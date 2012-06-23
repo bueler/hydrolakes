@@ -31,4 +31,13 @@ imagesc(x/1000,flipud(-y)/1000,flipud(floatmask)), view(2), colorbar
 title('mask for where ice is floating')
 xlabel('x (km)'), ylabel('y (km)')
 
+spera = 31556926.0;
+W0 = zeros(size(thk));
+ts = 0.0;
+te = spera;
+Wnew = conserve(x,y,topg,usrf,floatmask,W0,ts,te,10);
+figure(4)
+imagesc(x/1000,flipud(-y)/1000,flipud(Wnew)), view(2), colorbar
+title(sprintf('water amount from CONSERVE after time of %f sec',te-ts))
+xlabel('x (km)'), ylabel('y (km)')
 
