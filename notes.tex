@@ -1,23 +1,9 @@
 \documentclass[12pt,final]{amsart}%default 10pt
 %prepared in AMSLaTeX, under LaTeX2e
-%\addtolength{\topmargin}{-0.15in}
-%\addtolength{\textheight}{0.7in}
-%\addtolength{\oddsidemargin}{-0.5in}
-%\addtolength{\evensidemargin}{-0.5in}
-%\addtolength{\textwidth}{1.2in}
 
 \usepackage[margin=1in]{geometry}
 
 \usepackage{natbib}
-
-% hyperref should be the last package we load
-\usepackage[pdftex,
-                colorlinks=true,
-                plainpages=false, % only if colorlinks=true
-                linkcolor=blue,   % only if colorlinks=true
-                citecolor=black,   % only if colorlinks=true
-                urlcolor=magenta     % only if colorlinks=true
-]{hyperref}
 
 \usepackage{amssymb,alltt,verbatim,xspace,fancyvrb}
 \usepackage{palatino}
@@ -29,11 +15,23 @@
   \usepackage[final,pdftex]{graphicx}
 \fi
 
+% hyperref should be the last package we load
+\usepackage[pdftex,
+                colorlinks=true,
+                plainpages=false, % only if colorlinks=true
+                linkcolor=blue,   % only if colorlinks=true
+                citecolor=black,   % only if colorlinks=true
+                urlcolor=magenta     % only if colorlinks=true
+]{hyperref}
+
 \newcommand{\normalspacing}{\renewcommand{\baselinestretch}{1.1}\tiny\normalsize}
 \newcommand{\tablespacing}{\renewcommand{\baselinestretch}{1.0}\tiny\normalsize}
 \normalspacing
 
 % math macros
+\newcommand\bv{\mathbf{v}}
+\newcommand\bq{\mathbf{q}}
+
 \newcommand\CC{\mathbb{C}}
 \newcommand{\DDt}[1]{\ensuremath{\frac{d #1}{d t}}}
 \newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
@@ -76,66 +74,95 @@
 %\setcounter{tocdepth}{1}
 %\tableofcontents
 
-\section{Introduction} 
+\section*{Introduction}
 
-Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Additionally, physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at McCarthy in 2012.  Don't want to forget that \dots}
+Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at the 2nd McCarthy Summer School in Glaciology in 2012.}  The assumption that water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
 
-The assumption water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
 
-Water is conserved.  In fact, if we regard the water as being in a layer \citep{Clarke05}, whether thick or thin, we can keep track of its thickness $W(t,x)$ in one spatial dimension by the equation
+\section*{Continuum model}
+
+We consider a layer of water with thickness $W(t,x,y)$.  It is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  While the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.  We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
+
+Water is conserved, so that in two spatial dimensions it is described by the equation \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
-W_t + Q_x = \Phi
+W_t + \Div \bq = \Phi
 \end{equation}
-where $Q$ is the water flux, with SI units $\text{m}^2\,\text{s}^{-1}$, and $\Phi$ is a source term with units $\text{m}\,\text{s}^{-1}$.  The layer thickness $W$ here is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters, because of the fine spatial variation which one is unlikely to be able to model.  We will attempt only to model spatially-averaged versions of water amount and water pressure.
-
-Equation \eqref{eq:conserve} is a conservation statement.  Solve equation \eqref{eq:conserve} in the case $Q=0$ and $\Phi(x)$ is known.  (That is: no lateral flux of water.)  On the other hand, describe the steady state case where $W_t=0$; how does a ``flux boundary condition'' come in?
+where $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).
 
 We might separate the water sources between the melt on the lower surface of the glacier and the en- or supra-glacial drainage origin,
   $$\Phi = \rho_w^{-1} \left(m + S\right)$$
-where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  But this split is not really critical; for the first part of this project let's take $\Phi$ to be constant, $\Phi=\Phi_0$.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ while $\Phi$ has units $\text{m}\,\text{s}^{-1}$.  (Here the density is mass-per-volume and the fluxes $m,S$ are mass rates per area.  This gives $\Phi$ in the right units whether or not we have flow-line geometry.)
+where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  For the first example below we will take $\Phi$ to be constant.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
 
-There is a hydraulic potential.  We will relate the water flux $Q$ in equation \eqref{eq:conserve} to the gradient of the hydraulic potential $\psi(t,x)$.  By definition, $\psi$ combines the actual water pressure $P(t,x)$ and the gravitational potential corresponding to that mass of water at the location on the bed of the glacier,
-\begin{equation} \label{eq:oldpotential}
-\psi = P + \rho_w g\, b.
-\end{equation}
-But really it should be
+The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
-Here $z=b(x)$ is the bedrock elevation.  We will assume that both the ice thickness $H(x)$ and the bed elevation $b(x)$ are given, time-independent data.
+Here $z=b(x,y)$ is the time-independent bedrock elevation, which we assume is given by time-independent data.
 
-Water flows from high to low hydraulic potential.  The simplest such is to assume a water sheet, which gives equation
-\begin{equation}
-Q = - \frac{K \, W}{\rho_w g} \psi_x
-\label{eq:flux}
+Water flows from high to low hydraulic potential.  The simplest model is for a water sheet \citep{Clarke05}
+\begin{equation}  \label{eq:flux}
+\bq = - \frac{K \, W}{\rho_w g} \grad \psi
 \end{equation}
-(Clarke 2005).  Here, $\rho_w$ is the water density, $g$ the gravitational acceleration and $K$ the effective hydraulic conductivity.  The transmissivity of the system is really the product $KW$.  Notice that the system transmits more water for a given head gradient if either the holes are bigger ($K$ is larger) or the water sheet is thicker ($W$ is larger).  The main point here: By \eqref{eq:flux}, water flows from high to low fluid potential.  
+Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the holes through the subglacial material are bigger ($K$ is larger) or the water sheet is thicker ($W$ is larger).
 
-From equations \eqref{eq:potential} and \eqref{eq:flux}, flow depends on both horizontal gradients in the water pressure and on the bedrock slope.  However, because the bedrock elevation comes from rough data in practice, the hydraulic potential is not actually very smooth.  The gradient $\nabla \psi$ will be seen to have very large spatial variability in practice.
-
-Combine equations (1), (2), and (3) in a single equation, eliminating symbols $Q$ and $\psi$, to get a new equation $W_t + \dots = \dots$.  Get
-  $$W_t - \frac{K}{\rho_w g} \left(W \left(P + \rho_w g\, b\right)_x\right)_x = \Phi$$
-
-Water pressure $P$ equals the overburden pressure.  The ice is a fluid which has a pressure field of its own.  At the base of the ice we denote this as $P_i$, the \emph{overburden pressure}.  We make, without worrying further\footnote{You should rethink this issue if you are solving the Stokes equations in highly-variable ice flows.}, that this ice pressure is hydrostatic (``cryostatic''):
-	$$P_i = \rho_i g H.$$
-Here $\rho_i$ is the density of ice and $H$ is the ice thickness.
-
-The extreme model is
-\begin{equation}
-P=P_i \label{extremeone}
+Recall that the ice is a fluid which has a pressure field of its own, with basal value $P_i$, the \emph{overburden pressure}.  In this minimal model, water pressure $P$ is proportional to the ice overburden pressure.  We also make, as an acceptable shallow approximation \citep{GreveBlatter2009}, the assumption that the ice pressure is hydrostatic
+\begin{equation} \label{eq:hydrostatic}
+  P_i = \rho_i g H = \rho_i g (h-b).
 \end{equation}
-It has been used at least once in modeling Antarctica \citep{LeBrocqetal2009}.
+Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$), $H$ is the ice thickness (m), and $h$ is the ice upper surface elevation (m).  Our model for the subglacial water pressure is
+\begin{equation} \label{eq:pisoverburden}
+  P = s P_i
+\end{equation}
+where $s$ is a dimensionless constant $0\le s \le 1$.  In the case $s=1$ this model has been used for subglacial water in Antarctica \citep{LeBrocqetal2009}.
 
-Combine equations (1), (2), (3), and (4) in a single equation, eliminating symbols $Q$, $P$ and $\psi$.  Get  
-  $$W_t - \frac{K}{\rho_w g} \left(W \left(\rho_i g H + \rho_w g\, b\right)_x\right)_x = \Phi$$
-What are the correct boundary conditions in a one-dimensional version of the new equation?
+Let $r = \rho_i / \rho_w \approx 0.9$, a dimensionless constant.  From equations \eqref{eq:potential}, \eqref{eq:flux}, \eqref{eq:hydrostatic}, and \eqref{eq:pisoverburden} we derive a more transparent description of the flux,
+\begin{equation} \label{eq:qexpression}
+  \bq = \bv\, W - K W \grad W
+\end{equation}
+where
+\begin{equation} \label{eq:vexpression}
+  \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+\end{equation}
+is an ice-sheet-geometry-dependent vector function which has units of velocity.  Thus the water flow $\bq$ mostly depends on the surface and bedrock slope because the velocity $\bv$ is a sum of these slopes.  However, because the bedrock elevation comes from rough data in practice, the distribution of the velocity $\bv$ will not be very smooth.  Indeed, for $s\approx 1$ the typically-smoother surface gradient is more important, while for $s \ll 1$ the typically-rougher bedrock gradient becomes more significant.
 
-In fact, let's now choose some data for the the ice sheet surface and bed elevation.  For East Antarctica I have written a mfile \texttt{getEAIStransect.m}, which calls modest data processing scripts \texttt{buildant.m,netcdf.m} to extract and plot surface elevation and bed elevation.  You will also need a 100Mb NetCDF file called \texttt{Antarctica\_5km\_dev1.0.nc}, which I can supply.  As an admittedly-modest alteration, modify these to plot overburden pressure for these geometry data.  Compute the hydraulic potential assuming extreme model \eqref{extremeone}, and then show $Q$ in some manner (arrows?).  If the flow is down the overburden pressure gradient, where will lakes occur?
+From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers},
+\begin{equation} \label{eq:adeqn}
+  W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi
+\end{equation}
 
 
-Build a numerical model of the equation from Extreme Model 1.  It might be very helpful to consider the abstract form
-	$$u_t + (v u)_x = f.$$
-for $v(x)$ and $f(x)$ given.  How would you test your numerical scheme?  (\emph{Here we actually get our hands dirty in numerical methods.  Talk to me about finite difference schemes and boundary conditions.})
+\section*{Numerical scheme}
+
+\newcommand{\Wlij}{W^l_{i,j}}
+\newcommand{\Wij}{W_{i,j}}
+\newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
+
+Equation \eqref{eq:adeqn} is discretized by a conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  To set notation, suppose our rectangular computational domain has an $M_x \times M_y$ grid of points $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  We index starting at zero; e.g.~the $x$-values are $x_0,\dots,x_{M_x-1}$ where the first and the last are on the boundary of the domain.  Let $\Wlij \approx W(t_l,x_i,y_j)$ be the approximations of the grid-point value of the continuum solution $W(t,x,y)$.
+
+To explain the upwind method, consider the model equation
+\begin{equation} \label{eq:modeladvect}
+u_t + (a(x) u)_x = 0
+\end{equation}
+for some quantity $u(t,x)$ transported by a flux $q = a(x) u$.  We describe our upwind scheme as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell and we consider the flux at the interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide, based on the sign of $a(x)$ at the interfaces between cells, which spatial finite difference to compute.  Our scheme is a version of the ``donor cell'' upwind method, but also it is implicit.  The scheme is easier to display if we define the following upwind notation,
+\newcommand{\up}[2]{\big<#1\big|\,#2\big>}
+	$$\up{a}{U_j} := a \begin{Bmatrix} U_j, \quad a \ge 0, \\ U_{j+1}, \quad a< 0 \end{Bmatrix}.$$
+For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ with $j=0,1,\dots,J$, we set
+\begin{equation}\label{eq:modelfdadvect}
+\frac{U_j^{l+1} - U_j^l}{\Delta t} + \frac{\up{a_+}{U_j^{l+1}} - \up{a_-}{U_{j-1}^{l+1}}}{\Delta x} = 0
+\end{equation}
+where $a_+ = a(x_{j+1/2})$ and $a_-=a(x_{j-1/2})$.
+
+Scheme \eqref{eq:modelfdadvect} possesses good conservation properties.  In fact, if $Z^l := \sum_{j=1}^{J-1} U_j^l \Delta x$ is our estimate of the total amount of $u$ at time $t_l$ then
+    $$Z^{l+1} = Z^l + \sum_{j=1}^{J-1} (U_j^{l+1} - U_j^l) \Delta x = Z^l + \Delta t \, \up{a(x_{1/2})}{U_0^{l+1}} - \Delta t\, \up{a(x_{J-1/2})}{U_J^{l+1}}.$$
+Therefore the scheme exhibits conservation $Z^{l+1}=Z^l$, even should $a(x)$ be highly-irregular, if at each boundary location one of these apply:  \emph{(i)} the velocity $a(x)$ one half grid cell into the interior is zero, or \emph{(ii)} the value of $u$ at inflow boundary locations is zero; the velocity one-half grid cell into the interior is used to evaluate inflow or outflow.
+
+Now we can state our scheme for equation \eqref{eq:adeqn}.  We apply the conservative, implicit upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation :
+\begin{align}
+ \Wij &- \Wlij + \nu_x \Big(\upp{v_e}{\Wij}{i} - \upp{v_w}{W_{i-1,j}}{i}\Big) + \nu_y \left(\upp{v_n}{\Wij}{j} - \upp{v_s}{W_{i,j-1}}{j}\right)\label{eq:Wfd} \\
+      &= FIXME. \notag
+\end{align}
+where $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, and FIXME
+Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
 
 
