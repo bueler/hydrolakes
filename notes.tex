@@ -55,8 +55,11 @@
 \newcommand\lap{\triangle}
 \newcommand\Matlab{\textsc{Matlab}\xspace}
 \newcommand\RR{\mathbb{R}}
-\newcommand{\Up}{\ensuremath{\operatorname{Up}}}
 \newcommand\vf{\varphi}
+
+\newcommand{\Wlij}{W^l_{i,j}}
+\newcommand{\Wij}{W_{i,j}}
+\newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
 
 
 
@@ -74,12 +77,12 @@
 %\setcounter{tocdepth}{1}
 %\tableofcontents
 
-\section*{Introduction}
+\section{Introduction}
 
 Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at the 2nd McCarthy Summer School in Glaciology in 2012.}  The assumption that water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
 
 
-\section*{Continuum model}
+\section{Continuum model}
 
 We consider a layer of water with thickness $W(t,x,y)$.  It is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  While the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.  We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
 
@@ -131,37 +134,40 @@ From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advec
 \end{equation}
 
 
-\section*{Numerical scheme}
+\section{Numerical scheme}
 
-\newcommand{\Wlij}{W^l_{i,j}}
-\newcommand{\Wij}{W_{i,j}}
-\newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
-
-Equation \eqref{eq:adeqn} is discretized by a conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  To set notation, suppose our rectangular computational domain has an $M_x \times M_y$ grid of points $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  We index starting at zero; e.g.~the $x$-values are $x_0,\dots,x_{M_x-1}$ where the first and the last are on the boundary of the domain.  Let $\Wlij \approx W(t_l,x_i,y_j)$ be the approximations of the grid-point value of the continuum solution $W(t,x,y)$.
+Equation \eqref{eq:adeqn} is discretized by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ be the approximation of the continuum solution at the grid point.
 
 To explain the upwind method, consider the model equation
 \begin{equation} \label{eq:modeladvect}
-u_t + (a(x) u)_x = 0
+u_t + (v(x) u)_x = 0
 \end{equation}
-for some quantity $u(t,x)$ transported by a flux $q = a(x) u$.  We describe our upwind scheme as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell and we consider the flux at the interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide, based on the sign of $a(x)$ at the interfaces between cells, which spatial finite difference to compute.  Our scheme is a version of the ``donor cell'' upwind method, but also it is implicit.  The scheme is easier to display if we define the following upwind notation,
+for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  We describe our ``donor cell'' upwind scheme as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which spatial finite difference to compute based on the sign of the velocity $v(x)$ at the interfaces between cells.  The scheme is easier to display if we define the following upwind notation,
 \newcommand{\up}[2]{\big<#1\big|\,#2\big>}
-	$$\up{a}{U_j} := a \begin{Bmatrix} U_j, \quad a \ge 0, \\ U_{j+1}, \quad a< 0 \end{Bmatrix}.$$
-For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ with $j=0,1,\dots,J$, we set
+	$$\up{v}{U_j} := v \begin{Bmatrix} U_j, & v \ge 0 \\ U_{j+1}, & v < 0 \end{Bmatrix}.$$
+For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ we set
 \begin{equation}\label{eq:modelfdadvect}
-\frac{U_j^{l+1} - U_j^l}{\Delta t} + \frac{\up{a_+}{U_j^{l+1}} - \up{a_-}{U_{j-1}^{l+1}}}{\Delta x} = 0
+\frac{U_j^{l+1} - U_j^l}{\Delta t} + \frac{\up{v_+}{U_j^l} - \up{v_-}{U_{j-1}^l}}{\Delta x} = 0
 \end{equation}
-where $a_+ = a(x_{j+1/2})$ and $a_-=a(x_{j-1/2})$.
+where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
-Scheme \eqref{eq:modelfdadvect} possesses good conservation properties.  In fact, if $Z^l := \sum_{j=1}^{J-1} U_j^l \Delta x$ is our estimate of the total amount of $u$ at time $t_l$ then
-    $$Z^{l+1} = Z^l + \sum_{j=1}^{J-1} (U_j^{l+1} - U_j^l) \Delta x = Z^l + \Delta t \, \up{a(x_{1/2})}{U_0^{l+1}} - \Delta t\, \up{a(x_{J-1/2})}{U_J^{l+1}}.$$
-Therefore the scheme exhibits conservation $Z^{l+1}=Z^l$, even should $a(x)$ be highly-irregular, if at each boundary location one of these apply:  \emph{(i)} the velocity $a(x)$ one half grid cell into the interior is zero, or \emph{(ii)} the value of $u$ at inflow boundary locations is zero; the velocity one-half grid cell into the interior is used to evaluate inflow or outflow.
+Now we can state our scheme for equation \eqref{eq:adeqn}.  Suppose the velocity has components $\bv = (\alpha,\beta)$ and recall that $\Div \left(\bv W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}, and use ``compass'' notation for the components: $\alpha_e = \alpha_{i+1/2,j}$, $\alpha_w = \alpha_{i-1/2,j}$, $\beta_n = \beta_{i,j+1/2}$, $\beta_s = \beta_{i,j-1/2}$.  Similarly for the diffusive term, the averages of the current water thicknesses, again computed on the staggered grid points, are denoted as follows: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
 
-Now we can state our scheme for equation \eqref{eq:adeqn}.  We apply the conservative, implicit upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation :
+\begin{figure}[ht]
+\centering
+\includegraphics[width=2.5in,keepaspectratio=true]{diffstencil}
+\bigskip
+\caption{
+The numerical scheme computes velocity components $\bv=(\alpha,\beta)$, and averaged current water thicknesses $W$ at the staggered grid locations shown with triangles.  The finite volume scheme is a donor-cell first-order upwind method for the dashed cell.}
+\label{fig:stencil}
+\end{figure}
+
+We apply the conservative upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation:
 \begin{align}
- \Wij &- \Wlij + \nu_x \Big(\upp{v_e}{\Wij}{i} - \upp{v_w}{W_{i-1,j}}{i}\Big) + \nu_y \left(\upp{v_n}{\Wij}{j} - \upp{v_s}{W_{i,j-1}}{j}\right)\label{eq:Wfd} \\
-      &= FIXME. \notag
+ &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{\upp{\alpha_e}{\Wlij}{i} - \upp{\alpha_w}{W_{i-1,j}^l}{i}}{\Delta x} + \frac{\upp{\beta_n}{\Wlij}{j} - \upp{\beta_s}{W_{i,j-1}^l}{j}}{\Delta y}  \label{eq:Wfd} \\
+      &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}\bigg] + \Phi_{ij}. \notag
 \end{align}
-where $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, and FIXME
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
 

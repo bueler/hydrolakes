@@ -27,6 +27,14 @@ print -dpdf diffstencil.pdf
    plot([-ones(size(x)); zeros(size(x)); ones(size(x))]',x,'k',...
        'LineWidth',lwidth)
 
+   % make the cell
+   xcell=-0.5:0.1:0.5;
+   clwidth=4.0;
+   plot(xcell,[-0.5*ones(size(xcell)); 0.5*ones(size(xcell))]','k--',...
+        'LineWidth',clwidth)
+   plot([-0.5*ones(size(xcell)); 0.5*ones(size(xcell))],xcell','k--',...
+        'LineWidth',clwidth)
+
    % label the regular grid positions
    fsize = 20;
    text(-1,-1.5,'i-1','FontSize',fsize,'FontAngle','italic',...
