@@ -11,8 +11,6 @@ function [x,y,lat,lon,thk,topg,usrf] = buildant(doplot,filename)
 if nargin < 1, doplot = 1; end
 if nargin < 2, filename = 'Antarctica_5km_dev1.0.nc'; end
 
-disp(['reading variables x,y,lat,lon,prcp,thk,topg,usrf from NetCDF file ' filename])
-
 S = netcdf(filename);  % reads NetCDF file into a large structure
 
 x = double(S.VarArray(14).Data);
