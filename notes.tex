@@ -82,6 +82,11 @@
 Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at the 2nd McCarthy Summer School in Glaciology in 2012.}  The assumption that water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
 
 
+      % FIXME:  * experiment with increased K
+      %         * show positivity preserving and stability in appendix
+
+
+
 \section{Continuum model}
 
 We consider a layer of water with thickness $W(t,x,y)$.  It is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  While the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.  We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
