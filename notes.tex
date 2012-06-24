@@ -157,8 +157,7 @@ Now we can state our scheme for equation \eqref{eq:adeqn}.  Suppose the velocity
 \centering
 \includegraphics[width=2.5in,keepaspectratio=true]{diffstencil}
 \bigskip
-\caption{
-The numerical scheme computes velocity components $\bv=(\alpha,\beta)$, and averaged current water thicknesses $W$ at the staggered grid locations shown with triangles.  The finite volume scheme is a donor-cell first-order upwind method for the dashed cell.}
+\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} computes velocity components $\bv=(\alpha,\beta)$, and averaged current water thicknesses $W$ at the staggered grid locations shown with triangles.  The finite volume scheme is a donor-cell first-order upwind method for the dashed cell.}
 \label{fig:stencil}
 \end{figure}
 
@@ -166,7 +165,7 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \begin{align}
  &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{\upp{\alpha_e}{\Wlij}{i} - \upp{\alpha_w}{W_{i-1,j}^l}{i}}{\Delta x} + \frac{\upp{\beta_n}{\Wlij}{j} - \upp{\beta_s}{W_{i,j-1}^l}{j}}{\Delta y}  \label{eq:Wfd} \\
       &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
-      &\qquad\qquad\qquad + \frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}\bigg] + \Phi_{ij}. \notag
+      &\qquad\qquad\qquad + \frac{W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}\bigg] + \Phi_{ij}. \notag
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
