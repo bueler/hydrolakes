@@ -83,6 +83,12 @@ while t<te
   Wnew = W;  % copies unaltered zero b.c.s
   for i=2:length(x)-1
     for j=2:length(y)-1
+
+      % FIXME:  1.  compute Wnew before checking float
+      %         2.  accounting: water in, water lost, water stored, balance
+      %         3.  experiment with increased K
+      %         4.  in notes, show positivity preserving and stability
+
       if floatmask(i,j)<0.5
         Wij = W(i,j);
         upe = up(alpha(i,j),  Wij,     W(i+1,j));
