@@ -13,7 +13,9 @@ function [alpha,beta,W] = conserve(x,y,b,h,floatmask,W0,ts,te,Nmin)
 % Note that
 %   v = (alpha,beta) = - s K r grad h - K (1 - s r) grad b
 % and the flux  q  is a sum of advective and diffusive components:
-%   q = v W - K W grad W.
+%   q = v W - K W grad W
+% so the equation is
+%   W_t + div (v W) = div (K W grad W) + Phi
 % If floatmask==1 then W=0 at that point.  (FIXME: account for water lost.)
 
 rhoi = 910.0;   % kg m-3
@@ -23,23 +25,66 @@ g = 9.81;       % m s-2
 K = 1.0e-3;     % m s-1
 
 s = 1;  % s=1 is full overburden
+sr = s * r;
 
 Phi = 0.01;   % 1 cm s-1
 
 [Mx, My] = size(W0);
+dx = x(2) - x(1);
+dy = y(2) - y(1);
 
+xs = 0.5 * (x(1:end-1) + x(2:end));
+ys = 0.5 * (y(1:end-1) + y(2:end));
 
+dhdx  = (h(2:end,:)-h(1:end-1,:)) / dx;
+dbdx  = (b(2:end,:)-b(1:end-1,:)) / dx;
+alpha = - K * (sr * dhdx + (1-sr) * dbdx);
+dhdy  = (h(:,2:end)-h(:,1:end-1)) / dy;
+dbdy  = (b(:,2:end)-b(:,1:end-1)) / dy;
+beta  = - K * (sr * dhdy + (1-sr) * dbdy);
 
-dtmax = (te - ts) / Nmin;
+%figure(5), scale=1.0e11;
+%quiver(xs/1000,ys/1000,scale*alpha(:,1:end-1),scale*beta(1:end-1,:))
+%title('velocity'), xlabel('x (km)'), ylabel('y (km)')
+
+dtmax = (te - ts) / Nmin
+dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy)
 t = ts;
 W = W0;
-
-return  % FIXME
-
 while t<te
   dt = min(te-t,dtmax);
+
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
   Wno = 0.5 * (W(:,2:end) + W(:,1:end-1));
+
+  maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
+  dtDIFF = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
+  dt = min([dt dtCFL dtDIFF])
+
+  nux = dt / dx;        nuy = dt / dy;
+  mux = K * dt / dx^2;  muy = K * dt / dy^2;
+
+  Wnew = W;  % copies unaltered zero b.c.s
+  for i=2:length(x)-1
+    for j=2:length(y)-1
+      Wij = W(i,j);
+      upe = up(alpha(i,j),  Wij,     W(i+1,j));
+      upw = up(alpha(i-1,j),W(i-1,j),Wij);
+      upn = up(beta(i,j),   Wij,     W(i,j+1));
+      ups = up(beta(i,j-1), W(i,j-1),Wij);
+      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + ...
+          mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
+          muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1))) + dt * Phi;
+    end
+  end
+  W = Wnew;
+  t = t + dt;
 end
 
+   function z = up(v,L,R)
+   if v >= 0
+     z = v * L;
+   else
+     z = v * R;
+   end
