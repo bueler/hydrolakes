@@ -1,11 +1,14 @@
+function antlakes(tyears,nn)
 % ANTLAKES  FIXME:  for now it just plots fields
+
+if nargin<1, tyears=100.0; end
+if nargin<2, nn=10; end
 
 filename = 'Antarctica_5km_dev1.0.nc';
 fprintf('reading variables x,y,lat,lon,thk,topg,usrf from NetCDF file %s\n',filename)
 [x,y,lat,lon,thk,topg,usrf] = buildant(0,filename);
 
 dx = x(2)-x(1);
-nn = 10;
 fprintf('subsampling to %d km resolution\n', dx*nn / 1000.0)
 clear dx
 x = x(1:nn:end);
@@ -37,11 +40,17 @@ xlabel('x (km)'), ylabel('y (km)')
 spera = 31556926.0;
 W0 = zeros(size(thk));
 ts = 0.0;
-te = spera;
-W = conserve(x,y,topg,usrf,floatmask,W0,ts,te,10);
+te = tyears*spera;
+[W,xx,yy,qx,qy] = conserve(x,y,topg,usrf,floatmask,W0,ts,te,10);
 
 figure(4)
 imagesc(x/1000,flipud(-y)/1000,flipud(W)), colorbar
 title(sprintf('water amount from CONSERVE after time of %.3f year',(te-ts)/spera))
 xlabel('x (km)'), ylabel('y (km)')
+
+return
+
+figure(5), scale=1.0e11;
+quiver(xx/1000,yy/1000,scale*qx,scale*qy)
+title('ice flux  (m^2 s^-1)'), xlabel('x (km)'), ylabel('y (km)')
 
