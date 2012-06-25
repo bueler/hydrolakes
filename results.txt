@@ -1,0 +1,43 @@
+**********
+100km (nn=20):
+>> antlakes(20000,20)
+reading variables x,y,lat,lon,thk,topg,usrf
+  from NetCDF file Antarctica_5km_dev1.0.nc
+subsampling to 100 km resolution
+showing topg, usrf, floatmask
+max |v| = 694.514 m a-1  and  dtCFL = 51.259 a
+running ...
+                                max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
+  t =   51.259 a [dt = 51.259]:    0.513    0.175        0.006        8e-16
+...
+  t = 20000.000 a [dt =  8.803]:  829.442   23.678        0.852        3e-16
+
+**********
+50km (nn=10):
+>> antlakes(20000,10)
+reading variables x,y,lat,lon,thk,topg,usrf
+  from NetCDF file Antarctica_5km_dev1.0.nc
+subsampling to 50 km resolution
+showing topg, usrf, floatmask
+max |v| = 2240.086 m a-1  and  dtCFL = 7.957 a
+running ...
+                                max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
+  t =    7.957 a [dt =  7.957]:    0.080    0.027        0.001        5e-14
+...
+  t = 20000.000 a [dt =  4.370]:  776.002   22.859        0.823        2e-16
+  
+**********
+25km (nn=5):
+>> antlakes(20000,5)
+reading variables x,y,lat,lon,thk,topg,usrf
+  from NetCDF file Antarctica_5km_dev1.0.nc
+subsampling to 25 km resolution
+showing topg, usrf, floatmask
+max |v| = 4378.399 m a-1  and  dtCFL = 2.019 a
+running ...
+                                max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
+  t =    2.019 a [dt =  2.019]:    0.020    0.007        0.000        2e-13
+...
+  t = 19998.346 a [dt =  2.019]:  621.415   21.749        0.783        3e-16
+  t = 20000.000 a [dt =  1.654]:  621.418   21.750        0.783        2e-16
+
