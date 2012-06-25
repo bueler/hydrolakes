@@ -156,13 +156,21 @@ For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ w
 \end{equation}
 where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
-Now we can state our scheme for equation \eqref{eq:adeqn}.  Suppose the velocity has components $\bv = (\alpha,\beta)$ and recall that $\Div \left(\bv W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}, and use ``compass'' notation for the components: $\alpha_e = \alpha_{i+1/2,j}$, $\alpha_w = \alpha_{i-1/2,j}$, $\beta_n = \beta_{i,j+1/2}$, $\beta_s = \beta_{i,j-1/2}$.  Similarly for the diffusive term, the averages of the current water thicknesses, again computed on the staggered grid points, are denoted as follows: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
+Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bv = (\alpha,\beta)$ and recall that $\Div \left(\bv W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}, and we use ``compass'' notation for the components:
+% \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+\begin{align*}
+\alpha_e &= \alpha_{i+1/2,j} = -K \left(sr \frac{h_{i+1,j}-h_{i,j}}{\Delta x} + (1-sr) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \\
+\alpha_w &= \alpha_{i-1/2,j} = -K \left(sr \frac{h_{i,j}-h_{i-1,j}}{\Delta x} + (1-sr) \frac{b_{i,j}-b_{i-1,j}}{\Delta x}\right), \\
+\beta_n  &= \beta_{i,j+1/2} = -K \left(sr \frac{h_{i,j+1}-h_{i,j}}{\Delta y} + (1-sr) \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right), \\
+\beta_s  &= \beta_{i,j-1/2} = -K \left(sr \frac{h_{i,j}-h_{i,j-1}}{\Delta y} + (1-sr) \frac{b_{i,j}-b_{i,j-1}}{\Delta y}\right).
+\end{align*}  
+Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=2.5in,keepaspectratio=true]{diffstencil}
 \bigskip
-\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} computes velocity components $\bv=(\alpha,\beta)$, and averaged current water thicknesses $W$ at the staggered grid locations shown with triangles.  The finite volume scheme is a donor-cell first-order upwind method for the dashed cell.}
+\caption{Numerical scheme \eqref{eq:Wfd} uses velocity components for the advection part of Equation \eqref{eq:adeqn}, and averaged water thicknesses for the diffusive part of the same Equation, at the staggered grid locations (triangles).  The water thickness values $W_{i,j}^l$ are on the regular grid points forming a five-point stencil (diamonds).  The finite volume scheme for the advection part is a donor-cell first-order upwind method for the grid-point-centered cell (dashed).}
 \label{fig:stencil}
 \end{figure}
 
@@ -181,5 +189,28 @@ Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 
+\appendix
+
+\section{Positivity and stability of the numerical scheme}
+
+The explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:adeqn} is sufficiently simple so that we can analyze its properties.  First, the scheme is stable in the sense that if sufficient conditions relating to the advective and diffusive time scales are satisfied then wiggles cannot grow.  Specifically, in this appendix we sketch a maximum principle argument for stability \citep{MortonMayers}.  On the other hand, as a closely-related statement, we note that the scheme positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the same sufficient stability conditions, the discrete water thicknesses at the next time step $W_{i,j}^{l+1}$ are nonnegative.
+
+Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  In what follows we consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
+
+Now we rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
+\begin{align*}
+ W_{i,j}^{l+1} &= \Wlij - \nu_x \left(\alpha_e \Wlij - \alpha_w W_{i-1,j}^l\right) - \nu_y \left(\beta_n \Wlij - \beta_s W_{i,j-1}^l\right)  \\
+      &\qquad + \mu_x \left[W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
+      &\qquad + \mu_y \left[W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)\right] + \Delta t \Phi_{ij} \\
+      &= (\nu_x \alpha_w + \mu_x W_w) W_{i-1,j}^l + (\mu_x W_e) W_{i+1,j}^l + (\nu_y \beta_s + \mu_y W_s) W_{i,j-1}^l + (\mu_y W_n) W_{i,j+1}^l \\
+      &\qquad + \Big[1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s)\Big] \Wlij + \Delta t \Phi_{ij}.
+\end{align*}
+The new value is a linear combination of the old values, plus a source term:
+   $$W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij + \Delta t \Phi_{ij}.$$
+Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, coefficients $A,B,C,D$ are all nonnegative, and only $E$ could be negative, depending on the time step.  In fact, let us state for simplicity a sufficient condition based on an equal split between advective and diffusive parts; let us assume
+	$$\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2},$$
+and
+    $$\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}.$$
+FIXME: to complete
 
 \end{document}
