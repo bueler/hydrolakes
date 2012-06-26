@@ -1,0 +1,288 @@
+\documentclass[hide notes,intlimits]{beamer}
+
+\mode<presentation>
+{
+  \usetheme[footline]{UAFshadealert}
+  \setbeamercovered{transparent}
+}
+
+% frames are 128 millimeters by 96 millimeters
+
+% load packages
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,wasysym}
+\usepackage{lmodern}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,shadows}
+
+\usepackage{empheq}
+\usepackage{color}
+\usepackage{animate}
+
+\graphicspath{{figures/}}
+
+% Some useful commands (from MPL)
+\newcommand{\s}[1]{\ensuremath{\,\text{#1}}}
+\newcommand{\unit}[1]{\ensuremath{\,\text{#1}}}
+
+\definecolor{dark red}{HTML}{E41A1C}
+\definecolor{dark green}{HTML}{4DAF4A}
+\definecolor{dark violet}{HTML}{984EA3}
+\definecolor{dark blue}{HTML}{084594}
+\definecolor{dark orange}{HTML}{FF7F00}
+\definecolor{light blue}{HTML}{377EB8}
+\definecolor{light red}{HTML}{FB9A99}
+\definecolor{light violet}{HTML}{CAB2D6}
+
+\setbeamercolor{boxed}{fg=black,bg=uaf yellow}
+
+
+\newenvironment{transbox}{%
+  \begin{tikzpicture}
+    \node[drop shadow,rounded corners,text width=\textwidth,fill=white, fill opacity=0.6,text opacity=1] \bgroup
+  }{
+    \egroup;\end{tikzpicture}} 
+
+\newenvironment{transbox-tight}{%
+  \begin{tikzpicture}
+    \node[drop shadow,rounded corners,fill=uaf yellow, fill opacity=0.75,text opacity=1] \bgroup
+  }{
+    \egroup;\end{tikzpicture}} 
+
+
+% title page
+\title[]{Better subglacial hydrology into PISM}
+\subtitle{(the Parallel Ice Sheet Model)}
+
+\author[Bueler \and van Pelt]{Ed Bueler\inst{*} and Ward van Pelt\inst{\dagger}}
+\institute{\inst{*} University of Alaska Fairbanks \and %
+           \inst{\dagger} IMAU, Utrecht, Netherlands}
+%\author[Bueler]{Ed Bueler}
+%\institute{University of Alaska Fairbanks}
+
+\date{IGS June 2012}
+
+
+\begin{document}
+
+% define what is shown at the beginning of each section
+%\AtBeginSection[]
+%{
+% \begin{frame}<beamer>
+%   \frametitle{Outline}
+%   \tableofcontents[currentsection,subsectionstyle=hide/hide/hide]
+% \end{frame}
+%}
+
+
+\setbeamertemplate{background canvas}
+{
+  \tikz{\node[inner sep=0pt,opacity=1.0] {\includegraphics[width=\paperwidth]{uaf_beamer_shade_bg}};}
+} 
+
+% insert titlepage
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\setbeamertemplate{background canvas}
+{
+  % empty
+}
+
+%\begin{frame}
+%   \frametitle{Outline}
+%   \tableofcontents[subsectionstyle=hide/hide/hide]
+%\end{frame}
+
+
+\newcommand{\scream}[1]{\alert{\textbf{#1}}}
+
+\begin{frame}
+  \frametitle{PISM = Parallel Ice Sheet Model}
+
+  \begin{center}
+      \includegraphics[width=80mm]{figs/pism-users-map}
+  \end{center}
+
+\vspace{-2mm}
+  \begin{itemize}
+  \item \alert{\large\texttt{www.pism-docs.org}}  and  \url{help@pism-docs.org}
+  \item runs on laptops to supercomputers
+  \item documented releases once a year
+  \item \emph{User's Manual} with real modeling examples including Greenland Ice Sheet, Ross Ice Shelf, and St\"orglaciaren
+  
+  \bigskip
+  \scriptsize
+  \item[$\circ$] supported by the NASA Modeling, Analysis and Prediction (grant NNX09AJ38G)
+  \item[$\circ$] jointly developed by UAF and the Potsdam Institute for Climate Impact Research
+  \end{itemize}
+\end{frame}
+
+
+\newcommand{\whytitle}{why PISM needs better subglacial hydrology}
+
+\begin{frame}
+  \frametitle{\whytitle}
+  
+\begin{center}
+  motivation 1: \quad we are \scream{NOT} conserving mass (of liquid water)
+\end{center}
+
+  \begin{itemize}
+    \item FIXME:  cartoon of current basal water scheme
+    \item no lateral transport of liquid water
+    \item model is probably suitable for Siple coast ice streams (Tulaczyk et al 2000)
+    
+    FIXME: the equation
+    \item not so good for temperate and high-driving-stress (outlet) glaciers
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{\whytitle}
+  
+\begin{center}
+  motivation 2: we \scream{ARE} conserving energy (better than before)
+\end{center}
+  
+  \begin{itemize}
+    \item basal melt rate from better energy conservation using enthalpy\footnote{\tiny Aschwanden et al (2012) \emph{An enthalpy formulation for glaciers and ice sheets}, J. Glaciol. 58 (209), 441--457.}
+    \item FIXME: new basal melt rate equation
+  \end{itemize}
+
+  \begin{center}
+    \includegraphics[height=0.7\textheight]{figs/enthalpy-model.png}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{\whytitle}
+  
+\begin{center}
+  motivation 3: we want to report region-by-region the amount of subglacial water delivered at outlets
+\end{center}
+  
+  \begin{itemize}
+    \item FIXME: show side-by-side drainage basins for $h$ and for $\psi$
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{\whytitle}
+  
+\begin{center}
+  motivation 4: PISM is a playground for testing basal sliding
+\end{center}
+  
+  \begin{itemize}
+    \item FIXME: 
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{elements of subglacial hydrology}
+  \framesubtitle{we can agree on these?}
+
+\newcommand{\bq}{\mathbf{q}}
+
+  \begin{itemize}
+    \item conservation of mass:
+    
+    $$W_t + \nabla \cdot \bq = \frac{m + S}{\rho_w}$$
+
+    \item hydraulic potential:
+    
+    $$\psi = P + \rho_w g b$$
+
+    \item Darcy-ish flow:
+    
+    $$\bq = - \frac{K W}{\rho_w g} \nabla \psi $$
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{elements of subglacial hydrology}
+  \framesubtitle{whence pressure?}
+
+  \begin{itemize}
+    \item an equation determines the pressure; some alternatives:
+      \begin{itemize}
+      \item[$\circ$]
+        $$P = \rho_i g H$$
+      \item[$\circ$]
+        $$P = \rho_i g H \left(\frac{W}{W_{\text{crit}}}\right)^\gamma$$
+      \item[$\circ$]
+        
+        FIXME: Hewitt generic equation
+      \item[$\circ$]
+        
+        FIXME: Schoof et al inequalities
+      \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{time scales with the simple choice}
+
+  \begin{itemize}
+    \item FIXME: equation for $\psi$: comment
+    \item FIXME: combined equation for $W$: comment
+    \item FIXME: equation for $\mathbf{v}$: comment \& show results
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{results from the simple choice}
+
+  \begin{itemize}
+    \item FIXME: show for EAIS
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{ideas to include}
+  \framesubtitle{FIXME: this slide might remind me of something}
+
+  \begin{itemize}
+  \item physical models for opening (wall melt, sliding) and closure (creep)
+  \item elliptic equation determines water pressure
+  \item \alert{great danger} in building a model whose parameters cannot be identified
+  \end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+
+\end{document}

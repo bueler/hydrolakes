@@ -1,18 +1,22 @@
-all: notes.pdf
+all: notes.pdf slides.pdf
 
 codes   := 
-figures := 
+figures := diffstencil.pdf enthalpy-model.png
 
-codes   := $(addprefix matlab/, $(codes))
+codes   := $(addprefix codes/, $(codes))
 figures := $(addprefix figs/, $(figures))
 
-# link ice_bib.bib needed for bibtex to work  (to file in pism-dev/doc/)
+# link ice_bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
 
-%.pdf: %.tex $(figures) ice_bib.bib
-	pdflatex $*
-	bibtex $*
-	pdflatex $*
-	pdflatex $*
+notes.pdf: notes.tex $(figures) ice_bib.bib
+	pdflatex notes
+	bibtex notes
+	pdflatex notes
+	pdflatex notes
+
+slides.pdf: slides.tex $(figures)
+	pdflatex slides
+	pdflatex slides
 
 .PHONY: clean
 
