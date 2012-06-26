@@ -303,9 +303,14 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 
 
 \begin{frame}
-  \frametitle{FIXME: idea to include}
+  \frametitle{FIXME: ideas to include}
 
+\scriptsize
   \begin{itemize}
+  \item channeling flow can only be implemented in a 2d framework when the position of the channels is predefined; this does not seem to be desirable in our approach
+  \item main problem at the moment is the interaction/feedback of the water flux and the wall melt term in the opening/closure-equation. This interaction ultimately leads to concentrated water flow in infinitely narrow channels (larger water flux ->  larger channel -> lower pressure -> larger water flux)
+  \item We leave out the wall melt term in the closure relation and hence only model linked-cavity flow (opening by cavitation balanced by creep closure). This model would be suitable for all regions of an ice sheet except for fast flowing outlet glaciers.
+  \item Make the wall melt opening term in the opening/closure-relation a function of the water input rate rather than the water flux.
   \item \alert{great danger} in building a model whose parameters cannot be identified
   \end{itemize}
 \end{frame}
