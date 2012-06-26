@@ -127,9 +127,10 @@
 
 \begin{frame}
   \frametitle{\whytitle}
-  
+  \framesubtitle{motivation 1}
+
 \begin{center}
-  motivation 1: \quad we are \scream{NOT} conserving mass (of liquid water)
+  we are \scream{NOT} conserving mass (of liquid water)
 \end{center}
 
   \begin{itemize}
@@ -145,9 +146,10 @@
 
 \begin{frame}
   \frametitle{\whytitle}
+  \framesubtitle{motivation 2}
   
 \begin{center}
-  motivation 2: we \scream{ARE} conserving energy (better than before)
+  we \scream{ARE} conserving energy (better than before)
 \end{center}
   
   \begin{itemize}
@@ -158,35 +160,51 @@
   \begin{center}
     \includegraphics[height=0.7\textheight]{figs/enthalpy-model.png}
   \end{center}
+\end{frame}
 
+
+\newcommand{\goaltitle}{what we want to do for PISM users}
+
+
+\begin{frame}
+  \frametitle{\goaltitle}
+  \framesubtitle{goal 1}
+  
+\begin{center}
+  we want to give users a reasonable default behavior
+\end{center}
+  
+  \begin{itemize}
+    \item that does no harm
+  \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{\whytitle}
-  
+  \frametitle{\goaltitle}
+  \framesubtitle{goal 2}
+ 
 \begin{center}
-  motivation 3: we want to report region-by-region the amount of subglacial water delivered at outlets
+  we want to report region-by-region the amount of subglacial water delivered at outlets
 \end{center}
   
   \begin{itemize}
     \item FIXME: show side-by-side drainage basins for $h$ and for $\psi$
   \end{itemize}
-
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{\whytitle}
-  
+  \frametitle{\goaltitle}
+  \framesubtitle{goal 3}
+
 \begin{center}
-  motivation 4: PISM is a playground for testing basal sliding
+   PISM should be a playground for testing basal sliding models
 \end{center}
   
   \begin{itemize}
-    \item FIXME: 
+    \item FIXME:  show results from van Pelt \& Oerlemans
   \end{itemize}
-
 \end{frame}
 
 
@@ -197,17 +215,25 @@
 \newcommand{\bq}{\mathbf{q}}
 
   \begin{itemize}
-    \item conservation of mass:
+    \item \textbf{conservation of mass}:
     
-    $$W_t + \nabla \cdot \bq = \frac{m + S}{\rho_w}$$
+    $$W_t + \nabla \cdot \bq = m / \rho_w$$
 
-    \item hydraulic potential:
-    
-    $$\psi = P + \rho_w g b$$
+where $W=$ thickness of water sheet, $\bq=$ flux, $m=$ supply rate
 
-    \item Darcy-ish flow:
+    \item \textbf{hydraulic potential} for top of water sheet:
     
-    $$\bq = - \frac{K W}{\rho_w g} \nabla \psi $$
+    $$\phi = p_w + \rho_w g (b + W)$$
+
+where $\phi=$ hydraulic potential, $b=$ bedrock elevation
+
+    \item \textbf{Darcy flow}:
+    
+    $$\bq = - \frac{K W}{\rho_w g} \nabla \phi$$
+    
+    \scriptsize or \quad $\bq = - k W^\alpha |\nabla \phi|^{\beta - 2} \nabla \phi$ \quad etc.
+    
+\normalsize where $K$ hydraulic conductivity (\emph{not} constant in general)
   \end{itemize}
 
 \end{frame}
@@ -224,12 +250,17 @@
         $$P = \rho_i g H$$
       \item[$\circ$]
         $$P = \rho_i g H \left(\frac{W}{W_{\text{crit}}}\right)^\gamma$$
-      \item[$\circ$]
+      \item[$\circ$]  physical models for opening (wall melt, sliding) and closure (creep)
         
         FIXME: Hewitt generic equation
-      \item[$\circ$]
+
+  elliptic equation determines water pressure
+
+      \item[$\circ$] bounds on pressure
         
         FIXME: Schoof et al inequalities
+
+  elliptic variational inequality determines water pressure
       \end{itemize}
   \end{itemize}
 
@@ -240,8 +271,12 @@
   \frametitle{time scales with the simple choice}
 
   \begin{itemize}
-    \item FIXME: equation for $\psi$: comment
     \item FIXME: combined equation for $W$: comment
+    \item hydraulic potential from three elevations:
+    \begin{align*}
+      \phi &= \rho_i g H + \rho_w g (b+W) \\
+           &= \rho_i g \underline{\phantom{|}h\phantom{|}} + (\rho_w - \rho_i) g \underline{\phantom{|}b\phantom{|}} + \rho_w g \underline{\phantom{|}W\phantom{|}}
+    \end{align*}
     \item FIXME: equation for $\mathbf{v}$: comment \& show results
   \end{itemize}
 
@@ -268,12 +303,9 @@
 
 
 \begin{frame}
-  \frametitle{ideas to include}
-  \framesubtitle{FIXME: this slide might remind me of something}
+  \frametitle{FIXME: idea to include}
 
   \begin{itemize}
-  \item physical models for opening (wall melt, sliding) and closure (creep)
-  \item elliptic equation determines water pressure
   \item \alert{great danger} in building a model whose parameters cannot be identified
   \end{itemize}
 \end{frame}
