@@ -123,7 +123,7 @@
 \end{frame}
 
 
-\newcommand{\whytitle}{why PISM needs better subglacial hydrology}
+\newcommand{\whytitle}{why we need better subglacial hydrology}
 
 \begin{frame}
   \frametitle{\whytitle}
@@ -133,14 +133,26 @@
   we are \scream{NOT} conserving mass (of liquid water)
 \end{center}
 
+\begin{columns}
+\begin{column}{0.5\textwidth}
   \begin{itemize}
-    \item FIXME:  cartoon of current basal water scheme
-    \item no lateral transport of liquid water
-    \item model is probably suitable for Siple coast ice streams (Tulaczyk et al 2000)
-    
-    FIXME: the equation
-    \item not so good for temperate and high-driving-stress (outlet) glaciers
+    \item current basal water scheme is a ``can'' of porous till $\longrightarrow$
+      \begin{itemize}
+        \item[$\circ$] ``overflows'' at 2m of water \dots overflow lost
+        \item[$\circ$] but models till strength in reasonable way (Tulaczyk et al 2000)
+      \end{itemize}
+    \item no lateral transport of water
+    \item model is most suitable for (e.g.) Siple coast ice streams $\longrightarrow$
   \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+FIXME: can of till
+
+\vspace{15mm}
+
+\includegraphics[width=0.7\textwidth]{figs/siple}
+\end{column}
+\end{columns}
 \end{frame}
 
 
@@ -153,17 +165,23 @@
 \end{center}
   
   \begin{itemize}
-    \item basal melt rate from better energy conservation using enthalpy\footnote{\tiny Aschwanden et al (2012) \emph{An enthalpy formulation for glaciers and ice sheets}, J. Glaciol. 58 (209), 441--457.}
-    \item FIXME: new basal melt rate equation
+    \item better energy conservation using enthalpy
+    \item generates new basal melt rate equation
+    \item \emph{lots of water comes from dissipating gravitational potential energy, and some from geothermal energy}
   \end{itemize}
 
   \begin{center}
-    \includegraphics[height=0.7\textheight]{figs/enthalpy-model.png}
+    \includegraphics[height=0.4\textheight]{figs/enthalpy-model-crop}
+    
+    \medskip
+    \scriptsize \textbf{left}: basal melt rate using \underline{enthalpy} \qquad \textbf{right}: basal melt rate using \underline{temperature}
+
+    \tiny (from Aschwanden et al (2012) \emph{An enthalpy formulation for glaciers and ice sheets}, J. Glaciol.)
   \end{center}
 \end{frame}
 
 
-\newcommand{\goaltitle}{what we want to do for PISM users}
+\newcommand{\goaltitle}{what we want to do for users}
 
 
 \begin{frame}
@@ -171,7 +189,7 @@
   \framesubtitle{goal 1}
   
 \begin{center}
-  we want to give users a reasonable default behavior
+  \scream{give users reasonable default behavior}
 \end{center}
   
   \begin{itemize}
@@ -185,12 +203,20 @@
   \framesubtitle{goal 2}
  
 \begin{center}
-  we want to report region-by-region the amount of subglacial water delivered at outlets
+  \scream{report the amount of subglacial water delivered at each outlet}
 \end{center}
   
   \begin{itemize}
-    \item FIXME: show side-by-side drainage basins for $h$ and for $\psi$
+    \item we can do this for ice flow because we know which direction the ice flows
+    \item we need a subglacial hydrology just to know which fjord gets the water
   \end{itemize}
+
+\begin{center}
+\bigskip
+
+    FIXME: side-by-side drainage basins for $h$ and for $\psi$
+\end{center}
+
 \end{frame}
 
 
@@ -199,12 +225,22 @@
   \framesubtitle{goal 3}
 
 \begin{center}
-   PISM should be a playground for testing basal sliding models
+   \scream{provide a playground for testing basal sliding models}
 \end{center}
   
   \begin{itemize}
     \item FIXME:  show results from van Pelt \& Oerlemans
   \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{these goals clash}
+
+\begin{itemize}
+\item you can't please all the people all the time
+\end{itemize}
 \end{frame}
 
 
