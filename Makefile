@@ -1,7 +1,7 @@
 all: notes.pdf slides.pdf
 
 codes   := 
-figures := diffstencil.pdf enthalpy-model.png
+figures := diffstencil.pdf enthalpy-model-crop.png hydro-mask.png siple.png ftt-mask.png pism-users-map.png
 
 codes   := $(addprefix codes/, $(codes))
 figures := $(addprefix figs/, $(figures))
