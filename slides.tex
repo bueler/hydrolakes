@@ -169,18 +169,18 @@
 
 
 \begin{frame}
-  \frametitle{existing uses of PISM subglacial hydrology}
+  \frametitle{example existing uses of PISM subglacial hydrology}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{center}
-\textbf{typical purpose:} model the locations of all Antarctic ice streams without inversion
+model the locations of all Antarctic ice streams without inversion
 
-\vspace{11mm}
+\vspace{13mm}
 
 \includegraphics[width=0.9\textwidth]{figs/martin-fig12}
 
-\vspace{5mm}
+\vspace{8mm}
 
 \medskip
 \scriptsize (Martin et al., 2011, \emph{The Cryosphere})
@@ -188,7 +188,7 @@
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
-\textbf{less typical:} study sliding/surging cyclicity in PISM
+study sliding/surging cyclicity in PISM
 
 \bigskip
 \includegraphics[width=0.8\textwidth]{figs/vanPeltOerlemans-fig4}
@@ -207,7 +207,7 @@
 subgoals:
 
 \begin{enumerate}
-  \item \scream{provide reasonable default behavior}
+  \item \scream{provide reasonable default behavior for new users}
   \item \scream{introduce a minimum number of new tunable parameters}
     %\item[$\ast$]<2-4> \dots that does no harm
   \item \scream{provide a playground for testing basal sliding models}
@@ -249,9 +249,11 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
     
     $$\bq = - \frac{K W}{\rho_w g} \nabla \phi$$
     
-    \scriptsize or \quad $\bq = - k W^\alpha |\nabla \phi|^{\beta - 2} \nabla \phi$ \quad etc.
+    where $K=$ hydraulic conductivity (\emph{not} constant in general)
     
-\normalsize where $K=$ hydraulic conductivity (\emph{not} constant in general)
+    \medskip\medskip
+    \scriptsize or \quad $\bq = - k W^\alpha |\nabla \phi|^{\beta - 2} \nabla \phi$ \quad etc.
+
   \end{itemize}
 
 \end{frame}
@@ -282,7 +284,7 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
   \framesubtitle{whence pressure? (more alternatives)}
 
   \begin{itemize}
-    \item more alternatives:
+    \item more possibilities:
       \begin{itemize}
       \item[$\ast$] physical models for opening and closure of a distributed system
         \begin{itemize}
@@ -291,7 +293,7 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 where $W_O$ is the total opening effect from a longish list of processes (wall melt, sliding, \dots) and $W_C$ is the total closing effect from a list of processes including creep (Hewitt, 2011)
         \item[$\circ$] indirectly this determines water pressure $p_w$
         \end{itemize}
-      \item[$\ast$] but wait: there are channels, too! (R\"othlisberger)
+      \item[$\ast$] but wait: there are channels, too! (R\"othlisberger 1972)
 
 \begin{center}
 \medskip
@@ -307,29 +309,43 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \frametitle{elements of subglacial hydrology}
   \framesubtitle{whence pressure? (yet more alternatives \dots from Vancouver, B.C.~area as usual)}
 
-\begin{itemize}
-  \item and more alternatives:
+\begin{columns}
+\begin{column}{0.6\textwidth}
   \begin{itemize}
-  \item[$\ast$]  Schoof (2010): fixed-location 2D network of channels
-  
-  FIXME: figure 
-  
-  FIXME: warning that grid-independent limit not known/available (?)
+  \item and more possibilities:
+  \begin{itemize}
+  \item[$\ast$]  Creyts \& Schoof (2009): bed protrusions stabilize sheet flow (c.f.~Walder 1982)
 
-  \item[$\ast$]  Schoof and Hewitt and Werder (2012): elliptic variational inequality determines water pressure
-
-  FIXME: figure 
-  
-  FIXME: warning that in areas where creep dominates then $p_w = \rho_i g H$ then \dots
-
-  \item[$\ast$] and I bet there are even more
-
+  \bigskip
+  \item[$\ast$]  Schoof (2010): fixed-location 2D network of channels (top figure)
+      \begin{itemize}
+      \item[$\circ$] grid-refinement limit not known?
+      \end{itemize}
+      
+  \bigskip
+  \item[$\ast$]  Hewitt and Schoof and Werder (2012)
+      \begin{itemize}
+      \vspace{-3mm}
+      \item[$\circ$] elliptic variational inequality determines water pressure from bounds
+      $$0 \le p_w \le \rho_i g H$$
+      \item[$\circ$] may be large areas where $p_w = \rho_i g H$ anyway
+      \end{itemize}
   \end{itemize}
+  \end{itemize}
+\end{column}
 
-\end{itemize}
+\begin{column}{0.4\textwidth}
+\begin{center}
+\includegraphics[width=1.0\textwidth]{figs/schoof-channels}
+
+\vspace{20mm}
+
+\includegraphics[width=1.0\textwidth]{figs/schoof-overburden}
+\end{center}
+\end{column}
+\end{columns}
 
 \end{frame}
-
 
 
 \begin{frame}
@@ -341,7 +357,7 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
     \begin{itemize}
     \item[$\ast$] even though I \emph{like} elliptic variational inequalities
     \end{itemize}
-  \item yes, we hope to explore these alternatives in PISM
+  \item yes, we hope to explore these possibilities in PISM
   \item but it has finally dawned on us:
   
   \begin{center}
@@ -357,20 +373,20 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \begin{itemize}
     \item recall the simple model where creep dominates:
     		$$p_w = \rho_i g H$$
-    \item then hydraulic potential comes from three heights (underlined):
+    \item then hydraulic potential comes from three heights:
     \begin{align*}
       \phi &= \rho_i g H + \rho_w g (b+W) \\
-           &= \rho_i g \underline{\phantom{|}h\phantom{|}} + (\rho_w - \rho_i) g \underline{\phantom{|}b\phantom{|}} + \rho_w g \underline{\phantom{|}W\phantom{|}}
+           &= \rho_i g \,h + (\rho_w - \rho_i) g \,b + \rho_w g \,W
     \end{align*}
-    \item<2-3> combining all equations gives a simple equation for water thickness:
+    \emph{note relative sizes of coefficients}
+    \item<2-3> combining all equations gives:
        $$\boxed{W_t + \nabla\cdot\left(\mathbf{v} W\right) = \nabla \cdot(K W \nabla W) + m / \rho_w}$$
       \begin{itemize}
-      \vspace{-6mm}
-      \item[$\ast$] where $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$
-      \item[$\ast$] \dots if $r = \rho_i/\rho_w$
-      \item[$\ast$] it is an advection-diffusion equation
+      \vspace{-3mm}
+      \item[$\ast$] where $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$  \qquad (and $r = \rho_i/\rho_w$)
+      \item[$\ast$] a nonlinear advection-diffusion equation
       \end{itemize}
-    \item<3> \scriptsize generalization with one tunable parameter $0<s<1$: \quad $p_w = s\, \rho_i g H$
+    \item<3> \scriptsize generalization with one more tunable parameter $0<s<1$: \quad $p_w = s\, \rho_i g H$
   \end{itemize}
 \end{frame}
 
@@ -381,7 +397,7 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \begin{itemize}
     \item again, if $r = \rho_i/\rho_w$ then
       $$\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$$
-    \item what happens with real data for $h(x,y)$ and $b(x,y)$? for EAIS:
+    \item what happens with real data (\emph{ALBMAPv1}) for $h(x,y)$ and $b(x,y)$?
     \begin{center}
     \medskip
      \qquad \includegraphics[width=0.4\textwidth]{figs/vresults}
@@ -392,16 +408,18 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
        \item[$\ast$] so we probably need a regularization (smoothing or cap) on $\mathbf{v}$
        \end{itemize}
        \normalsize
-    \item diffusivity $D = K W \sim 10^{-3} \, (\text{m}^2 \text{a}^{-1})$ if $K=10^{-3} \,\text{m}\,\text{a}^{-1}$ and $W=1$ m, which is tiny \small \dots but big $K$ here regularizes
+    \item diffusivity $D = K W \sim 10^{-3} \, (\text{m}^2 \text{a}^{-1})$ if $K=10^{-3} \,\text{m}\,\text{a}^{-1}$ and $W=1$ m, which is tiny \small \dots but big $K$ gives a regularization
   \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{results from the simple choice}
+  \frametitle{Antarctic Ice Sheet example: where does the water concentrate?}
 
   \begin{itemize}
+    \item models like this have been used to suggest distribution of subglacial lakes in Antarctica
+    \item here some toy results with $m/\rho_w = 1 \,\,\text{cm}\,\text{a}^{-1}$ uniformly over whole ice sheet
     \item FIXME: show for EAIS
   \end{itemize}
 
@@ -409,7 +427,7 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 
 \begin{frame}
-  \frametitle{achievable, practical goal with basic model}
+  \frametitle{practical PISM benefit with basic model}
  
 \begin{itemize}
 \item  \scream{report the amount of subglacial water delivered at each outlet}
@@ -459,19 +477,28 @@ for subglacial water
 
 
 \begin{frame}
-  \frametitle{FIXME: summary}
+  \frametitle{summary}
 
-\small
   \begin{itemize}
-  \item channeling flow can only be implemented in a 2d framework when the position of the channels is predefined; this does not seem to be desirable in our approach
-  \item main problem at the moment is the interaction/feedback of the water flux and the wall melt term in the opening/closure-equation. This interaction ultimately leads to concentrated water flow in infinitely narrow channels (larger water flux ->  larger channel -> lower pressure -> larger water flux)
-  \item We leave out the wall melt term in the closure relation and hence only model linked-cavity flow (opening by cavitation balanced by creep closure). This model would be suitable for all regions of an ice sheet except for fast flowing outlet glaciers.
-  \item Make the wall melt opening term in the opening/closure-relation a function of the water input rate rather than the water flux.
-  \item \alert{great danger} in building a model whose parameters cannot be identified
+  \item we plan to put this ``basic'' model in PISM
+  \item then extend it to enable modelling of more dynamic subglacial drainage systems
+    \begin{itemize}
+    \small
+    \item[$\ast$] nontrivial aspect which everyone knows: water flux and wall melt term in the opening/closing equation  leads to concentrated water flow in channels
+    \item[$\ast$] the spatial average of that process must be captured
+    \end{itemize}
+    \normalsize
+  \item we are aware of the danger of building a model whose parameters cannot be identified
+    \begin{itemize}
+    \small
+    \item[$\ast$] too much depends on surface observations of flow
+    \end{itemize}
+    \normalsize
   \end{itemize}
-  
+
+\vspace{17mm}
   \begin{center}
-  \tiny Thanks for help with talk: Andy Aschwanden, Sarah Child, Brad Gooch.
+  \tiny \emph{Thanks for help with figures: Andy Aschwanden, Sarah Child, Brad Gooch}
   \end{center}
 \end{frame}
 
