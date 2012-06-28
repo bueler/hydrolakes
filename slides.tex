@@ -417,10 +417,26 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 \begin{frame}
   \frametitle{Antarctic Ice Sheet example: where does the water concentrate?}
 
+\vspace{-5mm}
   \begin{itemize}
-    \item models like this have been used to suggest distribution of subglacial lakes in Antarctica
-    \item here some toy results with $m/\rho_w = 1 \,\,\text{cm}\,\text{a}^{-1}$ uniformly over whole ice sheet
-    \item FIXME: show for EAIS
+  \small
+    \item models somewhat like this have been used to suggest distribution of subglacial lakes in Antarctica (Johnson 2002)
+    \item some toy \emph{Matlab} results with $m/\rho_w = 1 \,\,\text{cm}\,\text{a}^{-1}$ uniformly:
+    
+      \begin{center}
+      %\medskip
+      \includegraphics<1>[width=0.6\textwidth]{figs/water_20ka_100km}
+      \includegraphics<2>[width=0.6\textwidth]{figs/water_20ka_50km}
+      \includegraphics<3>[width=0.6\textwidth]{figs/water_20ka_25km}
+      %\medskip
+      \end{center}
+
+       \small
+       \begin{itemize}
+       \item[$\ast$] far too much water (PISM run would have mostly frozen bed \dots)
+       \item[$\ast$] but we do get convergence under grid refinement
+       \end{itemize}
+       \normalsize
   \end{itemize}
 
 \end{frame}
@@ -431,8 +447,7 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
  
 \begin{itemize}
 \item  \scream{report the amount of subglacial water delivered at each outlet}
-\item \dots like we can report the amount of ice delivered at each outlet
-\item \dots through automatic identification of ``drainage basins''
+\item \dots like we can report the amount of ice delivered at each outlet, through automatic identification of ``drainage basins''
   \begin{itemize}
   \item[$\ast$] e.g.~Jakobshavn basins below
   \end{itemize}
@@ -480,8 +495,14 @@ for subglacial water
   \frametitle{summary}
 
   \begin{itemize}
-  \item we plan to put this ``basic'' model in PISM
-  \item then extend it to enable modelling of more dynamic subglacial drainage systems
+  \item we will put the ``basic'' model in PISM
+    \begin{itemize}
+    \small
+    \item[$\ast$] probably requires over-regularization, but mass conservation is accomplished
+    \item[$\ast$] degree of coupling to sliding: needs exploration
+    \end{itemize}
+    \normalsize
+  \item then extend it to model more dynamic subglacial drainage systems
     \begin{itemize}
     \small
     \item[$\ast$] nontrivial aspect which everyone knows: water flux and wall melt term in the opening/closing equation  leads to concentrated water flow in channels
