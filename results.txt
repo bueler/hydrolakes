@@ -67,4 +67,18 @@ running ...
                                 max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
   t =    0.355 a [dt =  0.355]:    0.004    0.001        0.000        7e-13
 ...
+!!!NO RUN!!!
+
+**********
+>> antlakes(20000,1)
+reading variables x,y,lat,lon,thk,topg,usrf
+  from NetCDF file Antarctica_5km_dev1.0.nc
+subsampling to 5 km resolution
+showing topg, usrf, floatmask
+max |v| = 12847.341 m a-1  and  dtCFL = 0.138 a
+running ...
+                                max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
+  t =    0.138 a [dt =  0.138]:
+...  
+!!!NO RUN!!!
 
