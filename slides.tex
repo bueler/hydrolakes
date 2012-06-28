@@ -123,7 +123,9 @@
         \item[$\ast$] \dots but it provides till yield stress in reasonable way
         \item[$\ast$] suitable for Siple coast ice streams (Tulaczyk et al 2000) %$\longrightarrow$
       \end{itemize}
-    \item missing: \emph{lateral transport of water}
+    \item missing:
+    
+      \begin{center} \emph{lateral transport of water} \end{center}
   \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -167,6 +169,39 @@
 
 
 \begin{frame}
+  \frametitle{existing uses of PISM subglacial hydrology}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\textbf{typical purpose:} model the locations of all Antarctic ice streams without inversion
+
+\vspace{11mm}
+
+\includegraphics[width=0.9\textwidth]{figs/martin-fig12}
+
+\vspace{5mm}
+
+\medskip
+\scriptsize (Martin et al., 2011, \emph{The Cryosphere})
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\textbf{less typical:} study sliding/surging cyclicity in PISM
+
+\bigskip
+\includegraphics[width=0.8\textwidth]{figs/vanPeltOerlemans-fig4}
+
+\medskip
+\scriptsize (van Pelt \& Oerlemans, 2012, \emph{J.~Glaciol.})
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
   \frametitle{goal: improve PISM by adding mass-conserving subglacial hydrology}
 
 subgoals:
@@ -180,38 +215,9 @@ subgoals:
 
 \bigskip
 \begin{itemize}
-  \item<2-3> these subgoals clash
-  \item<3> you can't please all the people all the time
+  \item<2> these subgoals clash
 \end{itemize}
 \end{frame}
-
-
-\begin{frame}
-  \frametitle{existing uses of PISM subglacial hydrology}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\textbf{typical purpose:}
-
-%\includegraphics[width=0.7\textwidth]{figs/FIXME-PIKII}
-
-model the locations of ice streams without inversion
-\end{center}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\textbf{less typical:}
-
-%\includegraphics[width=0.7\textwidth]{figs/FIXME-IMAU}
-%  FIXME:  show results from van Pelt \& Oerlemans
-
-study surge cycles from PISM
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
-
 
 
 
@@ -260,26 +266,82 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
   \framesubtitle{whence pressure?}
 
   \begin{itemize}
-    \item an equation determines the pressure; some alternatives:
+    \item an equation is needed to determine the pressure!
+    \item some alternatives:
       \begin{itemize}
-      \item[$\circ$]
-        $$P = \rho_i g H$$
-      \item[$\circ$]
-        $$P = \rho_i g H \left(\frac{W}{W_{\text{crit}}}\right)^\gamma$$
-      \item[$\circ$]  physical models for opening (wall melt, sliding) and closure (creep)
-        
-        FIXME: Hewitt generic equation
-
-  elliptic equation determines water pressure
-
-      \item[$\circ$] bounds on pressure
-        
-        FIXME: Schoof et al inequalities
-
-  elliptic variational inequality determines water pressure
+      \item[$\ast$] creep dominates, zero effective pressure (e.g.~slow subglacial lake):
+        $$p_w = \rho_i g H$$
+      \item[$\ast$] generates porous medium equation (Flowers \& Clarke 2002):
+        $$p_w = \rho_i g H \left(\frac{W}{W_{\text{crit}}}\right)^\gamma$$
+        where $\gamma=7/2$ and $W_{\text{crit}}=0.1$ m, for example
       \end{itemize}
   \end{itemize}
 
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{elements of subglacial hydrology}
+  \framesubtitle{whence pressure? (more alternatives)}
+
+  \begin{itemize}
+    \item another alternative:
+      \begin{itemize}
+      \item[$\ast$] physical models for opening and closure of a distributed system
+        \begin{itemize}
+        \item[$\circ$]  evolution equation for [$Y=$ average cavity depth] must be of the form
+        $$Y_t = W_O - W_C$$
+where $W_O$ is the total opening effect from a longish list of processes (wall melt, sliding, \dots) and $W_C$ is the total closing effect from a list of processes including creep (Hewitt, 2011)
+        \item[$\circ$] indirectly this determines water pressure $p_w$
+        \end{itemize}
+      \item[$\ast$] but wait there are channels, too! (R\"othlisberger)
+
+\begin{center}
+\medskip
+\includegraphics[width=0.4\textwidth]{figs/hewitt-cartoon}
+\medskip
+\end{center}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{elements of subglacial hydrology}
+  \framesubtitle{whence pressure? (yet more alternatives from Vancouver, B.C.~area)}
+
+  \begin{itemize}
+  \item  Schoof (2010): fixed-location network of channels
+  \item Schoof and Hewitt and Werder (2012): elliptic variational inequality determines water pressure
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{TMI}
+
+  \begin{itemize}
+  \item too much information!
+  \item \dots and too many tunable parameters
+  \item \dots even though I \emph{like} elliptic variational inequalities
+  \item yes, we hope to explore these alternatives in PISM!
+  \item but:
+  
+  \begin{center}
+  \emph{exploring processes through modeling is different from improving default behavior for ice sheet simulation}
+  \end{center}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{back to something basic}
+
+  \begin{itemize}
+  \item 
+  \end{itemize}
 \end{frame}
 
 
@@ -334,18 +396,11 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 \end{column}
 \end{columns}
 
-% side-by-side drainage basins for $h$ and for $\psi$
 \end{frame}
-
-
-
-
-
 
 
 \setbeamertemplate{background canvas}
 {
-%  \tikz{\node[inner sep=0pt,opacity=1.0] {\includegraphics[width=\paperwidth]{uaf_beamer_shade_bg}};}
   \tikz{\node[inner sep=0pt,opacity=0.3] {\includegraphics[width=\paperwidth]{figs/crop-andy-66}};}
 } 
 
