@@ -282,7 +282,7 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
   \framesubtitle{whence pressure? (more alternatives)}
 
   \begin{itemize}
-    \item another alternative:
+    \item more alternatives:
       \begin{itemize}
       \item[$\ast$] physical models for opening and closure of a distributed system
         \begin{itemize}
@@ -305,12 +305,28 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 \begin{frame}
   \frametitle{elements of subglacial hydrology}
-  \framesubtitle{whence pressure? (yet more alternatives from Vancouver, B.C.~area)}
+  \framesubtitle{whence pressure? (yet more alternatives \dots from Vancouver, B.C.~area as usual)}
 
+\begin{itemize}
+  \item and more alternatives:
   \begin{itemize}
-  \item  Schoof (2010): fixed-location network of channels
-  \item Schoof and Hewitt and Werder (2012): elliptic variational inequality determines water pressure
+  \item[$\ast$]  Schoof (2010): fixed-location 2D network of channels
+  
+  FIXME: figure 
+  
+  FIXME: warning that grid-independent limit not known/available (?)
+
+  \item[$\ast$]  Schoof and Hewitt and Werder (2012): elliptic variational inequality determines water pressure
+
+  FIXME: figure 
+  
+  FIXME: warning that in areas where creep dominates then $p_w = \rho_i g H$ then \dots
+
+  \item[$\ast$] and I bet there are even more
+
   \end{itemize}
+
+\end{itemize}
 
 \end{frame}
 
@@ -347,7 +363,7 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
            &= \rho_i g \underline{\phantom{|}h\phantom{|}} + (\rho_w - \rho_i) g \underline{\phantom{|}b\phantom{|}} + \rho_w g \underline{\phantom{|}W\phantom{|}}
     \end{align*}
     \item<2-3> combining all equations gives a simple equation for water thickness:
-       $$\boxed{W_t + \nabla\cdot\left(\mathbf{v} W\right) = K \nabla \cdot(W \nabla W) + m / \rho_w}$$
+       $$\boxed{W_t + \nabla\cdot\left(\mathbf{v} W\right) = \nabla \cdot(K W \nabla W) + m / \rho_w}$$
       \begin{itemize}
       \vspace{-6mm}
       \item[$\ast$] where $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$
@@ -360,10 +376,23 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 
 \begin{frame}
-  \frametitle{time scales with the simple choice}
+  \frametitle{velocity and time scales in the ``basic'' model}
 
   \begin{itemize}
-    \item FIXME: equation for $\mathbf{v}$: comment \& show results
+    \item again, if $r = \rho_i/\rho_w$ then
+      $$\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$$
+    \item what happens with real data for $h(x,y)$ and $b(x,y)$? for EAIS:
+    \begin{center}
+    \medskip
+     \qquad \includegraphics[width=0.4\textwidth]{figs/vresults}
+    \medskip
+    \end{center}
+       \small
+       \begin{itemize}
+       \item[$\ast$] so we probably need a regularization (smoothing or cap) on $\mathbf{v}$
+       \end{itemize}
+       \normalsize
+    \item diffusivity $D = K W \sim 10^{-3} \, (\text{m}^2 \text{a}^{-1})$ if $K=10^{-3} \,\text{m}\,\text{a}^{-1}$ and $W=1$ m, which is tiny \small \dots but big $K$ here regularizes
   \end{itemize}
 
 \end{frame}
@@ -380,26 +409,42 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 
 \begin{frame}
-  \frametitle{a goal we can achieve with this model}
+  \frametitle{achievable, practical goal with basic model}
  
-\begin{center}
-  \scream{report the amount of subglacial water delivered at each outlet}
-\end{center}
-  
+\begin{itemize}
+\item  \scream{report the amount of subglacial water delivered at each outlet}
+\item \dots like we can report the amount of ice delivered at each outlet
+\item \dots through automatic identification of ``drainage basins''
   \begin{itemize}
-    \item we can do this for ice flow because we know which direction the ice flows
-    \item we need a subglacial hydrology just to know which fjord gets the water
+  \item[$\ast$] e.g.~Jakobshavn basins below
   \end{itemize}
+\end{itemize}
+
+\vspace{-5mm}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figs/ftt-mask}
+\includegraphics[width=0.85\textwidth]{figs/ftt-mask}
+
+basin for $-\nabla h$ flow,
+
+\phantom{where $\phi$}
+
+for ice
 \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figs/hydro-mask}
+\vspace{0.5mm}
+
+\includegraphics[width=0.85\textwidth]{figs/hydro-mask}
+
+basin for $-\nabla \phi$ flow,
+
+where $\phi = \rho_i g H + \rho_w g b$,
+
+for subglacial water
 \end{center}
 \end{column}
 \end{columns}
