@@ -54,7 +54,7 @@
 
 
 % title page
-\title[]{Better subglacial hydrology into \\ the Parallel Ice Sheet Model}
+\title[Better subglacial hydrology into PISM]{Better subglacial hydrology into \\ the Parallel Ice Sheet Model}
 \subtitle{definitely a work in progress}
 
 \author[Bueler \and van Pelt]{Ed Bueler\inst{*} and Ward van Pelt\inst{\dagger}}
@@ -207,16 +207,12 @@
 subgoals:
 
 \begin{enumerate}
-  \item \scream{provide a playground for testing basal sliding models}
+  \item \scream{provide reasonable default behavior}
   \item \scream{introduce a minimum number of new tunable parameters}
     %\item[$\ast$]<2-4> \dots that does no harm
-  \item \scream{provide reasonable default behavior}
+  \item \scream{provide a playground for testing basal sliding models}
 \end{enumerate}
 
-\bigskip
-\begin{itemize}
-  \item<2> these subgoals clash
-\end{itemize}
 \end{frame}
 
 
@@ -233,7 +229,7 @@ subgoals:
     
     $$W_t + \nabla \cdot \bq = m / \rho_w$$
 
-where $W=$ thickness of water sheet, $\bq=$ flux, $m=$ supply rate
+where $W=$ spatially-averaged thickness of water layer, $\bq=$ flux, $m=$ supply rate ($\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$)
 
     \begin{onlyenv}<1>\item \textbf{hydraulic potential}:
     
@@ -242,7 +238,7 @@ where $W=$ thickness of water sheet, $\bq=$ flux, $m=$ supply rate
 where $\phi=$ hydraulic potential, $b=$ bedrock elevation
     \end{onlyenv}
 
-    \begin{onlyenv}<2>\item \textbf{hydraulic potential} {\color{blue} for top of water sheet:}
+    \begin{onlyenv}<2>\item \textbf{hydraulic potential} {\color{blue} for top of water sheet}:
     
     $$\phi = p_w + \rho_w g (b{\color{blue} + W})$$
 
@@ -266,7 +262,8 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
   \framesubtitle{whence pressure?}
 
   \begin{itemize}
-    \item an equation is needed to determine the pressure!
+    \item combine previous three equations to get one equation in two unknown fields: $W$ and $p_w$
+    \item an equation is needed to determine the pressure $p_w$
     \item some alternatives:
       \begin{itemize}
       \item[$\ast$] creep dominates, zero effective pressure (e.g.~slow subglacial lake):
@@ -294,11 +291,11 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 where $W_O$ is the total opening effect from a longish list of processes (wall melt, sliding, \dots) and $W_C$ is the total closing effect from a list of processes including creep (Hewitt, 2011)
         \item[$\circ$] indirectly this determines water pressure $p_w$
         \end{itemize}
-      \item[$\ast$] but wait there are channels, too! (R\"othlisberger)
+      \item[$\ast$] but wait: there are channels, too! (R\"othlisberger)
 
 \begin{center}
 \medskip
-\includegraphics[width=0.4\textwidth]{figs/hewitt-cartoon}
+\includegraphics[width=0.4\textwidth]{figs/hewitt-cartoon} \tiny figure from (Hewitt, 2011)
 \medskip
 \end{center}
     \end{itemize}
@@ -325,9 +322,11 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \begin{itemize}
   \item too much information!
   \item \dots and too many tunable parameters
-  \item \dots even though I \emph{like} elliptic variational inequalities
-  \item yes, we hope to explore these alternatives in PISM!
-  \item but:
+    \begin{itemize}
+    \item[$\ast$] even though I \emph{like} elliptic variational inequalities
+    \end{itemize}
+  \item yes, we hope to explore these alternatives in PISM
+  \item but it has finally dawned on us:
   
   \begin{center}
   \emph{exploring processes through modeling is different from improving default behavior for ice sheet simulation}
@@ -340,7 +339,22 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \frametitle{back to something basic}
 
   \begin{itemize}
-  \item 
+    \item recall the simple model where creep dominates:
+    		$$p_w = \rho_i g H$$
+    \item then hydraulic potential comes from three heights (underlined):
+    \begin{align*}
+      \phi &= \rho_i g H + \rho_w g (b+W) \\
+           &= \rho_i g \underline{\phantom{|}h\phantom{|}} + (\rho_w - \rho_i) g \underline{\phantom{|}b\phantom{|}} + \rho_w g \underline{\phantom{|}W\phantom{|}}
+    \end{align*}
+    \item<2-3> combining all equations gives a simple equation for water thickness:
+       $$\boxed{W_t + \nabla\cdot\left(\mathbf{v} W\right) = K \nabla \cdot(W \nabla W) + m / \rho_w}$$
+      \begin{itemize}
+      \vspace{-6mm}
+      \item[$\ast$] where $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$
+      \item[$\ast$] \dots if $r = \rho_i/\rho_w$
+      \item[$\ast$] it is an advection-diffusion equation
+      \end{itemize}
+    \item<3> \scriptsize generalization with one tunable parameter $0<s<1$: \quad $p_w = s\, \rho_i g H$
   \end{itemize}
 \end{frame}
 
@@ -349,12 +363,6 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \frametitle{time scales with the simple choice}
 
   \begin{itemize}
-    \item FIXME: combined equation for $W$: comment
-    \item hydraulic potential from three elevations:
-    \begin{align*}
-      \phi &= \rho_i g H + \rho_w g (b+W) \\
-           &= \rho_i g \underline{\phantom{|}h\phantom{|}} + (\rho_w - \rho_i) g \underline{\phantom{|}b\phantom{|}} + \rho_w g \underline{\phantom{|}W\phantom{|}}
-    \end{align*}
     \item FIXME: equation for $\mathbf{v}$: comment \& show results
   \end{itemize}
 
@@ -406,9 +414,9 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 
 \begin{frame}
-  \frametitle{FIXME: ideas to include}
+  \frametitle{FIXME: summary}
 
-\scriptsize
+\small
   \begin{itemize}
   \item channeling flow can only be implemented in a 2d framework when the position of the channels is predefined; this does not seem to be desirable in our approach
   \item main problem at the moment is the interaction/feedback of the water flux and the wall melt term in the opening/closure-equation. This interaction ultimately leads to concentrated water flow in infinitely narrow channels (larger water flux ->  larger channel -> lower pressure -> larger water flux)
@@ -416,6 +424,10 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \item Make the wall melt opening term in the opening/closure-relation a function of the water input rate rather than the water flux.
   \item \alert{great danger} in building a model whose parameters cannot be identified
   \end{itemize}
+  
+  \begin{center}
+  \tiny Thanks for help with talk: Andy Aschwanden, Sarah Child, Brad Gooch.
+  \end{center}
 \end{frame}
 
 
