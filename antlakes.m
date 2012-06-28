@@ -15,6 +15,9 @@ filename = 'Antarctica_5km_dev1.0.nc';
 fprintf('reading variables x,y,lat,lon,thk,topg,usrf\n  from NetCDF file %s\n',filename)
 [x,y,lat,lon,thk,topg,usrf] = buildant(0,filename);
 
+fprintf('x range: %.3f km to %.3fkm\n',min(x)/1000,max(x)/1000)
+fprintf('y range: %.3f km to %.3fkm\n',min(y)/1000,max(y)/1000)
+
 dx = x(2)-x(1);
 fprintf('subsampling to %d km resolution\n', dx*nn / 1000.0)
 clear dx
