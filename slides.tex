@@ -55,7 +55,7 @@
 
 % title page
 \title[Better subglacial hydrology into PISM]{Better subglacial hydrology into \\ the Parallel Ice Sheet Model}
-\subtitle{definitely a work in progress}
+\subtitle{a work in progress}
 
 \author[Bueler \and van Pelt]{Ed Bueler\inst{*} and Ward van Pelt\inst{\dagger}}
 \institute{\inst{*} University of Alaska Fairbanks \and %
@@ -95,8 +95,8 @@
   
   \bigskip
   \scriptsize
-  \item[$\circ$] supported by the NASA Modeling, Analysis and Prediction (grant NNX09AJ38G)
-  \item[$\circ$] jointly developed by UAF and the Potsdam Institute for Climate Impact Research
+  \item[$\circ$] supported by the NASA Modeling, Analysis and Prediction
+  \item[$\circ$] jointly developed by UAF and Potsdam Inst.~for Climate Impact Research
   \end{itemize}
 \end{frame}
 
@@ -116,13 +116,12 @@
 \begin{columns}
 \begin{column}{0.5\textwidth}
   \begin{itemize}
-    \item current basal hydrology in PISM has an independent ``can'' of porous till at each subglacial location %$\longrightarrow$
+    \item current basal hydrology in PISM has an independent ``can'' of porous till at each location
       \begin{itemize}
-        \item[$\ast$] the can receives basal melt
-        \item[$\ast$] ``overflows'' at 2m of water \dots overflow lost
-        \item[$\ast$] \dots but it provides till yield stress in reasonable way
-        \item[$\ast$] suitable for Siple coast ice streams (Tulaczyk et al 2000) %$\longrightarrow$
-      \end{itemize}
+        \item[$\ast$] ``can'' receives basal melt
+        \item[$\ast$] ``overflows'' at 2m of water \dots \emph{overflow lost}
+        \item[$\ast$] provides till yield stress
+        \item[$\ast$] suitable for Siple coast ice streams (Tulaczyk et al 2000)      \end{itemize}
     \item missing:
     
       \begin{center} \emph{lateral transport of water} \end{center}
@@ -153,17 +152,17 @@
 \vspace{-2mm}
   \begin{itemize}
     \item better energy conservation using enthalpy
-    \item new basal melt rate equation
-    %\item \emph{lots of water comes from dissipating gravitational potential energy, and some from geothermal energy}
+    \item new basal melt rate distribution ($\text{mm}\,\text{a}^{-1}$):
   \end{itemize}
 
   \begin{center}
-    \includegraphics[height=0.6\textheight]{figs/enthalpy-model-crop}
+    \includegraphics[height=0.57\textheight]{figs/enthalpy-model-crop}
     
     \medskip
-    \scriptsize \textbf{left}: basal melt rate using \underline{enthalpy} \qquad \textbf{right}: basal melt rate using \underline{temperature}
+    \scriptsize \textbf{left}: using \underline{enthalpy} \qquad\qquad\quad \textbf{right}: using \underline{temperature}
 
-    \tiny (from Aschwanden et al (2012) \emph{An enthalpy formulation for glaciers and ice sheets}, J. Glaciol.)
+\medskip
+    \tiny Aschwanden et al (2012), \emph{An enthalpy formulation for glaciers and ice sheets}, J. Glaciol.
   \end{center}
 \end{frame}
 
@@ -174,13 +173,13 @@
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{center}
-model the locations of all Antarctic ice streams without inversion
+model locations of Antarctic ice streams without inversion
 
-\vspace{13mm}
+\vspace{10mm}
 
 \includegraphics[width=0.9\textwidth]{figs/martin-fig12}
 
-\vspace{8mm}
+\vspace{7mm}
 
 \medskip
 \scriptsize (Martin et al., 2011, \emph{The Cryosphere})
@@ -188,7 +187,7 @@ model the locations of all Antarctic ice streams without inversion
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
-study sliding/surging cyclicity in PISM
+study sliding and cyclicity/surging
 
 \bigskip
 \includegraphics[width=0.8\textwidth]{figs/vanPeltOerlemans-fig4}
@@ -202,28 +201,29 @@ study sliding/surging cyclicity in PISM
 
 
 \begin{frame}
-  \frametitle{goal: improve PISM by adding mass-conserving subglacial hydrology}
+  \frametitle{the goal}
 
+\begin{center}
+\scream{improve PISM by adding mass-conserving subglacial hydrology}
+\end{center}
+
+\bigskip\bigskip\bigskip
 subgoals:
 
 \begin{enumerate}
-  \item \scream{provide reasonable default behavior for new users}
-  \item \scream{introduce a minimum number of new tunable parameters}
-    %\item[$\ast$]<2-4> \dots that does no harm
-  \item \scream{provide a playground for testing basal sliding models}
+  \item provide reasonable default behavior
+  \item introduce minimum number of new tunable parameters
+  \item provide playground for testing sliding models
 \end{enumerate}
 
 \end{frame}
 
 
-
-
 \begin{frame}
   \frametitle{elements of subglacial hydrology}
-  \framesubtitle{we can agree on these?}
+  \framesubtitle{can we agree on these?}
 
 \newcommand{\bq}{\mathbf{q}}
-
   \begin{itemize}
     \item \textbf{conservation of mass}:
     
@@ -231,19 +231,11 @@ subgoals:
 
 where $W=$ spatially-averaged thickness of water layer, $\bq=$ flux, $m=$ supply rate ($\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$)
 
-    \begin{onlyenv}<1>\item \textbf{hydraulic potential}:
-    
-    $$\phi = p_w + \rho_w g b$$
-
-where $\phi=$ hydraulic potential, $b=$ bedrock elevation
-    \end{onlyenv}
-
-    \begin{onlyenv}<2>\item \textbf{hydraulic potential} {\color{blue} for top of water sheet}:
+    \item \textbf{hydraulic potential} {\color{blue} for top of water sheet}:
     
     $$\phi = p_w + \rho_w g (b{\color{blue} + W})$$
 
 where $\phi=$ hydraulic potential, $b=$ bedrock elevation
-    \end{onlyenv}
 
     \item \textbf{some kind of Darcy flow}:
     
@@ -264,15 +256,37 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
   \framesubtitle{whence pressure?}
 
   \begin{itemize}
-    \item combine previous three equations to get one equation in two unknown fields: $W$ and $p_w$
-    \item an equation is needed to determine the pressure $p_w$
-    \item some alternatives:
+    \item combine previous three equations to get one equation in two unknowns
       \begin{itemize}
-      \item[$\ast$] creep dominates, zero effective pressure (e.g.~slow subglacial lake):
+      \item[$\ast$] water thickness $W$ and pressure $p_w$ are unknown
+      \end{itemize}
+      
+    \item an \emph{closure} equation is needed to determine $p_w$
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{closure alternatives}
+
+  \begin{itemize}
+    \item creep dominates so ice presses on water (classical?):
         $$p_w = \rho_i g H$$
-      \item[$\ast$] generates porous medium equation (Flowers \& Clarke 2002):
+      \begin{itemize}
+      \vspace{-4mm}
+      \item[$\ast$]  e.g.~static subglacial lake
+      \item[$\ast$]  zero effective pressure
+      \item[$\ast$]  \dots but we could try:  $p_w = s\, \rho_i g H$ with $0<s<1$
+      \end{itemize}
+
+\bigskip
+    \item generates porous medium equation (Flowers \& Clarke 2002):
         $$p_w = \rho_i g H \left(\frac{W}{W_{\text{crit}}}\right)^\gamma$$
-        where $\gamma=7/2$ and $W_{\text{crit}}=0.1$ m, for example
+      \begin{itemize}
+      \vspace{-1mm}
+      \item[$\ast$]  where $\gamma=7/2$ and $W_{\text{crit}}=0.1$ m, for example
+      \item[$\ast$]  e.g.~on Trapridge Glacier
       \end{itemize}
   \end{itemize}
 
@@ -280,20 +294,23 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 
 
 \begin{frame}
-  \frametitle{elements of subglacial hydrology}
-  \framesubtitle{whence pressure? (more alternatives)}
+  \frametitle{more closure alternatives}
 
-  \begin{itemize}
-    \item more possibilities:
       \begin{itemize}
-      \item[$\ast$] physical models for opening and closure of a distributed system
+      \item physical models for opening and closure of a distributed system
         \begin{itemize}
-        \item[$\circ$]  evolution equation for [$Y=$ average cavity depth] must be of the form
+        \item[$\ast$]  evolution equation for [$Y=$ average cavity depth] must be of the form (Hewitt, 2011)
         $$Y_t = W_O - W_C$$
-where $W_O$ is the total opening effect from a longish list of processes (wall melt, sliding, \dots) and $W_C$ is the total closing effect from a list of processes including creep (Hewitt, 2011)
-        \item[$\circ$] indirectly this determines water pressure $p_w$
+          \begin{itemize}
+          \vspace{-4mm}
+          \item[$\circ$] $W_O$ is total from opening processes (wall melt, sliding, \dots)
+          \item[$\circ$] $W_C$ is total from closing processes (ice creep, sedimentation, \dots)
+          \end{itemize}
+        \item[$\ast$] indirectly determines water pressure $p_w$
         \end{itemize}
-      \item[$\ast$] but wait: there are channels, too! (R\"othlisberger 1972)
+      
+      \bigskip
+      \item but wait: there are channels, too! (R\"othlisberger 1972)
 
 \begin{center}
 \medskip
@@ -301,44 +318,51 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 \medskip
 \end{center}
     \end{itemize}
-  \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{elements of subglacial hydrology}
-  \framesubtitle{whence pressure? (yet more alternatives \dots from Vancouver, B.C.~area as usual)}
+  \frametitle{yet more alternatives}
+  \framesubtitle{\dots from Vancouver, B.C.~area as usual}
 
+\small
 \begin{columns}
 \begin{column}{0.6\textwidth}
   \begin{itemize}
-  \item and more possibilities:
-  \begin{itemize}
-  \item[$\ast$]  Creyts \& Schoof (2009): bed protrusions stabilize sheet flow (c.f.~Walder 1982)
+  \item  Creyts \& Schoof (2009): bed protrusions stabilize sheet flow
+      \begin{itemize}
+      \vspace{-1mm}
+      \item[$\ast$] vs Walder (1982): sheet flow unstable
+      \end{itemize}
 
   \bigskip
-  \item[$\ast$]  Schoof (2010): fixed-location 2D network of channels (top figure)
+  \item  Schoof (2010): fixed-location 2D network of channels
       \begin{itemize}
-      \item[$\circ$] grid-refinement limit not known?
+      \vspace{-1mm}
+      \item[$\ast$] grid-refinement limit not known?
       \end{itemize}
       
   \bigskip
-  \item[$\ast$]  Hewitt and Schoof and Werder (2012)
+  \item  Hewitt \& Schoof \& Werder (2012):
       \begin{itemize}
-      \vspace{-3mm}
-      \item[$\circ$] elliptic variational inequality determines water pressure from bounds
-      $$0 \le p_w \le \rho_i g H$$
-      \item[$\circ$] may be large areas where $p_w = \rho_i g H$ anyway
+      \vspace{-1mm}
+      \item[$\ast$] water pressure bounds: $0 \le p_w \le \rho_i g H$
+      \item[$\ast$] elliptic variational inequality for $p_w$
+      \item[$\ast$] large areas where $p_w = \rho_i g H$ anyway?
       \end{itemize}
-  \end{itemize}
   \end{itemize}
 \end{column}
 
 \begin{column}{0.4\textwidth}
 \begin{center}
+\vspace{-5mm}
+\includegraphics[width=0.85\textwidth]{figs/creyts-sheetflow}
+
+\vspace{4mm}
+
 \includegraphics[width=1.0\textwidth]{figs/schoof-channels}
 
-\vspace{20mm}
+\vspace{5mm}
 
 \includegraphics[width=1.0\textwidth]{figs/schoof-overburden}
 \end{center}
@@ -349,15 +373,10 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
 
 
 \begin{frame}
-  \frametitle{TMI}
+  \frametitle{too many tunable parameters!}
 
   \begin{itemize}
-  \item too much information!
-  \item \dots and too many tunable parameters
-    \begin{itemize}
-    \item[$\ast$] even though I \emph{like} elliptic variational inequalities
-    \end{itemize}
-  \item yes, we hope to explore these possibilities in PISM
+  \item we hope to explore above possibilities in PISM
   \item but it has finally dawned on us:
   
   \begin{center}
@@ -373,20 +392,15 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \begin{itemize}
     \item recall the simple model where creep dominates:
     		$$p_w = \rho_i g H$$
-    \item then hydraulic potential comes from three heights:
-    \begin{align*}
-      \phi &= \rho_i g H + \rho_w g (b+W) \\
-           &= \rho_i g \,h + (\rho_w - \rho_i) g \,b + \rho_w g \,W
-    \end{align*}
-    \emph{note relative sizes of coefficients}
-    \item<2-3> combining all equations gives:
+    \item hydraulic potential:
+      $$\phi = \rho_i g H + \rho_w g (b+W) = \rho_i g \,h + (\rho_w - \rho_i) g \,b + \rho_w g \,W$$
+    \item combining all equations gives:
        $$\boxed{W_t + \nabla\cdot\left(\mathbf{v} W\right) = \nabla \cdot(K W \nabla W) + m / \rho_w}$$
       \begin{itemize}
       \vspace{-3mm}
-      \item[$\ast$] where $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$  \qquad (and $r = \rho_i/\rho_w$)
-      \item[$\ast$] a nonlinear advection-diffusion equation
+      \item[$\ast$] $\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$  \quad where $r = \rho_i/\rho_w$
+      \item[$\ast$] an advection-diffusion equation
       \end{itemize}
-    \item<3> \scriptsize generalization with one more tunable parameter $0<s<1$: \quad $p_w = s\, \rho_i g H$
   \end{itemize}
 \end{frame}
 
@@ -395,8 +409,8 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
   \frametitle{velocity and time scales in the ``basic'' model}
 
   \begin{itemize}
-    \item again, if $r = \rho_i/\rho_w$ then
-      $$\mathbf{v} = - K \left[r \nabla h + (1-r) \nabla b\right]$$
+    \item velocity from spatial gradients of elevations:
+      $$\mathbf{v} = - K \Big[r \nabla h + (1-r) \nabla b\Big]$$
     \item what happens with real data (\emph{ALBMAPv1}) for $h(x,y)$ and $b(x,y)$?
     \begin{center}
     \medskip
@@ -405,46 +419,46 @@ where $W_O$ is the total opening effect from a longish list of processes (wall m
     \end{center}
        \small
        \begin{itemize}
-       \item[$\ast$] so we probably need a regularization (smoothing or cap) on $\mathbf{v}$
+       \item[$\ast$] may need a regularization (smoothing or cap) on $\mathbf{v}$
        \end{itemize}
        \normalsize
-    \item diffusivity $D = K W \sim 10^{-3} \, (\text{m}^2 \text{a}^{-1})$ if $K=10^{-3} \,\text{m}\,\text{a}^{-1}$ and $W=1$ m, which is tiny \small \dots but big $K$ gives a regularization
+    \item diffusivity $D = K W$ small but $K$ uncertain \dots another regularization?
   \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{toy Antarctic Ice Sheet example: where does the water concentrate?}
+  \frametitle{toy Antarctic Ice Sheet example}
 
 \vspace{-5mm}
   \begin{itemize}
   \small
-    \item models somewhat like this have been used to suggest distribution of subglacial lakes in Antarctica (Johnson 2002)
-    \item some toy \emph{Matlab} results with $m/\rho_w = 1 \,\,\text{cm}\,\text{a}^{-1}$ uniformly, at end of 20ka run:
+    \item toy \emph{Matlab} results: uniform $1 \,\,\text{cm}\,\text{a}^{-1}$ melt rate, 20ka run
     
       \begin{center}
       %\medskip
       \includegraphics<1>[width=0.5\textwidth]{figs/water_20ka_100km}
       \includegraphics<2>[width=0.5\textwidth]{figs/water_20ka_50km}
       \includegraphics<3>[width=0.5\textwidth]{figs/water_20ka_25km}
-      \includegraphics<4>[width=0.5\textwidth]{figs/water_20ka_25km_lakes}
+      %\includegraphics<4>[width=0.5\textwidth]{figs/water_20ka_25km_lakes}
       %\medskip
       \end{center}
 
        \small
        \begin{itemize}
        \item[$\ast$] far too much water (PISM run would give mostly frozen bed \dots)
-       \item[$\ast$] but we do get convergence under grid refinement (100km, 50km, 25km)
+       \item[$\ast$] convergence under grid refinement evident (100km, 50km, 25km)
        \end{itemize}
        \normalsize
+  \item Johnson (2002) studied distribution of subglacial lakes with related model
   \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{practical PISM benefit with basic model}
+  \frametitle{practical benefit with the basic model}
  
 \begin{itemize}
 \item  \scream{report the amount of subglacial water delivered at each outlet}
@@ -499,17 +513,17 @@ for subglacial water
   \item we will put the ``basic'' model in PISM
     \begin{itemize}
     \small
-    \item[$\ast$] mass conservation is accomplished
+    \item[$\ast$] mass conservation
     \item[$\ast$] numerical stability provable for low-order scheme
-    \item[$\ast$] probably requires over-regularization
+    \item[$\ast$] allows (needs?) over-regularization
     \item[$\ast$] degree of coupling to sliding: needs exploration
     \end{itemize}
     \normalsize
-  \item then extend it to model more dynamic subglacial drainage systems
+  \item next: extend basic model to more dynamic subglacial drainage systems
     \begin{itemize}
     \small
     \item[$\ast$] nontrivial job: wall melt and channelization (\emph{as we all know})
-    \item[$\ast$] the 2D spatial average of that process must be captured
+    \item[$\ast$] the 2D spatial averages must be captured
     \end{itemize}
     \normalsize
   \item we are aware of the danger of building a model whose parameters cannot be identified
