@@ -60,43 +60,21 @@
 \author[Bueler \and van Pelt]{Ed Bueler\inst{*} and Ward van Pelt\inst{\dagger}}
 \institute{\inst{*} University of Alaska Fairbanks \and %
            \inst{\dagger} IMAU, Utrecht, Netherlands}
-%\author[Bueler]{Ed Bueler}
-%\institute{University of Alaska Fairbanks}
 
 \date{IGS June 2012}
 
 
 \begin{document}
 
-% define what is shown at the beginning of each section
-%\AtBeginSection[]
-%{
-% \begin{frame}<beamer>
-%   \frametitle{Outline}
-%   \tableofcontents[currentsection,subsectionstyle=hide/hide/hide]
-% \end{frame}
-%}
-
-
-\setbeamertemplate{background canvas}
-{
-  \tikz{\node[inner sep=0pt,opacity=1.0] {\includegraphics[width=\paperwidth]{uaf_beamer_shade_bg}};}
-} 
-
-% insert titlepage
-\begin{frame}
-  \titlepage
-\end{frame}
-
 \setbeamertemplate{background canvas}
 {
   % empty
 }
 
-%\begin{frame}
-%   \frametitle{Outline}
-%   \tableofcontents[subsectionstyle=hide/hide/hide]
-%\end{frame}
+% insert titlepage
+\begin{frame}
+  \titlepage
+\end{frame}
 
 
 \newcommand{\scream}[1]{\alert{\textbf{#1}}}
@@ -129,28 +107,33 @@
   \frametitle{\whytitle}
   \framesubtitle{motivation 1}
 
+\vspace{-6mm}
 \begin{center}
   we are \scream{NOT} conserving mass (of liquid water)
 \end{center}
 
+\vspace{-5mm}
 \begin{columns}
 \begin{column}{0.5\textwidth}
   \begin{itemize}
-    \item current basal water scheme is a ``can'' of porous till $\longrightarrow$
+    \item current basal hydrology in PISM has an independent ``can'' of porous till at each subglacial location %$\longrightarrow$
       \begin{itemize}
-        \item[$\circ$] ``overflows'' at 2m of water \dots overflow lost
-        \item[$\circ$] but models till strength in reasonable way (Tulaczyk et al 2000)
+        \item[$\ast$] the can receives basal melt
+        \item[$\ast$] ``overflows'' at 2m of water \dots overflow lost
+        \item[$\ast$] \dots but it provides till yield stress in reasonable way
+        \item[$\ast$] suitable for Siple coast ice streams (Tulaczyk et al 2000) %$\longrightarrow$
       \end{itemize}
-    \item no lateral transport of water
-    \item model is most suitable for (e.g.) Siple coast ice streams $\longrightarrow$
+    \item missing: \emph{lateral transport of water}
   \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
-FIXME: can of till
+\begin{center}
+\includegraphics[height=0.3\textheight]{figs/till-warhol-soup}
 
-\vspace{15mm}
+%\vspace{1mm}
 
-\includegraphics[width=0.7\textwidth]{figs/siple}
+\includegraphics[height=0.45\textheight]{figs/siple}
+\end{center}
 \end{column}
 \end{columns}
 \end{frame}
@@ -159,19 +142,21 @@ FIXME: can of till
 \begin{frame}
   \frametitle{\whytitle}
   \framesubtitle{motivation 2}
-  
+
+\vspace{-6mm}
 \begin{center}
   we \scream{ARE} conserving energy (better than before)
 \end{center}
   
+\vspace{-2mm}
   \begin{itemize}
     \item better energy conservation using enthalpy
-    \item generates new basal melt rate equation
-    \item \emph{lots of water comes from dissipating gravitational potential energy, and some from geothermal energy}
+    \item new basal melt rate equation
+    %\item \emph{lots of water comes from dissipating gravitational potential energy, and some from geothermal energy}
   \end{itemize}
 
   \begin{center}
-    \includegraphics[height=0.4\textheight]{figs/enthalpy-model-crop}
+    \includegraphics[height=0.6\textheight]{figs/enthalpy-model-crop}
     
     \medskip
     \scriptsize \textbf{left}: basal melt rate using \underline{enthalpy} \qquad \textbf{right}: basal melt rate using \underline{temperature}
@@ -181,72 +166,54 @@ FIXME: can of till
 \end{frame}
 
 
-\newcommand{\goaltitle}{what we want to do for users}
-
-
 \begin{frame}
-  \frametitle{\goaltitle}
-  \framesubtitle{goal 1}
-  
-\begin{center}
-  \scream{give users reasonable default behavior}
-\end{center}
-  
-  \begin{itemize}
-    \item that does no harm
-  \end{itemize}
+  \frametitle{goal: improve PISM by adding mass-conserving subglacial hydrology}
+
+subgoals:
+
+\begin{enumerate}
+  \item \scream{provide a playground for testing basal sliding models}
+  \item \scream{introduce a minimum number of new tunable parameters}
+    %\item[$\ast$]<2-4> \dots that does no harm
+  \item \scream{provide reasonable default behavior}
+\end{enumerate}
+
+\bigskip
+\begin{itemize}
+  \item<2-3> these subgoals clash
+  \item<3> you can't please all the people all the time
+\end{itemize}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{\goaltitle}
-  \framesubtitle{goal 2}
- 
-\begin{center}
-  \scream{report the amount of subglacial water delivered at each outlet}
-\end{center}
-  
-  \begin{itemize}
-    \item we can do this for ice flow because we know which direction the ice flows
-    \item we need a subglacial hydrology just to know which fjord gets the water
-  \end{itemize}
+  \frametitle{existing uses of PISM subglacial hydrology}
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
-\includegraphics[width=0.7\textwidth]{figs/ftt-mask}
+\begin{center}
+\textbf{typical purpose:}
+
+%\includegraphics[width=0.7\textwidth]{figs/FIXME-PIKII}
+
+model the locations of ice streams without inversion
+\end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
-\includegraphics[width=0.7\textwidth]{figs/hydro-mask}
+\begin{center}
+\textbf{less typical:}
+
+%\includegraphics[width=0.7\textwidth]{figs/FIXME-IMAU}
+%  FIXME:  show results from van Pelt \& Oerlemans
+
+study surge cycles from PISM
+\end{center}
 \end{column}
 \end{columns}
-
-% side-by-side drainage basins for $h$ and for $\psi$
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{\goaltitle}
-  \framesubtitle{goal 3}
-
-\begin{center}
-   \scream{provide a playground for testing basal sliding models}
-\end{center}
-  
-  \begin{itemize}
-    \item FIXME:  show results from van Pelt \& Oerlemans
-  \end{itemize}
 \end{frame}
 
 
 
-\begin{frame}
-  \frametitle{these goals clash}
-
-\begin{itemize}
-\item you can't please all the people all the time
-\end{itemize}
-\end{frame}
 
 
 \begin{frame}
@@ -262,19 +229,27 @@ FIXME: can of till
 
 where $W=$ thickness of water sheet, $\bq=$ flux, $m=$ supply rate
 
-    \item \textbf{hydraulic potential} for top of water sheet:
+    \begin{onlyenv}<1>\item \textbf{hydraulic potential}:
     
-    $$\phi = p_w + \rho_w g (b + W)$$
+    $$\phi = p_w + \rho_w g b$$
 
 where $\phi=$ hydraulic potential, $b=$ bedrock elevation
+    \end{onlyenv}
 
-    \item \textbf{Darcy flow}:
+    \begin{onlyenv}<2>\item \textbf{hydraulic potential} {\color{blue} for top of water sheet:}
+    
+    $$\phi = p_w + \rho_w g (b{\color{blue} + W})$$
+
+where $\phi=$ hydraulic potential, $b=$ bedrock elevation
+    \end{onlyenv}
+
+    \item \textbf{some kind of Darcy flow}:
     
     $$\bq = - \frac{K W}{\rho_w g} \nabla \phi$$
     
     \scriptsize or \quad $\bq = - k W^\alpha |\nabla \phi|^{\beta - 2} \nabla \phi$ \quad etc.
     
-\normalsize where $K$ hydraulic conductivity (\emph{not} constant in general)
+\normalsize where $K=$ hydraulic conductivity (\emph{not} constant in general)
   \end{itemize}
 
 \end{frame}
@@ -334,6 +309,33 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{a goal we can achieve with this model}
+ 
+\begin{center}
+  \scream{report the amount of subglacial water delivered at each outlet}
+\end{center}
+  
+  \begin{itemize}
+    \item we can do this for ice flow because we know which direction the ice flows
+    \item we need a subglacial hydrology just to know which fjord gets the water
+  \end{itemize}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figs/ftt-mask}
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figs/hydro-mask}
+\end{center}
+\end{column}
+\end{columns}
+
+% side-by-side drainage basins for $h$ and for $\psi$
+\end{frame}
 
 
 
@@ -341,6 +343,11 @@ where $\phi=$ hydraulic potential, $b=$ bedrock elevation
 
 
 
+\setbeamertemplate{background canvas}
+{
+%  \tikz{\node[inner sep=0pt,opacity=1.0] {\includegraphics[width=\paperwidth]{uaf_beamer_shade_bg}};}
+  \tikz{\node[inner sep=0pt,opacity=0.3] {\includegraphics[width=\paperwidth]{figs/crop-andy-66}};}
+} 
 
 
 \begin{frame}
