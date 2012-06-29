@@ -12,6 +12,7 @@ running ...
 ...
   t = 20000.000 a [dt =  8.803]:  829.442   23.678        0.852        3e-16
 
+
 **********
 50km (nn=10):
 >> antlakes(20000,10)
@@ -25,6 +26,7 @@ running ...
   t =    7.957 a [dt =  7.957]:    0.080    0.027        0.001        5e-14
 ...
   t = 20000.000 a [dt =  4.370]:  776.002   22.859        0.823        2e-16
+
   
 **********
 25km (nn=5):
@@ -40,6 +42,26 @@ running ...
 ...
   t = 19998.346 a [dt =  2.019]:  621.415   21.749        0.783        3e-16
   t = 20000.000 a [dt =  1.654]:  621.418   21.750        0.783        2e-16
+
+
+**********
+20km (nn=4):
+>> antlakes(20000,4)
+reading variables x,y,lat,lon,thk,topg,usrf
+  from NetCDF file Antarctica_5km_dev1.0.nc
+x range: -2800.000 km to 3195.000km
+y range: -2800.000 km to 3195.000km
+subsampling to 20 km resolution
+showing topg, usrf, floatmask
+max |v| = 5398.841 m a-1  and  dtCFL = 1.314 a
+running ...
+                                max W (m)  av W (m)  vol(10^6 km^3)  rel-bal
+  t =    1.314 a [dt =  1.314]:    0.013    0.004        0.000        3e-13
+  t =    2.629 a [dt =  1.314]:    0.033    0.009        0.000        1e-13
+...
+  t = 19998.995 a [dt =  1.314]:  732.950   21.651        0.779        0e+00
+  t = 20000.000 a [dt =  1.005]:  732.958   21.652        0.779        2e-16
+
 
 **********
 15km (nn=3):
