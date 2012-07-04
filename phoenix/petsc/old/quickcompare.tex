@@ -1,0 +1,243 @@
+\documentclass[11pt]{amsart}
+%\documentclass[11pt,a4paper]{amsart}
+
+% use up more of the page
+\addtolength{\topmargin}{-5mm}
+\addtolength{\textheight}{12mm}
+\addtolength{\oddsidemargin}{-9mm}
+\addtolength{\evensidemargin}{-9mm}
+\addtolength{\textwidth}{20mm}
+
+%\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage{fancyvrb}
+\usepackage[final]{graphicx}
+
+% hyperref should be the last package we load
+\usepackage[pdftex,
+                colorlinks=true,
+                plainpages=false, % only if colorlinks=true
+                linkcolor=blue,   % only if colorlinks=true
+                citecolor=black,   % only if colorlinks=true
+                urlcolor=magenta     % only if colorlinks=true
+]{hyperref}
+
+
+\newcommand{\RR}{\mathbb{R}}
+
+\newcommand{\Hij}{H_{i,j}}
+\newcommand{\Pij}{P_{i,j}}
+\newcommand{\Wij}{W_{i,j}}
+\newcommand{\Yij}{Y_{i,j}}
+
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bQ}{\mathbf{Q}}
+\newcommand{\bW}{\mathbf{W}}
+
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bv}{\mathbf{v}}
+
+\newcommand{\hpw}{\hat p_w}
+\newcommand{\Cavit}{C_{avit}}
+\newcommand{\Creep}{C_{reep}}
+
+
+
+\title[Comparison of three forms for sheet-like hydrology models]{Quick comparison of \\ three forms for sheet-like hydrology models}
+
+\author{Ed Bueler}
+
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+\medskip
+
+\subsection*{Straightforward goals}  Recall that we want to capture the major qualities of an evolving drainage system without over-specifying a particular system morphology.  We want:
+\renewcommand{\labelenumi}{\textbf{(\alph{enumi})}}
+\begin{enumerate}
+\item liquid water lives in a sheet-like system with thickness $W$,
+\item it is conserved,
+\item water flows from high to low hydraulic potential, and
+\item water pressure $P$ is an increasing, concave-up function of water amount.
+\end{enumerate}
+
+This quick note is about what \emph{else} we might want.  We intend to add evolution of some quantity which corresponds to the capacity or efficiency of the drainage system, so that the drainage system has some memory of recent water stage, and so that we are capturing physical opening and closing processes.  The drainage system has a \emph{state}, which is not identical to the instantaneous amount of water.  We want the pressure to evolve as well, and this pressure will determining an evolving basal strength/resistance parameter like a yield stress.
+
+The following three possibilities for evolving drainage system state are examined here: 
+\renewcommand{\labelenumi}{\textbf{\Roman{enumi}.}}
+\begin{enumerate}
+\item we introduce an evolving drainage system thickness $Y$, or 
+\item we make water pressure $P$ a state variable in a model with evolving $Y$, or
+\item we fix drainage system capacity but we allow hydraulic conductivity $K$ to evolve.
+\end{enumerate}
+This note is a quick comparison of the mathematical forms taken by these three models.  In each case the water thickness $W$ evolves, but an additional distributed quantity also evolves, respectively $Y$, $P$, and $K$.  We address the issues that arise in numerical solutions.  There is no intention to make this note a permanent document.  All the notation here is defined in the draft technical report, van Pelt and Bueler (2012), \emph{A subglacial hydrology model for the Parallel Ice Sheet Model}.  Also, here we make no references into the literature; for that see the draft report.  Regularizations, numerics, and verification are all addressed in the draft report but ignored here.
+
+
+\subsection*{Common model elements}  Here are the elements we want, the ones that do not distinguish between the three cases.
+
+The evolution of the water thickness $W$, which we must regard as an average over a horizontal scale of tens to thousands of meters, is described by the mass conservation equation,
+\begin{equation} \label{eq:conserve}
+\frac{\partial W}{\partial t} + \nabla \cdot \bQ = \frac{m + S}{\rho_w}\, ,
+\end{equation}
+where $\bQ$ is the water flux, $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ for the rate at which surface runoff and/or englacial drainage adds water.
+
+We use a Darcy relation for the water flux $\bQ$:
+\begin{equation} \label{eq:flux}
+\bQ = - \frac{K \, W}{\rho_w g} \nabla \psi
+\end{equation}
+Here, $\rho_w$ is the water density, $g$ the gravitational acceleration, $K$ the effective hydraulic conductivity, and $\psi$ is the hydraulic potential.  Because of the sign in \eqref{eq:flux}, water flows from high to low fluid potential.  Equation \eqref{eq:flux} is a nontrivial choice, and modifications can be made.
+
+The hydraulic potential (head) $\psi$ combines the water pressure $P$ and the bedrock elevation $z=b$:
+\begin{equation} \label{eq:potential}
+\psi = P + \rho_w g\, b.
+\end{equation}
+Subglacial water pressure $P$ is always related in some manner to the overburden pressure
+\begin{equation}\label{eq:shallowoverburden}
+  p_i = \rho_i g H,
+\end{equation}
+where $H$ is the ice thickness and $\rho_i$ is the density of the ice.
+
+Finally among the common elements we suppose that wall melt is proportional to the dissipation rate,
+\begin{equation}\label{eq:meltsimple}
+   m = -\frac{\mathbf{Q} \cdot \nabla \psi}{L}.
+\end{equation}
+We use equation \eqref{eq:meltsimple} for simplicity here but we suggest more complete forms in the draft report.
+
+
+
+\subsection*{Alternatives for evolution of drainage system state}  Mathematical closure suggests that water pressure $P$ is a function of the water amount (thickness) $W$.  It is easiest to propose relations where the thickness $W$ is compared to a drainage system capacity in a ratio, and we will only consider such cases here.  Conceptually, if the capacity of the drainage system is held fixed then increasing amounts of water should increase the pressure.  On the other hand, if the water thickness is constant and the capacity increases then the pressure should decrease.  
+
+One alternative is to choose a power law
+\begin{equation} \label{eq:pressureWcrit}
+P = p_i \left(\frac{W}{W_{crit}}\right)^\sigma
+\end{equation}
+where $W_{crit}>0$ is a \emph{constant}, non-evolving critical water thickness and $\sigma>1$ is also constant.  Note that if the drainage system is full at some location, i.e.~if $W=W_{crit}$, then \eqref{eq:pressureWcrit} says that $P$ equals the ice overburden pressure $p_i$.  We could allow $W_{crit}$ to depend on spatial variables, but when we use ``$W_{crit}$'' in this note we are assuming it does not evolve in time.
+
+An alternative is to replace $W_{crit}$ with a variable capacity thickness $Y$ which varies in time and space.  The pressure is determined from $W,Y$ just as with \eqref{eq:pressureWcrit}
+\begin{equation} \label{eq:pressureY}
+P = p_i \left( \frac{W}{Y} \right)^\sigma.
+\end{equation}
+but we now require some evolution equation for $Y$.
+
+The capacity variable $Y$ evolves by a differential equation which has terms for opening by wall (ceiling) melting, opening by cavitation from sliding, and closure as a function of the creep of the walls of conduits and/or sheets.  Our proposed equation is
+\begin{equation} \label{eq:capacityevolution}
+\frac{\partial Y}{\partial t} = \frac{m}{\rho_i} + \Cavit |\mathbf{v}_{base}| - \Creep A N^n Y.
+\end{equation}
+The terms on the right side of \eqref{eq:capacityevolution} represent wall melt, cavitation, and creep closure, respectively.  Here $m$ is the mass-per-area rate of wall melt of the ice, the same as in equation \eqref{eq:conserve}, $\mathbf{v}_{base}$ is the sliding velocity, $A$ is the ice softness in Glen's law, $n$ is Glen's exponent for ice deformation, $N$ is the effective pressure (below), and $\Cavit,\Creep$ are dimensionless positive constants.  The effective pressure $N$ appearing in \eqref{eq:capacityevolution} is bounded below by zero,
+\begin{equation} \label{eq:effectivepressure}
+N = p_i - \min\{p_i,P\} = \max\{0,p_i-P\}.
+\end{equation}
+Both the water thickness $W \ge 0$ and the drainage system capacity/thickness $Y \ge 0$ are allowed to be zero in some areas, representing locations with dry base (possibly frozen base) and zero capacity, respectively.  We do not require $W\le Y$, and we might consider the case $W>Y$ to represent channelized flow.
+
+To conserve mass, in the above relations the pressure $P$ must be allowed to become larger than the overburden pressure $p_i$.  Once that happens, equations \eqref{eq:flux} and \eqref{eq:potential} imply a strongly-enhanced water flux toward areas with lower potential.  Also, if we use equations \eqref{eq:pressureY} and \eqref{eq:capacityevolution} together in some model then it is possible to combine these equations into an evolution equation for $P$.  This reformulation is addressed below.
+
+If we use equation \eqref{eq:pressureWcrit}, with nonevolving capacity, then we do not use \eqref{eq:capacityevolution}.  We can allow opening and closing of the drainage system by evolution of the hydraulic conductivity $K$, however.  First let us suppose we have bounds on $K$, say $K_{min} \le K \le K_{max}$; these are in the literature, and they can be enforced numerically by variational inequalities.  Now, as a example evolution model for $K$, one which is not even slightly-justified by physical opening and closing processes but which is used here for illustration, we choose
+\begin{equation}\label{eq:evolvingK}
+\frac{\partial K}{\partial t} = \alpha (2 K_{max} - K) \left(\left(\frac{W}{W_{crit}}\right)^2 - 1\right)
+\end{equation}
+where $\alpha\ge 0$ is constant and $K_{max}$ is constant.    The factor ``$(2K_{max}-K)$'' is introduced to have the right side depend in some way on $K$; this factor is always positive because of the bounds on $K$.  More significantly, if $W<W_{crit}$ then the drainage system is not full and the right hand side is negative, so there is ``closure'' in that sense, while if $W>W_{crit}$ then the right hand side is positive and the drainage system ``opens''.  It is very important, if we use an evolution equation for $K$, to look for alternatives to \eqref{eq:evolvingK} which have a \emph{physical} opening and closing process explanation.
+
+
+\subsection*{Three forms for the mathematical model}  In this subsection we list the three PDE \emph{systems} which result if the above equations are solved for various pairs of variables.  
+
+Before doing so we make some simplifications which will reduce the apparent complexity without losing any interesting parts, from the point of view of the mathematical qualities or the complexity of implementation.  Specifically, in this subsection we assume a flat bed $\nabla b=0$, we assume no surface/englacial water source $S=0$, and we assume no basal sliding $\mathbf{v}_{base}=0$.  These assumptions are not made in the draft report, except in a verification case.
+
+Here are the three PDE systems:
+\renewcommand{\labelenumi}{\textbf{\Roman{enumi}.}}
+\begin{enumerate}
+\item $(W,Y)$ \textbf{FORM}:  Combine equations \eqref{eq:conserve}, \eqref{eq:flux}, \eqref{eq:potential}, \eqref{eq:shallowoverburden}, \eqref{eq:meltsimple}, \eqref{eq:pressureY},  \eqref{eq:capacityevolution}, and \eqref{eq:effectivepressure}.  Assume $K=K_0$ is a constant hydraulic conductivity.  Eliminate all variables except $W$ and $Y$ and physical constants.  Get
+\begin{align}
+\frac{\partial W}{\partial t} &= \frac{K_0}{\rho_w g} \nabla \cdot \Big(W \nabla P\Big) + \frac{K_0}{\rho_w^2 g L} W \Big|\nabla P\Big|^2, \label{eq:WYsystem} \\
+\frac{\partial Y}{\partial t} &= \frac{K_0}{\rho_i \rho_w g L} W \Big|\nabla P\Big|^2 \notag - \Creep A \left(\max\left\{0,\rho_i g H - P\right\}\right)^n Y  \notag
+\end{align}
+where $P = \rho_i g H \left(W/Y\right)^\sigma$; we have actually not eliminated ``$P$'' because it is writing the equations with $P$ remaining.  Though use of ``$P$'' in system \eqref{eq:WYsystem} simplifies its appearance, these equations have right-hand sides which are computed as functions of $W$ and $Y$, while $P$ is merely an intermediate quantity in that computation.  In particular, $Y$ is evolving and we do not directly show how $P$ evolves.
+
+\medskip
+\item $(W,P)$ \textbf{FORM}:  The fact that system \eqref{eq:WYsystem} is easiest to write using ``$P$'' motivates trying to write down an evolution equation for $P$ directly.  So again we will combine equations \eqref{eq:conserve}, \eqref{eq:flux}, \eqref{eq:potential}, \eqref{eq:shallowoverburden}, \eqref{eq:meltsimple}, \eqref{eq:pressureY},  \eqref{eq:capacityevolution}, and \eqref{eq:effectivepressure}, and we assume $K=K_0$ is a constant hydraulic conductivity, but this time we start the conversion from a $(W,Y)$ model to a $(W,P)$ model by computing logarithms of \eqref{eq:pressureY}:
+  $$\ln P = \ln p_i + \sigma (\ln W - \ln Y).$$
+Then find time derivatives of both sides,
+\begin{equation*}
+   \frac{\partial P}{\partial t} = \sigma P \left(\frac{\partial(\ln W)}{\partial t} - \frac{\partial(\ln y)}{\partial t}\right).
+\end{equation*}
+The term for the rate of change of the logarithm of overburden pressure has been assumed to be negligible, $\partial (\ln p_i)/\partial t \approx 0$, because changes to $p_i$ are on ice-dynamical timescales which are slower than the timescales for changes in $W$, $Y$, or $P$.\footnote{But keeping the ``$\partial (\ln p_i)/\partial t$'' term requires no interesting changes, actually.  If we think we need it we can put it back.}  Now recalling  $d(\ln f)/dt = (1/f) df/dt$, equations \eqref{eq:conserve} and \eqref{eq:capacityevolution} become
+\begin{align*}
+  \frac{\partial (\ln W)}{\partial t} &= \frac{K_0}{\rho_w g} \frac{1}{W} \nabla \cdot \Big(W \nabla P\Big) + \frac{K_0}{\rho_w^2 g L} \Big|\nabla P\Big|^2, \\
+  \frac{\partial (\ln Y)}{\partial t} &= \frac{K_0}{\rho_i \rho_w g L} \frac{W}{Y} \Big|\nabla P\Big|^2 \notag - \Creep A \left(\max\left\{0,\rho_i g H - P\right\}\right)^n.
+\end{align*}
+We want to write these equations without ``$Y$'' on their right sides, which is easy because by \eqref{eq:pressureY} we have
+	$$\frac{W}{Y} = \left(\frac{P}{p_i}\right)^{1/\sigma}.$$
+Thus we can write out an equation for $\partial P/\partial t$ by combining the above to gives the $(W,P)$ form,
+\begin{align}
+\frac{\partial W}{\partial t} &= \frac{K_0}{\rho_w g} \nabla \cdot \Big(W \nabla P\Big) + \frac{K_0}{\rho_w^2 g L} W \Big|\nabla P\Big|^2,  \label{eq:WPsystem} \\
+\frac{\partial P}{\partial t} &= \sigma \frac{P}{W} \bigg[\frac{K_0}{\rho_w g} \nabla \cdot \big(W \nabla P\big) + \frac{K_0}{\rho_w g L} \bigg(\frac{1}{\rho_w} - \frac{1}{\rho_i} \left(\frac{P}{\rho_i g H}\right)^{1/\sigma}\bigg) W \left|\nabla P\right|^2 \notag \\
+     &\qquad\qquad + \Creep A \left(\max\left\{0,\rho_i g H - P\right\}\right)^n W\bigg]. \notag 
+\end{align}
+This form has evolution of $W$, intimately connected with conserving water mass, and evolution of $P$, intimately connected with the yield stress seen by ice dynamics, but the drainage system parameter $Y$ is only diagnostically computable.  Nonetheless systems \eqref{eq:WYsystem} and \eqref{eq:WPsystem} are completely equivalent continuum models, and all quantities which appear in one system can be computed in the other.
+
+Here are some possible advantages of a $(W,P)$ model over a $(W,Y)$ model:\begin{itemize}
+\item the pressure $P$ is more directly-related to ice dynamics than is $Y$, because it is $P$ that determines yield stress in a Mohr-Coulomb rule,
+\item the variable $Y$ is not more observable than $P$, and it may be the opposite because $P$ can be observed in bore holes,
+\item both $W$ and $P$ are already in use in PISM as state variables, and finally
+\item the steady state of system \eqref{eq:WPsystem} includes an equation for $P$ alone, which might allow us to determine $P$ just from knowledge of $P$ at boundaries; the equation is
+   $$0 = \left(\frac{P}{\rho_i g H}\right)^{1/\sigma} \left|\nabla P\right|^2 - \omega \left(\max\left\{0,\rho_i g H - P\right\}\right)^n,$$
+where $\omega$ is a known positive constant.
+\end{itemize}
+
+\medskip
+\item $(W,K)$ \textbf{FORM}:  This time we combine equations \eqref{eq:conserve}, \eqref{eq:flux}, \eqref{eq:potential}, \eqref{eq:shallowoverburden}, \eqref{eq:meltsimple}, and \eqref{eq:evolvingK}.  The result is immediate:
+\begin{align}
+\frac{\partial W}{\partial t} &= \frac{\rho_i}{\rho_w( W_{crit})^\sigma} \nabla \cdot \Big(K W \nabla (H W^\sigma)\Big) + \frac{\rho_i^2 g}{\rho_w^2 L (W_{crit})^{2\sigma}} K W \Big|\nabla (H W^\sigma)\Big|^2, \label{eq:WKsystem} \\
+\frac{\partial K}{\partial t} &= \alpha (2 K_{max} - K) \left(\left(\frac{W}{W_{crit}}\right)^2 - 1\right) \notag
+\end{align}
+
+\end{enumerate}
+
+
+\subsection*{Numerical solution schemes were built for all three systems}  Now we want to compare the three systems \eqref{eq:WYsystem}, \eqref{eq:WPsystem}, and \eqref{eq:WKsystem}.  Each system is a pair of time-evolving scalar PDEs.  Each system incorporates all the goals \textbf{(a)}--\textbf{(d)} at the beginning, so these systems are not distinguished by their basic goals.  In each case there are significant uncertainties in the correct settings for constants.
+
+The first two systems \eqref{eq:WYsystem} are \eqref{eq:WPsystem} actually mathematically equivalent.  The major distinctions between them is likely to be that $P$ is directly related to yield stress, and that we may be able to use the steady state equation for $P$ to some effect, though what effect that would be is at this point unclear.  The last system \eqref{eq:WKsystem} is fundamentally different from the other two.
+
+In all cases we can recover, from the continuum equations for the system, the vertically-integrated porous medium equation, namely
+\begin{equation} \label{eq:vertporous}
+\frac{\partial W}{\partial t} = \gamma \nabla \cdot \left( W \nabla \left( W^\sigma \right) \right)
+\end{equation}
+where $\gamma = K_0 \rho_i H_0 / (\rho_w W_{crit}^\sigma)$, under the appropriate simplifications: constant hydraulic conductivity $K=K_0$, no melt $m=0$, and no opening/closure processes.  Equation \eqref{eq:vertporous} has a Barenblatt exact solution, which can be used to verify a numerical solver for any three forms of the coupled equations in the simplified verification case.
+
+I have written finite difference implementations of each of the three systems.  In directory \texttt{UAF-misc/betterhydro/petsc/} the program \texttt{bh.c} solves \eqref{eq:WYsystem}, \texttt{alt.c} solves \eqref{eq:WPsystem}, and  \texttt{kw.c} solves \eqref{eq:WKsystem}.  Each of these PETSc-using codes solves the implicit time-step equations in parallel, using a Newton method.  In all runs there has been no grid asymmetry, and in cases where the global amount of water should be conserved, we see that the numerical schemes do so.  The verification case mention above can, in all three cases, be recovered by removing the appropriate processes.
+
+
+\subsection*{Discussion: the main issue and distinction}  Running these codes reveals that the $(W,Y)$ and $(W,P)$ forms are subject to a numerical artifact which does not really seem to correspond to the intended modeled processes.
+
+Figure \ref{fig:finalWs} shows the final water thickness map from the $(W,P)$ and $(W,K)$ forms after a run of 20 model days on a coarse grid.  The runs start from an injection of water, after which there is no additional melt (i.e.~$m>0$ though $S=0$).  The results from the $(W,P)$ system show explosively-large values of $W$ at the margin where $W\to 0$.  In both cases there is good conservation of water; this is not the issue.  The initial states are the same for $W$, and there is no physical reason to expect large concentrations of water at these locations, where transport should be minimal.  Fine grid cases give even more extreme artifacts from the $(W,P)$ system \eqref{eq:WPsystem}, with maximums $W > 16$ m (not shown) when the grid is refined by a factor of four in each direction.  From the $(W,K)$ system we get a smooth shape similar to the verified porous medium result, even though there has indeed been nontrivial evolution of the hydraulic conductivity and as a result there are significant differences from the result from a pure solution of \eqref{eq:vertporous}.
+
+% compare W_final from
+%    ./alt -fd -da_grid_x 41 -da_grid_y 41 -mfile foo.m
+%    ./kw -fd -da_grid_x 41 -da_grid_y 41 -mfile bar.m -kw_steps 20
+\begin{figure}[ht]
+\centering
+\includegraphics[width=2.7in,keepaspectratio=true]{figs/WPfinalW.png} \quad \includegraphics[width=2.7in,keepaspectratio=true]{figs/WKfinalW.png}
+\caption{Maps of the final water thickness $W$ from coarse grid computations.  From the $(W,P)$ system (left) we get large values $W\sim 4$ m at the margin where $W\to 0$.  From the $(W,K)$ system (right) we get a smooth shape with maximum values of $W$ less than 1 m.}
+\label{fig:finalWs}
+\end{figure}
+
+Figure \ref{fig:maxWs} shows the maximum value of $W$ as a function of time from three runs  
+% compare maxW time-series from
+%    ./alt -fd -alt_tend_days 60 -alt_steps 50
+%    ./kw -fd -kw_tend_days 60 -kw_steps 50
+%    ./porous -por_tend_days 60 -por_steps 50
+\begin{figure}[ht]
+\centering
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/unstableWP.pdf}
+\caption{compare}
+\label{fig:maxWs}
+\end{figure}
+
+
+
+\end{document}

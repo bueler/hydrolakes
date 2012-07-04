@@ -1,0 +1,38 @@
+% each block of four: N M |W-Wexact|_1 |W-Wexact|_inf
+% where we did "./porous -por_dosteps $N -da_grid_x $M -da_grid_y $M" on 4 procs
+% produced by the bash code:
+%   for N in 2 4 8 16 32 64 128; do
+%     (( M = 10*N+1 ))
+%     echo $N
+%     echo $M
+%     mpiexec -n 4 ./porous -por_dosteps $N -da_grid_x $M -da_grid_y $M |grep -A 1 errors
+%   done
+% plus hand editing
+2
+21
+2.157e+06
+2.250e-02
+4
+41
+1.282e+06
+1.808e-02
+8
+81
+5.309e+05
+1.420e-02
+16
+161
+2.271e+05
+1.243e-02
+32
+321
+9.494e+04
+1.075e-02
+64
+641
+4.234e+04
+9.024e-03
+128
+1281
+1.871e+04
+7.634e-03
