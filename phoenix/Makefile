@@ -17,5 +17,5 @@ figures := $(addprefix figs/, $(figures))
 .PHONY: clean
 
 clean:
-	@rm -f *.out *.aux *.log *.bbl *.blg *.synctex.gz *.dvi *~
+	@rm -f *.out *.aux *.log *.bbl *.blg *.synctex.gz *.dvi *.toc *~
 
