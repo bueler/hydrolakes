@@ -1,0 +1,9 @@
+
+To use, download the SeaRISE Antarctic data set [ALBMAPv1 at SeaRISE site](http://websrv.cs.umt.edu/isis/images/4/4d/Antarctica_5km_dev1.0.nc).
+
+Then run in Matlab/Octave:
+
+  >> antlakes
+
+Of course you should see code or help for all *.m codes to understand.
+

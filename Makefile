@@ -1,7 +1,7 @@
-all: notes.pdf slides.pdf
+all: notes.pdf
 
 codes   := 
-figures := diffstencil.pdf enthalpy-model-crop.png hydro-mask.png siple.png ftt-mask.png pism-users-map.png
+figures := diffstencil.pdf
 
 codes   := $(addprefix codes/, $(codes))
 figures := $(addprefix figs/, $(figures))
@@ -13,10 +13,6 @@ notes.pdf: notes.tex $(figures) ice_bib.bib
 	bibtex notes
 	pdflatex notes
 	pdflatex notes
-
-slides.pdf: slides.tex $(figures)
-	pdflatex slides
-	pdflatex slides
 
 .PHONY: clean
 
