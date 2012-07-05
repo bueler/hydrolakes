@@ -6,7 +6,8 @@ function antlakes(tyears,nn)
 % where    tyears = run time in years [default=100.0]
 %              nn = stride for subsample [default=10 for 50 km res]
 % example:  >> antlakes(100.0,10)
-% Calls:  CONSERVE.
+% Calls:  CONSERVE, BUILDANT
+% Depends: NETCDF
 
 if nargin<1, tyears=100.0; end
 if nargin<2, nn=10; end

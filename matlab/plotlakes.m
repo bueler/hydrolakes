@@ -1,7 +1,7 @@
 % PLOTLAKES  load and minimal plot of lakes from Siegert (2005)
 
-A = load('siegert_2005_lakes.txt');
-B = load('vostok.txt');
+A = load('data/siegert_2005_lakes.txt');
+B = load('data/vostok.txt');
 
 plot(A(:,1)/1000,A(:,2)/1000,'ro','markersize',7,'linewidth',2)
 hold on
