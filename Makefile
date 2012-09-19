@@ -1,4 +1,4 @@
-all: notes.pdf
+all: notes.pdf dampnotes.pdf
 
 codes   := 
 figures := diffstencil.pdf
@@ -7,6 +7,12 @@ codes   := $(addprefix codes/, $(codes))
 figures := $(addprefix figs/, $(figures))
 
 # link ice_bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
+
+dampnotes.pdf: dampnotes.tex $(figures) ice_bib.bib
+	pdflatex dampnotes
+	bibtex dampnotes
+	pdflatex dampnotes
+	pdflatex dampnotes
 
 notes.pdf: notes.tex $(figures) ice_bib.bib
 	pdflatex notes

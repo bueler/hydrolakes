@@ -1,0 +1,216 @@
+\documentclass[12pt,final]{amsart}%default 10pt
+%prepared in AMSLaTeX, under LaTeX2e
+
+\usepackage[margin=1in]{geometry}
+
+\usepackage{natbib}
+
+\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb}
+\usepackage{palatino}
+
+% check if we are compiling under latex or pdflatex
+\ifx\pdftexversion\undefined
+  \usepackage[final,dvips]{graphicx}
+\else
+  \usepackage[final,pdftex]{graphicx}
+\fi
+
+% hyperref should be the last package we load
+\usepackage[pdftex,
+                colorlinks=true,
+                plainpages=false, % only if colorlinks=true
+                linkcolor=blue,   % only if colorlinks=true
+                citecolor=black,   % only if colorlinks=true
+                urlcolor=magenta     % only if colorlinks=true
+]{hyperref}
+
+\newcommand{\normalspacing}{\renewcommand{\baselinestretch}{1.1}\tiny\normalsize}
+\newcommand{\tablespacing}{\renewcommand{\baselinestretch}{1.0}\tiny\normalsize}
+\normalspacing
+
+% math macros
+\newcommand\bv{\mathbf{v}}
+\newcommand\bq{\mathbf{q}}
+
+\newcommand\CC{\mathbb{C}}
+\newcommand{\DDt}[1]{\ensuremath{\frac{d #1}{d t}}}
+\newcommand{\ddt}[1]{\ensuremath{\frac{\partial #1}{\partial t}}}
+\newcommand{\ddx}[1]{\ensuremath{\frac{\partial #1}{\partial x}}}
+\newcommand{\ddy}[1]{\ensuremath{\frac{\partial #1}{\partial y}}}
+\newcommand{\ddxp}[1]{\ensuremath{\frac{\partial #1}{\partial x'}}}
+\newcommand{\ddz}[1]{\ensuremath{\frac{\partial #1}{\partial z}}}
+\newcommand{\ddxx}[1]{\ensuremath{\frac{\partial^2 #1}{\partial x^2}}}
+\newcommand{\ddyy}[1]{\ensuremath{\frac{\partial^2 #1}{\partial y^2}}}
+\newcommand{\ddxy}[1]{\ensuremath{\frac{\partial^2 #1}{\partial x \partial y}}}
+\newcommand{\ddzz}[1]{\ensuremath{\frac{\partial^2 #1}{\partial z^2}}}
+\newcommand{\Div}{\nabla\cdot}
+\newcommand\eps{\epsilon}
+\newcommand{\grad}{\nabla}
+\newcommand{\ihat}{\mathbf{i}}
+\newcommand{\ip}[2]{\ensuremath{\left<#1,#2\right>}}
+\newcommand{\jhat}{\mathbf{j}}
+\newcommand{\khat}{\mathbf{k}}
+\newcommand{\nhat}{\mathbf{n}}
+\newcommand\lam{\lambda}
+\newcommand\lap{\triangle}
+\newcommand\Matlab{\textsc{Matlab}\xspace}
+\newcommand\RR{\mathbb{R}}
+\newcommand\vf{\varphi}
+
+\newcommand{\Wlij}{W^l_{i,j}}
+\newcommand{\Wij}{W_{i,j}}
+\newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
+
+
+
+\title[]{A less-minimal, more-damped model of subglacial hydrology}
+
+\author[]{Ed Bueler}
+
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+%\setcounter{tocdepth}{1}
+%\tableofcontents
+
+\section{Introduction}
+
+Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at the 2nd McCarthy Summer School in Glaciology in 2012.}  The assumption that water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
+
+
+      % FIXME:  * experiment with increased K
+      %         * show positivity preserving and stability in appendix
+
+
+
+\section{Continuum model}
+
+We consider a layer of water with thickness $W(t,x,y)$.  It is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  While the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.  We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
+
+Water is conserved, so that in two spatial dimensions it is described by the equation \citep{Clarke05}
+\begin{equation} \label{eq:conserve}
+W_t + \Div \bq = \Phi
+\end{equation}
+where $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).
+
+We might separate the water sources between the melt on the lower surface of the glacier and the en- or supra-glacial drainage origin,
+  $$\Phi = \rho_w^{-1} \left(m + S\right)$$
+where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  For the first example below we will take $\Phi$ to be constant.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
+
+The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
+\begin{equation} \label{eq:potential}
+\psi = P + \rho_w g\, (b+W).
+\end{equation}
+Here $z=b(x,y)$ is the time-independent bedrock elevation, which we assume is given by time-independent data.
+
+Water flows from high to low hydraulic potential.  The simplest model is for a water sheet \citep{Clarke05}
+\begin{equation}  \label{eq:flux}
+\bq = - \frac{K \, W}{\rho_w g} \grad \psi
+\end{equation}
+Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the holes through the subglacial material are bigger ($K$ is larger) or the water sheet is thicker ($W$ is larger).
+
+Recall that the ice is a fluid which has a pressure field of its own, with basal value $P_i$, the \emph{overburden pressure}.  In this minimal model, water pressure $P$ is proportional to the ice overburden pressure.  We also make, as an acceptable shallow approximation \citep{GreveBlatter2009}, the assumption that the ice pressure is hydrostatic
+\begin{equation} \label{eq:hydrostatic}
+  P_i = \rho_i g H = \rho_i g (h-b).
+\end{equation}
+Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$), $H$ is the ice thickness (m), and $h$ is the ice upper surface elevation (m).  Our model for the subglacial water pressure is
+\begin{equation} \label{eq:pisoverburden}
+  P = s P_i
+\end{equation}
+where $s$ is a dimensionless constant $0\le s \le 1$.  In the case $s=1$ this model has been used for subglacial water in Antarctica \citep{LeBrocqetal2009}.
+
+Let $r = \rho_i / \rho_w \approx 0.9$, a dimensionless constant.  From equations \eqref{eq:potential}, \eqref{eq:flux}, \eqref{eq:hydrostatic}, and \eqref{eq:pisoverburden} we derive a more transparent description of the flux,
+\begin{equation} \label{eq:qexpression}
+  \bq = \bv\, W - K W \grad W
+\end{equation}
+where
+\begin{equation} \label{eq:vexpression}
+  \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+\end{equation}
+is an ice-sheet-geometry-dependent vector function which has units of velocity.  Thus the water flow $\bq$ mostly depends on the surface and bedrock slope because the velocity $\bv$ is a sum of these slopes.  However, because the bedrock elevation comes from rough data in practice, the distribution of the velocity $\bv$ will not be very smooth.  Indeed, for $s\approx 1$ the typically-smoother surface gradient is more important, while for $s \ll 1$ the typically-rougher bedrock gradient becomes more significant.
+
+From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers},
+\begin{equation} \label{eq:adeqn}
+  W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi
+\end{equation}
+
+
+\section{Numerical scheme}
+
+Equation \eqref{eq:adeqn} is discretized by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ be the approximation of the continuum solution at the grid point.
+
+To explain the upwind method, consider the model equation
+\begin{equation} \label{eq:modeladvect}
+u_t + (v(x) u)_x = 0
+\end{equation}
+for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  We describe our ``donor cell'' upwind scheme as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which spatial finite difference to compute based on the sign of the velocity $v(x)$ at the interfaces between cells.  The scheme is easier to display if we define the following upwind notation,
+\newcommand{\up}[2]{\big<#1\big|\,#2\big>}
+	$$\up{v}{U_j} := v \begin{Bmatrix} U_j, & v \ge 0 \\ U_{j+1}, & v < 0 \end{Bmatrix}.$$
+For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ we set
+\begin{equation}\label{eq:modelfdadvect}
+\frac{U_j^{l+1} - U_j^l}{\Delta t} + \frac{\up{v_+}{U_j^l} - \up{v_-}{U_{j-1}^l}}{\Delta x} = 0
+\end{equation}
+where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
+
+Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bv = (\alpha,\beta)$ and recall that $\Div \left(\bv W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}, and we use ``compass'' notation for the components:
+% \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+\begin{align*}
+\alpha_e &= \alpha_{i+1/2,j} = -K \left(sr \frac{h_{i+1,j}-h_{i,j}}{\Delta x} + (1-sr) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \\
+\alpha_w &= \alpha_{i-1/2,j} = -K \left(sr \frac{h_{i,j}-h_{i-1,j}}{\Delta x} + (1-sr) \frac{b_{i,j}-b_{i-1,j}}{\Delta x}\right), \\
+\beta_n  &= \beta_{i,j+1/2} = -K \left(sr \frac{h_{i,j+1}-h_{i,j}}{\Delta y} + (1-sr) \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right), \\
+\beta_s  &= \beta_{i,j-1/2} = -K \left(sr \frac{h_{i,j}-h_{i,j-1}}{\Delta y} + (1-sr) \frac{b_{i,j}-b_{i,j-1}}{\Delta y}\right).
+\end{align*}  
+Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=2.5in,keepaspectratio=true]{figs/diffstencil}
+\bigskip
+\caption{Numerical scheme \eqref{eq:Wfd} uses velocity components for the advection part of Equation \eqref{eq:adeqn}, and averaged water thicknesses for the diffusive part of the same Equation, at the staggered grid locations (triangles).  The water thickness values $W_{i,j}^l$ are on the regular grid points forming a five-point stencil (diamonds).  The finite volume scheme for the advection part is a donor-cell first-order upwind method for the grid-point-centered cell (dashed).}
+\label{fig:stencil}
+\end{figure}
+
+We apply the conservative upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation:
+\begin{align}
+ &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{\upp{\alpha_e}{\Wlij}{i} - \upp{\alpha_w}{W_{i-1,j}^l}{i}}{\Delta x} + \frac{\upp{\beta_n}{\Wlij}{j} - \upp{\beta_s}{W_{i,j-1}^l}{j}}{\Delta y}  \label{eq:Wfd} \\
+      &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}\bigg] + \Phi_{ij}. \notag
+\end{align}
+Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
+
+
+
+
+\small
+\bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
+\bibliographystyle{agu}
+
+\appendix
+
+\section{Positivity and stability of the numerical scheme}
+
+The explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:adeqn} is sufficiently simple so that we can analyze its properties.  First, the scheme is stable in the sense that if sufficient conditions relating to the advective and diffusive time scales are satisfied then wiggles cannot grow.  Specifically, in this appendix we sketch a maximum principle argument for stability \citep{MortonMayers}.  On the other hand, as a closely-related statement, we note that the scheme positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the same sufficient stability conditions, the discrete water thicknesses at the next time step $W_{i,j}^{l+1}$ are nonnegative.
+
+Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  In what follows we consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
+
+Now we rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
+\begin{align*}
+ W_{i,j}^{l+1} &= \Wlij - \nu_x \left(\alpha_e \Wlij - \alpha_w W_{i-1,j}^l\right) - \nu_y \left(\beta_n \Wlij - \beta_s W_{i,j-1}^l\right)  \\
+      &\qquad + \mu_x \left[W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
+      &\qquad + \mu_y \left[W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)\right] + \Delta t \Phi_{ij} \\
+      &= (\nu_x \alpha_w + \mu_x W_w) W_{i-1,j}^l + (\mu_x W_e) W_{i+1,j}^l + (\nu_y \beta_s + \mu_y W_s) W_{i,j-1}^l + (\mu_y W_n) W_{i,j+1}^l \\
+      &\qquad + \Big[1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s)\Big] \Wlij + \Delta t \Phi_{ij}.
+\end{align*}
+The new value is a linear combination of the old values, plus a source term:
+   $$W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij + \Delta t \Phi_{ij}.$$
+Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, coefficients $A,B,C,D$ are all nonnegative, and only $E$ could be negative, depending on the time step.  In fact, let us state for simplicity a sufficient condition based on an equal split between advective and diffusive parts; let us assume
+	$$\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2},$$
+and
+    $$\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}.$$
+FIXME: to complete
+
+\end{document}
