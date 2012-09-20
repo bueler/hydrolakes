@@ -117,7 +117,7 @@ Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravit
 
 \subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we have this expression which identifies a part of the flux as proportional to the gradient of the water thickness:
 	$$\bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W.$$
-The flux which is down the gradient of the conserved quantity will act diffusively.  The remaining flux is likely to be dominant and it is, to our knowledge, not particularly diffusive.  We conceive of it as transport driven by a velocity field which varies in space and time.  We will construct a conservative numerical scheme based on this understand of how the flux is decomposed.
+The flux which is down the gradient of the conserved quantity will act diffusively.  The remaining flux is likely to be dominant.  It is, to our knowledge, not particularly diffusive.  We conceive of it as transport driven by a velocity field which varies in space and time.  We will construct a conservative numerical scheme based on this understand of how the flux is decomposed.
 
 Let
 \begin{equation} \label{eq:vexpression}
@@ -152,8 +152,18 @@ The evolution of the capacity thickness $Y$ (m) of a linked-cavity system is des
 \end{equation}
 where $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the ice basal velocity (i.e.~sliding velocity), $A$ is the ice softness, and $c_1,c_2$ are constants to be fit by data (see below).  We have used Glen exponent $n=3$ for concreteness.
 
-\subsection*{Closure for pressure}  FIXME
+Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The creep term is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  On the other hand there are presumably-strong stresses (pressures) within the liquid water associated to keeping the cavity full because liquid water is an incompressible fluid with low viscosity.  For example, if the cavity is locally larger than local water sources can easily fill then the pressure field should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
 
+\subsection*{Closure for pressure}  At this point we do not know how to compute pressure.  The apparent state variables of the model so far are $W,Y,P$, in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables $W,Y,P$, but with a number of additional parameters of course.
+
+A strong closure is to require the aquifer to be full at all locations and times:
+\begin{equation}
+W = Y.\label{eq:strongclosure}
+\end{equation}
+The consequence of this strong closure is explored by \cite{Schoofetal2012} in some detail.  In our simple circumstances, equation \eqref{eq:strongclosure} allows us to eliminate ``$Y$'' and equate expressions for $\partial W/\partial t = \partial Y/\partial t$ from equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux} with that from \eqref{eq:capacity} to get this equation:
+\begin{equation}
+FIXME = FIXME.\label{eq:pressurepde}
+\end{equation}
 
 \subsection*{Solvable mathematical model}  FIXME
 
