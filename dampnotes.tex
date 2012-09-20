@@ -154,7 +154,7 @@ where $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the
 
 Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The creep term is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  On the other hand there are presumably-strong stresses (pressures) within the liquid water associated to keeping the cavity full because liquid water is an incompressible fluid with low viscosity.  For example, if the cavity is locally larger than local water sources can easily fill then the pressure field should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
 
-\subsection*{Closure for pressure}  At this point we do not know how to compute pressure.  The apparent state variables of the model so far are $W,Y,P$, in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables $W,Y,P$, but with a number of additional parameters of course.
+\subsection*{Full-cavity closure for pressure}  At this point we do not know how to compute pressure.  The apparent state variables of the model so far are $W,Y,P$, in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables $W,Y,P$, but with a number of additional parameters of course.
 
 A strong closure is to require the aquifer to be full at all locations and times:
 \begin{equation}
@@ -164,14 +164,39 @@ The consequences of this strong closure are explored by \cite{Schoofetal2012} in
 \begin{equation}
 \Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) = c_1 \left(W_r - W\right) |\bv_b| - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
 \end{equation}
-We will avoid solving equation \eqref{eq:ellipticpressure} but it is significant to our theory.  If we have an instantaneous water thickness field $W$ then, assuming adequate pressure boundary conditions, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure field.  Of course the pressure solution is actually subject to inequalities $0 \le P \le P_o$.  Thus the mathematical problem is an elliptic variational inequality as explored by \cite{Schoofetal2012}.  We seek an easily-implementable alternative which allows us to explore the space of physical parameters using real data.
 
-So we replace \eqref{eq:strongclosure} with a damped version.  Instead of ``$0 = Y - W$'' we add a damped version with a characteristic time scale $\tau$ which should be short:
+Though we will avoid actually solving equation \eqref{eq:ellipticpressure}, it is significant to our theory.  If we have an instantaneous water thickness field $W$ then, assuming adequate pressure boundary conditions, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure field.  Of course the pressure solution is actually subject to inequalities
+\begin{equation}
+0 \le P \le P_o. \label{eq:bounds}
+\end{equation}
+Thus the mathematical problem is an elliptic variational inequality as explored by \cite{Schoofetal2012}.  In these notes we seek a more easily implemented alternative which allows us to explore the space of physical parameters using real data.
+
+\subsection*{Nearly-full-cavity closure for pressure}  Therefore we replace rigid constraint \eqref{eq:strongclosure} with a damped version.  Instead of ``$0 = Y - W$'' we add a damped version with a characteristic time scale $\tau$ which should be short (hours to months)  compared to ice flow change time scales (months to centuries):
 \begin{equation}
 - \tau \frac{\partial Y}{\partial t} = Y - W. \label{eq:dampedclosure}
 \end{equation}
-This equation which will keep the separate state variable $Y$, that is, we are not able to eliminate $Y$ but must actually keep track of it in a time-dependent way.
+Of course as $\tau \to 0$ this recovers the full-cavity closure $Y=W$.
 
+Equation \eqref{eq:dampedclosure} says that if the notional cavity top is locally above the water level ($Y>W$) then the cavity top should descend ($\partial Y/\partial t < 0$), and, vice versa, if the notional cavity top is locally below the water ($Y<W$) then the cavity top should ascend ($\partial Y/\partial t > 0$).  Said a different way, equation \eqref{eq:dampedclosure} represents a penalty method for enforcing constraint \eqref{eq:strongclosure}.
+
+While equation \eqref{eq:dampedclosure} requires us keep the separate state variable $Y$ in a time-dependent way---we are not able to eliminate $Y$ as one may from \eqref{eq:strongclosure}---now we can express pressure in terms of the geometric state variables, as follows.  Solve \eqref{eq:capacity} for $N$, thus $P$, and substitute the expression for $\partial Y/\partial t$ from \eqref{eq:dampedclosure}:
+\begin{equation}
+P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|}{c_2 A Y}\right)^{1/3}.  \label{eq:pressurenormal}
+\end{equation}
+
+The above expression for $P$ applies only in certain ``normal'' cases, however.  In particular it assumes positive effective pressure ($N\ge 0$).  Furthermore we must address how the important bounds \eqref{eq:bounds} are maintained.  Note that the denominator of the fraction in \eqref{eq:pressurenormal} is always positive but the denominator can change sign.  We have the following conditional scheme for pressure:
+\begin{equation}
+P = \begin{cases}
+0, & \begin{array}{l} - \tau^{-1} (Y-W) < c_1 \left(W_r - Y\right) |\bv_b| \\ \quad \text{and} \quad \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b| > c_2 A Y P_o^3 ,\end{array} \\
+P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|}{c_2 A Y}\right)^{1/3}, &  \\
+P_o, & - \tau^{-1} (Y-W) > c_1 \left(W_r - Y\right) |\bv_b|,
+\end{cases} \label{eq:pressureWY}
+\end{equation}
+where the middle ``normal pressure'' case occurs exactly when the inequalities defining the extreme cases do not hold.  As a result of this scheme we have a function which computes pressure in terms of $Y,W$ (and the physical constants),
+\begin{equation}
+P = f(Y,W).
+\end{equation}
+And evidently bounds \eqref{eq:bounds} are satisfied:  $0 \le f(Y,W) \le P_o$.
 
 
 \subsection*{Solvable mathematical model}  FIXME
