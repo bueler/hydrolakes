@@ -88,9 +88,9 @@ We model water pressure by a damped form of the full-cavity formulation.  In the
 
 \subsection*{Elements}  We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only likely to be meaningful compared to observations, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.
 
-We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
+We assume that water is incompressible so that the thickness of the water layer tells us the mass of water.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics \citep{Clarke05}. 
 
-Water is conserved, so that in two spatial dimensions it is described by the equation \citep{Clarke05}
+Water is conserved.  In two spatial dimensions this is the equation \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \Div \bq = \Phi
 \end{equation}
@@ -113,7 +113,7 @@ Water flows from high to low hydraulic potential.  The simplest model is for a w
 \begin{equation}  \label{eq:flux}
 \bq = - \frac{K \, W}{\rho_w g} \grad \psi
 \end{equation}
-Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the holes through the subglacial material are bigger ($K$ is larger) or the water sheet is thicker ($W$ is larger).
+Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the ability of the subglacial material to conduct water is bigger (i.e.~$K$ is larger) or if the water sheet is thicker ($W$ is larger).
 
 \subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we have this expression which identifies a part of the flux as proportional to the gradient of the water thickness:
 	$$\bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W.$$
@@ -128,7 +128,7 @@ be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, an
   \bq = \bv\, W - K W \grad W.
 \end{equation}
 
-Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of pressure follows that slope, but the pressure model below must generate pressure fields with that property.  More obviously the flux depends on the bedrock slope because the velocity $\bv$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bv$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
+Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of the overburden pressure follows that slope.  The pressure model below may generate pressure fields with that property, but this is not obvious.  More obviously the flux depends on the bedrock slope because the velocity $\bv$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bv$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
 
 In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
@@ -136,7 +136,7 @@ In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we de
 \end{equation}
 As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bv\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
 
-\subsection*{Capacity of the system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make, as a shallow approximation \citep{GreveBlatter2009}, the assumption that the ice pressure is hydrostatic:
+\subsection*{Capacity of the system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
   P_o = \rho_i g H = \rho_i g (h-b).
 \end{equation}
