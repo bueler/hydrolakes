@@ -130,7 +130,7 @@ be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, an
 
 Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of pressure follows that slope, but the pressure model below must generate pressure fields with that property.  More obviously the flux depends on the bedrock slope because the velocity $\bv$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bv$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
 
-In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers},
+In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
   W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi.
 \end{equation}
@@ -160,10 +160,19 @@ A strong closure is to require the aquifer to be full at all locations and times
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequence of this strong closure is explored by \cite{Schoofetal2012} in some detail.  In our simple circumstances, equation \eqref{eq:strongclosure} allows us to eliminate ``$Y$'' and equate expressions for $\partial W/\partial t = \partial Y/\partial t$ from equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux} with that from \eqref{eq:capacity} to get this equation:
+The consequences of this strong closure are explored by \cite{Schoofetal2012} in some detail.  In our simple circumstances, equation \eqref{eq:strongclosure} allows us to eliminate ``$Y$'' and equate expressions for $\partial W/\partial t = \partial Y/\partial t$ from equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux} with that from \eqref{eq:capacity} to get this equation:
 \begin{equation}
-FIXME = FIXME.\label{eq:pressurepde}
+\Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) = c_1 \left(W_r - W\right) |\bv_b| - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
 \end{equation}
+We will avoid solving equation \eqref{eq:ellipticpressure} but it is significant to our theory.  If we have an instantaneous water thickness field $W$ then, assuming adequate pressure boundary conditions, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure field.  Of course the pressure solution is actually subject to inequalities $0 \le P \le P_o$.  Thus the mathematical problem is an elliptic variational inequality as explored by \cite{Schoofetal2012}.  We seek an easily-implementable alternative which allows us to explore the space of physical parameters using real data.
+
+So we replace \eqref{eq:strongclosure} with a damped version.  Instead of ``$0 = Y - W$'' we add a damped version with a characteristic time scale $\tau$ which should be short:
+\begin{equation}
+- \tau \frac{\partial Y}{\partial t} = Y - W. \label{eq:dampedclosure}
+\end{equation}
+This equation which will keep the separate state variable $Y$, that is, we are not able to eliminate $Y$ but must actually keep track of it in a time-dependent way.
+
+
 
 \subsection*{Solvable mathematical model}  FIXME
 
