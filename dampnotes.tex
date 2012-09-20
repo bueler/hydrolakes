@@ -63,9 +63,9 @@
 
 
 
-\title[]{A less-minimal, more-damped model of subglacial hydrology}
+\title[]{A less-minimal model of subglacial hydrology}
 
-\author[]{Ed Bueler}
+\author[]{Ward van Pelt and Ed Bueler}
 
 
 \begin{document}
@@ -79,17 +79,16 @@
 
 \section{Introduction}
 
-Any reasonable model of the aquifer has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential (``head'').  Physical processes control the geometry of the aquifer/layer (e.g.~cavities open by sliding, cavities/channels close by creep, channels open by melting, sediment moves, \dots), but we do not model these here.  Instead we model water pressure by the highly-simplified assumption that the water pressure is equal to the overburden pressure, or is a fixed multiple thereof.\footnote{This project is a fork from the project that Sarah Child and Brad Booch did at the 2nd McCarthy Summer School in Glaciology in 2012.}  The assumption that water pressure is equal to the overburden pressure is justified if creep closure dominates over sliding or wall melt.
+Any reasonable model of the subglacial aquifer (liquid water layer) has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential  (``head'').  Additionally, physical processes control the geometry of the layer, including the opening of cavities by sliding and the closure of cavities (and channels) by creep.  Additionally, channels open by melting, sediment moves, and so on, but we do not model these here.
 
-
-      % FIXME:  * experiment with increased K
-      %         * show positivity preserving and stability in appendix
-
+We model water pressure by a damped form of the full-cavity formulation.  In the exactly-full cavity formulation the result is an elliptic variational inequality \citep{Schoofetal2012} for pressure that causes the computation of pressure to be nonlocal over each connected component of the hydrological system.  Here we avoid this instantaneous distributed balance by not exactly enforcing the full-cavity condition.
 
 
 \section{Continuum model}
 
-We consider a layer of water with thickness $W(t,x,y)$.  It is only likely to be meaningful, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  While the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.  We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
+\subsection*{Elements}  We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only likely to be meaningful compared to observations, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.
+
+We assume that the water is incompressible.  Choosing to model the subglacial hydrology using a water thickness is therefore not a significant restriction on the physics, and the thickness of water tells us the mass of water.
 
 Water is conserved, so that in two spatial dimensions it is described by the equation \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
@@ -99,9 +98,12 @@ where $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\P
 
 We might separate the water sources between the melt on the lower surface of the glacier and the en- or supra-glacial drainage origin,
   $$\Phi = \rho_w^{-1} \left(m + S\right)$$
-where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  For the first example below we will take $\Phi$ to be constant.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
+where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
 
-The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
+\newcommand{\Nbreen}{Nordenski\"oldbreen\xspace}
+For the \Nbreen, Svalbard example below we will take $m=0$ so that only supraglacial input is modeled.
+
+The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
@@ -113,30 +115,48 @@ Water flows from high to low hydraulic potential.  The simplest model is for a w
 \end{equation}
 Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the holes through the subglacial material are bigger ($K$ is larger) or the water sheet is thicker ($W$ is larger).
 
-Recall that the ice is a fluid which has a pressure field of its own, with basal value $P_i$, the \emph{overburden pressure}.  In this minimal model, water pressure $P$ is proportional to the ice overburden pressure.  We also make, as an acceptable shallow approximation \citep{GreveBlatter2009}, the assumption that the ice pressure is hydrostatic
-\begin{equation} \label{eq:hydrostatic}
-  P_i = \rho_i g H = \rho_i g (h-b).
-\end{equation}
-Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$), $H$ is the ice thickness (m), and $h$ is the ice upper surface elevation (m).  Our model for the subglacial water pressure is
-\begin{equation} \label{eq:pisoverburden}
-  P = s P_i
-\end{equation}
-where $s$ is a dimensionless constant $0\le s \le 1$.  In the case $s=1$ this model has been used for subglacial water in Antarctica \citep{LeBrocqetal2009}.
+\subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we have this expression which identifies a part of the flux as proportional to the gradient of the water thickness:
+	$$\bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W.$$
+The flux which is down the gradient of the conserved quantity will act diffusively.  The remaining flux is likely to be dominant and it is, to our knowledge, not particularly diffusive.  We conceive of it as transport driven by a velocity field which varies in space and time.  We will construct a conservative numerical scheme based on this understand of how the flux is decomposed.
 
-Let $r = \rho_i / \rho_w \approx 0.9$, a dimensionless constant.  From equations \eqref{eq:potential}, \eqref{eq:flux}, \eqref{eq:hydrostatic}, and \eqref{eq:pisoverburden} we derive a more transparent description of the flux,
-\begin{equation} \label{eq:qexpression}
-  \bq = \bv\, W - K W \grad W
-\end{equation}
-where
+Let
 \begin{equation} \label{eq:vexpression}
-  \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+  \bv = - \frac{K}{\rho_w g} \grad P - K \grad b
 \end{equation}
-is an ice-sheet-geometry-dependent vector function which has units of velocity.  Thus the water flow $\bq$ mostly depends on the surface and bedrock slope because the velocity $\bv$ is a sum of these slopes.  However, because the bedrock elevation comes from rough data in practice, the distribution of the velocity $\bv$ will not be very smooth.  Indeed, for $s\approx 1$ the typically-smoother surface gradient is more important, while for $s \ll 1$ the typically-rougher bedrock gradient becomes more significant.
+be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this simpler description of the flux,
+\begin{equation} \label{eq:qexpression}
+  \bq = \bv\, W - K W \grad W.
+\end{equation}
 
-From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers},
+Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of pressure follows that slope, but the pressure model below must generate pressure fields with that property.  More obviously the flux depends on the bedrock slope because the velocity $\bv$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bv$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
+
+In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers},
 \begin{equation} \label{eq:adeqn}
-  W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi
+  W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi.
 \end{equation}
+As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bv\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
+
+\subsection*{Capacity of the system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make, as a shallow approximation \citep{GreveBlatter2009}, the assumption that the ice pressure is hydrostatic:
+\begin{equation} \label{eq:hydrostatic}
+  P_o = \rho_i g H = \rho_i g (h-b).
+\end{equation}
+Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$), $H$ is the ice thickness (m), and $h$ is the ice upper surface elevation (m).  Now let
+\begin{equation}
+N = P_o - P\label{eq:effective}
+\end{equation}
+be the effective pressure.  The effective pressure is high if the subglacial water is unpressurized and low in the high pressure water case.  The effective pressure is a measure of much of the ice load is carried by the mineral (till or bedrock) base.
+
+The evolution of the capacity thickness $Y$ (m) of a linked-cavity system is described as the sum of opening by cavitation and closure by creep:
+\begin{equation}
+\frac{\partial Y}{\partial t} = c_1 \left(W_r - Y\right) |\bv_b| - c_2 A |N|^3 Y, \label{eq:capacity}
+\end{equation}
+where $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the ice basal velocity (i.e.~sliding velocity), $A$ is the ice softness, and $c_1,c_2$ are constants to be fit by data (see below).  We have used Glen exponent $n=3$ for concreteness.
+
+\subsection*{Closure for pressure}  FIXME
+
+
+\subsection*{Solvable mathematical model}  FIXME
+
 
 
 \section{Numerical scheme}
