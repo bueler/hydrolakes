@@ -30,6 +30,7 @@
 
 % math macros
 \newcommand\bv{\mathbf{v}}
+\newcommand\bV{\mathbf{V}}
 \newcommand\bq{\mathbf{q}}
 
 \newcommand\CC{\mathbb{C}}
@@ -88,7 +89,7 @@ We model water pressure by a damped form of the full-cavity formulation.  In the
 
 \subsection*{Elements}  We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only likely to be meaningful compared to observations, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.
 
-We assume that water is incompressible so that the thickness of the water layer tells us the mass of water.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics \citep{Clarke05}. 
+We assume that water is incompressible so that the thickness of the water layer tells us the mass of water.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.
 
 Water is conserved.  In two spatial dimensions this is the equation \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
@@ -121,20 +122,20 @@ The flux which is down the gradient of the conserved quantity will act diffusive
 
 Let
 \begin{equation} \label{eq:vexpression}
-  \bv = - \frac{K}{\rho_w g} \grad P - K \grad b
+  \bV = - \frac{K}{\rho_w g} \grad P - K \grad b
 \end{equation}
 be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this simpler description of the flux,
 \begin{equation} \label{eq:qexpression}
-  \bq = \bv\, W - K W \grad W.
+  \bq = \bV\, W - K W \grad W.
 \end{equation}
 
-Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of the overburden pressure follows that slope.  The pressure model below may generate pressure fields with that property, but this is not obvious.  More obviously the flux depends on the bedrock slope because the velocity $\bv$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bv$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
+Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of the overburden pressure follows that slope.  The pressure model below may generate pressure fields with that property, but this is not obvious.  More obviously the flux depends on the bedrock slope because the velocity $\bV$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bV$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
 
 In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
-  W_t + \Div\left(\bv\, W\right) = \Div \left(K W \grad W\right) + \Phi.
+  \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) = \Div \left(K W \grad W\right) + \Phi.
 \end{equation}
-As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bv\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
+As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bV\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
 
 \subsection*{Capacity of the system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
@@ -187,7 +188,9 @@ P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|}{c_2 A 
 \end{equation}
 
 The above expression for $P$ applies only in certain ``normal'' cases, however.  In particular it assumes positive effective pressure ($N\ge 0$).  Furthermore we must address how the bounds \eqref{eq:bounds} are maintained.  Note that the denominator of the fraction in \eqref{eq:pressurenormal} is always positive but the denominator can change sign.  Let
-	$$\mathcal{Z} = \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|,$$
+\begin{equation}
+\mathcal{Z} = \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|, \label{eq:Znumerator}
+\end{equation}
 the numerator appearing in Equation \eqref{eq:pressurenormal}.
 
 We have the following conditional scheme for pressure:
@@ -225,8 +228,7 @@ For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ w
 \end{equation}
 where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
-Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bv = (\alpha,\beta)$ and recall that $\Div \left(\bv W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}, and we use ``compass'' notation for the components:
-% \bv = - K \left(s r \grad h + (1-sr) \grad b\right)
+Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}, and we use ``compass'' notation for the components:
 \begin{align*}
 \alpha_e &= \alpha_{i+1/2,j} = -K \left(sr \frac{h_{i+1,j}-h_{i,j}}{\Delta x} + (1-sr) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \\
 \alpha_w &= \alpha_{i-1/2,j} = -K \left(sr \frac{h_{i,j}-h_{i-1,j}}{\Delta x} + (1-sr) \frac{b_{i,j}-b_{i-1,j}}{\Delta x}\right), \\
