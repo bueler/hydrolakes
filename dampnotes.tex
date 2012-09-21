@@ -60,6 +60,8 @@
 
 \newcommand{\Wlij}{W^l_{i,j}}
 \newcommand{\Wij}{W_{i,j}}
+\newcommand{\Ylij}{Y^l_{i,j}}
+\newcommand{\Yij}{Y_{i,j}}
 \newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
 
 
@@ -240,15 +242,20 @@ W \ge 0, \qquad Y \ge 0.
 
 The defined quantities $P_o$, $\mathcal{Z}$, $P$, and $\bV$ in equations \eqref{eq:AGAINhydrostatic}, \dots, \eqref{eq:AGAINvexpression} could be thought of as a fourth class of symbols, \emph{derived functions}, but of course they can be eliminated from any expression according to taste.
 
+
 \section{Numerical scheme}
 
-Equation \eqref{eq:adeqn} is discretized by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ be the approximation of the continuum solution at the grid point.
+Equation \eqref{eq:AGAINadeqn} will be discretized in this section by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).
 
-To explain the upwind method, consider the model equation
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximation of the continuum solution for the state functions at the grid points.
+
+To explain the upwind method for \eqref{eq:AGAINadeqn}, consider the model equation
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
-for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  We describe our ``donor cell'' upwind scheme as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which spatial finite difference to compute based on the sign of the velocity $v(x)$ at the interfaces between cells.  The scheme is easier to display if we define the following upwind notation,
+for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  A ``donor cell'' upwind scheme can be described as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the cell interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which spatial finite difference to compute based on the sign of the velocity $v(x)$ at these interfaces.
+
+The scheme is easier to display if we define the following upwind notation,
 \newcommand{\up}[2]{\big<#1\big|\,#2\big>}
 	$$\up{v}{U_j} := v \begin{Bmatrix} U_j, & v \ge 0 \\ U_{j+1}, & v < 0 \end{Bmatrix}.$$
 For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ we set
@@ -257,13 +264,16 @@ For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ w
 \end{equation}
 where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
-Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}, and we use ``compass'' notation for the components:
+Now we can state our scheme for equation \eqref{eq:AGAINadeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:AGAINvexpression}.
+
+Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows us to write a simplest description of the velocity:  $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation for the components:
 \begin{align*}
-\alpha_e &= \alpha_{i+1/2,j} = -K \left(sr \frac{h_{i+1,j}-h_{i,j}}{\Delta x} + (1-sr) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \\
-\alpha_w &= \alpha_{i-1/2,j} = -K \left(sr \frac{h_{i,j}-h_{i-1,j}}{\Delta x} + (1-sr) \frac{b_{i,j}-b_{i-1,j}}{\Delta x}\right), \\
-\beta_n  &= \beta_{i,j+1/2} = -K \left(sr \frac{h_{i,j+1}-h_{i,j}}{\Delta y} + (1-sr) \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right), \\
-\beta_s  &= \beta_{i,j-1/2} = -K \left(sr \frac{h_{i,j}-h_{i,j-1}}{\Delta y} + (1-sr) \frac{b_{i,j}-b_{i,j-1}}{\Delta y}\right).
-\end{align*}  
+\alpha_e &= \alpha_{i+1/2,j} = - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \\
+\alpha_w &= \alpha_{i-1/2,j} = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \\
+\beta_n  &= \beta_{i,j+1/2} = - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \\
+\beta_s  &= \beta_{i,j-1/2} = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}.
+\end{align*}
+
 Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
 
 \begin{figure}[ht]
