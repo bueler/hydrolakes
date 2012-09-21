@@ -22,19 +22,23 @@ function W = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %
 % ** MODEL **:  The major ("state space") functions are W and Y.  Some
 % derived functions are:
-%   P_o = rhoi g H = overburden pressur
-%   psi = P + rhow g (b + W) = hydraulic potential of top of water layer
+%   P_o = rhoi g H = overburden pressure
 %   Z = tau^{-1} (Y-W) + c_1 (W_r - Y) |v_b|
 %       /  0,                               if Z >= c_2 A Y P_o^3
 %   P = |  P_o,                             if Z <= 0
 %       \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  in all other cases
 %   V = - (K / (rhow g)) grad P - K grad b
 %   q = V W - K W grad W
+% The hydraulic potential of the top of the water layer is
+% psi = P + rhow g (b + W), but it turns out we do not need this internally.
 % Note that the velocity has named components  V = (alpha,beta)  in the code.
 % Also note the flux  q  is a sum of advective and diffusive components.
 % The evolution equations are
+%
 %   dW/dt + div( V W ) = div ( K W grad W ) + Phi
 %   dY/dt = - tau^{-1} (Y - W)
+%
+% Note that the equation for dY/dt is a damped (penalized) version of Y=W.
 %
 % ** USAGE **  The calling form is
 %
@@ -50,52 +54,63 @@ function W = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 % If floatmask==1 then W=0 at that point.  (FIXME: account for water lost.)
 
 % the following parameters could be packaged into an input structure:
+spera = 31556926.0;
 rhoi = 910.0;   % kg m-3
 rhow = 1028.0;  % kg m-3
 r = rhoi / rhow;
 g = 9.81;       % m s-2
-K = 1.0e-3;     % m s-1   FIXME
 
-spera = 31556926.0;
+% major model parameters:
+K = 5.0e-3;            % m s-1   FIXME
+tau = (1/50) * spera;  % s; = 1 week
+Wr = 1.0;              % m
+c1 = 0.500;            % m-1
+c2 = 0.040;            % [pure]
 
-s = 1;  % s=1 is full overburden
-sr = s * r;
-
+% get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);
+Mx = Mx-1;  My = My-1;
 dx = x(2) - x(1);
 dy = y(2) - y(1);
-
+% generate staggered grid
 xs = 0.5 * (x(1:end-1) + x(2:end));
 ys = 0.5 * (y(1:end-1) + y(2:end));
 
-dhdx  = (h(2:end,:)-h(1:end-1,:)) / dx;
-dbdx  = (b(2:end,:)-b(1:end-1,:)) / dx;
-alpha = - K * (sr * dhdx + (1-sr) * dbdx);
-dhdy  = (h(:,2:end)-h(:,1:end-1)) / dy;
-dbdy  = (b(:,2:end)-b(:,1:end-1)) / dy;
-beta  = - K * (sr * dhdy + (1-sr) * dbdy);
-
-%figure(5), scale=1.0e11;
-%quiver(xs/1000,ys/1000,scale*alpha(:,1:end-1),scale*beta(1:end-1,:))
-%title('velocity'), xlabel('x (km)'), ylabel('y (km)')
+% bed slope components onto staggered grid
+dbdx = (b(2:end,:)-b(1:end-1,:)) / dx;
+dbdy = (b(:,2:end)-b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
 
-maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
-dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
-fprintf('max |v| = %.3f m a-1  and  dtCFL = %.3f a\n',...
-  maxv*spera, dtCFL/spera)
-
 fprintf('running ...\n')
 fprintf('                                ')
-fprintf('max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n')
+fprintf('        [max V (m/a)    dtCFL (a)    dtdiffusion (a)  -->  dt (a)]\n')
+fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n')
 
 t = ts;
 W = W0;
+Y = Y0;
 volW = 0.0;
 dA = dx*dy;
+
 while t<te
-  dt = min(te-t,dtmax);
+  Po = rhoi * g * (h-b);
+  Z = (1/tau) * (Y-W) + c_1 (W_r - Y) |v_b|
+%       /  0,                               if Z >= c_2 A Y P_o^3
+%   P = |  P_o,                             if Z <= 0
+%       \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  in all other cases
+%   V = - (K / (rhow g)) grad P - K grad b
+
+  % velocity
+  alpha = ;
+  beta  = ;
+  %figure(5)
+  %scale = 1.0e4 * spera;  % scale so 
+  %quiver(xs/1000,ys/1000,scale*alpha(:,1:end-1),scale*beta(1:end-1,:))
+  %title('velocity'), xlabel('x (km)'), ylabel('y (km)')
+
+  maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
+  dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
 
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
@@ -103,8 +118,11 @@ while t<te
 
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
   dtDIFF = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
-  dt = min([dt dtCFL dtDIFF]);
-  fprintf('  t = %8.3f a [dt = %6.3f]:  ',(t+dt)/spera,dt/spera)
+  %fprintf('  t = %8.3f a [dt = %6.3f]:  ',(t+dt)/spera,dt/spera)
+
+  dt = min([te-t dtmax dtCFL dtDIFF]);
+  fprintf('        [%.5e  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
+          maxv*spera, dtCFL/spera, dtDIFF/spera, dt/spera)
 
   nux = dt / dx;        nuy = dt / dy;
   mux = K * dt / dx^2;  muy = K * dt / dy^2;
@@ -139,7 +157,8 @@ while t<te
   end
 
   sumnew = sum(sum(Wnew));
-  fprintf('%7.3f  %7.3f',max(max(Wnew)),sumnew/(Mx*My))
+  fprintf('t = %.5f (a):  %7.3f  %7.3f',...
+          (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)))
 
   volnew = sumnew * dA;
   balance = (volW + inputvol - losevol) - volnew;
