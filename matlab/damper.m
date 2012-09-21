@@ -67,6 +67,8 @@ Wr = 1.0;              % m
 c1 = 0.500;            % m-1
 c2 = 0.040;            % [pure]
 
+c0 = K / (rhow * g);   % constant in velocity formula
+
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);
 Mx = Mx-1;  My = My-1;
@@ -77,8 +79,8 @@ xs = 0.5 * (x(1:end-1) + x(2:end));
 ys = 0.5 * (y(1:end-1) + y(2:end));
 
 % bed slope components onto staggered grid
-dbdx = (b(2:end,:)-b(1:end-1,:)) / dx;
-dbdy = (b(:,2:end)-b(:,1:end-1)) / dy;
+dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
+dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
 
@@ -94,32 +96,44 @@ volW = 0.0;
 dA = dx*dy;
 
 while t<te
-  Po = rhoi * g * (h-b);
-  Z = (1/tau) * (Y-W) + c_1 (W_r - Y) |v_b|
-%       /  0,                               if Z >= c_2 A Y P_o^3
-%   P = |  P_o,                             if Z <= 0
-%       \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  in all other cases
-%   V = - (K / (rhow g)) grad P - K grad b
+  % pressure is nontrivial
+  Po = rhoi * g * (h - b);
+  Z = (1/tau) * (Y - W) + c1 * (Wr - Y) .* magvb;
+  %     /  0,                               Z >= c_2 A Y P_o^3
+  % P = |  P_o,                             Z <= 0
+  %     \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  other cases
+  P = Po;  % addresses Z <= 0 cases already, and allocates
+  for i=1:Mx
+    for j=1:My
+      if Z(i,j) >= c2 * A * Y(i,j) * Po(i,j)^3
+        P(i,j) = 0;
+      elseif Z(i,j) > 0
+        P(i,j) = Po(i,j) - Z(i,j)^(1/3) * (c2 * A * Y(i,j))^(-1/3);
+      end
+    end
+  end
 
-  % velocity
-  alpha = ;
-  beta  = ;
+  % grad pressure
+  dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
+  dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;
+
+  % velocity  V = - c0 grad P - K grad b = (alpha,beta)
+  alpha = - c0 * dPdx - K * dbdx;
+  beta  = - c0 * dPdy - K * dbdy;
   %figure(5)
-  %scale = 1.0e4 * spera;  % scale so 
+  %scale = 1.0e4 * spera;  % scale so that 10000 m/a
   %quiver(xs/1000,ys/1000,scale*alpha(:,1:end-1),scale*beta(1:end-1,:))
   %title('velocity'), xlabel('x (km)'), ylabel('y (km)')
-
-  maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
-  dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
 
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
   Wno = 0.5 * (W(:,2:end) + W(:,1:end-1));
 
+  % determine time step adaptively
+  maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
+  dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
   dtDIFF = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
-  %fprintf('  t = %8.3f a [dt = %6.3f]:  ',(t+dt)/spera,dt/spera)
-
   dt = min([te-t dtmax dtCFL dtDIFF]);
   fprintf('        [%.5e  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
           maxv*spera, dtCFL/spera, dtDIFF/spera, dt/spera)
@@ -132,6 +146,7 @@ while t<te
   inputvol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
+      % conserve water
       Wij = W(i,j);
       upe = up(alpha(i,j),  Wij,     W(i+1,j));
       upw = up(alpha(i-1,j),W(i-1,j),Wij);
@@ -143,6 +158,10 @@ while t<te
           muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1))) + ...
           inputdepth;
       inputvol = inputvol + inputdepth * dA;
+
+      % evolve capacity
+      X = dt / tau;
+      Ynew(i,j) = (1 / (1+x)) * Y(i,j) + (1 / (1 + (1/x))) * Wnew(i,j);
     end
   end
 
