@@ -1,7 +1,7 @@
 \documentclass[12pt,final]{amsart}%default 10pt
 %prepared in AMSLaTeX, under LaTeX2e
 
-\usepackage[margin=1in]{geometry}
+\usepackage[total={6.2in,9.1in},top=1.2in,left=1.1in]{geometry}
 
 \usepackage{natbib}
 
@@ -65,20 +65,14 @@
 \newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
 
 
-
 \title[]{A less-minimal model of subglacial hydrology}
 
 \author[]{Ward van Pelt and Ed Bueler}
 
 
 \begin{document}
-
 \maketitle
-
 \thispagestyle{empty}
-
-%\setcounter{tocdepth}{1}
-%\tableofcontents
 
 \section{Introduction}
 
@@ -266,7 +260,7 @@ where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=2.5in,keepaspectratio=true]{figs/diffstencil}
+\includegraphics[width=2.0in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
 \caption{The numerical scheme for Equation \eqref{eq:AGAINadeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,Y$ are needed at the regular grid points (diamonds).}
 \label{fig:stencil}
@@ -296,8 +290,13 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
-Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  FIXME
-
+Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
+\begin{equation}
+\frac{Y_{i,j}^{l+1} - Y_{i,j}^{l}}{\Delta t} = \frac{Y_{i,j}^{l+1} - W_{i,j}^{l+1}}{- \tau}. \label{eq:Yfd}
+\end{equation}
+This proposed scheme is a maximally-stable first draft numerical scheme.  It can be rewritten as a direct calculation of the updated value,
+   $$Y_{i,j}^{l+1} = \frac{1}{1 + (\Delta t/\tau)}\, Y_{i,j}^{l} + \frac{1}{1 + (\tau / \Delta t)}\, W_{i,j}^{l+1}.$$
+It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are each positive and each less than one, and which add to one.  Thus the scheme is unconditionally stable.
 
 \clearpage \newpage
 \small
@@ -306,13 +305,14 @@ Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  
 
 
 \clearpage \newpage
+\small
 \appendix
 
 \section{Positivity and stability of the numerical scheme}
 
-The explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:AGAINadeqn} is sufficiently simple so that we can analyze its properties.  First, the scheme is stable in the sense that if sufficient conditions relating to the advective and diffusive time scales are satisfied then wiggles cannot grow.  As a closely-related statement, we note that the scheme positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the same sufficient stability conditions, the discrete water thicknesses at the next time step $W_{i,j}^{l+1}$ are nonnegative.  In this appendix we sketch a maximum principle argument for stability \citep{MortonMayers} which also shows this positivity-preserving property.
+Explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:AGAINadeqn} is sufficiently simple so that we can analyze its properties.  The scheme is conditionally stable with conditions we give below.  We also note that the scheme is positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the stability conditions, the updated values $W_{i,j}^{l+1}$ are also nonnegative.  In this appendix we sketch a maximum principle argument \citep{MortonMayers} which shows both stability and the positivity-preserving property.
 
-Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  In what follows we consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
+Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  We consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
 
 We rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
 \begin{align*}
