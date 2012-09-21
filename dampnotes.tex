@@ -264,6 +264,14 @@ For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ w
 \end{equation}
 where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=2.5in,keepaspectratio=true]{figs/diffstencil}
+\bigskip
+\caption{The numerical scheme for Equation \eqref{eq:AGAINadeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,Y$ are needed at the regular grid points (diamonds).}
+\label{fig:stencil}
+\end{figure}
+
 Now we can state our scheme for equation \eqref{eq:AGAINadeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:AGAINvexpression}.
 
 Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows us to write a simplest description of the velocity:  $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation for the components:
@@ -276,13 +284,6 @@ Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows u
 
 Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=2.5in,keepaspectratio=true]{figs/diffstencil}
-\bigskip
-\caption{Numerical scheme \eqref{eq:Wfd} uses velocity components for the advection part of Equation \eqref{eq:adeqn}, and averaged water thicknesses for the diffusive part of the same Equation, at the staggered grid locations (triangles).  The water thickness values $W_{i,j}^l$ are on the regular grid points forming a five-point stencil (diamonds).  The finite volume scheme for the advection part is a donor-cell first-order upwind method for the grid-point-centered cell (dashed).}
-\label{fig:stencil}
-\end{figure}
 
 We apply the conservative upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation:
 \begin{align}
