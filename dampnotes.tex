@@ -282,8 +282,11 @@ Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows u
 \beta_s  &= \beta_{i,j-1/2} = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}.
 \end{align*}
 
-Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging: $W_e = (W_{i,j}^l + W_{i+1,j}^l)/2$, $W_w = (W_{i-1,j}^l + W_{i,j}^l)/2$, $W_n = (W_{i,j}^l + W_{i,j+1}^l)/2$, $W_s = (W_{i,j-1}^l + W_{i,j}^l)/2$.
-
+Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging:
+\begin{align*}
+W_e &= (W_{i,j}^l + W_{i+1,j}^l)/2, & W_w &= (W_{i-1,j}^l + W_{i,j}^l)/2, \\
+W_n &= (W_{i,j}^l + W_{i,j+1}^l)/2, & W_s &= (W_{i,j-1}^l + W_{i,j}^l)/2.
+\end{align*}
 
 We apply the conservative upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation:
 \begin{align}
@@ -293,22 +296,25 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
+Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  FIXME
 
 
-
+\clearpage \newpage
 \small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 
+
+\clearpage \newpage
 \appendix
 
 \section{Positivity and stability of the numerical scheme}
 
-The explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:adeqn} is sufficiently simple so that we can analyze its properties.  First, the scheme is stable in the sense that if sufficient conditions relating to the advective and diffusive time scales are satisfied then wiggles cannot grow.  Specifically, in this appendix we sketch a maximum principle argument for stability \citep{MortonMayers}.  On the other hand, as a closely-related statement, we note that the scheme positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the same sufficient stability conditions, the discrete water thicknesses at the next time step $W_{i,j}^{l+1}$ are nonnegative.
+The explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:AGAINadeqn} is sufficiently simple so that we can analyze its properties.  First, the scheme is stable in the sense that if sufficient conditions relating to the advective and diffusive time scales are satisfied then wiggles cannot grow.  As a closely-related statement, we note that the scheme positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the same sufficient stability conditions, the discrete water thicknesses at the next time step $W_{i,j}^{l+1}$ are nonnegative.  In this appendix we sketch a maximum principle argument for stability \citep{MortonMayers} which also shows this positivity-preserving property.
 
 Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  In what follows we consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
 
-Now we rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
+We rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
 \begin{align*}
  W_{i,j}^{l+1} &= \Wlij - \nu_x \left(\alpha_e \Wlij - \alpha_w W_{i-1,j}^l\right) - \nu_y \left(\beta_n \Wlij - \beta_s W_{i,j-1}^l\right)  \\
       &\qquad + \mu_x \left[W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
@@ -317,11 +323,23 @@ Now we rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$
       &\qquad + \Big[1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s)\Big] \Wlij + \Delta t \Phi_{ij}.
 \end{align*}
 The new value is a linear combination of the old values, plus a source term:
-   $$W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij + \Delta t \Phi_{ij}.$$
-Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, coefficients $A,B,C,D$ are all nonnegative, and only $E$ could be negative, depending on the time step.  In fact, let us state for simplicity a sufficient condition based on an equal split between advective and diffusive parts; let us assume
-	$$\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2},$$
-and
-    $$\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}.$$
-FIXME: to complete
+\begin{equation}
+W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij + \Delta t \Phi_{ij}. \label{eq:lincomb}
+\end{equation}
+
+Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, coefficients $A,B,C,D$ are all nonnegative, and only $E$ could be negative, depending on the time step.  Thus we can state a sufficient condition based on an equal split between advective and diffusive parts.
+
+Let us assume a CFL-type time step restriction for the advection term in  \eqref{eq:AGAINadeqn}:
+\begin{equation}
+\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
+\end{equation}
+Because we also handle the diffusion term in \eqref{eq:AGAINadeqn} explicitly, we have second time-step restriction:
+\begin{equation}
+\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
+\end{equation}
+The right-hand sides of these inequalities are each $1/2$, but of course $1-(1/2)-(1/2)=0$.  In other words the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
+	$$E = 1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
+
+Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative.  Furthermore they all add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving and stable under the stability conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
 
 \end{document}
