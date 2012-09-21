@@ -201,15 +201,44 @@ P_o, & \mathcal{Z} \le 0, \\
 P_o - \mathcal{Z}^{1/3} (c_2 A Y)^{-1/3}, & \text{all other cases}.
 \end{cases} \label{eq:pressureWY}
 \end{equation}
-The last ``normal pressure'' case occurs exactly when the given formula computes a pressure satisfying \eqref{eq:bounds}.  As a result of this scheme we have a function which computes pressure in terms of $Y,W$,
+The last ``normal pressure'' case occurs exactly when the given formula computes a pressure satisfying \eqref{eq:bounds}.  As a result of this scheme we have a function which computes pressure in terms of $Y,W$, namely $P = f(Y,W)$.  Of course $f$ is also a function of model parameters (i.e.~$W_r,c_1,c_2,\dots$) and of ice flow model variables (i.e.~$P_o,|\bv_b|$).
+
+\subsection*{Solvable mathematical model}  The above equations have now yielded a solvable mathematical model, but the reader deserves a clarified version.  We essentially have four major definitions, equations \eqref{eq:hydrostatic}, \eqref{eq:Znumerator}, \eqref{eq:pressureWY}, and \eqref{eq:vexpression} which we can apply in the following order at each time step:
+\begin{align}
+P_o &= \rho_i g (h-b), \label{eq:AGAINhydrostatic} \\
+\mathcal{Z} &= \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|, \label{eq:AGAINZnumerator} \\
+P &= \begin{cases}
+0, & \mathcal{Z} \ge c_2 A Y P_o^3\,\, (\ge 0) , \\
+P_o, & \mathcal{Z} \le 0, \\
+P_o - \mathcal{Z}^{1/3} (c_2 A Y)^{-1/3}, & \text{all other cases},
+\end{cases} \label{eq:AGAINpressureWY} \\
+\bV &= - \frac{K}{\rho_w g} \grad P - K \grad b. \label{eq:AGAINvexpression}
+\end{align}
+The time step itself is for these two evolution equations, which are equations \eqref{eq:adeqn} and \eqref{eq:dampedclosure}, respectively,
+\begin{align}
+\frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi, \label{eq:AGAINadeqn} \\
+\frac{\partial Y}{\partial t} &= \frac{Y - W}{-\tau}. \label{eq:AGAINdampedclosure}
+\end{align}
+
+The above equations relate three classes of symbols, \emph{parameters}, \emph{data functions}, and \emph{state functions}, as summarized in the following table:
+
+\begin{table}
+\begin{tabular}{r|c}
+ & symbols \\ \hline
+\emph{parameters (scalar)} & $g$, $\rho_i$, $\rho_w$, $A$, $K$, $W_r$, $c_1$, $c_2$, $\tau$ \\
+\emph{data functions} & $\Phi$, $b$, $h$, $|\bv_b|$ \\
+\emph{state functions} & $W$, $Y$
+\end{tabular}
+\end{table}
+
+\noindent The parameters are time- and space-independent.  Default values must be chosen for these parameters, even as the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.
+
+The two state functions $W$ and $Y$ are the key evolving quantities in the numerical model's memory.  They must be saved by the current model at any stopping and/or restarting point.  Initial values, and boundary values, of these quantities must somehow be supplied.  Note that we always assume these thicknesses are positive:
 \begin{equation}
-P = f(Y,W).
+W \ge 0, \qquad Y \ge 0.
 \end{equation}
-Of course $f$ is also a function of model parameters (i.e.~$W_r,c_1,c_2,\dots$) and of ice flow model variables (i.e.~$P_o,|\bv_b|$).
 
-\subsection*{Solvable mathematical model}  FIXME
-
-
+The defined quantities $P_o$, $\mathcal{Z}$, $P$, and $\bV$ in equations \eqref{eq:AGAINhydrostatic}, \dots, \eqref{eq:AGAINvexpression} could be thought of as a fourth class of symbols, \emph{derived functions}, but of course they can be eliminated from any expression according to taste.
 
 \section{Numerical scheme}
 
