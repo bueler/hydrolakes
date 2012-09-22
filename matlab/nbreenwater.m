@@ -1,12 +1,12 @@
+function W = nbreenwater(tyears,nn)
 % NBREENWATER  **FIXME this comment**
+% Form:  W = nbreenwater(tyears,nn)
+% (Note all input and output arguments are optional.)
 % Calls:   BUILDNBREEN, CONSERVEWATER, DAMPER
 % Depends: NETCDF
 
-% % if nargin<1, tyears=100.0; end
-% % if nargin<2, nn=10; end
-
-tyears=5.0;
-nn=4;
+if nargin<1, tyears=5.0; end
+if nargin<2, nn=4; end
 
 filename = 'nbreen_input.nc';
 
@@ -27,29 +27,6 @@ usurf = usurf(1:nn:end,1:nn:end);
 icemask = icemask(1:nn:end,1:nn:end);
 outline = outline(1:nn:end,1:nn:end);
 
-fprintf('showing topg, usurf, icemask\n')
-
-figure(1)
-imagesc(x/1000,flipud(-y)/1000,flipud(topg)), colorbar
-title('bed elevation  (m)')
-xlabel('x (km)'), ylabel('y (km)')
-%set(gcf,'PaperPositionMode','auto')
-%print('-dpsc2',strcat('fig_bed.eps'))
-
-figure(2)
-imagesc(x/1000,flipud(-y)/1000,flipud(usurf)), colorbar
-title('surface elevation  (m)')
-xlabel('x (km)'), ylabel('y (km)')
-%set(gcf,'PaperPositionMode','auto')
-%print('-dpsc2',strcat('fig_usurf.eps'))
-
-figure(3)
-imagesc(x/1000,flipud(-y)/1000,flipud(outline))
-title('outline')
-xlabel('x (km)'), ylabel('y (km)')
-%set(gcf,'PaperPositionMode','auto')
-%print('-dpsc2',strcat('fig_outline.eps'))
-
 spera = 31556926.0;
 Phi0arr = zeros(size(icemask));
 Phi = zeros(size(icemask));
@@ -61,17 +38,67 @@ for i=1:length(x)
     end
 end
 
-figure(4)
-imagesc(x/1000,flipud(-y)/1000,flipud(Phi*spera)), colorbar
-title('water input  (m/a)')
-xlabel('x (km)'), ylabel('y (km)')
-%set(gcf,'PaperPositionMode','auto')
-%print('-dpsc2',strcat('fig_melt.eps'))
+floatmask = (usurf - topg > thk + 1.0);
 
-return
+%if nargout < 1
+if false
+  fprintf('showing initial fields: topg, usurf, outline, Phi, floatmask\n')
+
+  figure(1)
+  imagesc(x/1000,flipud(-y)/1000,flipud(topg)), colorbar
+  title('bed elevation  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_bed.eps'))
+
+  figure(2)
+  imagesc(x/1000,flipud(-y)/1000,flipud(usurf)), colorbar
+  title('surface elevation  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_usurf.eps'))
+
+  figure(3)
+  imagesc(x/1000,flipud(-y)/1000,flipud(outline))
+  title('outline')
+  xlabel('x (km)'), ylabel('y (km)')
+  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_outline.eps'))
+
+  figure(4)
+  imagesc(x/1000,flipud(-y)/1000,flipud(Phi*spera)), colorbar
+  title('water input  (m/a)')
+  xlabel('x (km)'), ylabel('y (km)')
+  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_melt.eps'))
+
+  figure(5)
+  imagesc(x/1000,flipud(-y)/1000,flipud(floatmask)), colorbar
+  title('mask for where ice is floating')
+  xlabel('x (km)'), ylabel('y (km)')
+end
+
 
 W0 = zeros(size(topg));
+Y0 = W0;
+vb = 50.0/spera;    % ice speed (m s-1; = 50 m a-1)
+magvb = vb * ones(size(topg));
 ts = 0.0;
 te = tyears*spera;
-W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
+%W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
+[W, Y, P] = damper(x,y,topg,usurf,magvb,floatmask,W0,Y0,Phi,ts,te,5);
 
+if nargout < 1
+  fprintf('showing final fields: W, Y, P\n')
+
+  figure(6)
+  imagesc(x/1000,flipud(-y)/1000,flipud(W)), colorbar
+  title('water thickness W  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+
+  figure(7)
+  imagesc(x/1000,flipud(-y)/1000,flipud(Y)), colorbar
+  title('capacity thickness Y  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+
+  figure(8)
+  imagesc(x/1000,flipud(-y)/1000,flipud(P)), colorbar
+  title('water pressure P  (Pa)')
+  xlabel('x (km)'), ylabel('y (km)')
+end

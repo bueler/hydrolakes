@@ -1,4 +1,4 @@
-function W = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
+function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 % DAMPER Runs a nearly-full-cavity Darcy flux subglacial hydrology
 % model.
 %
@@ -42,14 +42,15 @@ function W = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %
 % ** USAGE **  The calling form is
 %
-%      W = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
+%      [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %
 % The input data has already been described.  Regarding the last three
 % scalar arguments, the code runs from time  ts  to time  te  using at
 % least  Nmin  time steps.  Thus the maximum time step is  (te-ts)/Nmin,
 % but the code does adaptive time-stepping.  At each time step the code
 % reports time step, time step restrictions (CFL for advection and
-% criterion for diffusion), and total water amount.
+% criterion for diffusion), and total water amount.  The output variables
+% are the final values of the state variables W,Y and the pressure P.
 
 % If floatmask==1 then W=0 at that point.  (FIXME: account for water lost.)
 
@@ -61,6 +62,7 @@ r = rhoi / rhow;
 g = 9.81;       % m s-2
 
 % major model parameters:
+A = 3.1689e-24;     % viscosity parameter (Pa-3 s-1)
 K = 5.0e-3;            % m s-1   FIXME
 tau = (1/50) * spera;  % s; = 1 week
 Wr = 1.0;              % m
@@ -84,10 +86,9 @@ dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
 
-fprintf('running ...\n')
-fprintf('                                ')
+fprintf('running ...\n\n')
 fprintf('        [max V (m/a)    dtCFL (a)    dtdiffusion (a)  -->  dt (a)]\n')
-fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n')
+fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
 
 t = ts;
 W = W0;
@@ -138,6 +139,7 @@ while t<te
   fprintf('        [%.5e  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
           maxv*spera, dtCFL/spera, dtDIFF/spera, dt/spera)
 
+  X = dt / tau;  % appears in update formula for Y
   nux = dt / dx;        nuy = dt / dy;
   mux = K * dt / dx^2;  muy = K * dt / dy^2;
 
@@ -160,8 +162,7 @@ while t<te
       inputvol = inputvol + inputdepth * dA;
 
       % evolve capacity
-      X = dt / tau;
-      Ynew(i,j) = (1 / (1+x)) * Y(i,j) + (1 / (1 + (1/x))) * Wnew(i,j);
+      Ynew(i,j) = (1 / (1+X)) * Y(i,j) + (1 / (1 + (1/X))) * Wnew(i,j);
     end
   end
 
