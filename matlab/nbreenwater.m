@@ -1,4 +1,4 @@
-function W = nbreenwater(tyears,nn)
+function [W, Y] = nbreenwater(tyears,nn,W0,Y0)
 % NBREENWATER  **FIXME this comment**
 % Form:  W = nbreenwater(tyears,nn)
 % (Note all input and output arguments are optional.)
@@ -40,9 +40,9 @@ end
 
 floatmask = (usurf - topg > thk + 1.0);
 
-%if nargout < 1
-if false
-  fprintf('showing initial fields: topg, usurf, outline, Phi, floatmask\n')
+if nargout < 1
+%if false
+  fprintf('showing initial fields: topg, usurf, outline, Phi, geometric psi\n')
 
   figure(1)
   imagesc(x/1000,flipud(-y)/1000,flipud(topg)), colorbar
@@ -69,14 +69,21 @@ if false
   %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_melt.eps'))
 
   figure(5)
-  imagesc(x/1000,flipud(-y)/1000,flipud(floatmask)), colorbar
-  title('mask for where ice is floating')
+  rhoi = 910.0;  rhow = 1028.0;  g = 9.81;
+  psi = rhoi * g * thk + rhow * g * topg;
+  imagesc(x/1000,flipud(-y)/1000,flipud(psi)), colorbar
+  title('hydraulic potential from geometry  (Pa)')
   xlabel('x (km)'), ylabel('y (km)')
 end
 
+%return
 
-W0 = zeros(size(topg));
-Y0 = W0;
+if nargin < 3
+  W0 = zeros(size(topg));
+end
+if nargin < 4
+  Y0 = W0;
+end
 vb = 50.0/spera;    % ice speed (m s-1; = 50 m a-1)
 magvb = vb * ones(size(topg));
 ts = 0.0;
@@ -100,5 +107,14 @@ if nargout < 1
   figure(8)
   imagesc(x/1000,flipud(-y)/1000,flipud(P)), colorbar
   title('water pressure P  (Pa)')
+  xlabel('x (km)'), ylabel('y (km)')
+
+  figure(9)
+  Pmask = ones(size(P));
+  Po = rhoi * g * thk;
+  Pmask(P < 0.001*Po) = 0;
+  Pmask(P > 0.999*Po) = 2;
+  imagesc(x/1000,flipud(-y)/1000,flipud(Pmask)), colorbar
+  title('pressure mask:  0 = underpressure,  1 = normal,  2 = overpressure')
   xlabel('x (km)'), ylabel('y (km)')
 end

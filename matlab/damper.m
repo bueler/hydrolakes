@@ -1,11 +1,8 @@
 function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
-% DAMPER Runs a nearly-full-cavity Darcy flux subglacial hydrology
-% model.
-%
-% ** DESCRIPTION **: This model combines an advection-diffusion
-% equation for water thickness W with a penalized form of the
-% "Y=W" full-cavity condition which gives evolution of the capacity
-% thickness Y.
+% DAMPER  A nearly-full-cavity, Darcy flux subglacial hydrology model.
+% This model combines an advection-diffusion equation for water thickness W
+% with a penalized form of the "Y=W" full-cavity condition which gives
+% evolution of the capacity thickness Y.
 %
 % ** INPUT DATA **:  The input data are given on (Mx+1) x (My+1) grids:
 %   x = coordinate vector of length Mx+1
@@ -20,8 +17,9 @@ function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 % Note the ice thickness is  H = h - b  if  floatmask==0  and  H = 0
 % otherwise.
 %
-% ** MODEL **:  The major ("state space") functions are W and Y.  Some
-% derived functions are:
+% ** MODEL EQUATIONS **:  The equations are described in dampnotes.pdf.
+% Here is a summary only.  The major ("state space") functions are W and Y.
+% Derived fields include pressure P, velocity V, and flux q:
 %   P_o = rhoi g H = overburden pressure
 %   Z = tau^{-1} (Y-W) + c_1 (W_r - Y) |v_b|
 %       /  0,                               if Z >= c_2 A Y P_o^3
@@ -30,7 +28,7 @@ function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %   V = - (K / (rhow g)) grad P - K grad b
 %   q = V W - K W grad W
 % The hydraulic potential of the top of the water layer is
-% psi = P + rhow g (b + W), but it turns out we do not need this internally.
+% psi = P + rhow g (b + W), but we do not need to compute it separately.
 % Note that the velocity has named components  V = (alpha,beta)  in the code.
 % Also note the flux  q  is a sum of advective and diffusive components.
 % The evolution equations are
@@ -62,9 +60,9 @@ r = rhoi / rhow;
 g = 9.81;       % m s-2
 
 % major model parameters:
-A = 3.1689e-24;     % viscosity parameter (Pa-3 s-1)
-K = 5.0e-3;            % m s-1   FIXME
-tau = (1/50) * spera;  % s; = 1 week
+A = 3.1689e-24;        % ice softness (Pa-3 s-1)
+K = 1.0e-2;            % m s-1   FIXME
+tau = (1/50) * spera;  % s; about 1 week
 Wr = 1.0;              % m
 c1 = 0.500;            % m-1
 c2 = 0.040;            % [pure]
@@ -72,8 +70,7 @@ c2 = 0.040;            % [pure]
 c0 = K / (rhow * g);   % constant in velocity formula
 
 % get grid parameters from W0; other fields must match but code does not check
-[Mx, My] = size(W0);
-Mx = Mx-1;  My = My-1;
+[Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
 dx = x(2) - x(1);
 dy = y(2) - y(1);
 % generate staggered grid
@@ -85,16 +82,15 @@ dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
 dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
-
-fprintf('running ...\n\n')
-fprintf('        [max V (m/a)    dtCFL (a)    dtdiffusion (a)  -->  dt (a)]\n')
-fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
-
 t = ts;
 W = W0;
 Y = Y0;
 volW = 0.0;
 dA = dx*dy;
+
+fprintf('running ...\n\n')
+fprintf('        [max V (m/a)    dtCFL (a)    dtDIFF (a)  -->  dt (a)]\n')
+fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
 
 while t<te
   % pressure is nontrivial
@@ -104,12 +100,16 @@ while t<te
   % P = |  P_o,                             Z <= 0
   %     \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  other cases
   P = Po;  % addresses Z <= 0 cases already, and allocates
-  for i=1:Mx
-    for j=1:My
-      if Z(i,j) >= c2 * A * Y(i,j) * Po(i,j)^3
+  for i=1:Mx+1
+    for j=1:My+1
+      if i==1 | i==Mx+1 | j==1 | j==My+1  % boundary case
         P(i,j) = 0;
-      elseif Z(i,j) > 0
-        P(i,j) = Po(i,j) - Z(i,j)^(1/3) * (c2 * A * Y(i,j))^(-1/3);
+      else                                % interior case
+        if Z(i,j) >= c2 * A * Y(i,j) * Po(i,j)^3
+          P(i,j) = 0;
+        elseif Z(i,j) > 0
+          P(i,j) = Po(i,j) - Z(i,j)^(1/3) * (c2 * A * Y(i,j))^(-1/3);
+        end
       end
     end
   end
@@ -143,7 +143,8 @@ while t<te
   nux = dt / dx;        nuy = dt / dy;
   mux = K * dt / dx^2;  muy = K * dt / dy^2;
 
-  Wnew = W;  % copies unaltered zero b.c.s
+  Wnew = W;  % copies unaltered initial b.c.s
+  Ynew = Y;  % copies unaltered initial b.c.s
 
   inputvol = 0.0;
   for i=2:length(x)-1
@@ -176,17 +177,18 @@ while t<te
     end
   end
 
+  % report on new state W,Y
   sumnew = sum(sum(Wnew));
-  fprintf('t = %.5f (a):  %7.3f  %7.3f',...
-          (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)))
-
   volnew = sumnew * dA;
   balance = (volW + inputvol - losevol) - volnew;
-  fprintf('        %.3f        %.0e\n',...
-            volnew/(1e9*1e6),abs(balance/volnew))
+  fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
+          (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
+          volnew/(1e9*1e6),abs(balance/volnew))
 
+  % actually update to new state W,Y
   volW = volnew;
   W = Wnew;
+  Y = Ynew;
   t = t + dt;
 end
 
@@ -196,3 +198,4 @@ end
    else
      z = v * R;
    end
+
