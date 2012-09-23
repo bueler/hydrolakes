@@ -1,0 +1,14 @@
+The codes and data in this subdirectory do the runs which appeared in
+Ed's not very impressive talk at IGS 2012.  To use, two actions are
+needed.
+
+1) Download or link the SeaRISE Antarctic data set
+[ALBMAPv1 at SeaRISE site](http://websrv.cs.umt.edu/isis/images/4/4d/Antarctica_5km_dev1.0.nc)
+
+2) Link the code netcdf.m which is up one level in the directory:
+  $ ln -s ../netcdf.m
+
+Then run in Matlab/Octave:
+
+  >> antlakes
+

@@ -28,6 +28,7 @@
 *.mtc
 *.mtc0
 Antarctica_5km_dev1.0.nc
+netcdf.m
 notes.pdf
 slides.pdf
 phoenix/phoenix.pdf
