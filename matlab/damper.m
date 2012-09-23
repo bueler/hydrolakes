@@ -114,6 +114,9 @@ while t<te
     end
   end
 
+  % FIXME:  bypass and go back to overburden
+  %P = Po;
+
   % grad pressure
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
   dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;

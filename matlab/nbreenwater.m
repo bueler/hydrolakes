@@ -40,8 +40,8 @@ end
 
 floatmask = (usurf - topg > thk + 1.0);
 
-if nargout < 1
-%if false
+if true
+%if nargout < 1
   fprintf('showing initial fields: topg, usurf, outline, Phi, geometric psi\n')
 
   figure(1)
@@ -84,6 +84,7 @@ end
 if nargin < 4
   Y0 = W0;
 end
+
 vb = 50.0/spera;    % ice speed (m s-1; = 50 m a-1)
 magvb = vb * ones(size(topg));
 ts = 0.0;
@@ -91,7 +92,8 @@ te = tyears*spera;
 %W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
 [W, Y, P] = damper(x,y,topg,usurf,magvb,floatmask,W0,Y0,Phi,ts,te,5);
 
-if nargout < 1
+if true
+%if nargout < 1
   fprintf('showing final fields: W, Y, P\n')
 
   figure(6)
@@ -118,3 +120,4 @@ if nargout < 1
   title('pressure mask:  0 = underpressure,  1 = normal,  2 = overpressure')
   xlabel('x (km)'), ylabel('y (km)')
 end
+
