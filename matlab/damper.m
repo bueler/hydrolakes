@@ -1,4 +1,4 @@
-function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
+function [W, Y, P] = damper(x,y,b,h,magvb,outline,W0,Y0,Phi,ts,te,Nmin)
 % DAMPER  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
 % with a penalized form of the "Y=W" full-cavity condition which gives
@@ -10,12 +10,11 @@ function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %   b = bed elevation; array of (Mx+1) x (My+1) values
 %   h = surface elevation; <same size>
 %   magvb = |v_b| = magnitude of sliding velocity; <same size>
-%   floatmask = 1 if floating, 0 otherwise; <same size>
+%   outline = 1 if inside modeled region, 0 otherwise; <same size>
 %   W0 = initial values for water thickness W; <same size>
 %   Y0 = initial values for capacity thickness Y; <same size>
 %   Phi = melt rate as m s-1; <same size>
-% Note the ice thickness is  H = h - b  if  floatmask==0  and  H = 0
-% otherwise.
+% Note that where outline==0 we set the water thickness W to zero.
 %
 % ** MODEL EQUATIONS **:  The equations are described in dampnotes.pdf.
 % Here is a summary only.  The major ("state space") functions are W and Y.
@@ -40,7 +39,7 @@ function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 %
 % ** USAGE **  The calling form is
 %
-%      [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
+%      [W, Y, P] = damper(x,y,b,h,magvb,outline,W0,Y0,Phi,ts,te,Nmin)
 %
 % The input data has already been described.  Regarding the last three
 % scalar arguments, the code runs from time  ts  to time  te  using at
@@ -50,9 +49,6 @@ function [W, Y, P] = damper(x,y,b,h,magvb,floatmask,W0,Y0,Phi,ts,te,Nmin)
 % criterion for diffusion), and total water amount.  The output variables
 % are the final values of the state variables W,Y and the pressure P.
 
-% If floatmask==1 then W=0 at that point.  (FIXME: account for water lost.)
-
-% the following parameters could be packaged into an input structure:
 spera = 31556926.0;
 rhoi = 910.0;   % kg m-3
 rhow = 1028.0;  % kg m-3
@@ -61,11 +57,13 @@ g = 9.81;       % m s-2
 
 % major model parameters:
 A = 3.1689e-24;        % ice softness (Pa-3 s-1)
-K = 1.0e-2;            % m s-1   FIXME
+K = 1.0e-2;            % m s-1   FIXME: want Kmax or Kmin according to W > Wr
 tau = (1/50) * spera;  % s; about 1 week
 Wr = 1.0;              % m
 c1 = 0.500;            % m-1
 c2 = 0.040;            % [pure]
+
+Yeps = 0.0001;         % minimum Y required in P formulation (avoid division by zero)
 
 c0 = K / (rhow * g);   % constant in velocity formula
 
@@ -82,8 +80,11 @@ dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
 dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
+dt = tau; % FIXME: only relevant in ward==true case
+
 t = ts;
 W = W0;
+Wold = W0;  % FIXME:  this means dW/dt=0 at t=0
 Y = Y0;
 volW = 0.0;
 dA = dx*dy;
@@ -92,10 +93,21 @@ fprintf('running ...\n\n')
 fprintf('        [max V (m/a)    dtCFL (a)    dtDIFF (a)  -->  dt (a)]\n')
 fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
 
+ward = false;
+
 while t<te
-  % pressure is nontrivial
+  % overburden pressure
   Po = rhoi * g * (h - b);
-  Z = (1/tau) * (Y - W) + c1 * (Wr - Y) .* magvb;
+  Po(h <= 0.0) = 0.0;   % if no ice, ignor depth to bed
+
+  % pressure is nontrivial
+  Vcav = c1 * (Wr - Y) .* magvb;
+  Vcav(Vcav < 0.0) = 0.0;
+  if ward
+    Z = (Y - W)/dt - (W - Wold)/dt + Vcav;
+  else
+    Z = (Y - W)/tau                + Vcav;
+  end
   %     /  0,                               Z >= c_2 A Y P_o^3
   % P = |  P_o,                             Z <= 0
   %     \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  other cases
@@ -104,11 +116,14 @@ while t<te
     for j=1:My+1
       if i==1 | i==Mx+1 | j==1 | j==My+1  % boundary case
         P(i,j) = 0;
+      elseif outline(i,j) < 0.5
+        P(i,j) = 0;
       else                                % interior case
-        if Z(i,j) >= c2 * A * Y(i,j) * Po(i,j)^3
+        gam = c2 * A * (Y(i,j) + Yeps);
+        if Z(i,j) >= gam * Po(i,j)^3
           P(i,j) = 0;
         elseif Z(i,j) > 0
-          P(i,j) = Po(i,j) - Z(i,j)^(1/3) * (c2 * A * Y(i,j))^(-1/3);
+          P(i,j) = Po(i,j) - (Z(i,j) / gam)^(1/3);
         end
       end
     end
@@ -166,14 +181,21 @@ while t<te
       inputvol = inputvol + inputdepth * dA;
 
       % evolve capacity
-      Ynew(i,j) = (1 / (1+X)) * Y(i,j) + (1 / (1 + (1/X))) * Wnew(i,j);
+      if ward
+        %s0 = c1 * Wr * magvb(i,j);
+        %s1 = c1 * magvb(i,j) + c2 * A * (Po(i,j) - P(i,j))^3;
+        %Ynew(i,j) = ( Y(i,j) + s0 * dt ) / (1 + s1 * dt);
+        Ynew(i,j) = 0.5 * ( Y(i,j) + 2 * Wnew(i,j) - W(i,j) );
+      else
+        Ynew(i,j) = (1 / (1+X)) * Y(i,j) + (1 / (1 + (1/X))) * Wnew(i,j);
+      end
     end
   end
 
   losevol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
-      if floatmask(i,j) > 0.5
+      if outline(i,j) < 0.5
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
@@ -187,6 +209,10 @@ while t<te
   fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
           (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
           volnew/(1e9*1e6),abs(balance/volnew))
+
+  if ward
+    Wold = W;
+  end
 
   % actually update to new state W,Y
   volW = volnew;

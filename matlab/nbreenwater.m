@@ -11,7 +11,7 @@ if nargin<2, nn=4; end
 filename = 'nbreen_input.nc';
 
 fprintf('reading variables x,y,thk,topg,usurf,icemask\n  from text files %s\n',filename)
-[x,y,thk,topg,usurf,icemask, outline] = buildnbreen(0,filename);
+[x,y,thk,topg,usurf,icemask,outline] = buildnbreen(0,filename);
 
 fprintf('x range: %.3f km to %.3fkm\n',min(x)/1000,max(x)/1000)
 fprintf('y range: %.3f km to %.3fkm\n',min(y)/1000,max(y)/1000)
@@ -37,8 +37,6 @@ for i=1:length(x)
         if usurf(i,j)==0.0, usurf(i,j)=topg(i,j); end
     end
 end
-
-floatmask = (usurf - topg > thk + 1.0);
 
 if true
 %if nargout < 1
@@ -90,7 +88,7 @@ magvb = vb * ones(size(topg));
 ts = 0.0;
 te = tyears*spera;
 %W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
-[W, Y, P] = damper(x,y,topg,usurf,magvb,floatmask,W0,Y0,Phi,ts,te,5);
+[W, Y, P] = damper(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);
 
 if true
 %if nargout < 1
