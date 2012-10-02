@@ -133,7 +133,7 @@ In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we de
 \end{equation}
 As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bV\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
 
-\subsection*{Capacity of the system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
+\subsection*{Capacity of the linked-cavity system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
   P_o = \rho_i g H = \rho_i g (h-b).
 \end{equation}
@@ -145,30 +145,36 @@ be the effective pressure.  The effective pressure is high if the subglacial wat
 
 The evolution of the capacity thickness $Y$ (m) of a linked-cavity system is described as the sum of opening by cavitation and closure by creep:
 \begin{equation}
-\frac{\partial Y}{\partial t} = c_1 \left(W_r - Y\right) |\bv_b| - c_2 A |N|^3 Y, \label{eq:capacity}
+\frac{\partial Y}{\partial t} = c_1 |\bv_b| \min\left\{0,W_r - Y\right\} - c_2 A |N|^3 Y, \label{eq:capacity}
 \end{equation}
 where $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the ice basal velocity (i.e.~sliding velocity), $A$ is the ice softness, and $c_1,c_2$ are constants to be fit by data (see below).  We have used Glen exponent $n=3$ for concreteness.
 
-Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The creep term is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  On the other hand there are presumably-strong stresses (pressures) within the liquid water associated to keeping the cavity full because liquid water is an incompressible fluid with low viscosity.  For example, if the cavity is locally larger than local water sources can easily fill then the pressure field should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
+Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The first term in \eqref{eq:capacity}, the cavitation term, is always nonnegative (i.e.~causes opening), and it is only positive where the capacity is less than the roughness scale, namely $Y<W_r$.  The other term describing creep is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  There are presumably-strong stresses (pressures) within the liquid water associated to keeping the cavity full because liquid water is an incompressible fluid with low viscosity.
 
-\subsection*{Full-cavity closure for pressure}  At this point we do not know how to compute pressure.  The apparent state variables of the model so far are $W$,$Y$,$P$, in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables (along with a number of additional parameters, of course).  Two equations are not enough to determine these variables.  A closure is needed.
+For example, if the cavity is locally larger than local water sources can easily fill then the pressure should be locally lower, and this should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
+
+\subsection*{Full-cavity closure for pressure}  At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  They are ``state variables'' in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables (along with a number of additional parameters, of course).  Two equations are not enough to determine these variables, however.  A closure is needed.
 
 A strong closure is to require the aquifer to be full at all locations and times:
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequences of this strong closure are explored by \cite{Schoofetal2012} in some detail in a broader context.  In our simpler circumstances, equation \eqref{eq:strongclosure} allows us to eliminate ``$Y$'' and equate expressions for $\partial W/\partial t = \partial Y/\partial t$ from equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux} with that from \eqref{eq:capacity} to get this equation:
+The consequences of this strong closure are explored by \cite{Schoofetal2012}, in a broader context.  First, equation \eqref{eq:strongclosure} allows us to eliminate ``$Y$,'' but we can use the derived equality
 \begin{equation}
-\Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) = c_1 \left(W_r - W\right) |\bv_b| - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
+\frac{\partial W}{\partial t} = \frac{\partial Y}{\partial t}.\label{eq:dstrongclosure}
+\end{equation}
+From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, and using \eqref{eq:dstrongclosure} to eliminate the time derivatives, we get this equation:
+\begin{equation}
+\Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) + \Phi = c_1 |\bv_b| \min\left\{0,W_r - Y\right\} - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
 \end{equation}
 
-Though we will avoid actually solving equation \eqref{eq:ellipticpressure}, it is significant to our theory.  If we have an instantaneous water thickness field $W$ then, assuming adequate pressure boundary conditions, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure field.  Of course the pressure solution is actually subject to inequalities
+Though we will not solve \eqref{eq:ellipticpressure} directly, this equation is significant to our understanding, and to the mathematical model which we do solve.  Note that in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift quickly and thus lower the pressure back to overburden $P=P_o$, the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
-Thus the mathematical problem is an elliptic variational inequality explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be approached within a finite element \citep{SchoofStream,JouvetBueler2012} numerical paradigm.
+The mathematical problem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and adequate pressure boundary conditions is all together an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This mathematical model is explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be addressed with a finite element approach \citep{SchoofStream,JouvetBueler2012}.
 
-However, the goal of this work is the selection of suitable subglacial hydrology models for coupling to ice dynamics, and potential for parameter evaluation from observations, and these goals suggest the need for rapid implementation.  Therefore, in these notes, we seek a more easily-implemented finite difference alternative which allows us to explore the space of physical parameters using real data.
+However, the goal of this work is the initial selection of a usable subglacial hydrology model which can be coupled to ice dynamics.  We need to determine parameters from observations, and these goals suggest the need for rapid implementation.  Therefore, in these notes, we seek a more easily-implemented finite difference alternative of a model which does not require the solution of an elliptic problem at each time step.  Ours is an initial exploration of the space of physical parameters, and our model must be implementable enough to allow immediate comparison to observations.
 
 \subsection*{Nearly-full-cavity closure}  Therefore we replace rigid constraint \eqref{eq:strongclosure}, namely $0 = Y - W$, with a damped version.  Choose a characteristic time scale $\tau$ which should be short (hours to months) compared to ice flow change time scales (months to centuries).  Then consider this equation
 \begin{equation}
@@ -180,12 +186,12 @@ Equation \eqref{eq:dampedclosure} does not allow us to eliminate $Y$ as we may w
 
 On the other hand, equation \eqref{eq:dampedclosure} allows us to express pressure in terms of the geometric state variables $W$ and $Y$, as follows.  Solve \eqref{eq:capacity} for $N$, thus $P$, and substitute the expression for $\partial Y/\partial t$ from \eqref{eq:dampedclosure}:
 \begin{equation}
-P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|}{c_2 A Y}\right)^{1/3}.  \label{eq:pressurenormal}
+P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 |\bv_b| \min\left\{0,W_r - Y\right\}}{c_2 A Y}\right)^{1/3}.  \label{eq:pressurenormal}
 \end{equation}
 
 The above expression for $P$ applies only in certain ``normal'' cases, however.  In particular it assumes positive effective pressure ($N\ge 0$).  Furthermore we must address how the bounds \eqref{eq:bounds} are maintained.  Note that the denominator of the fraction in \eqref{eq:pressurenormal} is always positive but the denominator can change sign.  Let
 \begin{equation}
-\mathcal{Z} = \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|, \label{eq:Znumerator}
+\mathcal{Z} = \tau^{-1} (Y-W) + c_1 |\bv_b| \min\left\{0,W_r - Y\right\}, \label{eq:Znumerator}
 \end{equation}
 the numerator appearing in Equation \eqref{eq:pressurenormal}.
 
@@ -202,7 +208,7 @@ The last ``normal pressure'' case occurs exactly when the given formula computes
 \subsection*{Solvable mathematical model}  The above equations have now yielded a solvable mathematical model, but the reader deserves a clarified version.  We essentially have four major definitions, equations \eqref{eq:hydrostatic}, \eqref{eq:Znumerator}, \eqref{eq:pressureWY}, and \eqref{eq:vexpression} which we can apply in the following order at each time step:
 \begin{align}
 P_o &= \rho_i g (h-b), \label{eq:AGAINhydrostatic} \\
-\mathcal{Z} &= \tau^{-1} (Y-W) + c_1 \left(W_r - Y\right) |\bv_b|, \label{eq:AGAINZnumerator} \\
+\mathcal{Z} &= \tau^{-1} (Y-W) + c_1 |\bv_b| \min\left\{0,W_r - Y\right\}, \label{eq:AGAINZnumerator} \\
 P &= \begin{cases}
 0, & \mathcal{Z} \ge c_2 A Y P_o^3\,\, (\ge 0) , \\
 P_o, & \mathcal{Z} \le 0, \\
@@ -239,9 +245,9 @@ The defined quantities $P_o$, $\mathcal{Z}$, $P$, and $\bV$ in equations \eqref{
 
 \section{Numerical scheme}
 
-Equation \eqref{eq:AGAINadeqn} will be discretized in this section by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).
+\subsection*{Numerical scheme for conservation equation \eqref{eq:AGAINadeqn}}  Equation \eqref{eq:AGAINadeqn} will be discretized in this section by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximation of the continuum solution for the state functions at the grid points.
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
 
 To explain the upwind method for \eqref{eq:AGAINadeqn}, consider the model equation
 \begin{equation} \label{eq:modeladvect}
@@ -290,7 +296,7 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
-Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
+\subsection*{Numerical scheme for nearly-full equation \eqref{eq:AGAINdampedclosure}}  Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
 \begin{equation}
 \frac{Y_{i,j}^{l+1} - Y_{i,j}^{l}}{\Delta t} = \frac{Y_{i,j}^{l+1} - W_{i,j}^{l+1}}{- \tau}. \label{eq:Yfd}
 \end{equation}
@@ -298,13 +304,13 @@ This proposed scheme is a maximally-stable first draft numerical scheme.  It can
    $$Y_{i,j}^{l+1} = \frac{1}{1 + (\Delta t/\tau)}\, Y_{i,j}^{l} + \frac{1}{1 + (\tau / \Delta t)}\, W_{i,j}^{l+1}.$$
 It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are each positive and each less than one, and which add to one.  Thus the scheme is unconditionally stable.
 
-\clearpage \newpage
+%\clearpage \newpage
 \small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 
 
-\clearpage \newpage
+%\clearpage \newpage
 \small
 \appendix
 
