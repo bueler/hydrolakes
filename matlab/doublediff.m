@@ -1,10 +1,8 @@
 function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 % DOUBLEDIFF  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
-% with a penalized form of the "Y=W" full-cavity condition which gives
-% evolution of the hydraulic potential psi by a diffusion equation.
-% The input and output of this routine is pressure P, but psi and P are
-% related directly by psi = P + rhow g (b + W).
+% with a penalized form of the "Y=W" full-cavity condition.  The latter
+% evolves the hydraulic potential psi by a diffusion equation.
 %
 % ** INPUT DATA **:  The input data are given on (Mx+1) x (My+1) grids:
 %   x = coordinate vector of length Mx+1
@@ -18,34 +16,28 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 %   Phi = melt rate as m s-1; <same size>
 % Note that where outline==0 we set the water thickness W to zero.
 %
-% ** MODEL EQUATIONS **:  The equations are described in FIXME.pdf.
+% ** MODEL EQUATIONS **:  The equations are described in dampnotes.pdf.
 % Here is a summary only.  The major ("state space") functions are W and P.
-% Derived fields include hydraulic conductivity psi, velocity V, and flux q:
-%   V = - (K / (rhow g)) grad P - K grad b
-%   q = V W - K W grad W
-%   P_o = rhoi g H = overburden pressure
-%   psi_o = P_o + rhow g b
-%   psi = P + rhow g (b + W) = hydraulic potential of top of water layer
-% Note that the velocity has named components  V = (alpha,beta)  in the code.
-% Also note the flux  q  is a sum of advective and diffusive components.
+% Derived fields are:
+%   V = - (K / (rhow g)) grad P - K grad b   % velocity of water
+%   P_o = rhoi g H                           % overburden pressure
+% Note that the velocity V has components  (alpha,beta)  in the code.
 % The evolution equations are
 %
 %   dW/dt + div( V W ) = div ( K W grad W ) + Phi
-%   dpsi/dt = - E0^{-1} (Y - W)
-%
-% Note that the equation for dY/dt is a damped (penalized) version of Y=W.
+%   (E0/P_o) dP/dt = FIXME
 %
 % ** USAGE **  The calling form is
 %
-%      [W, Y, P] = damper(x,y,b,h,magvb,outline,W0,Y0,Phi,ts,te,Nmin)
+%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 %
 % The input data has already been described.  Regarding the last three
-% scalar arguments, the code runs from time  ts  to time  te  using at
+% scalar arguments, the code runs from times  ts  to  te  using at
 % least  Nmin  time steps.  Thus the maximum time step is  (te-ts)/Nmin,
 % but the code does adaptive time-stepping.  At each time step the code
 % reports time step, time step restrictions (CFL for advection and
 % criterion for diffusion), and total water amount.  The output variables
-% are the final values of the state variables W,Y and the pressure P.
+% are the final values of the state variables W,P.
 
 spera = 31556926.0;
 rhoi = 910.0;   % kg m-3
@@ -61,7 +53,7 @@ Wr = 1.0;              % m
 c1 = 0.500;            % m-1
 c2 = 0.040;            % [pure]
 
-Yeps = 0.0001;         % minimum Y required in P formulation (avoid division by zero)
+E0 = 1.0;         % m  FIXME:  not small; what is right
 
 c0 = K / (rhow * g);   % constant in velocity formula
 
@@ -78,25 +70,23 @@ dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
 dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
 dtmax = (te - ts) / Nmin;
-dt = tau; % FIXME: only relevant in ward==true case
 
 t = ts;
 W = W0;
-Wold = W0;  % FIXME:  this means dW/dt=0 at t=0
-Y = Y0;
+P = P0;
 volW = 0.0;
 dA = dx*dy;
 
 fprintf('running ...\n\n')
-fprintf('        [max V (m/a)    dtCFL (a)    dtDIFF (a)  -->  dt (a)]\n')
+fprintf('        [max V (m/a)    dtCFL (a)    dtDIFF_W (a)   dtDIFF_P (a)  -->  dt (a)]\n')
 fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
-
-ward = false;
 
 while t<te
   % overburden pressure
   Po = rhoi * g * (h - b);
   Po(h <= 0.0) = 0.0;   % if no ice, ignor depth to bed
+
+FIXME FROM HERE
 
   % pressure is nontrivial
   Vcav = c1 * (Wr - Y) .* magvb;

@@ -206,47 +206,46 @@ The above equations have now yielded a solvable mathematical model, but the read
 \frac{\partial Y}{\partial t} &= \frac{Y - W}{-\tau}. \label{eq:AGAINdampedclosure}
 \end{align}
 
+\subsection*{Alternative nearly-full closure}  As already noted, we observe that an important consequence of the full-cavity identity $Y=W$ (i.e.~equation \eqref{eq:strongclosure}) is the elliptic PDE \eqref{eq:ellipticpressure}.  This PDE describes how the pressures of different areas of the aquifer are related to each other at each instant.  However, the model in the previous subsection, equations \eqref{eq:AGAINadeqn}--\eqref{eq:AGAINdampedclosure}, does not obviously support a damped version of instantaneous relation \eqref{eq:ellipticpressure}.  In this subsection we try again, using both \eqref{eq:strongclosure} and a different nearly-full version of it, to build a model which contains a damped version of \eqref{eq:ellipticpressure}.
 
-\subsection*{Alternative nearly-full closure}  As noted, an important consequence of \eqref{eq:strongclosure}, namely $Y=W$, is equation \eqref{eq:ellipticpressure}, an elliptic PDE describing how the pressures of different areas of the aquifer are related to each other at each instant.  The model in the previous subsection, namely equations \eqref{eq:AGAINadeqn}--\eqref{eq:AGAINdampedclosure}, does not, however, obviously support a damped version of the kind of instantaneous relation determined by \eqref{eq:ellipticpressure}.  In this subsection we try again, using both \eqref{eq:strongclosure} and a different nearly-full version of it, to build a model which contains a damped version of \eqref{eq:ellipticpressure}.
-
-We approximate the time derivative of $Y=W$ by this new damped version:
+Let $E_0>0$ be a fixed, small vertical distance which is a fraction of the typical aquifer thickness.  We approximate the time derivative of $Y=W$, the identity $\partial W/\partial t = \partial Y/\partial t$, by this new damped version:
 \begin{equation}
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} =  \frac{\partial W}{\partial t}  - \frac{\partial Y}{\partial t}\label{eq:dampeddstrong}
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} =  \frac{\partial W}{\partial t}  - \frac{\partial Y}{\partial t}.\label{eq:dampeddstrong}
 \end{equation}
-where $E_0>0$ is a fixed, small vertical distance.  Note that the units do match.  As with \eqref{eq:dampedclosure}, equation \eqref{eq:dampeddstrong} represents a penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus \eqref{eq:ellipticpressure} also.
+Note that the units do match, so that the equation has units $\text{m}\,\text{s}^{-1}$.  As with the previous nearly-full relation \eqref{eq:dampedclosure}, equation \eqref{eq:dampeddstrong} represents a penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus elliptic PDE \eqref{eq:ellipticpressure} also.
 
-Note that $E_0$ is a positive constant and that $P_o$ is positive in any area where there is ice.  Therefore, in equation \eqref{eq:dampeddstrong}, $P$ increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, $P$ decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is trying to open space for water but water is being supplied slower than that).
+Note that $E_0/P_o$ is a positive in any area where there is ice.  Therefore, in equation \eqref{eq:dampeddstrong}, $P$ increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, $P$ decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is trying to open space for water but water is being supplied slower than that).
 
-Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation.  Specifically, by using the expression from \eqref{eq:conserve} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the fact $Y=W$, we get this equation:
+Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation.  Specifically, by using the expressions from \eqref{eq:conserve}, \eqref{eq:potential}, and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get this equation:
 \begin{align}
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad (P+\rho_w g (b+W))\right) - c_1 |\bv_b| \min\left\{0,W_r - W\right\} \label{eq:diffusionpressure} \\
   &\qquad\qquad + c_2 A |P_o - P|^3 W  + \Phi. \notag
 \end{align}
-This equation is a diffusion, a parabolic equation for $\psi$.
 
-We have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, diffusion equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds $W\ge 0$ and \eqref{eq:bounds}.  Writing this systematically,
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Writing this systematically we have:
 \begin{align}
 0 &\le W, \label{eq:ALTWbound} \\
 0 &\le P \le P_o, \label{eq:ALTbounds} \\
 \bV &= - \frac{K}{\rho_w g} \grad P - K \grad b, \label{eq:ALTvexpression} \\
 \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \label{eq:ALTadeqn} \\
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad P \right) + c_2 A |P_o - P|^3 W \label{eq:ALTdiffusionpressure} \\
-  &\qquad + \Div \left(K\,W (b+W) \right) - c_1 |\bv_b| \min\left\{0,W_r - W\right\} + \Phi, \notag
+  &\qquad + \Div \left(K\,W \grad b \right) - c_1 |\bv_b| \min\left\{0,W_r - W\right\} \notag \\
+  &\qquad + \Div \left(K\,W \grad W \right) + \Phi, \notag
 \end{align}
 
 
-\subsection*{On the symbols}  The above equations \eqref{eq:ALTbounds}--\eqref{eq:ALTdiffusionpressure} relate three classes of symbols, \emph{parameters}, \emph{data functions}, and \emph{state functions}, as summarized in the following table:
+\subsection*{On the symbols}  The above equations \eqref{eq:ALTbounds}--\eqref{eq:ALTdiffusionpressure} relate three classes of symbols, as summarized in the following table:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
- & symbols \\ \hline
+class & symbols \\ \hline
 \emph{parameters (scalar)} & $g$, $\rho_i$, $\rho_w$, $A$, $K$, $W_r$, $c_1$, $c_2$, $\tau$ \\
 \emph{data functions} & $\Phi$, $b$, $h$, $|\bv_b|$ \\
 \emph{state functions} & $W$, $P$
 \end{tabular}
 \end{table}
 
-\noindent The parameters are time- and space-independent.  Default values must be chosen for these parameters, even as the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.
+\noindent The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.  The state functions evolve according to the mathematical model in this work.
 
 
 
@@ -254,11 +253,17 @@ We have a new mathematical model, consisting of conservation equation \eqref{eq:
 
 \section{Numerical scheme}
 
-\subsection*{Numerical scheme for conservation equation \eqref{eq:AGAINadeqn}}  Equation \eqref{eq:AGAINadeqn} will be discretized in this section by an explicit\footnote{This is a first draft.  I expect to find that ``explicit'' is not good enough because on fine grids the diffusive time-step restriction is too severe.  The most natural ``good enough'' guess for a scheme is a semi-implicit solution with implicit treatment of the diffusive part.} conservative first-order upwind method for the advection part and a centered, second-order scheme for the nonlinear diffusion part.  Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).
+\subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  Equation \eqref{eq:adeqn} will be discretized in this section by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
+Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the appendix it is shown that the time step $\Delta t$ must satisfy
+    $$\Delta t \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) \le \frac{1}{2}$$
+where $V=(\alpha,\beta)$ is the advecting velocity, for the upwind part of the scheme to maintain stability.  The time step must also satisfy
+    $$\Delta t\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2}$$
+for the diffusion scheme to be stable.  To give some practical values, we are interested in grids of size $\Delta x = \Delta y = 500$ m.  The the maximum speed $|V|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  In that case the advective restriction gives about $\Delta t \le 0.001$ year while the diffusive restriction is about $\Delta t \le 0.1$ year.  Thus, unless velocities are unusually slow and deep lakes develop (so that $KW$ is large), we should not worry so much about the diffusive time scale.  The problem is primarily an advection.
 
-To explain the upwind method for \eqref{eq:AGAINadeqn}, consider the model equation
+To set notation to actually state the scheme, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
+
+To explain the upwind method for \eqref{eq:adeqn}, consider the model equation
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
@@ -277,11 +282,11 @@ where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 \centering
 \includegraphics[width=2.0in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
-\caption{The numerical scheme for Equation \eqref{eq:AGAINadeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,Y$ are needed at the regular grid points (diamonds).}
+\caption{The numerical scheme for Equation \eqref{eq:adeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,Y$ are needed at the regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
-Now we can state our scheme for equation \eqref{eq:AGAINadeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.
+Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.
 
 Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows us to write a simplest description of the velocity:  $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation for the components:
 \begin{align*}
@@ -305,13 +310,16 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
-\subsection*{Numerical scheme for nearly-full equation \eqref{eq:AGAINdampedclosure}}  Finally we need a numerical method for equation \eqref{eq:AGAINdampedclosure}.  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
+\subsection*{Numerical scheme for nearly-full equation \eqref{eq:AGAINdampedclosure}}    Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
 \begin{equation}
 \frac{Y_{i,j}^{l+1} - Y_{i,j}^{l}}{\Delta t} = \frac{Y_{i,j}^{l+1} - W_{i,j}^{l+1}}{- \tau}. \label{eq:Yfd}
 \end{equation}
 This proposed scheme is a maximally-stable first draft numerical scheme.  It can be rewritten as a direct calculation of the updated value,
    $$Y_{i,j}^{l+1} = \frac{1}{1 + (\Delta t/\tau)}\, Y_{i,j}^{l} + \frac{1}{1 + (\tau / \Delta t)}\, W_{i,j}^{l+1}.$$
 It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are each positive and each less than one, and which add to one.  Thus the scheme is unconditionally stable.
+
+\subsection*{Numerical scheme for alternative nearly-full equation \eqref{eq:ALTdiffusionpressure}}   FIXME:  start by computing time step restriction  
+
 
 %\clearpage \newpage
 \small
@@ -325,7 +333,7 @@ It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ a
 
 \section{Positivity and stability of the numerical scheme}
 
-Explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:AGAINadeqn} is sufficiently simple so that we can analyze its properties.  The scheme is conditionally stable with conditions we give below.  We also note that the scheme is positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the stability conditions, the updated values $W_{i,j}^{l+1}$ are also nonnegative.  In this appendix we sketch a maximum principle argument \citep{MortonMayers} which shows both stability and the positivity-preserving property.
+Explicit numerical scheme \eqref{eq:Wfd} for the model PDE \eqref{eq:adeqn} is sufficiently simple so that we can analyze its properties.  The scheme is conditionally stable with conditions we give below.  We also note that the scheme is positivity-preserving: if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are also nonnegative at step $t_l$ then, under the stability conditions, the updated values $W_{i,j}^{l+1}$ are also nonnegative.  In this appendix we sketch a maximum principle argument \citep{MortonMayers} which shows both stability and the positivity-preserving property.
 
 Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  We consider only the case where all of the discrete velocities at the middle of the cell edges are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The many other cases, where these velocity components have various signs, can be handled by similar special-case arguments like the present one, and these other cases are left as a standard exercise for the reader \citep{MortonMayers}.
 
@@ -344,11 +352,11 @@ W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + 
 
 Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, coefficients $A,B,C,D$ are all nonnegative, and only $E$ could be negative, depending on the time step.  Thus we can state a sufficient condition based on an equal split between advective and diffusive parts.
 
-Let us assume a CFL-type time step restriction for the advection term in  \eqref{eq:AGAINadeqn}:
+Let us assume a CFL-type time step restriction for the advection term in  \eqref{eq:adeqn}:
 \begin{equation}
 \nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
 \end{equation}
-Because we also handle the diffusion term in \eqref{eq:AGAINadeqn} explicitly, we have second time-step restriction:
+Because we also handle the diffusion term in \eqref{eq:adeqn} explicitly, we have second time-step restriction:
 \begin{equation}
 \mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
 \end{equation}
