@@ -88,7 +88,12 @@ magvb = vb * ones(size(topg));
 ts = 0.0;
 te = tyears*spera;
 %W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
-[W, Y, P] = damper(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);
+dd = false
+if dd
+  %FIXME: [W, Y, P] = doublediff(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);  
+else
+  [W, Y, P] = damper(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);
+end
 
 if true
 %if nargout < 1
