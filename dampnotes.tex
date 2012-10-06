@@ -60,6 +60,8 @@
 
 \newcommand{\Wlij}{W^l_{i,j}}
 \newcommand{\Wij}{W_{i,j}}
+\newcommand{\Plij}{P^l_{i,j}}
+\newcommand{\Pij}{P_{i,j}}
 \newcommand{\Ylij}{Y^l_{i,j}}
 \newcommand{\Yij}{Y_{i,j}}
 \newcommand{\upp}[3]{\big<#1\big|_{#3}\,#2\big>}
@@ -222,15 +224,15 @@ Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation.  
   &\qquad\qquad + c_2 A |P_o - P|^3 W  + \Phi. \notag
 \end{align}
 
-In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Writing this systematically we have:
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Writing this systematically again using $c_0 = K / \rho_w g$ we have:
 \begin{align}
 0 &\le W, \label{eq:ALTWbound} \\
 0 &\le P \le P_o, \label{eq:ALTbounds} \\
-\bV &= - \frac{K}{\rho_w g} \grad P - K \grad b, \label{eq:ALTvexpression} \\
+\bV &= - c_0 \grad P - K \grad b, \label{eq:ALTvexpression} \\
+\psi &= P + \rho_w g (b + W), \label{eq:ALTpotential} \\
 \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \label{eq:ALTadeqn} \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad P \right) + c_2 A |P_o - P|^3 W \label{eq:ALTdiffusionpressure} \\
-  &\qquad + \Div \left(K\,W \grad b \right) - c_1 |\bv_b| \min\left\{0,W_r - W\right\} \notag \\
-  &\qquad + \Div \left(K\,W \grad W \right) + \Phi, \notag
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A |P_o - P|^3 W \label{eq:ALTdiffusionpressure} \\
+  &\qquad - c_1 |\bv_b| \min\left\{0,W_r - W\right\} + \Phi. \notag
 \end{align}
 
 
@@ -249,17 +251,21 @@ class & symbols \\ \hline
 
 
 
-
-
 \section{Numerical scheme}
 
 \subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  Equation \eqref{eq:adeqn} will be discretized in this section by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.
 
-Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the appendix it is shown that the time step $\Delta t$ must satisfy
-    $$\Delta t \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) \le \frac{1}{2}$$
+Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the appendix it is shown that the time step must satisfy
+\begin{equation}
+\Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) \le \frac{1}{2} \label{eq:dtCFL}
+\end{equation}
 where $V=(\alpha,\beta)$ is the advecting velocity, for the upwind part of the scheme to maintain stability.  The time step must also satisfy
-    $$\Delta t\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2}$$
-for the diffusion scheme to be stable.  To give some practical values, we are interested in grids of size $\Delta x = \Delta y = 500$ m.  The the maximum speed $|V|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  In that case the advective restriction gives about $\Delta t \le 0.001$ year while the diffusive restriction is about $\Delta t \le 0.1$ year.  Thus, unless velocities are unusually slow and deep lakes develop (so that $KW$ is large), we should not worry so much about the diffusive time scale.  The problem is primarily an advection.
+\begin{equation}
+\Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2} \label{eq:dtDIFFW}
+\end{equation}
+for the diffusion scheme to be stable.
+
+To give some practical values for these time step restrictions, we are interested in grids of size $\Delta x = \Delta y = 500$ m.  The maximum speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  In that case the advective restriction \eqref{eq:dtCFL} gives about $\Delta t_{\text{CFL}} \le 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is about $\Delta t_W \le 0.1$ year.  Thus, unless velocities are unusually slow and deep lakes develop (so that $KW$ is large), we should not worry so much about the diffusive time scale.  The problem is primarily an advection.
 
 To set notation to actually state the scheme, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
 
@@ -310,6 +316,7 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
+
 \subsection*{Numerical scheme for nearly-full equation \eqref{eq:AGAINdampedclosure}}    Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
 \begin{equation}
 \frac{Y_{i,j}^{l+1} - Y_{i,j}^{l}}{\Delta t} = \frac{Y_{i,j}^{l+1} - W_{i,j}^{l+1}}{- \tau}. \label{eq:Yfd}
@@ -318,7 +325,28 @@ This proposed scheme is a maximally-stable first draft numerical scheme.  It can
    $$Y_{i,j}^{l+1} = \frac{1}{1 + (\Delta t/\tau)}\, Y_{i,j}^{l} + \frac{1}{1 + (\tau / \Delta t)}\, W_{i,j}^{l+1}.$$
 It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are each positive and each less than one, and which add to one.  Thus the scheme is unconditionally stable.
 
-\subsection*{Numerical scheme for alternative nearly-full equation \eqref{eq:ALTdiffusionpressure}}   FIXME:  start by computing time step restriction  
+
+\subsection*{Numerical scheme for alternative nearly-full equation \eqref{eq:ALTdiffusionpressure}}   Equation \eqref{eq:ALTdiffusionpressure} is, like equation \eqref{eq:adeqn}, a diffusion.  This time there are additional ``reaction'' terms, but no dominating advection terms.  Again it will be discretized by an explicit centered, second-order scheme for the nonlinear diffusion part.  And again, because this is an explicit scheme, we consider stable time steps immediately.
+
+The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof in the appendix does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  Noting that $P_o=\rho_i g H$,
+\begin{equation}
+\Delta t_P\, \left(\frac{2 K \rho_i \max H \max W}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2} \label{eq:dtDIFFP}
+\end{equation}
+The resulting time step is a certain fraction of the time step from \eqref{eq:dtDIFFW},
+\begin{equation}
+\Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.
+\end{equation}
+
+With the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 10^3$ m we have a time step $\Delta t_P$ which is 1000 times smaller than the time step $\Delta t_W$.  With these values and the previous ones identified earlier ($\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get $\Delta t_{\text{CFL}} \le 0.001$ year from \eqref{eq:dtCFL}, $\Delta t_W \le 0.1$ year from \eqref{eq:dtDIFFW}, and $\Delta t_P \le 0.0001$ year from \eqref{eq:dtDIFFP}.  Thus this scheme for pressure diffusion \eqref{eq:ALTdiffusionpressure} has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Note that the size of the stable time step $\Delta t_P$ scales inversely with the adjustable small distance $E_0$.
+
+The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}.  It is
+\begin{align}
+\frac{E_0}{P_o} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
+      &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
+      &\qquad + c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 W - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j} \notag
+\end{align}
+where at the beginning of each step we compute the gridded values of the hydraulic potential,
+	$$\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij).$$
 
 
 %\clearpage \newpage

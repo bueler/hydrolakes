@@ -86,51 +86,20 @@ while t<te
   Po = rhoi * g * (h - b);
   Po(h <= 0.0) = 0.0;   % if no ice, ignor depth to bed
 
-FIXME FROM HERE
+  % terms in pressure equation
+  Ocav = c1 * (Wr - W) .* magvb;
+  Ocav(Ocav < 0.0) = 0.0;
+  Ccrp = c2 * (Po - P).^3 .* W;
 
-  % pressure is nontrivial
-  Vcav = c1 * (Wr - Y) .* magvb;
-  Vcav(Vcav < 0.0) = 0.0;
-  if ward
-    Z = (Y - W)/dt - (W - Wold)/dt + Vcav;
-  else
-    Z = (Y - W)/tau                + Vcav;
-  end
-  %     /  0,                               Z >= c_2 A Y P_o^3
-  % P = |  P_o,                             Z <= 0
-  %     \  P_o - Z^{1/3} (c_2 A Y)^{-1/3},  other cases
-  P = Po;  % addresses Z <= 0 cases already, and allocates
-  for i=1:Mx+1
-    for j=1:My+1
-      if i==1 | i==Mx+1 | j==1 | j==My+1  % boundary case
-        P(i,j) = 0;
-      elseif outline(i,j) < 0.5
-        P(i,j) = 0;
-      else                                % interior case
-        gam = c2 * A * (Y(i,j) + Yeps);
-        if Z(i,j) >= gam * Po(i,j)^3
-          P(i,j) = 0;
-        elseif Z(i,j) > 0
-          P(i,j) = Po(i,j) - (Z(i,j) / gam)^(1/3);
-        end
-      end
-    end
-  end
+FIXME
 
-  % FIXME:  bypass and go back to overburden
-  %P = Po;
-
-  % grad pressure
+  % grad pressure and grad water
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
   dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;
 
   % velocity  V = - c0 grad P - K grad b = (alpha,beta)
   alpha = - c0 * dPdx - K * dbdx;
   beta  = - c0 * dPdy - K * dbdy;
-  %figure(5)
-  %scale = 1.0e4 * spera;  % scale so that 10000 m/a
-  %quiver(xs/1000,ys/1000,scale*alpha(:,1:end-1),scale*beta(1:end-1,:))
-  %title('velocity'), xlabel('x (km)'), ylabel('y (km)')
 
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
@@ -140,14 +109,22 @@ FIXME FROM HERE
   maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
   dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
-  dtDIFF = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
-  dt = min([te-t dtmax dtCFL dtDIFF]);
-  fprintf('        [%.5e  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
-          maxv*spera, dtCFL/spera, dtDIFF/spera, dt/spera)
+  dtDIFFW = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
+  maxPo = max(max(Po));
+  dtDIFFP = 0.25 / ((c0 * maxW * maxPo / E0) * (1/dx^2 + 1/dy^2));
+  dt = min([te-t dtmax dtCFL dtDIFFW dtDIFFP]);
+  fprintf('        [%.5e  %.5f  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
+          maxv*spera, dtCFL/spera, dtDIFFW/spera, dtDIFFP/spera, dt/spera)
 
   X = dt / tau;  % appears in update formula for Y
-  nux = dt / dx;        nuy = dt / dy;
-  mux = K * dt / dx^2;  muy = K * dt / dy^2;
+  nux = dt / dx;
+  nuy = dt / dy;
+  mux = K * dt / dx^2;
+  muy = K * dt / dy^2;
+  pux = (c0 / E0) * dt / dx^2;
+  puy = (c0 / E0) * dt / dy^2;
+
+FIXME from here
 
   Wnew = W;  % copies unaltered initial b.c.s
   Ynew = Y;  % copies unaltered initial b.c.s
@@ -162,21 +139,13 @@ FIXME FROM HERE
       upn = up(beta(i,j),   Wij,     W(i,j+1));
       ups = up(beta(i,j-1), W(i,j-1),Wij);
       inputdepth = dt * Phi(i,j);
-      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + ...
-          mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
-          muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1))) + ...
+      dtlapW = mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
+               muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
+      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + lapW + ...
           inputdepth;
       inputvol = inputvol + inputdepth * dA;
 
-      % evolve capacity
-      if ward
-        %s0 = c1 * Wr * magvb(i,j);
-        %s1 = c1 * magvb(i,j) + c2 * A * (Po(i,j) - P(i,j))^3;
-        %Ynew(i,j) = ( Y(i,j) + s0 * dt ) / (1 + s1 * dt);
-        Ynew(i,j) = 0.5 * ( Y(i,j) + 2 * Wnew(i,j) - W(i,j) );
-      else
-        Ynew(i,j) = (1 / (1+X)) * Y(i,j) + (1 / (1 + (1/X))) * Wnew(i,j);
-      end
+FIXME
     end
   end
 
