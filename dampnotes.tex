@@ -5,7 +5,7 @@
 
 \usepackage{natbib}
 
-\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb}
+\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color,empheq}
 \usepackage{palatino}
 
 % check if we are compiling under latex or pdflatex
@@ -27,6 +27,11 @@
 \newcommand{\normalspacing}{\renewcommand{\baselinestretch}{1.1}\tiny\normalsize}
 \newcommand{\tablespacing}{\renewcommand{\baselinestretch}{1.0}\tiny\normalsize}
 \normalspacing
+
+\definecolor{myblue}{rgb}{.8, .8, 1}
+
+\newcommand*\mybluebox[1]{%
+\colorbox{myblue}{\hspace{1em}#1\hspace{1em}}}
 
 % math macros
 \newcommand\bv{\mathbf{v}}
@@ -83,7 +88,7 @@ Any reasonable model of the subglacial aquifer (liquid water layer) has at least
 We model water pressure by a damped form of the full-cavity formulation.  In the exactly-full cavity formulation the result is an elliptic variational inequality \citep{Schoofetal2012} for pressure that causes the computation of pressure to be nonlocal over each connected component of the hydrological system.  Here we avoid this instantaneous distributed balance by not exactly enforcing the full-cavity condition.
 
 
-\section{Elements of a continuum model}
+\section{Elements of a subglacial hydrology continuum model}
 
 We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only likely to be meaningful compared to observations, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.
 
@@ -160,20 +165,22 @@ Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface 
 
 For example, if the cavity is locally larger than local water sources can easily fill then the pressure should be locally lower, and this should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
 
+
 \section{Closures to determine pressure}
 
-At this point we do not know how to compute pressure $P$.  The state variables of the model so far are $W$,$Y$,$P$.  They are ``state variables'' in the sense that for a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables (along with a number of additional parameters, of course).  Two equations are not enough to determine these variables, however.  A closure is needed.
+At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables.   (Of course there are several additional data functions and parameters.)  Two equations are not enough to determine these variables, however.  A closure for the pressure is needed.
 
 \subsection*{Full-cavity closure}  Requiring the aquifer to be full at all locations and times is a closure:
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequences of this ``strong'' closure are explored by \cite{Schoofetal2012}, in a broader context.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, and using this derived form to eliminate the time derivatives, we get this equation relating $P$ and $W$:
+The consequences of this ``strong'' closure are explored by \cite{Schoofetal2012}, in a broader context.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, and using $\partial W/\partial t = \partial Y/\partial t$ to eliminate the time derivatives, we get this equation relating $P$ and $W$:
 \begin{equation}
 \Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) + \Phi = c_1 |\bv_b| \min\left\{0,W_r - W\right\} - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
 \end{equation}
+Equation \eqref{eq:ellipticpressure} is essentially the same as equation (2.12) in \citep{Schoofetal2012}.
 
-Though we will not solve \eqref{eq:ellipticpressure} directly, this equation is very significant to the understanding of the structure of the mathematical model which we will eventually solve.  Note that in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift quickly and thus lower the pressure back to overburden $P=P_o$, the pressure solution is subject to inequalities
+Though we will not solve \eqref{eq:ellipticpressure} directly, this equation is very significant to the understanding of the structure of the mathematical model which we will eventually solve.  Specifically, in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift quickly and thus lower the pressure back to overburden $P=P_o$, the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
@@ -224,8 +231,8 @@ Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation.  
   &\qquad\qquad + c_2 A |P_o - P|^3 W  + \Phi. \notag
 \end{align}
 
-In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Writing this systematically again using $c_0 = K / \rho_w g$ we have:
-\begin{align}
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact, at this stage we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Again let $c_0 = K / \rho_w g$.  Here is our proposed mathematical model:
+\begin{empheq}[box=\mybluebox]{align}
 0 &\le W, \label{eq:ALTWbound} \\
 0 &\le P \le P_o, \label{eq:ALTbounds} \\
 \bV &= - c_0 \grad P - K \grad b, \label{eq:ALTvexpression} \\
@@ -233,21 +240,24 @@ In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion,
 \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \label{eq:ALTadeqn} \\
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A |P_o - P|^3 W \label{eq:ALTdiffusionpressure} \\
   &\qquad - c_1 |\bv_b| \min\left\{0,W_r - W\right\} + \Phi. \notag
-\end{align}
+\end{empheq}
 
 
-\subsection*{On the symbols}  The above equations \eqref{eq:ALTbounds}--\eqref{eq:ALTdiffusionpressure} relate three classes of symbols, as summarized in the following table:
+\subsection*{On the symbols}  The above equations \eqref{eq:ALTWbound}--\eqref{eq:ALTdiffusionpressure} relate four classes of symbols, as summarized in the following table:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
 class & symbols \\ \hline
-\emph{parameters (scalar)} & $g$, $\rho_i$, $\rho_w$, $A$, $K$, $W_r$, $c_1$, $c_2$, $\tau$ \\
+\emph{parameters (scalar)} & $g$, $\rho_i$, $\rho_w$, $A$, $K$, $W_r$, $c_0$, $c_1$, $c_2$, $\tau$ \\
 \emph{data functions} & $\Phi$, $b$, $h$, $|\bv_b|$ \\
+\emph{derived functions} & $\bV$, $\psi$ \\
 \emph{state functions} & $W$, $P$
 \end{tabular}
 \end{table}
 
-\noindent The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.  The state functions evolve according to the mathematical model in this work.
+\noindent The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.
+
+The state and derived functions evolve according to the mathematical model in this work, but only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
 
 
 
@@ -255,7 +265,7 @@ class & symbols \\ \hline
 
 \subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  Equation \eqref{eq:adeqn} will be discretized in this section by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.
 
-Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the appendix it is shown that the time step must satisfy
+Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that the time step must satisfy
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) \le \frac{1}{2} \label{eq:dtCFL}
 \end{equation}
@@ -316,6 +326,8 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
+Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$.  However, because refreeze is possible, generally we must enforce $W\ge 0$ on the updated values.  If $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this step should be accounted for.  As the temporal grid is refined, the conservation error should decrease.
+
 
 \subsection*{Numerical scheme for nearly-full equation \eqref{eq:AGAINdampedclosure}}    Equation \eqref{eq:AGAINdampedclosure} will be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
 \begin{equation}
@@ -337,16 +349,24 @@ The resulting time step is a certain fraction of the time step from \eqref{eq:dt
 \Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.
 \end{equation}
 
-With the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 10^3$ m we have a time step $\Delta t_P$ which is 1000 times smaller than the time step $\Delta t_W$.  With these values and the previous ones identified earlier ($\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get $\Delta t_{\text{CFL}} \le 0.001$ year from \eqref{eq:dtCFL}, $\Delta t_W \le 0.1$ year from \eqref{eq:dtDIFFW}, and $\Delta t_P \le 0.0001$ year from \eqref{eq:dtDIFFP}.  Thus this scheme for pressure diffusion \eqref{eq:ALTdiffusionpressure} has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Note that the size of the stable time step $\Delta t_P$ scales inversely with the adjustable small distance $E_0$.
+With the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have a pressure-update time step $\Delta t_P$ which is about 1000 times smaller than the time step $\Delta t_W$.  With these values and the previous ones identified earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get
+\begin{align*}
+  \Delta t_{\text{CFL}} &\le 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
+  \Delta t_W            &\le 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
+  \Delta t_P            &\le 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP}.}
+\end{align*}
+Thus the numerical scheme for pressure diffusion \eqref{eq:ALTdiffusionpressure}, given below, has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$; by choosing $E_0$ larger we can make the time step restriction on $\Delta t_P$ less severe.
 
-The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}.  It is
+The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
 \begin{align}
 \frac{E_0}{P_o} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
       &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
-      &\qquad + c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 W - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j} \notag
+      &\qquad + c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 W - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j}. \notag
 \end{align}
-where at the beginning of each step we compute the gridded values of the hydraulic potential,
+At the start of each step we compute the current values of the hydraulic potential,
 	$$\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij).$$
+
+Generally there is no expectation that this pressure update will preserve our bounds \eqref{eq:ALTbounds}, namely $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we must explicitly \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
 
 
 %\clearpage \newpage
@@ -391,6 +411,6 @@ Because we also handle the diffusion term in \eqref{eq:adeqn} explicitly, we hav
 The right-hand sides of these inequalities are each $1/2$, but of course $1-(1/2)-(1/2)=0$.  In other words the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
 	$$E = 1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
 
-Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative.  Furthermore they all add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving and stable under the stability conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
+Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative.  Furthermore they all add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving when $\Phi\ge 0$, and it is stable under the stability conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
 
 \end{document}
