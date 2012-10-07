@@ -40,20 +40,18 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 % are the final values of the state variables W,P.
 
 spera = 31556926.0;
-rhoi = 910.0;   % kg m-3
-rhow = 1028.0;  % kg m-3
-r = rhoi / rhow;
-g = 9.81;       % m s-2
+rhoi  = 910.0;         % kg m-3
+rhow  = 1028.0;        % kg m-3
+g     = 9.81;          % m s-2
 
 % major model parameters:
-A = 3.1689e-24;        % ice softness (Pa-3 s-1)
-K = 1.0e-2;            % m s-1   FIXME: want Kmax or Kmin according to W > Wr
-tau = (1/50) * spera;  % s; about 1 week
+A  = 3.1689e-24;       % ice softness (Pa-3 s-1)
+K  = 1.0e-2;           % m s-1   FIXME: want Kmax or Kmin according to W > Wr
 Wr = 1.0;              % m
 c1 = 0.500;            % m-1
 c2 = 0.040;            % [pure]
 
-E0 = 1.0;         % m  FIXME:  not small; what is right
+E0 = 5.0;              % m       FIXME:  not small; what is right?
 
 c0 = K / (rhow * g);   % constant in velocity formula
 
@@ -61,6 +59,7 @@ c0 = K / (rhow * g);   % constant in velocity formula
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
 dx = x(2) - x(1);
 dy = y(2) - y(1);
+
 % generate staggered grid
 xs = 0.5 * (x(1:end-1) + x(2:end));
 ys = 0.5 * (y(1:end-1) + y(2:end));
@@ -69,86 +68,120 @@ ys = 0.5 * (y(1:end-1) + y(2:end));
 dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
 dbdy = (b(:,2:end) - b(:,1:end-1)) / dy;
 
+% initialize timestepping
 dtmax = (te - ts) / Nmin;
-
 t = ts;
+
+% initialize state variable W and mass accounting
+if any(any(W0<0))
+  error('points exist where initial water thickness is negative'), end
 W = W0;
-P = P0;
 volW = 0.0;
 dA = dx*dy;
 
+% overburden pressure will not vary during run
+% note b is bedrock elevation, not ice lower surface (where floating)
+if any(any(h < b))
+  error('points exist where ice surface is below bed'), end
+if any(any(h < 0))
+  error('points exist where ice surface is below sea level'), end
+Po = rhoi * g * (h - b);
+Hfloat = h / (1-rhoi/rhow);  % thickness if it were floating
+float = (rhoi * Hfloat < rhow * (-b));
+Po(float) = rhoi * g * Hfloat(float);  % if floating, set to ice base pressure
+
+% initialize state variable P
+if any(any(P0<0))
+  error('points exist where initial pressure is negative'), end
+if any(any(P0>Po))
+  error('points exist where initial pressure is above overburden'), end
+P = P0;
+
+% impose P boundary conditions based on geometry only
+P(float) = Po(float);
+icefree = (h < b + 1.0);
+P(icefree) = 0.0;
+
 fprintf('running ...\n\n')
-fprintf('        [max V (m/a)    dtCFL (a)    dtDIFF_W (a)   dtDIFF_P (a)  -->  dt (a)]\n')
-fprintf('t (a):   max W (m)  av W (m)  vol(10^6 km^3)  rel-bal\n\n')
+fprintf('   [max V (m/a)   dtCFL (a)   dtDIFF_W (a)   dtDIFF_P (a)  -->  dt (a)]\n')
+fprintf('t (a):   max W (m)  av W (m)  vol(km^3)  rel-bal\n\n')
 
 while t<te
-  % overburden pressure
-  Po = rhoi * g * (h - b);
-  Po(h <= 0.0) = 0.0;   % if no ice, ignor depth to bed
-
-  % terms in pressure equation
-  Ocav = c1 * (Wr - W) .* magvb;
+  % hydraulic potential and terms in pressure equation
+  psi = P + rhow * g * (b + W);
+  Ocav = c1 * magvb .* (Wr - W);
   Ocav(Ocav < 0.0) = 0.0;
   Ccrp = c2 * (Po - P).^3 .* W;
-
-FIXME
 
   % grad pressure and grad water
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
   dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;
 
-  % velocity  V = - c0 grad P - K grad b = (alpha,beta)
-  alpha = - c0 * dPdx - K * dbdx;
-  beta  = - c0 * dPdy - K * dbdy;
+  % velocity  V = - c0 grad P - K grad b = (alphV,betaV)
+  alphV = - c0 * dPdx - K * dbdx;
+  betaV = - c0 * dPdy - K * dbdy;
 
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
   Wno = 0.5 * (W(:,2:end) + W(:,1:end-1));
 
   % determine time step adaptively
-  maxv = sqrt(max(max(alpha))^2 + max(max(beta))^2);
-  dtCFL = 0.5 / (max(max(alpha))/dx + max(max(beta))/dy);
+  dtCFL = 0.5 / (max(max(abs(alphV)))/dx + max(max(abs(betaV)))/dy);
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
   dtDIFFW = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
-  maxPo = max(max(Po));
-  dtDIFFP = 0.25 / ((c0 * maxW * maxPo / E0) * (1/dx^2 + 1/dy^2));
+  maxH = max(max(h-b)) + 2 * E0;  % regularized: forces dtDIFFP < dtDIFFW
+  dtDIFFP = (rhow * E0 / (rhoi * maxH)) * dtDIFFW;
   dt = min([te-t dtmax dtCFL dtDIFFW dtDIFFP]);
-  fprintf('        [%.5e  %.5f  %.5f  %.5f   -->  dt = %.5f (a)]\n',...
-          maxv*spera, dtCFL/spera, dtDIFFW/spera, dtDIFFP/spera, dt/spera)
 
-  X = dt / tau;  % appears in update formula for Y
+  % report on time step
+  maxV = sqrt(max(max(alphV))^2 + max(max(betaV))^2);
+  fprintf('   [%.5e  %.6f  %.6f  %.6f   -->  dt = %.6f (a)]\n',...
+          maxV*spera, dtCFL/spera, dtDIFFW/spera, dtDIFFP/spera, dt/spera)
+
+  % coefficients for time step
   nux = dt / dx;
   nuy = dt / dy;
   mux = K * dt / dx^2;
   muy = K * dt / dy^2;
-  pux = (c0 / E0) * dt / dx^2;
-  puy = (c0 / E0) * dt / dy^2;
+  pux = c0 * dt / dx^2;
+  puy = c0 * dt / dy^2;
 
-FIXME from here
-
-  Wnew = W;  % copies unaltered initial b.c.s
-  Ynew = Y;  % copies unaltered initial b.c.s
-
-  inputvol = 0.0;
+  % P time step
+  Pnew = P;   % will keep P at edge of computational domain unaltered
   for i=2:length(x)-1
     for j=2:length(y)-1
-      % conserve water
-      Wij = W(i,j);
-      upe = up(alpha(i,j),  Wij,     W(i+1,j));
-      upw = up(alpha(i-1,j),W(i-1,j),Wij);
-      upn = up(beta(i,j),   Wij,     W(i,j+1));
-      ups = up(beta(i,j-1), W(i,j-1),Wij);
-      inputdepth = dt * Phi(i,j);
-      dtlapW = mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
-               muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
-      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + lapW + ...
-          inputdepth;
-      inputvol = inputvol + inputdepth * dA;
-
-FIXME
+      psiij = psi(i,j);
+      tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
+            puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
+      Ptmp = P(i,j) + (Po(i,j) / E0) * ( tmp + dt * Ccrp(i,j) - ...
+                                         dt * Ocav(i,j) + dt * Phi(i,j) );
+      % projection:
+      Ptmp = max(0.0, Ptmp);
+      Ptmp = min(Ptmp, Po(i,j));
+      Pnew(i,j) = Ptmp;
     end
   end
 
+  % W time step
+  Wnew = W;  % copies unaltered initial b.c.s
+  inputvol = 0.0;
+  for i=2:length(x)-1
+    for j=2:length(y)-1
+      Wij = W(i,j);
+      upe = up(alphV(i,j),  Wij,     W(i+1,j));
+      upw = up(alphV(i-1,j),W(i-1,j),Wij);
+      upn = up(betaV(i,j),   Wij,     W(i,j+1));
+      ups = up(betaV(i,j-1), W(i,j-1),Wij);
+      inputdepth = dt * Phi(i,j);
+      dtlapW = mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
+               muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
+      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + dtlapW + ...
+                  inputdepth;
+      inputvol = inputvol + inputdepth * dA;
+    end
+  end
+
+  % do volume accounting
   losevol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
@@ -156,25 +189,22 @@ FIXME
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
+      % FIXME: if Phi<0 is possible, should check W<0 here
     end
   end
 
-  % report on new state W,Y
+  % report on new state W
   sumnew = sum(sum(Wnew));
   volnew = sumnew * dA;
-  balance = (volW + inputvol - losevol) - volnew;
+  vbalance = (volW + inputvol - losevol) - volnew;
   fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
           (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
-          volnew/(1e9*1e6),abs(balance/volnew))
+          volnew/(1e9),abs(vbalance/volnew))
 
-  if ward
-    Wold = W;
-  end
-
-  % actually update to new state W,Y
+  % actually update to new state W
   volW = volnew;
   W = Wnew;
-  Y = Ynew;
+  P = Pnew;
   t = t + dt;
 end
 
