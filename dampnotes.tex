@@ -83,9 +83,9 @@
 
 \section{Introduction}
 
-Any reasonable model of the subglacial aquifer (liquid water layer) has at least these two elements: liquid water is conserved and water flows from high to low hydraulic potential  (``head'').  Additionally, physical processes control the geometry of the layer, including the opening of cavities by sliding and the closure of cavities (and channels) by creep.  Additionally, channels open by melting, sediment moves, and so on, but we do not model these here.
+Any reasonable model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and it flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by sliding and the closure of cavities and channels by creep.  Besides these two mechanisms, additionally channels open by melting, sediment moves, and so on, but we do not model such processes here.  We will study distributed systems of linked cavities.
 
-We model water pressure by a damped form of the full-cavity formulation.  In the exactly-full cavity formulation the result is an elliptic variational inequality \citep{Schoofetal2012} for pressure that causes the computation of pressure to be nonlocal over each connected component of the hydrological system.  Here we avoid this instantaneous distributed balance by not exactly enforcing the full-cavity condition.
+We model water pressure by a damped form of a full-cavity formulation.  Our model approximates that of \citep{Schoofetal2012} in which an elliptic variational inequality for pressure must be solved at each time step.  In our model and theirs, pressure is determined nonlocally over each connected component of the hydrological system.  We avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition, instead replacing the elliptic formulation of \citep{Schoofetal2012} by a parabolic approximation of it.
 
 
 \section{Elements of a subglacial hydrology continuum model}
