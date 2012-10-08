@@ -83,40 +83,38 @@
 
 \section{Introduction}
 
-Any reasonable model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and it flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by sliding and the closure of cavities and channels by creep.  Besides these two mechanisms, additionally channels open by melting, sediment moves, and so on, but we do not model such processes here.  We will study distributed systems of linked cavities.
+Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and it flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by sliding and the closure of cavities and channels by creep.  Besides these two mechanisms, additionally channels can open by melting, sediment can move, and so on, but we do not model such processes here.  We study distributed systems of linked cavities.
 
-We model water pressure by a damped form of a full-cavity formulation.  Our model approximates that of \citep{Schoofetal2012} in which an elliptic variational inequality for pressure must be solved at each time step.  In our model and theirs, pressure is determined nonlocally over each connected component of the hydrological system.  We avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition, instead replacing the elliptic formulation of \citep{Schoofetal2012} by a parabolic approximation of it.
+Specifically we model water pressure using a damped form of a full-cavity formulation of a distributed system.  Our model approximates the full-cavity formulation of \cite{Schoofetal2012} in which an elliptic variational inequality for pressure must be solved at each time step.  In our model and theirs, pressure is determined nonlocally over each connected component of the hydrological system.  We avoid solving an instantaneous distributed balance, however, by not exactly enforcing the full-cavity condition.  Our model replaces the elliptic pressure equation of \cite{Schoofetal2012} by a parabolic approximation.
 
 
 \section{Elements of a subglacial hydrology continuum model}
 
-We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only likely to be meaningful compared to observations, however, if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unlikely to be able to model, we will attempt only to model spatially-averaged versions of water amount and water pressure.
+We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unable to model, we only attempt to model spatially-averaged versions of water amount and water pressure.
 
-We assume that water is incompressible so that the thickness of the water layer tells us the mass of water.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.
+We assume that water is incompressible and of constant density.  Thus the thickness of the water layer tells us its mass.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.  Instead, specific physics comes from choosing a form for the water flux and a closure for pressure.
 
 \subsection*{Conservation}  Water is conserved.  In two spatial dimensions this is the equation \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \Div \bq = \Phi
 \end{equation}
-where $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).
-
-The function $W$ is the key evolving quantity in the model because it is conserved.  It must be saved by the model at any stopping and/or restarting point.  Initial values and boundary values for $W$ must be supplied.  And we always assume this thickness is positive:
+where $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).  Of course, initial and boundary values for $W$ must be supplied.  We always assume the water thickness is nonnegative:
 \begin{equation}
 W \ge 0.
 \end{equation}
 
-We might separate the water sources between the melt on the lower surface of the glacier and the en- or supra-glacial drainage origin,
-  $$\Phi = \rho_w^{-1} \left(m + S\right)$$
-where $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
+We might separate the water sources between the melt on the lower surface of the glacier, and en- or supra-glacial drainage:
+  $$\Phi = \rho_w^{-1} \left(m + S\right).$$
+Here $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  Note $m$ and $S$ have units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$.
 
 \newcommand{\Nbreen}{Nordenski\"oldbreen\xspace}
 For the \Nbreen, Svalbard example below we will take $m=0$ so that only supraglacial input is modeled.
 
-The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
+\subsection*{Darcy flow}  The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential $\psi(t,x,y)$ which combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential corresponding to top of the layer of water at the location on the bed of the glacier,
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
-Here $z=b(x,y)$ is the time-independent bedrock elevation, which we assume is given by time-independent data.
+Here $z=b(x,y)$ is the time-independent bedrock elevation, which we assume for simplicity is given by time-independent data.
 
 Water flows from high to low hydraulic potential.  The simplest model is for a water sheet \citep{Clarke05}
 \begin{equation}  \label{eq:flux}
@@ -124,15 +122,23 @@ Water flows from high to low hydraulic potential.  The simplest model is for a w
 \end{equation}
 Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the ability of the subglacial material to conduct water is bigger (i.e.~$K$ is larger) or if the water sheet is thicker ($W$ is larger).
 
-\subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we have this expression which identifies a part of the flux as proportional to the gradient of the water thickness:
-	$$\bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W.$$
-The flux which is down the gradient of the conserved quantity will act diffusively.  The remaining flux is likely to be dominant.  It is, to our knowledge, not particularly diffusive.  We conceive of it as transport driven by a velocity field which varies in space and time.  We will construct a conservative numerical scheme based on this understand of how the flux is decomposed.
+\subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we can identify the part of the flux which is proportional to the gradient of the water thickness:
+\begin{equation}
+  \bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W. \label{eq:firstfluxdecomp}
+\end{equation}
+Flux which is down the gradient of the conserved quantity, like the second term $-K W \grad W$ in \eqref{eq:firstfluxdecomp}, will act diffusively.
 
-Let
+However, the flux in the first term dominates when
+    $$\frac{|\grad P|}{\rho_w g} \sim |\grad H| \gg |\grad W|,$$
+where $H$ is is the ice thickness.  (In this statement we are supposing ice overburden pressure dominates the subglacial water pressure.  See also the time scales analysis in the numerical schemes section.)  As noted $W$ represents not the detailed local water thickness, which varies rapidly from a cavity to the adjacent location outside a cavity, and etc., but instead the spatial average of the true water thickness.  Thus $|\grad H| \gg |\grad W|$ is a reasonable supposition because generally $H\gg W$.
+
+The first term in \eqref{eq:firstfluxdecomp} is, to our knowledge, not particularly diffusive.  Thus we conceive of the flux as partly water transport driven by a velocity field which varies in space and time (the first term in \eqref{eq:firstfluxdecomp}) and partly diffusion (the second term).  We will construct our conservative numerical scheme based on this understanding of how the flux is decomposed.
+
+To clarify the decomposition, let
 \begin{equation} \label{eq:vexpression}
   \bV = - \frac{K}{\rho_w g} \grad P - K \grad b
 \end{equation}
-be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this simpler description of the flux,
+be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this advection-diffusion description of the flux,
 \begin{equation} \label{eq:qexpression}
   \bq = \bV\, W - K W \grad W.
 \end{equation}
