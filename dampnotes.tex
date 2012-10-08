@@ -1,12 +1,14 @@
-\documentclass[12pt,final]{amsart}%default 10pt
+\documentclass[11pt,final]{amsart}%default 10pt
 %prepared in AMSLaTeX, under LaTeX2e
 
-\usepackage[total={6.2in,9.1in},top=1.2in,left=1.1in]{geometry}
+\usepackage[total={6.2in,9.0in},top=1.2in,left=1.1in]{geometry}
 
 \usepackage{natbib}
 
 \usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color,empheq}
 \usepackage{palatino}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
 
 % check if we are compiling under latex or pdflatex
 \ifx\pdftexversion\undefined
@@ -24,7 +26,7 @@
                 urlcolor=magenta     % only if colorlinks=true
 ]{hyperref}
 
-\newcommand{\normalspacing}{\renewcommand{\baselinestretch}{1.1}\tiny\normalsize}
+\newcommand{\normalspacing}{\renewcommand{\baselinestretch}{1.05}\tiny\normalsize}
 \newcommand{\tablespacing}{\renewcommand{\baselinestretch}{1.0}\tiny\normalsize}
 \normalspacing
 
@@ -122,36 +124,39 @@ Water flows from high to low hydraulic potential.  The simplest model is for a w
 \end{equation}
 Here, $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ the gravitational acceleration ($\text{m}\,\text{s}^{-2}$) and $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  Notice that the system transmits more water for a given head gradient if either the ability of the subglacial material to conduct water is bigger (i.e.~$K$ is larger) or if the water sheet is thicker ($W$ is larger).
 
-\subsection*{Advection-diffusion form}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we can identify the part of the flux which is proportional to the gradient of the water thickness:
+\subsection*{Advection-diffusion flux decomposition}  Combining \eqref{eq:potential} and \eqref{eq:flux} above we get the flux expression
 \begin{equation}
   \bq = - \frac{K\, W}{\rho_w g} \left(\grad P + \rho_w g b\right) - K W \grad W. \label{eq:firstfluxdecomp}
 \end{equation}
-Flux which is down the gradient of the conserved quantity, like the second term $-K W \grad W$ in \eqref{eq:firstfluxdecomp}, will act diffusively.
 
-However, the flux in the first term dominates when
+Thus we identify a part of the flux, the second term $-K W \grad W$ in \eqref{eq:firstfluxdecomp}, which is proportional to the gradient of the water thickness.  Flux which is down the gradient of the conserved quantity (i.e.~$W$ in equation \eqref{eq:conserve}) will act diffusively.
+
+However, the flux which is the first term in \eqref{eq:firstfluxdecomp} will dominate when
     $$\frac{|\grad P|}{\rho_w g} \sim |\grad H| \gg |\grad W|,$$
-where $H$ is is the ice thickness.  (In this statement we are supposing ice overburden pressure dominates the subglacial water pressure.  See also the time scales analysis in the numerical schemes section.)  As noted $W$ represents not the detailed local water thickness, which varies rapidly from a cavity to the adjacent location outside a cavity, and etc., but instead the spatial average of the true water thickness.  Thus $|\grad H| \gg |\grad W|$ is a reasonable supposition because generally $H\gg W$.
+where $H$ is is the ice thickness---here we are supposing ice overburden pressure dominates subglacial water pressure.  It will also dominate when $|\grad b| \gg |\grad W|$.  As noted $W$ represents not the detailed local water thickness, which varies rapidly from a cavity to an adjacent location outside a cavity, but instead the spatial average of the true water thickness \citep{Schoofetal2012}.  Thus $|\grad H| \gg |\grad W|$ is common because generally $H\gg W$.
 
-The first term in \eqref{eq:firstfluxdecomp} is, to our knowledge, not particularly diffusive.  Thus we conceive of the flux as partly water transport driven by a velocity field which varies in space and time (the first term in \eqref{eq:firstfluxdecomp}) and partly diffusion (the second term).  We will construct our conservative numerical scheme based on this understanding of how the flux is decomposed.
+The first term in \eqref{eq:firstfluxdecomp} is, to our knowledge, not particularly diffusive.  We conceive of the decomposed flux as partly transport driven by a velocity field, which varies in space and time (the first term in \eqref{eq:firstfluxdecomp}), and partly diffusion (the second term).  We will construct our conservative numerical scheme based on this understanding of how the flux is decomposed, and we provide a related time scales analysis in section \ref{sec:num} below.
 
-To clarify the decomposition, let
+To clarify the decomposition, define the velocity field
 \begin{equation} \label{eq:vexpression}
-  \bV = - \frac{K}{\rho_w g} \grad P - K \grad b
+  \bV = - \frac{K}{\rho_w g} \grad P - K \grad b.
 \end{equation}
-be the velocity field.  Then equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this advection-diffusion description of the flux,
+Equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} combine to this advection-diffusion description of the flux,
 \begin{equation} \label{eq:qexpression}
   \bq = \bV\, W - K W \grad W.
 \end{equation}
 
-Generally the water flow $\bq$ depends significantly on the ice surface slope because the gradient of the overburden pressure follows that slope.  The pressure model below may generate pressure fields with that property, but this is not obvious.  More obviously the flux depends on the bedrock slope because the velocity $\bV$ has such a term.  Because the bedrock elevation comes from rough data in practice, this part of the velocity $\bV$ will not be very smooth.  The part of the flux from the pressure gradient may not be very smooth either, depending on the solution of the pressure model below.
+As is well known \citep{Clarke05}, the water flow $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure, and therefore the gradient of the hydraulic potential follows the ice surface.  The pressure model which we construct and use in this paper may generate pressure fields $P$ with that property, but this is not so obvious from any model which depends on physical mechanisms for the opening and closing of cavities.
 
-In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010,MortonMayers} for the evolution of the water layer thickness:
+More obviously the flux $\bq$ depends on the bedrock slope $\grad b$ because the velocity $\bV$ has such a term.  Because the bedrock elevation comes from rough data in practice, however, this part of the velocity $\bV$ will not be very smooth, and it may be large in magnitude.  The part of the flux from the pressure gradient $\grad P$ may not be very smooth either, depending on the solution of the pressure model below.
+
+In any case, from equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
   \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) = \Div \left(K W \grad W\right) + \Phi.
 \end{equation}
-As we will see, the significance of this form is that there are numerical differences in how the advection term $\Div\left(\bV\, W\right)$ is handled relative to the diffusion term $\Div \left(K W \grad W\right)$.
+As we will see, the significance of this form is that there are different numerical schemes for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(K W \grad W\right)$, and these schemes impose time step restrictions of different magnitudes.
 
-\subsection*{Capacity of the linked-cavity system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
+\subsection*{Capacity of the distributed system}  First recall that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  We make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
   P_o = \rho_i g H = \rho_i g (h-b).
 \end{equation}
@@ -159,20 +164,20 @@ Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$), $H$ is the ice
 \begin{equation}
 N = P_o - P\label{eq:effective}
 \end{equation}
-be the effective pressure.  The effective pressure is high if the subglacial water is unpressurized and low in the high pressure water case.  The effective pressure is a measure of much of the ice load is carried by the mineral (till or bedrock) base.
+be the effective pressure.  The effective pressure is a measure of much of the ice load is carried by the mineral (till or bedrock) base, as opposed to how much is carried by the pressurized subglacial water.
 
-The evolution of the capacity thickness $Y$ (m) of a linked-cavity system is described as the sum of opening by cavitation and closure by creep:
+The evolution of the area-averaged thickness $Y$ (m) of the cavities in a distributed linked-cavity system \citep{Schoofetal2012} is described as the sum of opening by cavitation and closure by creep \citep{Hewitt2011}:
 \begin{equation}
-\frac{\partial Y}{\partial t} = c_1 |\bv_b| \min\left\{0,W_r - Y\right\} - c_2 A |N|^3 Y, \label{eq:capacity}
+\frac{\partial Y}{\partial t} = c_1 |\bv_b| (W_r - Y)_+ - c_2 A N^3 Y. \label{eq:capacity}
 \end{equation}
-where $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the ice basal velocity (i.e.~sliding velocity), $A$ is the ice softness, and $c_1,c_2$ are constants to be fit by data (see below).  We have used Glen exponent $n=3$ for concreteness.
+Here $W_r$ is a maximum roughness scale of the basal topography, $\bv_b$ is the ice basal velocity (i.e.~sliding velocity), $A$ is the ice softness, and $c_1,c_2$ are constants to be fit by data (see below).  We have used Glen exponent $n=3$ for concreteness.  Note that $X_+= \max\{0,X\}$ is the same as $X$ when $X>0$ and is zero otherwise.
 
-Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The first term in \eqref{eq:capacity}, the cavitation term, is always nonnegative (i.e.~causes opening), and it is only positive where the capacity is less than the roughness scale, namely $Y<W_r$.  The other term describing creep is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  There are presumably-strong stresses (pressures) within the liquid water associated to keeping the cavity full because liquid water is an incompressible fluid with low viscosity.
+Equation \eqref{eq:capacity} describes the evolution of the upper (ice) surface of the subglacial cavity.  The first term in \eqref{eq:capacity}, the cavitation term, is always nonnegative (i.e.~causes opening), and it is only positive where the capacity is less than the roughness scale, namely $Y<W_r$.  The other term describing creep is sensitive to the difference of ice and water pressure, but ice creep is relatively slow.  In any case the opening and closing terms, and satisfy the same inequalities, as in \cite{Schoofetal2012}; see equations (2.5)--(2.7) in that source.
 
-For example, if the cavity is locally larger than local water sources can easily fill then the pressure should be locally lower, and this should cause inflow into this local area, assuming water is available in connected cavities.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Only if there is insufficient connection to neighboring capacity should the extreme cases occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively.
+If the cavity is locally larger than connected water sources can quickly fill then the pressure should be locally lower, and this should encourage inflow into the area.  Conversely, if local water sources exceed capacity then the pressure field should force water out of the local area.  Though extreme cases could potentially occur, wherein a vapor (e.g. air) layer forms in the cavity, or the ice is forced upward by a negative effective pressure, respectively \citep{Schoofetal2012}, we do not model these.  We will, however, enforce physically-justified bounds on the water pressure, as described in the next section.
 
 
-\section{Closures to determine pressure}
+\section{Closures to determine pressure} \label{sec:closures}
 
 At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables.   (Of course there are several additional data functions and parameters.)  Two equations are not enough to determine these variables, however.  A closure for the pressure is needed.
 
@@ -240,7 +245,7 @@ The state and derived functions evolve according to the mathematical model in th
 
 
 
-\section{Numerical scheme}
+\section{Numerical scheme}  \label{sec:num}
 
 \subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  Equation \eqref{eq:adeqn} will be discretized in this section by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.
 
@@ -350,13 +355,13 @@ P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_
 \end{align}
 
 %\clearpage \newpage
-\small
+%\small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 
 
 %\clearpage \newpage
-\small
+%\small
 \appendix
 
 \section{Positivity and stability of the numerical scheme for mass conservation}
