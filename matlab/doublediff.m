@@ -126,6 +126,7 @@ while t<te
   Wno = 0.5 * (W(:,2:end) + W(:,1:end-1));
 
   % determine time step adaptively
+  % FIXME: dtCFL can be infinity if velocity is zero because P and b are constant
   dtCFL = 0.5 / (max(max(abs(alphV)))/dx + max(max(abs(betaV)))/dy);
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
   dtDIFFW = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
@@ -197,9 +198,10 @@ while t<te
   sumnew = sum(sum(Wnew));
   volnew = sumnew * dA;
   vbalance = (volW + inputvol - losevol) - volnew;
+  if volnew > 0, relbal = abs(vbalance/volnew); else relbal = nan; end
   fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
           (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
-          volnew/(1e9),abs(vbalance/volnew))
+          volnew/(1e9),relbal)
 
   % actually update to new state W
   volW = volnew;
