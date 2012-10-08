@@ -322,15 +322,26 @@ Thus the numerical scheme for pressure diffusion \eqref{eq:ALTdiffusionpressure}
 
 The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
 \begin{align}
-\frac{E_0}{P_o} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
+\frac{E_0}{(P_o)_{i,j}} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
       &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
-      &\qquad + c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 W - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j}. \notag
+      &\qquad + c_2 A \left|\rho_i g H_{i,j}- \Plij\right|^3 \Wlij - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j}. \notag
 \end{align}
 At the start of each step we compute the current values of the hydraulic potential,
 	$$\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij).$$
 
 Generally there is no expectation that this pressure update will preserve our bounds \eqref{eq:ALTbounds}, namely $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we must explicitly \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
 
+Finally, equation \eqref{eq:Pfd} is a reasonable statement of our scheme, but for implementation it is useful to have it in explicit update form.  First define
+	$$\omega_x = \frac{c_0 \Delta t}{\Delta x^2}, \qquad \omega_y = \frac{c_0 \Delta t}{\Delta y^2}.$$
+Also let
+	$$O_{\text{cav}; i,j} = c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\},$$
+	$$C_{\text{crp}; i,j} = c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 \Wlij$$
+be the gridded values of the cavitation-opening and creep-closure rates.  Then scheme \eqref{eq:Pfd} is equivalent to this form:
+\begin{align}
+P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
+      &\qquad\qquad\qquad\quad + \omega_y W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
+      &\qquad\qquad\qquad\quad + \Delta t\, C_{\text{crp}; i,j} - \Delta t\, O_{\text{cav}; i,j} + \Delta t \Phi_{i,j}\bigg]. \notag
+\end{align}
 
 %\clearpage \newpage
 \small
@@ -377,7 +388,7 @@ The right-hand sides of these inequalities are each $1/2$, but of course $1-(1/2
 Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative.  Furthermore they all add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving when $\Phi\ge 0$, and it is stable under the stability conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
 
 
-\section{An alternative nearly-full closure which does not yield a stabilizable scheme}
+\section{An alternative nearly-full closure}
 
 One possible alternative which replaces rigid constraint \eqref{eq:strongclosure}, namely $0 = Y - W$, is the damped version in this Appendix.
 
