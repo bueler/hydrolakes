@@ -225,41 +225,34 @@ In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion,
 \end{empheq}
 
 
-\subsection*{On the symbols}  The above equations \eqref{eq:bluebox} relate four classes of symbols, as summarized in the following table:
+\subsection*{On the symbols}  The model equations \eqref{eq:bluebox} relate four classes of symbols, as summarized in the following table:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
 class & symbols \\ \hline
-\emph{parameters (scalar)} & $g$, $\rho_i$, $\rho_w$, $A$, $K$, $W_r$, $c_0$, $c_1$, $c_2$, $\tau$ \\
-\emph{data functions} & $\Phi$, $b$, $h$, $|\bv_b|$ \\
+\emph{parameters (scalar)} & $A$, $c_0$, $c_1$, $c_2$, $E_0$, $g$, $K$, $\rho_i$, $\rho_w$, $W_r$ \\
+\emph{data functions} & $b$, $\Phi$, $P_o$, $|\bv_b|$ \\
 \emph{derived functions} & $\bV$, $\psi$ \\
 \emph{state functions} & $W$, $P$
 \end{tabular}
 \end{table}
 
-\noindent The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change these values and explore the parameter space.  The data functions are, essentially, supplied by the rest of the ice sheet model.
-
-The state and derived functions evolve according to the mathematical model in this work, but only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
-
+The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of the ice sheet model.  The derived and state functions evolve according to the mathematical model in this work.  Only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
 
 
 \section{Numerical scheme}  \label{sec:num}
 
-\subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  Equation \eqref{eq:adeqn} will be discretized in this section by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.
-
-Because this is an explicit scheme, we consider stable time steps immediately.  It turns out that the time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that the time step must satisfy
+\subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  In this section Equation \eqref{eq:adeqn} will be discretized by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.  We consider stable time steps for this scheme immediately.  The time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that for stability the time step should satisfy $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
-\Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) \le \frac{1}{2} \label{eq:dtCFL}
+\Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-where $V=(\alpha,\beta)$ is the advecting velocity, for the upwind part of the scheme to maintain stability.  The time step must also satisfy
+Here $V=(\alpha,\beta)$ is the advection velocity, for the upwind part of the scheme to maintain stability.  Because of the diffusion part, the time step should also satisfy $\Delta t \le \Delta t_{W}$ where
 \begin{equation}
-\Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2} \label{eq:dtDIFFW}
+\Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFW}
 \end{equation}
 for the diffusion scheme to be stable.
 
-To give some practical values for these time step restrictions, we are interested in grids of size $\Delta x = \Delta y = 500$ m.  The maximum speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  In that case the advective restriction \eqref{eq:dtCFL} gives about $\Delta t_{\text{CFL}} \le 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is about $\Delta t_W \le 0.1$ year.  Thus, unless velocities are unusually slow and deep lakes develop (so that $KW$ is large), we should not worry so much about the diffusive time scale.  The problem is primarily an advection.
-
-To set notation to actually state the scheme, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Ylij \approx Y(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
+To understand the significance of these time step restrictions, we consider typical values of the parameters.  We are interested in grids of size $\Delta x = \Delta y = 500$ m or larger.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  (There is significant uncertainty in estimating such velocities, which are part of the solutions to the model, not data provided to it.)  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  With these values the advective restriction \eqref{eq:dtCFL} gives $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop (so that $KW$ is large and $\Delta t_W$ is correspondingly small), we should not worry so much about the diffusive time scale.  The problem is primarily an advection.
 
 To explain the upwind method for \eqref{eq:adeqn}, consider the model equation
 \begin{equation} \label{eq:modeladvect}
@@ -280,21 +273,18 @@ where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 \centering
 \includegraphics[width=2.0in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
-\caption{The numerical scheme for Equation \eqref{eq:adeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,Y$ are needed at the regular grid points (diamonds).}
+\caption{The numerical scheme for Equation \eqref{eq:adeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,P$ are needed at the regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
-Now we can state our scheme for equation \eqref{eq:adeqn}, starting with the coefficients.  Suppose the velocity has components $\bV = (\alpha,\beta)$ and recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points, shown with triangle markers in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.
+Now we can state our scheme for equation \eqref{eq:adeqn}.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
 
-Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, which allows us to write a simplest description of the velocity:  $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation for the components:
+Recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points as in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.  Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, so that $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation like $\alpha_e = \alpha_{i+1/2,j}$, and so on, for the components:
 \begin{align*}
-\alpha_e &= \alpha_{i+1/2,j} = - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \\
-\alpha_w &= \alpha_{i-1/2,j} = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \\
-\beta_n  &= \beta_{i,j+1/2} = - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \\
-\beta_s  &= \beta_{i,j-1/2} = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}.
+\alpha_e &= - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \alpha_w = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \\
+\beta_n  &= - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \qquad \beta_s = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}.
 \end{align*}
-
-Similarly for the diffusive term, the staggered-grid values of the current water thicknesses are computed by averaging:
+For the diffusive term the staggered-grid values are computed by averaging:
 \begin{align*}
 W_e &= (W_{i,j}^l + W_{i+1,j}^l)/2, & W_w &= (W_{i-1,j}^l + W_{i,j}^l)/2, \\
 W_n &= (W_{i,j}^l + W_{i,j+1}^l)/2, & W_s &= (W_{i,j-1}^l + W_{i,j}^l)/2.
@@ -306,9 +296,9 @@ We apply the conservative upwind scheme in each variable, indicating the active 
       &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
       &\qquad\qquad\qquad + \frac{W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}\bigg] + \Phi_{ij}. \notag
 \end{align}
-Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
+This scheme, which uses first-order upwinding, has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
-Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$.  However, because refreeze is possible, generally we must enforce $W\ge 0$ on the updated values.  If $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this step should be accounted for.  As the temporal grid is refined, the conservation error should decrease.
+Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$ if it is true at time $t_l$.  However, because refreeze is possible, generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values.  Thus, if $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this projection should be accounted for.  As the temporal grid is refined, however, this mass conservation error should decrease.  Alternatively we could redistribute mass to preserve exact conservation.
 
 \subsection*{Numerical scheme for the pressure diffusion equation}   Equation \eqref{eq:diffusionpressure} is, like equation \eqref{eq:adeqn}, a diffusion.  This time there are additional ``reaction'' terms, but no dominating advection terms.  Again it will be discretized by an explicit centered, second-order scheme for the nonlinear diffusion part.  And again, because this is an explicit scheme, we consider stable time steps immediately.
 
