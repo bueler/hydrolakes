@@ -1,7 +1,8 @@
+%\documentclass[11pt,final,a4paper]{amsart}%default 10pt
 \documentclass[11pt,final]{amsart}%default 10pt
 %prepared in AMSLaTeX, under LaTeX2e
 
-\usepackage[total={6.2in,9.0in},top=1.2in,left=1.1in]{geometry}
+\usepackage[total={6.2in,9.2in},top=1.1in,left=1.1in]{geometry}
 
 \usepackage{natbib}
 
@@ -209,9 +210,9 @@ Let $E_0>0$ be a fixed, small vertical distance which is intended to be a fracti
 
 Equation \eqref{eq:dampeddstrong}, which has units $\text{m}\,\text{s}^{-1}$, represents a kind of penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus elliptic PDE \eqref{eq:ellipticpressure}.  Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, it decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).
 
-Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation \eqref{eq:ellipticpressure}.  Specifically, by using the expressions from \eqref{eq:conserve}, \eqref{eq:potential}, and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get
+Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation \eqref{eq:ellipticpressure}.  Specifically, by using the expressions from \eqref{eq:conserve} and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get
 \begin{align}
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad (P+\rho_w g (b+W))\right) - c_1 |\bv_b| (W_r - W)_+  + c_2 A |P_o - P|^3 W  + \Phi. \label{eq:diffusionpressure}
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad \psi\right) - c_1 |\bv_b| (W_r - W)_+  + c_2 A (P_o - P)^3 W  + \Phi. \label{eq:diffusionpressure}
 \end{align}
 
 In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact, we now have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Again let $c_0 = K / \rho_w g$.  Here is the mathematical model:
@@ -221,7 +222,7 @@ In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion,
 \bV &= - c_0 \grad P - K \grad b, \notag \\
 \psi &= P + \rho_w g (b + W), \label{eq:bluebox} \\
 \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \notag \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A |P_o - P|^3 W - c_1 |\bv_b| (W_r - W)_+ + \Phi. \notag
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+ + \Phi. \notag
 \end{empheq}
 
 
@@ -242,7 +243,7 @@ The parameters are constant (i.e.~time- and space-independent).  Default values 
 
 \section{Numerical scheme}  \label{sec:num}
 
-\subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  In this section Equation \eqref{eq:adeqn} will be discretized by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.  We consider stable time steps for this scheme immediately.  The time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that for stability the time step should satisfy $\Delta t \le \Delta t_{\text{CFL}}$ where
+\subsection*{Numerical scheme for conservation equation \eqref{eq:adeqn}}  The mass conservation equation will be discretized by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.  We consider stable time steps for this scheme immediately.  The time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that for stability the time step should satisfy $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
@@ -273,22 +274,20 @@ where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
 \centering
 \includegraphics[width=2.0in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
-\caption{The numerical scheme for Equation \eqref{eq:adeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivities are evaluated at the staggered grid locations (triangles).  The state functions $W,P$ are needed at the regular grid points (diamonds).}
+\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} is a finite volume scheme for the grid-centered cell (dashed line).  The velocity and diffusivity are evaluated at the staggered grid locations (triangles).  The state functions $W,P$ live at the regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
-Now we can state our scheme for equation \eqref{eq:adeqn}.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.
-
-Recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points as in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.  Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, so that $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation like $\alpha_e = \alpha_{i+1/2,j}$, and so on, for the components:
-\begin{align*}
-\alpha_e &= - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \alpha_w = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \\
-\beta_n  &= - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \qquad \beta_s = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}.
-\end{align*}
+Now we can state our scheme for equation \eqref{eq:adeqn}.  To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\Div \left(\bV W\right) = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components at staggered (cell-face-centered) points as in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.  Let $c_0=K/(\rho_w g)$, a derived parameter used for convenience, so that $\bV = - c_0 \grad P - K \grad b$.  We use ``compass'' notation like $\alpha_e = \alpha_{i+1/2,j}$, and so on, for the components:
+\begin{align}
+\alpha_e &= - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \alpha_w = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \label{eq:velocitycomp} \\
+\beta_n  &= - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \qquad \beta_s = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}. \notag
+\end{align}
 For the diffusive term the staggered-grid values are computed by averaging:
-\begin{align*}
-W_e &= (W_{i,j}^l + W_{i+1,j}^l)/2, & W_w &= (W_{i-1,j}^l + W_{i,j}^l)/2, \\
-W_n &= (W_{i,j}^l + W_{i,j+1}^l)/2, & W_s &= (W_{i,j-1}^l + W_{i,j}^l)/2.
-\end{align*}
+\begin{align}
+W_e &= (W_{i,j}^l + W_{i+1,j}^l)/2, & W_w &= (W_{i-1,j}^l + W_{i,j}^l)/2, \label{eq:stagW} \\
+W_n &= (W_{i,j}^l + W_{i,j+1}^l)/2, & W_s &= (W_{i,j-1}^l + W_{i,j}^l)/2. \notag
+\end{align}
 
 We apply the conservative upwind scheme in each variable, indicating the active index (either $i$ or $j$) in our upwind notation:
 \begin{align}
@@ -298,54 +297,53 @@ We apply the conservative upwind scheme in each variable, indicating the active 
 \end{align}
 This scheme, which uses first-order upwinding, has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
 
-Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$ if it is true at time $t_l$.  However, because refreeze is possible, generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values.  Thus, if $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this projection should be accounted for.  As the temporal grid is refined, however, this mass conservation error should decrease.  Alternatively we could redistribute mass to preserve exact conservation.
+Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$ if it is true at time $t_l$.  However, because refreeze is possible, generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values.
 
-\subsection*{Numerical scheme for the pressure diffusion equation}   Equation \eqref{eq:diffusionpressure} is, like equation \eqref{eq:adeqn}, a diffusion.  This time there are additional ``reaction'' terms, but no dominating advection terms.  Again it will be discretized by an explicit centered, second-order scheme for the nonlinear diffusion part.  And again, because this is an explicit scheme, we consider stable time steps immediately.
+\subsection*{Numerical scheme for pressure diffusion equation \eqref{eq:diffusionpressure}}  The pressure evolution equation is a nonlinear diffusion with additional ``reaction'' terms.  Unlike \eqref{eq:adeqn} there is no dominating advection term.  We discretize it using an explicit centered, second-order scheme.  Again, because this is an explicit scheme, we consider stable time steps immediately.
 
-The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof in the appendix does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  Noting that $P_o=\rho_i g H$,
+The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof in the appendix does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  Noting that $P_o=\rho_i g H$, the time step must satisfy $\Delta t \le \Delta t_P$ where
 \begin{equation}
-\Delta t_P\, \left(\frac{2 K \rho_i \max H \max W}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) \le \frac{1}{2} \label{eq:dtDIFFP}
+\Delta t_P\, \left(\frac{2 K \rho_i \max H \max W}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
 \end{equation}
-The resulting time step is a certain fraction of the time step from \eqref{eq:dtDIFFW},
+
+The resulting time step $\Delta t_P$ is a fraction of $\Delta t_W$ from \eqref{eq:dtDIFFW}:
 \begin{equation}
 \Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.
 \end{equation}
-
-With the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have a pressure-update time step $\Delta t_P$ which is about 1000 times smaller than the time step $\Delta t_W$.  With these values and the previous ones identified earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get
+In fact, with the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have $\Delta t_P$ which is about 1000 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get
 \begin{align*}
-  \Delta t_{\text{CFL}} &\le 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
-  \Delta t_W            &\le 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
-  \Delta t_P            &\le 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP}.}
+  \Delta t_{\text{CFL}} &\approx 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
+  \Delta t_W            &\approx 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
+  \Delta t_P            &\approx 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP}.}
 \end{align*}
-Thus the numerical scheme for pressure diffusion \eqref{eq:diffusionpressure}, given below, has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$; by choosing $E_0$ larger we can make the time step restriction on $\Delta t_P$ less severe.
+Thus the numerical scheme for pressure diffusion, given next, has the shortest time step.  This analysis says if is only about 10 times shorter than the CFL restriction for the advection, however.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$; by choosing $E_0$ larger we can make the time step restriction on $\Delta t_P$ less severe.
 
-The scheme we use for \eqref{eq:diffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
+Now, the scheme we use for \eqref{eq:diffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
 \begin{align}
 \frac{E_0}{(P_o)_{i,j}} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
       &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
-      &\qquad + c_2 A \left|\rho_i g H_{i,j}- \Plij\right|^3 \Wlij - c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\} + \Phi_{i,j}. \notag
+      &\qquad + c_2 A \left(\rho_i g H_{i,j}- \Plij\right)^3 \Wlij - c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+ + \Phi_{i,j}. \notag
 \end{align}
-At the start of each step we compute the current values of the hydraulic potential,
-	$$\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij).$$
 
-Generally there is no expectation that this pressure update will preserve our bounds \eqref{eq:bounds}, namely $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we must explicitly \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
-
-Finally, equation \eqref{eq:Pfd} is a reasonable statement of our scheme, but for implementation it is useful to have it in explicit update form.  First define
+Equation \eqref{eq:Pfd} is a reasonable statement of our scheme, but for implementation it is useful to have it in explicit update form.  First define
 	$$\omega_x = \frac{c_0 \Delta t}{\Delta x^2}, \qquad \omega_y = \frac{c_0 \Delta t}{\Delta y^2}.$$
 Also let
-	$$O_{\text{cav}; i,j} = c_1 |\bv_b|_{i,j} \min\left\{0,W_r - \Wlij\right\},$$
-	$$C_{\text{crp}; i,j} = c_2 A \left|\rho_i g H_{i,j} - \Plij\right|^3 \Wlij$$
+\newcommand{\Ocavij}{O_{\text{cav};\, i,j}}
+\newcommand{\Ccrpij}{C_{\text{crp};\, i,j}}
+	$$\Ocavij = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \Ccrpij = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
 be the gridded values of the cavitation-opening and creep-closure rates.  Then scheme \eqref{eq:Pfd} is equivalent to this form:
 \begin{align}
 P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
       &\qquad\qquad\qquad\quad + \omega_y W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
-      &\qquad\qquad\qquad\quad + \Delta t\, C_{\text{crp}; i,j} - \Delta t\, O_{\text{cav}; i,j} + \Delta t \Phi_{i,j}\bigg]. \notag
+      &\qquad\qquad\qquad\quad + \Delta t\, \left(\Ccrpij - \Ocavij + \Phi_{i,j}\right)\bigg]. \notag
 \end{align}
 
+\subsection*{One time step of model \eqref{eq:bluebox}}  FIXME (THIS IS SKETCH):  Assume geometry fixed and thus $h_{i,j}$, $b_{i,j}$ and $(P_o)_{i,j}$ are determined for the duration of the run..  We start the step with values $\Wlij$, $\Plij$ which satisfy the bounds $W\ge 0$ and $0 \le P \le P_o$.  Get velocity components at staggered grid locations from \eqref{eq:velocitycomp}.  Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.  Compute the current values of the hydraulic potential, $\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij)$.  Use \eqref{eq:Wfd} and \eqref{eq:Pfdupdate}.  Generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values.  Thus, if $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this projection should be accounted for.  As the temporal grid is refined, however, this mass conservation error should decrease.  Alternatively we could redistribute mass to preserve exact conservation.  There is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve our bounds $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
 
+\small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
-
+\normalsize
 
 \appendix
 
@@ -381,7 +379,7 @@ Because we also handle the diffusion term in \eqref{eq:adeqn} explicitly, we hav
 The right-hand sides of these inequalities are each $1/2$, but of course $1-(1/2)-(1/2)=0$.  In other words the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
 	$$E = 1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
 
-Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative.  Furthermore they all add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving when $\Phi\ge 0$, and it is stable under the stability conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
+Though the argument can only be made fully rigorous by handling all upwind cases (not shown), we see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative if the time step restrictions are satisfied.  Furthermore the coefficients add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} is positivity-preserving when $\Phi\ge 0$, and it is stable under conditions \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}.
 
 
 \section{An alternative nearly-full closure}
