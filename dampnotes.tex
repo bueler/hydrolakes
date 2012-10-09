@@ -200,35 +200,32 @@ The mathematical subproblem encompassing \eqref{eq:ellipticpressure}, constraint
 
 However, the goal of the current work is the initial selection of a usable subglacial hydrology model which can be coupled to ice dynamics.  We need to determine parameters from observations.  These goals suggest the need for rapid implementation.  Therefore, in these notes, we seek an easily-implemented finite difference model which does not require the solution of an elliptic problem at each time step.
 
-\subsection*{Diffusive, nearly-full closure}  As already noted, we observe that an important consequence of the full-cavity identity $Y=W$ (i.e.~equation \eqref{eq:strongclosure}) is the elliptic PDE \eqref{eq:ellipticpressure}.  This PDE describes how the pressures of different areas of the aquifer are related to each other at each instant.  However, the model in the previous subsection, equations \eqref{eq:AGAINadeqn}--\eqref{eq:AGAINdampedclosure}, does not obviously support a damped version of instantaneous relation \eqref{eq:ellipticpressure}.  In this subsection we try again, using both \eqref{eq:strongclosure} and a different nearly-full version of it, to build a model which contains a damped version of \eqref{eq:ellipticpressure}.
+\subsection*{Diffusive nearly-full closure}  As already noted, an important consequence of the full-cavity identity $Y=W$ (i.e.~equation \eqref{eq:strongclosure}) is the elliptic PDE \eqref{eq:ellipticpressure} for the pressure $P$.  This PDE describes how pressures of different areas of the aquifer are related to each other at each instant.  In this subsection we propose a damped version of the full-cavity relation $Y=W$ to build a model which includes a diffusive version of equation \eqref{eq:ellipticpressure}.
 
-Let $E_0>0$ be a fixed, small vertical distance which is a fraction of the typical aquifer thickness.  We approximate the time derivative of $Y=W$, the identity $\partial W/\partial t = \partial Y/\partial t$, by this new damped version:
+Let $E_0>0$ be a fixed, small vertical distance which is intended to be a fraction of the typical aquifer thickness.  We approximate the time derivative of $Y=W$, the identity $\partial W/\partial t = \partial Y/\partial t$, by this new damped version:
 \begin{equation}
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} =  \frac{\partial W}{\partial t}  - \frac{\partial Y}{\partial t}.\label{eq:dampeddstrong}
 \end{equation}
-Note that the units do match, so that the equation has units $\text{m}\,\text{s}^{-1}$.  As with the previous nearly-full relation \eqref{eq:dampedclosure}, equation \eqref{eq:dampeddstrong} represents a penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus elliptic PDE \eqref{eq:ellipticpressure} also.
 
-Note that $E_0/P_o$ is a positive in any area where there is ice.  Therefore, in equation \eqref{eq:dampeddstrong}, $P$ increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, $P$ decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is trying to open space for water but water is being supplied slower than that).
+Equation \eqref{eq:dampeddstrong}, which has units $\text{m}\,\text{s}^{-1}$, represents a kind of penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus elliptic PDE \eqref{eq:ellipticpressure}.  Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, it decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).
 
-Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation.  Specifically, by using the expressions from \eqref{eq:conserve}, \eqref{eq:potential}, and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get this equation:
+Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation \eqref{eq:ellipticpressure}.  Specifically, by using the expressions from \eqref{eq:conserve}, \eqref{eq:potential}, and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get
 \begin{align}
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad (P+\rho_w g (b+W))\right) - c_1 |\bv_b| \min\left\{0,W_r - W\right\} \label{eq:diffusionpressure} \\
-  &\qquad\qquad + c_2 A |P_o - P|^3 W  + \Phi. \notag
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad (P+\rho_w g (b+W))\right) - c_1 |\bv_b| (W_r - W)_+  + c_2 A |P_o - P|^3 W  + \Phi. \label{eq:diffusionpressure}
 \end{align}
 
-In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact, at this stage we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Again let $c_0 = K / \rho_w g$.  Here is our proposed mathematical model:
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact, we now have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Again let $c_0 = K / \rho_w g$.  Here is the mathematical model:
 \begin{empheq}[box=\mybluebox]{align}
-0 &\le W, \label{eq:ALTWbound} \\
-0 &\le P \le P_o, \label{eq:ALTbounds} \\
-\bV &= - c_0 \grad P - K \grad b, \label{eq:ALTvexpression} \\
-\psi &= P + \rho_w g (b + W), \label{eq:ALTpotential} \\
-\frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \label{eq:ALTadeqn} \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A |P_o - P|^3 W \label{eq:ALTdiffusionpressure} \\
-  &\qquad - c_1 |\bv_b| \min\left\{0,W_r - W\right\} + \Phi. \notag
+0 &\le W, \notag \\
+0 &\le P \le P_o, \notag \\
+\bV &= - c_0 \grad P - K \grad b, \notag \\
+\psi &= P + \rho_w g (b + W), \label{eq:bluebox} \\
+\frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi \notag \\
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A |P_o - P|^3 W - c_1 |\bv_b| (W_r - W)_+ + \Phi. \notag
 \end{empheq}
 
 
-\subsection*{On the symbols}  The above equations \eqref{eq:ALTWbound}--\eqref{eq:ALTdiffusionpressure} relate four classes of symbols, as summarized in the following table:
+\subsection*{On the symbols}  The above equations \eqref{eq:bluebox} relate four classes of symbols, as summarized in the following table:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
@@ -313,7 +310,7 @@ Because of the first-order upwinding this scheme has $O(\Delta t^1 + \Delta x^1 
 
 Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$.  However, because refreeze is possible, generally we must enforce $W\ge 0$ on the updated values.  If $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this step should be accounted for.  As the temporal grid is refined, the conservation error should decrease.
 
-\subsection*{Numerical scheme for alternative nearly-full equation \eqref{eq:ALTdiffusionpressure}}   Equation \eqref{eq:ALTdiffusionpressure} is, like equation \eqref{eq:adeqn}, a diffusion.  This time there are additional ``reaction'' terms, but no dominating advection terms.  Again it will be discretized by an explicit centered, second-order scheme for the nonlinear diffusion part.  And again, because this is an explicit scheme, we consider stable time steps immediately.
+\subsection*{Numerical scheme for the pressure diffusion equation}   Equation \eqref{eq:diffusionpressure} is, like equation \eqref{eq:adeqn}, a diffusion.  This time there are additional ``reaction'' terms, but no dominating advection terms.  Again it will be discretized by an explicit centered, second-order scheme for the nonlinear diffusion part.  And again, because this is an explicit scheme, we consider stable time steps immediately.
 
 The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof in the appendix does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  Noting that $P_o=\rho_i g H$,
 \begin{equation}
@@ -330,9 +327,9 @@ With the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \app
   \Delta t_W            &\le 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
   \Delta t_P            &\le 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP}.}
 \end{align*}
-Thus the numerical scheme for pressure diffusion \eqref{eq:ALTdiffusionpressure}, given below, has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$; by choosing $E_0$ larger we can make the time step restriction on $\Delta t_P$ less severe.
+Thus the numerical scheme for pressure diffusion \eqref{eq:diffusionpressure}, given below, has the shortest time step but it might only be about 10 times shorter than the essentially-obligatory CFL restriction for the advection.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$; by choosing $E_0$ larger we can make the time step restriction on $\Delta t_P$ less severe.
 
-The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
+The scheme we use for \eqref{eq:diffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn}:
 \begin{align}
 \frac{E_0}{(P_o)_{i,j}} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
       &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
@@ -341,7 +338,7 @@ The scheme we use for \eqref{eq:ALTdiffusionpressure} is similar to \eqref{eq:Wf
 At the start of each step we compute the current values of the hydraulic potential,
 	$$\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij).$$
 
-Generally there is no expectation that this pressure update will preserve our bounds \eqref{eq:ALTbounds}, namely $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we must explicitly \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
+Generally there is no expectation that this pressure update will preserve our bounds \eqref{eq:bounds}, namely $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we must explicitly \emph{project} to put the pressure $P_{i,j}^{l+1}$ back into this correct range.  Note that pressure is not a conserved quantity, so this projection step does not have accounting issues like that for the update to $W$.
 
 Finally, equation \eqref{eq:Pfd} is a reasonable statement of our scheme, but for implementation it is useful to have it in explicit update form.  First define
 	$$\omega_x = \frac{c_0 \Delta t}{\Delta x^2}, \qquad \omega_y = \frac{c_0 \Delta t}{\Delta y^2}.$$
@@ -355,14 +352,11 @@ P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_
       &\qquad\qquad\qquad\quad + \Delta t\, C_{\text{crp}; i,j} - \Delta t\, O_{\text{cav}; i,j} + \Delta t \Phi_{i,j}\bigg]. \notag
 \end{align}
 
-%\clearpage \newpage
-%\small
+
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 
 
-%\clearpage \newpage
-%\small
 \appendix
 
 \section{Positivity and stability of the numerical scheme for mass conservation}
