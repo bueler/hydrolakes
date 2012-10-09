@@ -179,23 +179,24 @@ If the cavity is locally larger than connected water sources can quickly fill th
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables.   (Of course there are several additional data functions and parameters.)  Two equations are not enough to determine these variables, however.  A closure for the pressure is needed.
+At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables.   Two equations are not enough to determine them, however, and a closure for the pressure is needed.
 
-\subsection*{Full-cavity closure}  Requiring the aquifer to be full at all locations and times is a closure:
+\subsection*{Full-cavity closure}  Requiring the aquifer to be full is a closure:
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequences of this ``strong'' closure are explored by \cite{Schoofetal2012}, in a broader context.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, and using $\partial W/\partial t = \partial Y/\partial t$ to eliminate the time derivatives, we get this equation relating $P$ and $W$:
+The consequences of this ``strong'' closure are explored by \cite{Schoofetal2012}.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, the relation $\partial W/\partial t = \partial Y/\partial t$ becomes this equation relating $P$ and $W$:
 \begin{equation}
-\Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) + \Phi = c_1 |\bv_b| \min\left\{0,W_r - W\right\} - c_2 A |P_o - P|^3 W.\label{eq:ellipticpressure}
+\Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) + \Phi = c_1 |\bv_b| (W_r - W)_+ - c_2 A (P_o - P)^3 W.\label{eq:ellipticpressure}
 \end{equation}
 Equation \eqref{eq:ellipticpressure} is essentially the same as equation (2.12) in \citep{Schoofetal2012}.
 
-Though we will not solve \eqref{eq:ellipticpressure} directly, this equation is very significant to the understanding of the structure of the mathematical model which we will eventually solve.  Specifically, in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift quickly and thus lower the pressure back to overburden $P=P_o$, the pressure solution is subject to inequalities
+Though we will not solve \eqref{eq:ellipticpressure} directly, it is significant to understanding the structure of our mathematical model.  Specifically, in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift and thus quickly lower the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
-The mathematical subproblem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and adequate pressure boundary conditions is all together an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This mathematical model is explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be addressed with a finite element approach \citep{SchoofStream,JouvetBueler2012}.
+
+The mathematical subproblem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and adequate pressure boundary conditions can be written, together, as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This mathematical model is explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be addressed with a finite element approach \citep[e.g.][]{SchoofStream,JouvetBueler2012}.
 
 However, the goal of the current work is the initial selection of a usable subglacial hydrology model which can be coupled to ice dynamics.  We need to determine parameters from observations.  These goals suggest the need for rapid implementation.  Therefore, in these notes, we seek an easily-implemented finite difference model which does not require the solution of an elliptic problem at each time step.
 
@@ -401,44 +402,42 @@ Though the argument can only be made fully rigorous by handling all upwind cases
 
 \section{An alternative nearly-full closure}
 
-One possible alternative which replaces rigid constraint \eqref{eq:strongclosure}, namely $0 = Y - W$, is the damped version in this Appendix.
+A possible alternative to \eqref{eq:dampeddstrong}, which also replaces rigid constraint \eqref{eq:strongclosure} with a damped version, is described in this Appendix.
 
-Choose a characteristic time scale $\tau$ which should be short (hours to months) compared to ice flow change time scales (months to centuries).  Then consider this equation
+Choose a characteristic time scale $\tau$ which should be short (hours to months) compared to ice flow change time scales (months to centuries).  Consider this equation
 \begin{equation}
 - \tau \frac{\partial Y}{\partial t} = Y - W. \label{eq:dampedclosure}
 \end{equation}
-As $\tau \to 0$ this equation recovers the full-cavity closure $Y=W$.  It says that if the notional cavity upper surface ($Y$) is locally above the water level ($Y>W$) then it should lower ($\partial Y/\partial t < 0$), and, vice versa, if the notional cavity upper surface is locally below the water ($Y<W$) then the cavity top should rise ($\partial Y/\partial t > 0$).   Said a different way, equation \eqref{eq:dampedclosure} represents a penalty method for enforcing constraint \eqref{eq:strongclosure}.  Equation \eqref{eq:dampedclosure} requires us to keep the separate state variable $Y$ in a time-dependent way.  It does not allow us to eliminate $Y$.
+As $\tau \to 0$ this equation recovers the full-cavity closure $Y=W$.  It says that if the notional cavity upper surface ($Y$) is locally above the water level ($Y>W$) then it should lower ($\partial Y/\partial t < 0$), and, vice versa, if the notional cavity upper surface is locally below the water ($Y<W$) then the cavity top should rise ($\partial Y/\partial t > 0$).
 
-On the other hand, equation \eqref{eq:dampedclosure} allows us to express pressure in terms of the geometric state variables $W$ and $Y$, as follows.  Solve \eqref{eq:capacity} for $N$, thus $P$, and substitute the expression for $\partial Y/\partial t$ from \eqref{eq:dampedclosure}:
+Equation \eqref{eq:dampedclosure} does not allow us to eliminate $Y$, but it allows us to express pressure in terms of the geometric state variables $W$ and $Y$, as follows.  Solve \eqref{eq:capacity} for $N$, thus $P$, and substitute the expression for $\partial Y/\partial t$ from \eqref{eq:dampedclosure}:
 \begin{equation}
-P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 |\bv_b| \min\left\{0,W_r - Y\right\}}{c_2 A Y}\right)^{1/3}.  \label{eq:pressurenormal}
+P = P_o - \left(\frac{\tau^{-1} (Y-W) + c_1 |\bv_b| (W_r - Y)_+}{c_2 A Y}\right)^{1/3}.  \label{eq:pressurenormal}
 \end{equation}
 
-The above expression for $P$ applies only in certain ``normal'' cases, however.  In particular it assumes positive effective pressure ($N\ge 0$).  Furthermore we must address how the bounds \eqref{eq:bounds} are maintained.  Note that the denominator of the fraction in \eqref{eq:pressurenormal} is always positive but the denominator can change sign.  Let $\mathcal{Z} = \tau^{-1} (Y-W) + c_1 |\bv_b| \min\left\{0,W_r - Y\right\}$,  the numerator appearing in Equation \eqref{eq:pressurenormal}.  We have the following conditional scheme for pressure:
+The above expression for $P$ applies only in certain ``normal'' cases, however.  In particular it assumes positive effective pressure ($N\ge 0 \iff P \le P_o$). The denominator of the fraction in \eqref{eq:pressurenormal} is always positive but the numerator
+   $$\mathcal{Z} = \tau^{-1} (Y-W) + c_1 |\bv_b| (W_r - Y)_+$$
+can change sign.  We have the following conditional scheme for pressure:
 \begin{equation}
 P = \begin{cases}
-0, & \mathcal{Z} \ge c_2 A Y P_o^3\,\, (\ge 0) , \\
+0, & \mathcal{Z} \ge c_2 A Y P_o^3, \\
 P_o, & \mathcal{Z} \le 0, \\
 P_o - \mathcal{Z}^{1/3} (c_2 A Y)^{-1/3}, & \text{all other cases}.
 \end{cases} \label{eq:pressureWY}
 \end{equation}
-The last ``normal pressure'' case occurs exactly when the given formula computes a pressure satisfying \eqref{eq:bounds}.  As a result of this scheme we have a function which computes pressure in terms of $Y,W$, namely $P = f(Y,W)$.  Of course $f$ is also a function of model parameters (i.e.~$W_r,c_1,c_2,\dots$) and of ice flow model variables (i.e.~$P_o,|\bv_b|$).
+The last ``normal pressure'' case occurs exactly when formula \eqref{eq:pressurenormal} computes a pressure satisfying the bounds \eqref{eq:bounds}.
 
-The above equations yield an apparently-solvable mathematical model.  We can apply the several definitions at each time step, starting with the geometric data $h,b$ and the current values of the state variables $W,Y$ and computing $P_o$, $\mathcal{Z}$, $P$, and $\bV$ in turn.  Then the time step itself is for these two evolution equations, which are equations \eqref{eq:adeqn} and \eqref{eq:dampedclosure}, respectively,
-\begin{align}
-\frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K W \grad W\right) + \Phi, \label{eq:AGAINadeqn} \\
-\frac{\partial Y}{\partial t} &= \frac{Y - W}{-\tau}. \label{eq:AGAINdampedclosure}
-\end{align}
+By \eqref{eq:pressureWY} we can compute pressure in terms of $Y,W$, namely $P = f(Y,W)$.   Thus, at each time step, we can start with the geometric data $h,b$ and the current values of the state variables $W,Y$ and we compute $P_o$, $\mathcal{Z}$, $P$, and $\bV$ in turn.  Then we update the state variables using the two evolution equations, which are equations \eqref{eq:adeqn} and \eqref{eq:dampedclosure}.
 
-Equation \eqref{eq:AGAINdampedclosure} can be discretized by a semi-implicit first-order Euler method (implicit for $Y$ and explicit for $W$).  Here we are not troubled by spatial derivatives.  The scheme we propose depends on first having computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}.  The scheme we propose is first-order backward Euler \citep{BurdenFaires} for the time-dependent ODE \eqref{eq:AGAINdampedclosure}, thus
+Equation \eqref{eq:dampedclosure} can be discretized by a semi-implicit (backward) first-order Euler method \citep{BurdenFaires}, assuming we have first computed the updated water thickness $W_{i,j}^{l+1}$ from \eqref{eq:Wfd}:
 \begin{equation}
 \frac{Y_{i,j}^{l+1} - Y_{i,j}^{l}}{\Delta t} = \frac{Y_{i,j}^{l+1} - W_{i,j}^{l+1}}{- \tau}. \label{eq:Yfd}
 \end{equation}
-This proposed scheme is a maximally-stable first-draft numerical scheme.  It can be rewritten as a direct calculation of the updated value,
+This scheme is a very stable first-draft numerical scheme.  It can be rewritten as a direct calculation of the updated value,
    $$Y_{i,j}^{l+1} = \frac{1}{1 + (\Delta t/\tau)}\, Y_{i,j}^{l} + \frac{1}{1 + (\tau / \Delta t)}\, W_{i,j}^{l+1}.$$
-It follows that for \emph{any} time step $\Delta t$ we compute $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are each positive and each less than one, and which add to one.  Thus the scheme is unconditionally stable when decoupled (i.e.~if the evolution of $W$ were not dependent on $Y$).
+Note $Y_{i,j}^{l+1}$ as a linear combination of $Y_{i,j}^{l}$ and $W_{i,j}^{l+1}$ with coefficients which are positive, less than one, and add to one.  Thus the scheme is unconditionally stable, at least when decoupled (i.e.~if the evolution of $W$ were not dependent on $Y$).
 
-However, in all trial runs of this model there was an observed ``checkerboard'' instability of the pressure variable, and sometimes of $W$ and/or $Y$.  The apparent reason for this instability is that the closure does not recover the effect of the highest-order term in the PDE \eqref{eq:ellipticpressure}, which is to say the elliptic part.  The diffusive closure in the main text has that part.
+However, in all trial runs of this model a ``checkerboard'' instability of the pressure variable was observed, and sometimes of $W$ and/or $Y$.  The apparent reason for this instability is that the closure does not recover the effect of the highest-order term in the PDE \eqref{eq:ellipticpressure}, which is to say the elliptic part.  The diffusive closure in the main text has that part and it does not show evidence of any such instability.
 
 
 \end{document}
