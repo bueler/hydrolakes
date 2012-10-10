@@ -1,8 +1,7 @@
-%\documentclass[11pt,final,a4paper]{amsart}%default 10pt
 \documentclass[11pt,final]{amsart}%default 10pt
 %prepared in AMSLaTeX, under LaTeX2e
 
-\usepackage[total={6.2in,9.2in},top=1.1in,left=1.1in]{geometry}
+\usepackage[total={6.2in,9.0in},top=1.2in,left=1.1in]{geometry}
 
 \usepackage{natbib}
 
@@ -225,20 +224,40 @@ In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion,
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+ + \Phi. \notag
 \end{empheq}
 
-
-\subsection*{On the symbols}  The model equations \eqref{eq:bluebox} relate four classes of symbols, as summarized in the following table:
+Model equations \eqref{eq:bluebox} relate four classes of fundamental symbols, as summarized in the following table:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
 class & symbols \\ \hline
-\emph{parameters (scalar)} & $A$, $c_0$, $c_1$, $c_2$, $E_0$, $g$, $K$, $\rho_i$, $\rho_w$, $W_r$ \\
+\emph{parameters (scalar)} & $A$, $c_1$, $c_2$, $E_0$, $g$, $K$, $\rho_i$, $\rho_w$, $W_r$ \\
 \emph{data functions} & $b$, $\Phi$, $P_o$, $|\bv_b|$ \\
-\emph{derived functions} & $\bV$, $\psi$ \\
 \emph{state functions} & $W$, $P$
 \end{tabular}
 \end{table}
 
-The parameters are constant (i.e.~time- and space-independent).  Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of the ice sheet model.  The derived and state functions evolve according to the mathematical model in this work.  Only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
+\noindent Also symbols $\bV$, $\psi$, $c_0$ are derived from these as already stated.
+
+The parameters in the table are all constant (i.e.~time- and space-independent).  % FIXME: actually we want K to depend on W<W_r or W>W_r
+Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of the ice sheet model.  The derived and state functions evolve according to the mathematical model in this work.  Only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
+
+\subsection*{Steady states of model \eqref{eq:bluebox}}  The steady states of the above mathematical model are worth considering both because the physical subglacial system is likely to be close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
+
+Though the advection-diffusion decomposition used in restating mass conservation equation \eqref{eq:conserve} as advection-diffusion equation \eqref{eq:adeqn} is important for the numerical solution of the time-dependent problem, to state the steady case we recall simply that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that the steady form of \eqref{eq:conserve} is either $0 = \Div\left(c_0 W \grad \psi\right) + \Phi$ or $\Div \left(\bV \grad W\right) = \Div\left(K W \grad W\right) + \Phi$ according to taste.
+
+With these reminders, we see that the steady form of model \eqref{eq:bluebox} can be written in terms of $\bq,W,P$ as
+\begin{align}
+\bq &= - c_0 W\, \grad\left(P + \rho_w g (b+W)\right), \notag \\
+0 &= - \Div \bq + \Phi, \label{eq:steadymodel} \\
+0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag
+\end{align}
+along with the bounds $W\ge 0$ and $0 \le P \le P_o$ of course.  In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is zero.
+
+The important point about the steady state equations is that processes have become decoupled.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~the first two equations in \eqref{eq:steadymodel}), and the opening and closing processes on the other hand (i.e.~the third equation in \eqref{eq:steadymodel}).   These steady state equations are identical to the steady states of the \cite{Schoofetal2012} model, where this decoupling is noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
+
+When $W<W_r$ and $\bv_b \ne 0$ these equations allow us to write the pressure as a function of the water amount,
+	$$P = P_o - \left(\frac{c_1 |\bv_b| (W_r - W)}{c_2 A W}\right)^{1/3} \qquad \text{ in steady state if $W<W_r$ and $\bv_b \ne 0$}.$$
+Actually, one should only use this formula if it computes a nonnegative pressure; otherwise we have $P=0$.  In all other steady cases, when either $W\ge W_r$ or $\bv_b=0$, we see that the water pressure takes the overburden value:
+	$$P = P_o \qquad \text{ in steady state if $W\ge W_r$ or $\bv_b=0$}.$$
 
 
 \section{Numerical scheme}  \label{sec:num}
