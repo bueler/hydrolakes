@@ -240,6 +240,9 @@ class & symbols \\ \hline
 The parameters in the table are all constant (i.e.~time- and space-independent).  % FIXME: actually we want K to depend on W<W_r or W>W_r
 Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of the ice sheet model.  The derived and state functions evolve according to the mathematical model in this work.  Only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
 
+
+\section{Steady states}  \label{sec:steadyverif}
+
 \subsection*{Steady states of model \eqref{eq:bluebox}}  The steady states of the above mathematical model are worth considering both because the physical subglacial system is likely to be close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
 
 Though the advection-diffusion decomposition used in restating mass conservation equation \eqref{eq:conserve} as advection-diffusion equation \eqref{eq:adeqn} is important for the numerical solution of the time-dependent problem, to state the steady case we recall simply that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that the steady form of \eqref{eq:conserve} is either $0 = \Div\left(c_0 W \grad \psi\right) + \Phi$ or $\Div \left(\bV \grad W\right) = \Div\left(K W \grad W\right) + \Phi$ according to taste.
@@ -258,6 +261,29 @@ When $W<W_r$ and $\bv_b \ne 0$ these equations allow us to write the pressure as
 	$$P = P_o - \left(\frac{c_1 |\bv_b| (W_r - W)}{c_2 A W}\right)^{1/3} \qquad \text{ in steady state if $W<W_r$ and $\bv_b \ne 0$}.$$
 Actually, one should only use this formula if it computes a nonnegative pressure; otherwise we have $P=0$.  In all other steady cases, when either $W\ge W_r$ or $\bv_b=0$, we see that the water pressure takes the overburden value:
 	$$P = P_o \qquad \text{ in steady state if $W\ge W_r$ or $\bv_b=0$}.$$
+
+\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:steadymodel} are a basis for building a useful two-dimensional exact solution.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we suppose an ice sheet geometry on a flat bedrock, and construct a solution for $W$ and $P$ which depends only on a radial coordinate.
+
+The flat bed ($b=0$) and radial form of \eqref{eq:steadymodel} is the system
+\begin{align}
+q(r) &= - c_0 W(r)\, \left(P'(r) + \rho_w g W'(r)\right), \label{eq:rsflux} \\
+0 &= - \frac{1}{r}\left(r\,q(r)\right)' + \Phi(r), \label{eq:rsconserve} \\
+0 &= c_2 A (P_o(r) - P(r))^3 W(r) - c_1 s_b(r) (W_r - W(r))_+, \label{eq:rsopenclose}
+\end{align}
+along with the bounds $W(r)\ge 0$ and $0 \le P(r) \le P_o(r)$, where $s_b(r)$ denotes the sliding speed $|\bv_b|$.
+
+In the case of constant water input $\Phi(r)=\Phi_0$ we have
+	$$q(r) = \frac{1}{2} \Phi_0\, r$$
+by integrating \eqref{eq:rsconserve} from $0$ to $r$ and using symmetry so $q(0)=0$.  
+
+Equations \eqref{eq:rsopenclose} and \eqref{eq:rsflux} combine to a first-order ODE for $W(r)$ because, as noted above, in steady state the pressure is a function of the water amount.  Specifically, where $s_b(r)>0$, and assuming $w(r) < W_r$, which must be verified later, we get
+	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) - \left(\left(\frac{c_1 s_b(r) (W_r - W)}{c_2 A W}\right)^{1/3}\right)' + \rho_w g W'(r)\right).$$
+Where $s_b(r)=0$ we get the simpler equation
+	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) + \rho_w g W'(r)\right).$$
+because $P(r)=P_o(r)$.
+
+FIXME: to be continued \dots
+
 
 
 \section{Numerical scheme}  \label{sec:num}
