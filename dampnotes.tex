@@ -80,6 +80,9 @@
 
 
 \begin{document}
+\scriptsize \hfill \today \normalsize
+\vspace{0.5in}
+
 \maketitle
 \thispagestyle{empty}
 
@@ -297,7 +300,12 @@ W'(r) = \frac{s_b'(r) W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + P_o'(r
 \end{equation}
 (The nontrivial manipulations needed to derive this form should be carefully checked.)
 
-FIXME: choose $h(r)$ a la Bodvardsson, thus $P_o(r)$ with finite slope, and explain why $W(R)=W_r$ at the margin location $r=R$
+It will turn out that the numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice cap margin inward toward the center.  Noting also that the overburden pressure gradient $P_o'(r)$ appears in \eqref{eq:WradialODE}, we choose an ice cap geometry in which that quantity is finite.  Specifically, the plug flow, flat bed solution of \cite{Bodvardsson} has finite surface slope $|h'|<0$.  Extending the surface elevation formula to the radial case, from equations (23) and (24) in \cite{Bodvardsson} we have surface elevation
+    $$h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right)$$
+where $h(0)=h_0$ is the height of the center of the ice cap and its margin, where $h(r)=0$, occurs at $r=R_0$.  (In Bodvardsson's theory, which only applies directly in the one-dimensional case, there is an equilibrium line elevation $h_{\text{ela}}=(2/3) h_0$, a mass balance gradient $a$, and a basal friction coefficient $k$ which are related by $a k R_0^2 = 9 h_{\text{ela}}$.  But these are not really our concern as we assume the ice geometry and basal sliding velocity are static as we find a subglacial water solution.)  It follows that
+    $$P_o(r) = \rho_i g h_0 \left(1 - \frac{r^2}{R_0^2} \right), \qquad P_o'(r) = FIXME$$
+
+FIXME:  explain why $W(R)=W_r$ at the margin location $r=R$
 
 
 \section{Numerical scheme}  \label{sec:num}
