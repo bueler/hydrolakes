@@ -255,6 +255,8 @@ Default values must be chosen for these parameters, even though the informed mod
 
 \subsection*{Steady states of model \eqref{eq:bluebox}}  The steady states of the above mathematical model are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
 
+FIXME: add edits from here
+
 Though the advection-diffusion decomposition used in restating mass conservation equation \eqref{eq:conserve} as \eqref{eq:adeqn} is important for the numerical solution of the time-dependent problem, when considering steady exact solutions we will avoid it.  That is, we recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that $0 = \Div\left(c_0 W \grad \psi\right) + \Phi$ is a steady form of \eqref{eq:conserve}.
 
 The steady form of model \eqref{eq:bluebox} is written in terms of $\bq,W,P$ as
@@ -273,6 +275,14 @@ When $W<W_r$ and $\bv_b \ne 0$ these equations allow us to write the pressure as
 	$$P = P_o - \left(\frac{c_1 |\bv_b| (W_r - W)}{c_2 A W}\right)^{1/3} \qquad \text{ in steady state if $W<W_r$ and $\bv_b \ne 0$}.$$
 Actually, one should only use this formula if it computes a nonnegative pressure; otherwise we have $P=0$.  In all other steady cases, when either $W\ge W_r$ or $\bv_b=0$, we see that the water pressure takes the overburden value:
 	$$P = P_o \qquad \text{ in steady state if $W\ge W_r$ or $\bv_b=0$}.$$
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady}
+\bigskip
+\caption{The function $P(W)$ in steady state has different shapes depending on the size of the sliding velocity.  If there is sliding $|\bv_b|>0$ then $\partial P / \partial W = \infty$ as water amount reaches the roughness scale $W=W_r$.  (In this case $W_r=1$ m and $c_1/(c_2 A) = 3.94\times 10^{24}\,\text{Pa}^3\,\text{s}\,\text{m}^{-1}$.)}
+\label{fig:psteady}
+\end{figure}
 
 \subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:steadymodel} are a basis for building a useful two-dimensional nearly-exact solution.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.  This solution will depend on the numerical solution of a first-order ODE which can be solved to very high precision, which explains the ``nearly'' qualifier.
 
