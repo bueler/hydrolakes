@@ -16,7 +16,7 @@ CC = c1 / (c2 * A)
 h0 = 1000.0;         % m
 Po = rhoi * g * h0;
 
-W = 0.01:.01:1.1*Wr;
+W = 0.01:0.001:1.1*Wr;
 
 % four different amounts of sliding:
 v0   = 100.0 / spera;  % m/s

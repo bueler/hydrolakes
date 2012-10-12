@@ -255,38 +255,54 @@ Default values must be chosen for these parameters, even though the informed mod
 
 \subsection*{Steady states of model \eqref{eq:bluebox}}  The steady states of the above mathematical model are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
 
-FIXME: add edits from here
-
-Though the advection-diffusion decomposition used in restating mass conservation equation \eqref{eq:conserve} as \eqref{eq:adeqn} is important for the numerical solution of the time-dependent problem, when considering steady exact solutions we will avoid it.  That is, we recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that $0 = \Div\left(c_0 W \grad \psi\right) + \Phi$ is a steady form of \eqref{eq:conserve}.
-
-The steady form of model \eqref{eq:bluebox} is written in terms of $\bq,W,P$ as
+Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that, in simplifying the equations in model \eqref{eq:bluebox}, we can always use the fact $\Div\left(c_0 W \grad \psi\right) = -\Div\left(\bV W\right) + \Div\left(K W \grad W\right)$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
-\bq &= - c_0 W\, \grad\left(P + \rho_w g (b+W)\right), \notag \\
-0 &= - \Div \bq + \Phi, \label{eq:steadymodel} \\
-0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
+\bV &= - c_0 \grad P - K \grad b, \label{eq:Vsteady} \\
+\bq &= \bV W - K W \grad W, \label{eq:qsteady} \\
+0 &= - \Div \bq + \Phi, \label{eq:masscontsteady} \\
+0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
 In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is zero.  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
-Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in steady state equations \eqref{eq:steadymodel}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~the first two equations above), and the opening and closing processes on the other hand (i.e.~the third equation).
+Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  In fact, steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} give steady states which are identical to those of the \cite{Schoofetal2012} model, where the same decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
 
-Steady state equations\eqref{eq:steadymodel} are identical to the steady states of the \cite{Schoofetal2012} model, where the decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
-
-When $W<W_r$ and $\bv_b \ne 0$ these equations allow us to write the pressure as a function of the water amount,
-	$$P = P_o - \left(\frac{c_1 |\bv_b| (W_r - W)}{c_2 A W}\right)^{1/3} \qquad \text{ in steady state if $W<W_r$ and $\bv_b \ne 0$}.$$
-Actually, one should only use this formula if it computes a nonnegative pressure; otherwise we have $P=0$.  In all other steady cases, when either $W\ge W_r$ or $\bv_b=0$, we see that the water pressure takes the overburden value:
-	$$P = P_o \qquad \text{ in steady state if $W\ge W_r$ or $\bv_b=0$}.$$
+The above equations allow us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount:
+\begin{equation}
+P(W) = \left(P_o - \left(\frac{c_1 |\bv_b| (W_r - W)_+}{c_2 A W}\right)^{1/3}\right)_+ \qquad \text{ in steady state}.  \label{eq:PofWsteady}
+\end{equation}
+This formula applies even if $W\ge W_r$ or $\bv_b=0$; in those cases the water pressure takes the overburden value $P = P_o$.   Figure \ref{fig:psteady} shows this function $P(W)$ for several cases of sliding velocity $|\bv_b|$.  We see that as the water amount reaches the roughness scale ($W\to W_r$) the pressure rises rapidly to overburden ($P(W) \to P_o$).  At the other extreme, note that $P(W)=0$ if $P_o^3 W < c_1 |\bv_b| (W_r - W) / (c_2 A)$, but that this only occurs if the sliding speed is sufficiently large and then only for small $W$.  If the sliding speed is modest enough so that $P_o^3 W > c_1 |\bv_b| (W_r - W) / (c_2 A)$, by contrast, then the pressure also drops rapidly as $W\to 0$.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady}
 \bigskip
-\caption{The function $P(W)$ in steady state has different shapes depending on the size of the sliding velocity.  If there is sliding $|\bv_b|>0$ then $\partial P / \partial W = \infty$ as water amount reaches the roughness scale $W=W_r$.  (In this case $W_r=1$ m and $c_1/(c_2 A) = 3.94\times 10^{24}\,\text{Pa}^3\,\text{s}\,\text{m}^{-1}$.)}
+\caption{The function $P(W)$ which arises in steady state, namely equation \eqref{eq:PofWsteady}, also depends on the sliding velocity.  For this figure we have chosen ice thickness $H=1000$ m so that $P_o=\rho_i g H \approx 90$ bar.  Also $W_r=1$ m and $c_1,c_2,A$ are from Table \ref{tab:constants}.}
 \label{fig:psteady}
 \end{figure}
 
-\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:steadymodel} are a basis for building a useful two-dimensional nearly-exact solution.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.  This solution will depend on the numerical solution of a first-order ODE which can be solved to very high precision, which explains the ``nearly'' qualifier.
+For convenience in later formulas define
+    $$s_b(r) =  \left(\frac{c_1 |\bv_b(r)|}{c_2 A}\right)^{1/3},$$
+which is the scaled basal sliding most relevant to the steady state pressure; note that \eqref{eq:PofWsteady} can be written $P(W) = \left(P_o - s_b (W_r - W)_+^{1/3}  W^{-1/3}\right)_+$.  In later calculations we will also need the derivative formula for the variation of $P$ when holding $P_o$ and $|\bv_b|$ constant; we emphasize it only applies in steady state:
+\begin{equation}
+\frac{\partial P}{\partial W} =
+    \begin{cases}
+      0, & \bv_b = 0 \text{ or } W > W_r \text{ or } P_o^3 W < s_b^3 (W_r - W), \\
+      \frac{1}{3} s_b W_r (W_r - W)^{-2/3} W^{-4/3}, & \text{otherwise}.
+    \end{cases}  \label{eq:dPdWsteady}
+\end{equation}
+The last case is the ``normal pressure'' case, where $0 < P < P_o$.  Formula \eqref{eq:dPdWsteady} also reveals that $\partial P / \partial W \to \infty$ as $W \to W_r$ or $W\to 0$, at least in the normal pressure cases.
 
-The flat bed ($b=0$) and radial form of \eqref{eq:steadymodel} is the system
+The immediate significance of considering $\partial P / \partial W$ is this calculation of flux in steady state in the normal pressure cases:
+\begin{align}
+\bV &= - c_0 \grad P - K \grad b = - c_0 \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - K \grad b  \label{eq:Vsteadyexpand} \\
+    &= - c_0 \left[\grad P_o - \left(\frac{W_r - W}{W}\right)^{1/3} \grad s_b +\frac{\partial P}{\partial W} \grad W\right] - K \grad b. \notag
+\end{align}
+
+FIXME: the significance of this is that we can address the circumstances under which the velocity is big, and thus when CFL is severe.  That is, for the question \emph{when does water move rapidly around the aquifer?} the best answer I can provide is \emph{consult \eqref{eq:Vsteadyexpand}}, even though that equation only applies in steady state.
+
+\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are a basis for building a useful two-dimensional nearly-exact solution.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.  This solution will depend on the numerical solution of a first-order ODE which can be solved to very high precision, which explains the ``nearly'' qualifier.
+
+The flat bed ($b=0$) and radial form of the steady equations is the system
 \begin{align}
 q(r) &= - c_0 W(r)\, \left(P'(r) + \rho_w g W'(r)\right), \label{eq:rsflux} \\
 0 &= - \frac{1}{r}\left(r\,q(r)\right)' + \Phi(r), \label{eq:rsconserve} \\
@@ -297,9 +313,7 @@ In the case of constant water input $\Phi(r)=\Phi_0$, which we assume for the ex
 	$$q(r) = \frac{1}{2} \Phi_0\, r$$
 by integrating from $0$ to $r$ and using symmetry so $q(0)=0$.    
 
-From such an expression for $q(r)$, equations \eqref{eq:rsflux} and \eqref{eq:rsopenclose} combine to give a first-order ODE for $W(r)$.  This is because, as noted above, in steady state the pressure is a function of the water amount, that is, we start the construction of the ODE by solving \eqref{eq:rsopenclose} for $P$ in terms of $W$.  From now on we assume $W(r) < W_r$, which must be verified later as a property of the constructed solution.  For convenience let
-    $$s_b(r) =  \left(\frac{c_1}{c_2 A} |\bv_b(r)|\right)^{1/3},$$
-so that $s_b(r)$ denotes a power of the sliding speed.  In constructing the exact solution we will choose the sliding speed so that $s_b(r)$ has a bounded derivative.
+From such an expression for $q(r)$, equations \eqref{eq:rsflux} and \eqref{eq:rsopenclose} combine to give a first-order ODE for $W(r)$.  This is because, as noted above, in steady state the pressure is a function of the water amount, that is, we start the construction of the ODE by solving \eqref{eq:rsopenclose} for $P$ in terms of $W$.  From now on we assume $W(r) < W_r$, which must be verified later as a property of the constructed solution.  In constructing the exact solution we will choose the sliding speed so that $s_b(r)$ has a bounded derivative.
 
 Now the ODE for $W(r)$ can be written
 	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) - \left(s_b(r) \left(\frac{W_r - W(r)}{W(r)}\right)^{1/3}\right)' + \rho_w g W'(r)\right).$$
