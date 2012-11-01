@@ -111,7 +111,7 @@ while t<te
   psi = P + rhow * g * (b + W);
   Ocav = c1 * magvb .* (Wr - W);
   Ocav(Ocav < 0.0) = 0.0;
-  Ccrp = c2 * (Po - P).^3 .* W;
+  Ccrp = c2 * A * (Po - P).^3 .* W;
 
   % grad pressure and grad water
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
