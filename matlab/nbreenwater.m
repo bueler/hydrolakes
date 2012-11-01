@@ -41,38 +41,28 @@ if true
   fprintf('showing initial fields: topg, usurf, outline, Phi, geometric psi\n')
 
   figure(1)
+  set(gcf,'position',[100 400 1200 400])
+  subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(topg)), colorbar
   title('bed elevation  (m)')
   xlabel('x (km)'), ylabel('y (km)')
-  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_bed.eps'))
-
-  figure(2)
+  subplot(1,2,2)
   imagesc(x/1000,flipud(-y)/1000,flipud(usurf)), colorbar
   title('surface elevation  (m)')
   xlabel('x (km)'), ylabel('y (km)')
-  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_usurf.eps'))
 
-  figure(3)
+  figure(2)
+  set(gcf,'position',[100 300 1200 400])
+  subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(outline))
   title('outline')
   xlabel('x (km)'), ylabel('y (km)')
-  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_outline.eps'))
-
-  figure(4)
+  subplot(1,2,2)
   imagesc(x/1000,flipud(-y)/1000,flipud(Phi*spera)), colorbar
   title('water input  (m/a)')
   xlabel('x (km)'), ylabel('y (km)')
-  %set(gcf,'PaperPositionMode','auto'), print('-dpsc2',strcat('fig_melt.eps'))
 
-  figure(5)
-  rhoi = 910.0;  rhow = 1028.0;  g = 9.81;
-  psi = rhoi * g * thk + rhow * g * topg;
-  imagesc(x/1000,flipud(-y)/1000,flipud(psi)), colorbar
-  title('hydraulic potential from geometry  (Pa)')
-  xlabel('x (km)'), ylabel('y (km)')
 end
-
-%return
 
 if nargin < 3
   W0 = zeros(size(topg));
@@ -94,23 +84,34 @@ fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
 if true
   fprintf('showing final fields: W, P\n')
 
-  figure(6)
+  rhoi = 910.0;  g = 9.81;
+
+  figure(3)
+  set(gcf,'position',[100 200 1200 400])
+  subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(W)), colorbar
   title('water thickness W  (m)')
   xlabel('x (km)'), ylabel('y (km)')
-
-  figure(7)
-  imagesc(x/1000,flipud(-y)/1000,flipud(P)), colorbar
-  title('water pressure P  (Pa)')
-  xlabel('x (km)'), ylabel('y (km)')
-
-  figure(8)
   Pmask = ones(size(P));
   Po = rhoi * g * thk;
   Pmask(P < 0.001*Po) = 0;
   Pmask(P > 0.999*Po) = 2;
+  subplot(1,2,2)
   imagesc(x/1000,flipud(-y)/1000,flipud(Pmask)), colorbar
-  title('pressure mask:  0 = underpressure,  1 = normal,  2 = overpressure')
+  title('pressure mask:  0=under, 1=normal, 2=over')
   xlabel('x (km)'), ylabel('y (km)')
+
+  figure(4)
+  set(gcf,'position',[100 100 1200 400])
+  psi = rhoi * g * thk;
+  subplot(1,2,1)
+  imagesc(x/1000,flipud(-y)/1000,flipud(psi),[0 5.0e6]), colorbar
+  title('overburden pressure P_o  (Pa)')
+  xlabel('x (km)'), ylabel('y (km)')
+  subplot(1,2,2)
+  imagesc(x/1000,flipud(-y)/1000,flipud(P),[0 5.0e6]), colorbar
+  title('water pressure P  (Pa)')
+  xlabel('x (km)'), ylabel('y (km)')
+
 end
 
