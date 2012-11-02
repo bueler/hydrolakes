@@ -195,42 +195,41 @@ Though extreme cases could potentially occur, wherein a vapor (e.g. air) layer f
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as two partial differential equations in these three variables.   Two equations are not enough to determine them, however, and a closure for the pressure is needed.
+At this point we do not know how to compute pressure $P$.  The apparent state variables of the model so far are $W$,$Y$,$P$.  For a fixed ice geometry and ice velocity, the above equations can be written as only two partial differential equations in these three unknowns.   A closure for the pressure is needed.
 
 \subsection*{Full-cavity closure}  Requiring the aquifer to be full is a closure:
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequences of this ``strong'' closure are explored by \cite{Schoofetal2012}.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, the relation $\partial W/\partial t = \partial Y/\partial t$ becomes this equation relating $P$ and $W$:
+The consequences of this ``strong'' closure are explored at some length by \cite{Schoofetal2012}.  Equation \eqref{eq:strongclosure} allows us to eliminate $Y$, but we can also use the time-derivative of the strong closure, namely the equality $\partial W/\partial t = \partial Y/\partial t$.  From equations \eqref{eq:conserve}, \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:capacity}, the relation $\partial W/\partial t = \partial Y/\partial t$ becomes this equation relating $P$ and $W$:
 \begin{equation}
 \Div \left(\frac{K\,W}{\rho_w g} \grad \left(P + \rho_w g (b+W)\right) \right) + \Phi = c_1 |\bv_b| (W_r - W)_+ - c_2 A (P_o - P)^3 W.\label{eq:ellipticpressure}
 \end{equation}
-Equation \eqref{eq:ellipticpressure} is essentially the same as equation (2.12) in \citep{Schoofetal2012}.
+Equation \eqref{eq:ellipticpressure} is the same as the $\alpha=1$, $\beta=2$ case of equation (2.12) in \citep{Schoofetal2012}.  Though we will not solve \eqref{eq:ellipticpressure} directly, it is significant to understanding the structure of our mathematical model.  Specifically, in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.
 
-Though we will not solve \eqref{eq:ellipticpressure} directly, it is significant to understanding the structure of our mathematical model.  Specifically, in a region where the water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for the unknown pressure $P$.  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift and thus quickly lower the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, the pressure solution is subject to inequalities
+Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift and thus quickly lower the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
+The mathematical problem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and adequate pressure boundary conditions can be written, together, as an elliptic variational inequality \citep{KinderlehrerStampacchia}, and it is explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be addressed with a finite element approach \citep[e.g.][]{SchoofStream,JouvetBueler2012}.
 
-The mathematical subproblem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and adequate pressure boundary conditions can be written, together, as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This mathematical model is explored by \cite{Schoofetal2012}.  The numerical analysis of such problems can be addressed with a finite element approach \citep[e.g.][]{SchoofStream,JouvetBueler2012}.
+However, the goal of the current work is the initial selection of a subglacial hydrology model which can be staightforwardly coupled to three-dimensional ice dynamics.  We need to determine parameters for this model from observations at the surface of glaciers.  These goals suggest that we seek an easily-implemented finite difference model which does not require the solution of an elliptic problem at each time step.  We find such a model by weakening closure \eqref{eq:strongclosure}, next.
 
-However, the goal of the current work is the initial selection of a usable subglacial hydrology model which can be coupled to ice dynamics.  We need to determine parameters from observations.  These goals suggest the need for rapid implementation.  Therefore, in these notes, we seek an easily-implemented finite difference model which does not require the solution of an elliptic problem at each time step.
+\subsection*{Diffusive nearly-full closure}  PDE \eqref{eq:ellipticpressure} is a kind of stress balance, though only the pressure is involved.  It describes how pressures of different areas of the aquifer are related to each other, and to the aquifer geometry, at each instant.  In this subsection we propose a damped version of the full-cavity relation $Y=W$ which generates equation \eqref{eq:ellipticpressure}.  We build a model which includes a diffusive version of \eqref{eq:ellipticpressure}.
 
-\subsection*{Diffusive nearly-full closure}  As already noted, an important consequence of the full-cavity identity $Y=W$ (i.e.~equation \eqref{eq:strongclosure}) is the elliptic PDE \eqref{eq:ellipticpressure} for the pressure $P$.  This PDE describes how pressures of different areas of the aquifer are related to each other at each instant.  In this subsection we propose a damped version of the full-cavity relation $Y=W$ to build a model which includes a diffusive version of equation \eqref{eq:ellipticpressure}.
-
-Let $E_0>0$ be a fixed, small vertical distance which is intended to be a fraction of the typical aquifer thickness.  We approximate the time derivative of $Y=W$, the identity $\partial W/\partial t = \partial Y/\partial t$, by this new damped version:
+Let $E_0>0$ be a fixed, small vertical distance.  It is intended to be a fraction of the typical aquifer thickness.  We approximate the full-closure time derivative identity $\partial W/\partial t = \partial Y/\partial t$ by this new damped version:
 \begin{equation}
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} =  \frac{\partial W}{\partial t}  - \frac{\partial Y}{\partial t}.\label{eq:dampeddstrong}
 \end{equation}
+Equation \eqref{eq:dampeddstrong} represents a kind of penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$.  Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, it decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).
 
-Equation \eqref{eq:dampeddstrong}, which has units $\text{m}\,\text{s}^{-1}$, represents a kind of penalty method for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$, and thus elliptic PDE \eqref{eq:ellipticpressure}.  Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, it decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).
-
-Equation \eqref{eq:dampeddstrong} implies a replacement for elliptic equation \eqref{eq:ellipticpressure}.  Specifically, by using the expressions from \eqref{eq:conserve} and \eqref{eq:flux} for $\partial W/\partial t$, and by using the expression from \eqref{eq:capacity} for $\partial Y/\partial t$, and also using the identity $Y=W$ to eliminate $Y$, we get
+To replace elliptic equation \eqref{eq:ellipticpressure} we use the expressions from \eqref{eq:conserve} and \eqref{eq:flux} for $\partial W/\partial t$, and the expression from \eqref{eq:capacity} for $\partial Y/\partial t$.  We also use the identity $Y=W$ to eliminate $Y$.  The result is
 \begin{align}
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad \psi\right) - c_1 |\bv_b| (W_r - W)_+  + c_2 A (P_o - P)^3 W  + \Phi. \label{eq:diffusionpressure}
 \end{align}
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.
 
-In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  In fact, we now have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Again let $c_0 = K / \rho_w g$.  Here is the mathematical model:
+\subsection*{Diffusive subglacial hydrology model}  At this point we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Define $c_0 = K / \rho_w g$.  Here is the new mathematical model:
 \begin{empheq}[box=\mybluebox]{align}
 0 &\le W, \notag \\
 0 &\le P \le P_o, \notag \\
@@ -240,7 +239,7 @@ In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion,
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+ + \Phi. \notag
 \end{empheq}
 
-Model equations \eqref{eq:bluebox} relate three classes of fundamental symbols, as summarized in the following table:
+Model equations \eqref{eq:bluebox} relate three classes of symbols:
 
 \begin{table}[h]
 \begin{tabular}{r|c}
@@ -251,15 +250,17 @@ class & symbols \\ \hline
 \end{tabular}
 \end{table}
 
-\noindent Also, as already stated, symbols $\bV$, $\psi$, $c_0$ are derived from these.  The parameters in the table are all constant (i.e.~time- and space-independent).  % FIXME: actually we want K to depend on W<W_r or W>W_r
-Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of the ice sheet model.  The derived and state functions evolve according to the mathematical model in this work.  Only the state functions $W,P$ must be provided with initial values, and saved for restarting the model.
+\noindent Symbols $\bV$, $\psi$, $c_0$ are derived from these.
+
+The parameters in are all constant (i.e.~time- and space-independent) in the current context.  % FIXME: actually we want K to depend on W<W_r or W>W_r
+Default values must be chosen for these parameters, even though the informed model user will seek to change them and explore the parameter space.  The data functions are supplied by the rest of an ice sheet model.  The state functions evolve according to the mathematical model \eqref{eq:bluebox}.  Only the state functions $W,P$ must be provided with initial values, and only they must be saved for restarting the model.
 
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Steady states of model \eqref{eq:bluebox}}  The steady states of the above mathematical model are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
+\subsection*{Steady states of the model}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
 
-Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  It follows that, in simplifying the equations in model \eqref{eq:bluebox}, we can always use the fact $\Div\left(c_0 W \grad \psi\right) = -\Div\left(\bV W\right) + \Div\left(K W \grad W\right)$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.    Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
 \bV &= - c_0 \grad P - K \grad b, \label{eq:Vsteady} \\
 \bq &= \bV W - K W \grad W, \label{eq:qsteady} \\
