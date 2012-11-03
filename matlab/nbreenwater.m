@@ -54,7 +54,7 @@ if true
   figure(2)
   set(gcf,'position',[100 300 1200 400])
   subplot(1,2,1)
-  imagesc(x/1000,flipud(-y)/1000,flipud(outline))
+  imagesc(x/1000,flipud(-y)/1000,flipud(outline)), colorbar
   title('outline')
   xlabel('x (km)'), ylabel('y (km)')
   subplot(1,2,2)
