@@ -39,21 +39,7 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 % criterion for diffusion), and total water amount.  The output variables
 % are the final values of the state variables W,P.
 
-spera = 31556926.0;
-rhoi  = 910.0;         % kg m-3
-rhow  = 1028.0;        % kg m-3
-g     = 9.81;          % m s-2
-
-% major model parameters:
-A  = 3.1689e-24;       % ice softness (Pa-3 s-1)
-K  = 1.0e-2;           % m s-1   FIXME: want Kmax or Kmin according to W > Wr
-Wr = 1.0;              % m
-c1 = 0.500;            % m-1
-c2 = 0.040;            % [pure]
-
-E0 = 5.0;              % m       FIXME:  not small; what is right?
-
-c0 = K / (rhow * g);   % constant in velocity formula
+p = params();
 
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
@@ -85,10 +71,10 @@ if any(any(h < b))
   error('points exist where ice surface is below bed'), end
 if any(any(h < 0))
   error('points exist where ice surface is below sea level'), end
-Po = rhoi * g * (h - b);
-Hfloat = h / (1-rhoi/rhow);  % thickness if it were floating
-float = (rhoi * Hfloat < rhow * (-b));
-Po(float) = rhoi * g * Hfloat(float);  % if floating, set to ice base pressure
+Po = p.rhoi * p.g * (h - b);
+Hfloat = h / (1-p.rhoi/p.rhow);  % thickness if it were floating
+float = (p.rhoi * Hfloat < p.rhow * (-b));
+Po(float) = p.rhoi * p.g * Hfloat(float);  % if floating, set to ice base pressure
 
 % initialize state variable P
 if any(any(P0<0))
@@ -108,18 +94,18 @@ fprintf('t (a):   max W (m)  av W (m)  vol(km^3)  rel-bal\n\n')
 
 while t<te
   % hydraulic potential and terms in pressure equation
-  psi = P + rhow * g * (b + W);
-  Ocav = c1 * magvb .* (Wr - W);
+  psi = P + p.rhow * p.g * (b + W);
+  Ocav = p.c1 * magvb .* (p.Wr - W);
   Ocav(Ocav < 0.0) = 0.0;
-  Ccrp = c2 * A * (Po - P).^3 .* W;
+  Ccrp = p.c2 * p.A * (Po - P).^3 .* W;
 
   % grad pressure and grad water
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
   dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;
 
   % velocity  V = - c0 grad P - K grad b = (alphV,betaV)
-  alphV = - c0 * dPdx - K * dbdx;
-  betaV = - c0 * dPdy - K * dbdy;
+  alphV = - p.c0 * dPdx - p.K * dbdx;
+  betaV = - p.c0 * dPdy - p.K * dbdy;
 
   % Wea = east staggered, Wno = north staggered
   Wea = 0.5 * (W(2:end,:) + W(1:end-1,:));
@@ -129,23 +115,23 @@ while t<te
   % FIXME: dtCFL can be infinity if velocity is zero because P and b are constant
   dtCFL = 0.5 / (max(max(abs(alphV)))/dx + max(max(abs(betaV)))/dy);
   maxW = max(max(max(Wea)),max(max(Wno))) + 0.001;
-  dtDIFFW = 0.25 / (K * maxW * (1/dx^2 + 1/dy^2));
-  maxH = max(max(h-b)) + 2 * E0;  % regularized: forces dtDIFFP < dtDIFFW
-  dtDIFFP = (rhow * E0 / (rhoi * maxH)) * dtDIFFW;
+  dtDIFFW = 0.25 / (p.K * maxW * (1/dx^2 + 1/dy^2));
+  maxH = max(max(h-b)) + 2 * p.E0;  % regularized: forces dtDIFFP < dtDIFFW
+  dtDIFFP = (p.rhow * p.E0 / (p.rhoi * maxH)) * dtDIFFW;
   dt = min([te-t dtmax dtCFL dtDIFFW dtDIFFP]);
 
   % report on time step
   maxV = sqrt(max(max(alphV))^2 + max(max(betaV))^2);
   fprintf('   [%.5e  %.6f  %.6f  %.6f   -->  dt = %.6f (a)]\n',...
-          maxV*spera, dtCFL/spera, dtDIFFW/spera, dtDIFFP/spera, dt/spera)
+          maxV*p.spera, dtCFL/p.spera, dtDIFFW/p.spera, dtDIFFP/p.spera, dt/p.spera)
 
   % coefficients for time step
   nux = dt / dx;
   nuy = dt / dy;
-  mux = K * dt / dx^2;
-  muy = K * dt / dy^2;
-  pux = c0 * dt / dx^2;
-  puy = c0 * dt / dy^2;
+  mux = p.K * dt / dx^2;
+  muy = p.K * dt / dy^2;
+  pux = p.c0 * dt / dx^2;
+  puy = p.c0 * dt / dy^2;
 
   % P time step
   Pnew = P;   % will keep P at edge of computational domain unaltered
@@ -154,7 +140,7 @@ while t<te
       psiij = psi(i,j);
       tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
             puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
-      Ptmp = P(i,j) + (Po(i,j) / E0) * ( tmp + dt * Ccrp(i,j) - ...
+      Ptmp = P(i,j) + (Po(i,j) / p.E0) * ( tmp + dt * Ccrp(i,j) - ...
                                          dt * Ocav(i,j) + dt * Phi(i,j) );
       % projection:
       Ptmp = max(0.0, Ptmp);
@@ -200,7 +186,7 @@ while t<te
   vbalance = (volW + inputvol - losevol) - volnew;
   if volnew > 0, relbal = abs(vbalance/volnew); else relbal = nan; end
   fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
-          (t+dt)/spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
+          (t+dt)/p.spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
           volnew/(1e9),relbal)
 
   % actually update to new state W

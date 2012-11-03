@@ -1,29 +1,21 @@
 function plotpsteady;
 % PLOTPSTEADY  Plot P = P(W) in steady state.
 
-spera = 31556926.0;
-rhoi  = 910.0;         % kg m-3
-rhow  = 1028.0;        % kg m-3
-g     = 9.81;          % m s-2
+p = params();
 
-% major model parameters:
-A  = 3.1689e-24;       % ice softness (Pa-3 s-1)
-Wr = 1.0;              % m
-c1 = 0.500;            % m-1
-c2 = 0.040;            % [pure]
-CC = c1 / (c2 * A)
+CC = p.c1 / (p.c2 * p.A);
 
 h0 = 1000.0;         % m
-Po = rhoi * g * h0;
+Po = p.rhoi * p.g * h0;
 
-W = 0.0:0.0005:1.2*Wr;
+W = 0.0:0.0005:1.2*p.Wr;
 
 % four different amounts of sliding:
-v0   = 100.0 / spera;  % m/s
-Pno  = PofW(W,    0.0,Po,CC,Wr) / 1e5;
-Plow = PofW(W, 0.1*v0,Po,CC,Wr) / 1e5;
-Pmed = PofW(W, 1.0*v0,Po,CC,Wr) / 1e5;
-Phgh = PofW(W,10.1*v0,Po,CC,Wr) / 1e5;
+v0   = 100.0 / p.spera;  % m/s
+Pno  = PofW(W,    0.0,Po,CC,p.Wr) / 1e5;
+Plow = PofW(W, 0.1*v0,Po,CC,p.Wr) / 1e5;
+Pmed = PofW(W, 1.0*v0,Po,CC,p.Wr) / 1e5;
+Phgh = PofW(W,10.1*v0,Po,CC,p.Wr) / 1e5;
 
 set(0,'defaultlinelinewidth',3.0)
 set(0,'defaultaxesfontsize',16.0)
