@@ -103,9 +103,8 @@ if true
 
   figure(4)
   set(gcf,'position',[100 100 1200 400])
-  psi = rhoi * g * thk;
   subplot(1,2,1)
-  imagesc(x/1000,flipud(-y)/1000,flipud(psi),[0 5.0e6]), colorbar
+  imagesc(x/1000,flipud(-y)/1000,flipud(Po),[0 5.0e6]), colorbar
   title('overburden pressure P_o  (Pa)')
   xlabel('x (km)'), ylabel('y (km)')
   subplot(1,2,2)
@@ -113,5 +112,11 @@ if true
   title('water pressure P  (Pa)')
   xlabel('x (km)'), ylabel('y (km)')
 
+  figure(5)
+  Wpos=W(W>0);  Ppos=P(W>0);  Popos=Po(W>0);
+  plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',10)
+  axis([0 2.5 0 1.2])
+  xlabel('water thickness W  (m)')
+  ylabel('water pressure P as fraction of overburden')
 end
 
