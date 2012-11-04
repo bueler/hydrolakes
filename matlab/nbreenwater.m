@@ -27,12 +27,13 @@ usurf = usurf(1:nn:end,1:nn:end);
 icemask = icemask(1:nn:end,1:nn:end);
 outline = outline(1:nn:end,1:nn:end);
 
-spera = 31556926.0;
+p = params();
+
 Phi0arr = zeros(size(icemask));
 Phi = zeros(size(icemask));
 for i=1:length(x)
     for j=1:length(y)
-        Phi0arr(i,j) = (3.0/900.0)*(900.0-min(usurf(i,j),900.0))/spera; 
+        Phi0arr(i,j) = (3.0/900.0)*(900.0-min(usurf(i,j),900.0))/p.spera; 
         if outline(i,j)>0.5, Phi(i,j) = Phi0arr(i,j); end
     end
 end
@@ -58,7 +59,7 @@ if true
   title('outline')
   xlabel('x (km)'), ylabel('y (km)')
   subplot(1,2,2)
-  imagesc(x/1000,flipud(-y)/1000,flipud(Phi*spera)), colorbar
+  imagesc(x/1000,flipud(-y)/1000,flipud(Phi*p.spera)), colorbar
   title('water input  (m/a)')
   xlabel('x (km)'), ylabel('y (km)')
 
@@ -68,14 +69,13 @@ if nargin < 3
   W0 = zeros(size(topg));
 end
 if nargin < 4
-  %P0 = rhoi * g * thk;
   P0 = zeros(size(topg));
 end
 
-vb = 50.0/spera;    % ice speed (m s-1; = 50 m a-1)
+vb = 50.0/p.spera;    % ice speed (m s-1; = 50 m a-1)
 magvb = vb * ones(size(topg));
 ts = 0.0;
-te = tyears*spera;
+te = tyears*p.spera;
 fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
 %W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
 %[W, Y, P] = damper(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);
@@ -84,8 +84,6 @@ fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
 if true
   fprintf('showing final fields: W, P\n')
 
-  rhoi = 910.0;  g = 9.81;
-
   figure(3)
   set(gcf,'position',[100 200 1200 400])
   subplot(1,2,1)
@@ -93,7 +91,7 @@ if true
   title('water thickness W  (m)')
   xlabel('x (km)'), ylabel('y (km)')
   Pmask = ones(size(P));
-  Po = rhoi * g * thk;
+  Po = p.rhoi * p.g * thk;
   Pmask(P < 0.001*Po) = 0;
   Pmask(P > 0.999*Po) = 2;
   subplot(1,2,2)
@@ -114,9 +112,11 @@ if true
 
   figure(5)
   Wpos=W(W>0);  Ppos=P(W>0);  Popos=Po(W>0);
-  plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',10)
-  axis([0 2.5 0 1.2])
+  plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',8)
+  hold on, WFC=0:.01:1.5*p.Wr; plot(WFC,(WFC/p.Wr).^(7/2),'r--'), hold off
+  axis([0 1.5*p.Wr 0 1.2])
   xlabel('water thickness W  (m)')
   ylabel('water pressure P as fraction of overburden')
+  title('is P=P(W)?  (Flowers & Clarke is red dashed)')
 end
 

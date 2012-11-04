@@ -15,7 +15,7 @@ p.c0 = p.K / (p.rhow * p.g);   % constant in velocity formula
 
 % regularization
 if nargin < 1
-  p.E0 = 5.0;              % m       FIXME:  not small; what is right?
+  p.E0 = 1.0;            % m; what is optimal?
 else
   p.E0 = E0;
 end

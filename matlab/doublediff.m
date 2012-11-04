@@ -4,18 +4,6 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 % with a penalized form of the "Y=W" full-cavity condition.  The latter
 % evolves the hydraulic potential psi by a diffusion equation.
 %
-% ** INPUT DATA **:  The input data are given on (Mx+1) x (My+1) grids:
-%   x = coordinate vector of length Mx+1
-%   y = coordinate vector of length My+1
-%   b = bed elevation; array of (Mx+1) x (My+1) values
-%   h = surface elevation; <same size>
-%   magvb = |v_b| = magnitude of sliding velocity; <same size>
-%   outline = 1 if inside modeled region, 0 otherwise; <same size>
-%   W0 = initial values for water thickness W; <same size>
-%   P0 = initial values for pressure P; <same size>
-%   Phi = melt rate as m s-1; <same size>
-% Note that where outline==0 we set the water thickness W to zero.
-%
 % ** MODEL EQUATIONS **:  The equations are described in dampnotes.pdf.
 % Here is a summary only.  The major ("state space") functions are W and P.
 % Derived fields are:
@@ -31,13 +19,25 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 %
 %      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 %
-% The input data has already been described.  Regarding the last three
-% scalar arguments, the code runs from times  ts  to  te  using at
-% least  Nmin  time steps.  Thus the maximum time step is  (te-ts)/Nmin,
-% but the code does adaptive time-stepping.  At each time step the code
-% reports time step, time step restrictions (CFL for advection and
-% criterion for diffusion), and total water amount.  The output variables
-% are the final values of the state variables W,P.
+% The input data are given on (Mx+1) x (My+1) grids:
+%   x = coordinate vector of length Mx+1
+%   y = coordinate vector of length My+1
+%   b = bed elevation; array of (Mx+1) x (My+1) values
+%   h = surface elevation; <same size>
+%   magvb = |v_b| = magnitude of sliding velocity; <same size>
+%   outline = 1 if inside modeled region, 0 otherwise; <same size>
+%   W0 = initial values for water thickness W in m; <same size>
+%   P0 = initial values for pressure P in Pa; <same size>
+%   Phi = melt rate as m s-1; <same size>
+% Regarding the last three scalar arguments, the code runs from times
+% ts  to  te  using at least  Nmin  time steps.  Thus the maximum time step
+% is  (te-ts)/Nmin.  But the code does adaptive time-stepping.  At each time
+% step the code reports time step, time step restrictions (CFL for advection
+% and criterion for diffusion), and total water amount.
+%
+% Note that where outline==0 we set the water thickness W to zero.
+%
+% The output variables are the final values of the state variables W,P.
 
 p = params();
 
