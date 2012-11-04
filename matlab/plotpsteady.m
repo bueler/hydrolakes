@@ -17,14 +17,19 @@ Plow = PofW(W, 0.1*v0,Po,CC,p.Wr) / 1e5;
 Pmed = PofW(W, 1.0*v0,Po,CC,p.Wr) / 1e5;
 Phgh = PofW(W,10.1*v0,Po,CC,p.Wr) / 1e5;
 
+% compare Flowers and Clarke function
+WcritFC = 0.5;
+PFC  = Po * (W / WcritFC).^(7/2);
+PFC  = PFC / 1e5;
+
 set(0,'defaultlinelinewidth',3.0)
 set(0,'defaultaxesfontsize',16.0)
 
-plot(W,Pno,W,Plow,W,Pmed,W,Phgh);
+plot(W,Pno,W,Plow,W,Pmed,W,Phgh,W,PFC,'k--');
 legend('no sliding; P=P_o  ','|v_b|=10 m/a','|v_b|=100 m/a','|v_b|=1000 m/a',...
        'location','southeast')
 xlabel('W  (m)'), ylabel('P  (bar)')
-axis([0 max(W) 0 1.1*Po/1e5])
+axis([0 max(W) 0 1.3*Po/1e5])
 
   function P = PofW(W,vb,Po,CC,Wr)
     if CC*vb > 0

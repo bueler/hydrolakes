@@ -303,13 +303,15 @@ Figure \ref{fig:psteady} shows the function $P(W)$ from \eqref{eq:PofWsteady} fo
 \centering
 \includegraphics[width=4.0in,keepaspectratio=true]{figs/psteady}
 \bigskip
-\caption{The function $P(W)$ equation \eqref{eq:PofWsteady}, which applies only in steady state, depends on the sliding velocity.  Ice thickness $H=1000$ m is constant and $P_o=\rho_i g H \approx 90$ bar.}
+\caption{The function $P(W)$ equation \eqref{eq:PofWsteady}, which applies only in steady state, depends on the sliding velocity.  Four cases are shown (solid curves).  We use an ice thickness of $H=1000$ m so that overburden pressure is $P_o \approx 90$ bar.  Relation \eqref{eq:PofWFC} (dashed), with $W_{\text{crit}}=0.5$ m for concreteness, is not used in the current work.}
 \label{fig:psteady}
 \end{figure}
 
 \cite{FlowersClarke2002_theory} propose a functional relation for all conditions, steady and not steady, namely
-    $$P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}.$$
-This is used to describe the water pressure under glaciers including the Trapridge glacier in Canada; they use critical water thickness $W_{\text{crit}}=0.1$ m.  On the one hand their formula has features in common with equation \eqref{eq:PofWsteady}: both functions are increasing, both scale with the overburden pressure, and both give zero pressure at $W=0$ (at least in $|\bv_b|>0$ case for \eqref{eq:PofWsteady}).  The power law form of $P_{FC}(W)$ is not, however, justified by equation \eqref{eq:PofWsteady}, even in steady state.  Also, it would appear that a functional relationship $P(W)$ should also depend on the sliding velocity   if water pressure is (in part) determined by cavitation.  Furthermore the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$, a physically-inconsistent state that does not arise in \eqref{eq:PofWsteady}.  The most important contrast of the \cite{FlowersClarke2002_theory} work and this paper is that there is no such functional relationship $P=f(W)$ in the nonsteady case which we solve numerically.
+\begin{equation}
+P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
+\end{equation}
+This is used to describe the water pressure under glaciers including the Trapridge glacier in Canada.  On the one hand their formula has features in common with equation \eqref{eq:PofWsteady}: both functions are increasing, both scale with the overburden pressure, and both give zero pressure at $W=0$ (at least in $|\bv_b|>0$ cases for \eqref{eq:PofWsteady}).  The power law form of $P_{FC}(W)$ is not, however, justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.  Also, it would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is to influence water pressure.  Furthermore the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$, a physically-inconsistent state that does not arise in \eqref{eq:PofWsteady}.  The most important contrast of the \cite{FlowersClarke2002_theory} work and the current paper, however, is that we have no such functional relationship $P(W)$ in the nonsteady theory.
 
 \subsection*{Velocity in steady state}  For convenience in later formulas define
     $$s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.$$
@@ -343,7 +345,7 @@ First, the direction of water transport $\bV$ is determined in steady state by a
 
 The linear combination in \eqref{eq:qsteadyexpand} has coefficients which are functions of water amount $W$.  The first two components have coefficients which go to zero as $W\to 0^+$, but in this same limit the third flux component, the diffusive one, dominates.  Also when the water thickness closely approximates the roughness scale ($W\approx W_r$) then the second sliding term contributes little while the third diffusive term is strong.
 
-\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are a basis for building a useful two-dimensional nearly-exact solution.  This solution will depend on the numerical solution of a first-order ODE which can be solved to very high precision, which explains the ``nearly'' qualifier.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.
+\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are a basis for building a useful two-dimensional nearly-exact solution.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} but eliminate $\bV$.  In the flat bed and radial case the resulting system is
 \begin{align}
