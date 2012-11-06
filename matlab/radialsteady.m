@@ -1,16 +1,13 @@
-function [r,W,h,vb] = radialsteady(M,h0,v0)
+function [r,W,h,vb] = radialsteady(h0,v0)
 % RADIALSTEADY Compute exact solution documented in dampnotes.pdf.
 
 p = params();
 
 % defaults
 if nargin < 1
-  M = 100;
-end
-if nargin < 2
   h0   = 500.0;           % m     center thickness
 end
-if nargin < 3
+if nargin < 2
   v0   = 100.0 / p.spera; % m/s   sliding velocity at margin
 end
 
@@ -21,43 +18,47 @@ Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 
 vphi0 = Phi0 / (2 * p.c0);
 
-% radial grid
-dr = R0 / M;
-r = 0:dr:R0;
-
-% ice thickness and sliding velocity
-h = h0 * (1 - (r/R0).^2);
-vb = v0 * (r - R1).^4 / (R0-R1)^4;
-vb(r < R1) = 0.0;
+% ice thickness and sliding velocity for plot
+dr = R0 / 500;
+rr = 0:dr:R0;
+hrr = h0 * (1 - (rr/R0).^2);
+vbrr = v0 * (rr - R1).^5 / (R0-R1)^5;
+vbrr(rr < R1) = 0.0;
 
 % show
 figure(97), clf
-ax = plotyy(r/1000.0,h,r/1000.0,vb * p.spera);
+ax = plotyy(rr/1000.0,hrr,rr/1000.0,vbrr * p.spera);
 xlabel('r  (km)')
 ylabel(ax(1),'h = ice thickness  (m)')
 ylabel(ax(2),'|v_b| = ice sliding speed   (m/a)')
+clear dr rr hrr vbrr
 
 % in octave this requires "odepkg", but then fails because of negative step direction
 
 % solve the ODE
-wopt = odeset('RelTol', 1e-6,'AbsTol', 1e-6);
+wopt = odeset('RelTol', 1e-12,'AbsTol', 1e-8);
 % others: 'InitialStep', 'MaxStep', 'NormControl', 'OutputFcn'
-[rr,WW] = ode45(@WODE,[R0 0.0],p.Wr-0.001,wopt);
-fprintf('  [numerical ODE solution generated %d r values in 0 <= r <= R0]\n',length(rr))
+[r,W] = ode45(@WODE,[R0 0.0],p.Wr-0.001,wopt);
+fprintf('  [numerical ODE solution generated %d r values in 0 <= r <= R0]\n',length(r))
 
 % show ODE soln W(r)
 figure(98), clf
-plot(rr/1000.0,WW);
+plot(r/1000.0,W);
 xlabel('r  (km)'), ylabel('W  (m)')
+axis([0 R0/1000.0 0 1.2*p.Wr]), grid on
+title(sprintf('exact solution W(r)   (note W_r = %.2f m)\n',p.Wr))
 
 % show pressure solution
 figure(99), clf
-vbrr = v0 * (rr - R1).^4 / (R0-R1)^4;  % vb calculation using ODE rr values
-vbrr(rr < R1) = 0.0;
-Porr = p.rhoi * p.g * h0 * (1 - (rr/R0).^2);
-plot(rr/1000.0,Porr/1e5,rr/1000.0,Psteady(Porr,vbrr,WW)/1e5);
+vb = v0 * (r - R1).^5 / (R0-R1)^5;
+vb(r < R1) = 0.0;
+vb(r > R0) = 0.0;
+h = h0 * (1 - (r/R0).^2);
+h(r > R0) = 0.0;
+Po = p.rhoi * p.g * h;
+plot(r/1000.0,Po/1e5,r/1000.0,Psteady(Po,vb,W)/1e5);
 xlabel('r  (km)'), ylabel('pressure  (bar)')
-legend('P_o = overburden pressure','P = water pressure')
+legend('P_o(r) = overburden pressure','P(r) = exact water pressure')
 
   function dW = WODE(r,W)
   % this function defines the right side of the ODE for W:  W'(r) = WODE(r,W)
@@ -66,12 +67,12 @@ legend('P_o = overburden pressure','P = water pressure')
     dsb = 0.0;
   else
     CC  = p.c1 / (p.c2 * p.A);
-    % vb = v0 * (r - R1).^4 / (R0-R1)^4   and   sb = (CC * vb)^(1/3)
+    % vb = v0 * (r - R1).^5 / (R0-R1)^5   and   sb = (CC * vb)^(1/3)
     CZ  = (CC * v0)^(1/3);
     zz  = ((r - R1) / (R0 - R1)).^(1/3);
-    sb  = CZ * zz.^4;
-    CD  = (4 * CZ) / (3 * (R0 - R1));
-    dsb = CD * zz;
+    sb  = CZ * zz.^5;
+    CD  = (5 * CZ) / (3 * (R0 - R1));
+    dsb = CD * zz.^2;
   end
   dPodr = - (2 * p.rhoi * p.g * h0 / R0^2) * r;
   tmp1  = W.^(1/3) .* (p.Wr - W).^(2/3);
