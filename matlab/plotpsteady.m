@@ -1,5 +1,5 @@
 function plotpsteady;
-% PLOTPSTEADY  Plot P = P(W) in steady state.
+% PLOTPSTEADY  Plot P = P(W) in steady state.  Generates figures for dampnotes.pdf.
 
 p = params();
 
@@ -34,13 +34,16 @@ axis([0 max(W) 0 1.3*Po/1e5])
 text(0.05,108,'(a)','fontsize',18)
 
 figure(2)
-%FIXME: compute for vb=100m/a but H = 300, 500, 1000, 2000 m
-plot(W,Pmed,W,PFC,'k--');
-legend('H = 300 m',...
-       'location','southeast')
+PP1 = PofW(W,v0,0.2*Po,CC,p.Wr) / 1e5; % H =  200 m
+PP2 = PofW(W,v0,0.5*Po,CC,p.Wr) / 1e5; % H =  500 m
+PP3 = Pmed;                            % H = 1000 m
+PP4 = PofW(W,v0,2*Po,CC,p.Wr) / 1e5;   % H = 2000 m
+plot(W,PP1,W,PP2,W,PP3,W,PP4);
+legend('H = 200 m','H = 500 m','H = 1000 m','H = 2000 m',...
+       'location','Best')
 xlabel('W  (m)'), ylabel('P  (bar)')
-axis([0 max(W) 0 1.3*Po/1e5])
-text(0.05,108,'(b)','fontsize',18)
+axis([0 max(W) 0 1.15*2*Po/1e5])
+text(0.05,1.08*2*Po/1e5,'(b)','fontsize',18)
 
   function P = PofW(W,vb,Po,CC,Wr)
     if CC*vb > 0
