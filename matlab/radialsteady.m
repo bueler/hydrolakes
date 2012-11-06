@@ -26,6 +26,8 @@ vbrr = v0 * (rr - R1).^5 / (R0-R1)^5;
 vbrr(rr < R1) = 0.0;
 
 % show
+set(0,'defaultaxesfontsize',14)
+set(0,'defaultlinelinewidth',3.0)
 figure(97), clf
 ax = plotyy(rr/1000.0,hrr,rr/1000.0,vbrr * p.spera);
 xlabel('r  (km)')
