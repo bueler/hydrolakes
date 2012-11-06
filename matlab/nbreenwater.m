@@ -139,7 +139,7 @@ if true
   title('water pressure P  (Pa)')
   xlabel('x (km)'), ylabel('y (km)')
 
-  figure(5)
+  figure(6)
   Wpos=W(W>0);  Ppos=P(W>0);  Popos=Po(W>0);
   plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',8)
   hold on, WFC=0:.01:1.5*p.Wr; plot(WFC,(WFC/p.Wr).^(7/2),'r--'), hold off
