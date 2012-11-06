@@ -1,4 +1,4 @@
-function [r,W,h,vb] = radialsteady(h0,v0)
+function [r,W,P,h,vb] = radialsteady(h0,v0)
 % RADIALSTEADY Compute exact solution documented in dampnotes.pdf.
 
 p = params();
@@ -48,15 +48,18 @@ xlabel('r  (km)'), ylabel('W  (m)')
 axis([0 R0/1000.0 0 1.2*p.Wr]), grid on
 title(sprintf('exact solution W(r)   (note W_r = %.2f m)\n',p.Wr))
 
-% show pressure solution
-figure(99), clf
+% compute pressure solution
 vb = v0 * (r - R1).^5 / (R0-R1)^5;
 vb(r < R1) = 0.0;
 vb(r > R0) = 0.0;
 h = h0 * (1 - (r/R0).^2);
 h(r > R0) = 0.0;
 Po = p.rhoi * p.g * h;
-plot(r/1000.0,Po/1e5,r/1000.0,Psteady(Po,vb,W)/1e5);
+P = Psteady(Po,vb,W);
+
+% show pressure solution
+figure(99), clf
+plot(r/1000.0,Po/1e5,r/1000.0,P/1e5);
 xlabel('r  (km)'), ylabel('pressure  (bar)')
 legend('P_o(r) = overburden pressure','P(r) = exact water pressure')
 
