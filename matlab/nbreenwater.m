@@ -13,24 +13,37 @@ filename = 'nbreen_input.nc';
 fprintf('reading variables x,y,thk,topg,usurf,icemask\n  from text files %s\n',filename)
 [x,y,thk,topg,usurf,icemask,outline] = buildnbreen(0,filename);
 
-fprintf('x range: %.3f km to %.3fkm\n',min(x)/1000,max(x)/1000)
-fprintf('y range: %.3f km to %.3fkm\n',min(y)/1000,max(y)/1000)
-
 dx = x(2)-x(1);
 fprintf('subsampling to %d m resolution\n', dx*nn)
 clear dx
 x = x(1:nn:end);
 y = y(1:nn:end);
-thk = thk(1:nn:end,1:nn:end);
 topg = topg(1:nn:end,1:nn:end);
 usurf = usurf(1:nn:end,1:nn:end);
-icemask = icemask(1:nn:end,1:nn:end);
 outline = outline(1:nn:end,1:nn:end);
 
-p = params();
+%thk = thk(1:nn:end,1:nn:end);  <-- inconsistent
+clear thk
+thk = usurf - topg;
+thk(thk < 0) = 0.0;
 
-Phi0arr = zeros(size(icemask));
-Phi = zeros(size(icemask));
+%icemask = icemask(1:nn:end,1:nn:end);  <-- not used by doublediff
+clear icemask
+
+% create floating and ice free masks used inside doublediff()
+p = params();
+Po = p.rhoi * p.g * thk;
+Hfloat = usurf / (1-p.rhoi/p.rhow);  % thickness if it were floating
+float = (p.rhoi * Hfloat < p.rhow * (-topg));
+icefree = (usurf < topg + 1.0);
+
+fprintf('x range: %.3f km to %.3fkm\n',min(x)/1000,max(x)/1000)
+fprintf('y range: %.3f km to %.3fkm\n',min(y)/1000,max(y)/1000)
+fprintf('max thickness: %.3f m\n',max(max(thk)))
+%fprintf('max thickness inconsistency: %.5f [frac]\n', max(max(abs(thk - (usurf - topg)))) / max(max(thk)))
+
+Phi0arr = zeros(size(topg));
+Phi = zeros(size(topg));
 for i=1:length(x)
     for j=1:length(y)
         Phi0arr(i,j) = (3.0/900.0)*(900.0-min(usurf(i,j),900.0))/p.spera; 
@@ -39,20 +52,36 @@ for i=1:length(x)
 end
 
 if true
-  fprintf('showing initial fields: topg, usurf, outline, Phi, geometric psi\n')
+  fprintf('showing initial fields ...\n')
 
   figure(1)
-  set(gcf,'position',[100 400 1200 400])
+  set(gcf,'position',[100 500 1200 400])
   subplot(1,2,1)
-  imagesc(x/1000,flipud(-y)/1000,flipud(topg)), colorbar
+  maxelev = max([max(max(topg)) max(max(usurf))]);
+  minelev = min([min(min(topg)) min(min(usurf))]);
+  imagesc(x/1000,flipud(-y)/1000,flipud(topg),[minelev maxelev]), colorbar
   title('bed elevation  (m)')
   xlabel('x (km)'), ylabel('y (km)')
   subplot(1,2,2)
-  imagesc(x/1000,flipud(-y)/1000,flipud(usurf)), colorbar
+  imagesc(x/1000,flipud(-y)/1000,flipud(usurf),[minelev maxelev]), colorbar
   title('surface elevation  (m)')
   xlabel('x (km)'), ylabel('y (km)')
 
   figure(2)
+  set(gcf,'position',[100 400 1200 400])
+  subplot(1,2,1)
+  imagesc(x/1000,flipud(-y)/1000,flipud(thk)), colorbar
+  title('ice thickness  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+  subplot(1,2,2)
+  typemask = ones(size(thk));
+  typemask(icefree) = 0.0;
+  typemask(float) = 2.0;
+  imagesc(x/1000,flipud(-y)/1000,flipud(typemask)), colorbar
+  title('cell type:  0 = ice free,  1 = glacier,  2 = floating or ocean')
+  xlabel('x (km)'), ylabel('y (km)')
+
+  figure(3)
   set(gcf,'position',[100 300 1200 400])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(outline)), colorbar
@@ -84,7 +113,7 @@ fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
 if true
   fprintf('showing final fields: W, P\n')
 
-  figure(3)
+  figure(4)
   set(gcf,'position',[100 200 1200 400])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(W)), colorbar
@@ -99,7 +128,7 @@ if true
   title('pressure mask:  0=under, 1=normal, 2=over')
   xlabel('x (km)'), ylabel('y (km)')
 
-  figure(4)
+  figure(5)
   set(gcf,'position',[100 100 1200 400])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(Po),[0 5.0e6]), colorbar

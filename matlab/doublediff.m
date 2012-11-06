@@ -148,6 +148,8 @@ while t<te
       Pnew(i,j) = Ptmp;
     end
   end
+  P(float) = Po(float);
+  P(icefree) = 0.0;
 
   % W time step
   Wnew = W;  % copies unaltered initial b.c.s
@@ -172,7 +174,7 @@ while t<te
   losevol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
-      if outline(i,j) < 0.5
+      if (outline(i,j) < 0.5) || float(i,j) || icefree(i,j)
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
