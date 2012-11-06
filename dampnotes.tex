@@ -76,7 +76,7 @@
 \newcommand{\Nbreen}{Nordenski\"oldbreen\xspace}
 
 
-\title[]{A diffusive-closure and nearly-full model \\ of subglacial hydrology}
+\title[]{A diffusive-closure model of subglacial hydrology}
 
 \author[]{Ward van Pelt and Ed Bueler}
 
@@ -90,7 +90,7 @@
 
 \section{Introduction}
 
-Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by motion (sliding) of the overlying ice, and the closure of cavities and channels by creep.  This paper describes such a model for distributed systems of linked cavities. 
+Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by motion (sliding) of the overlying ice, and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  This paper describes such a model for distributed systems of linked cavities. 
 
 We model water pressure using a damped approximation of a full-cavity formulation of a distributed system \cite{Schoofetal2012}.  In our model pressure is determined non-locally over each connected component of the hydrological system.  However, unlike the \cite{Schoofetal2012} model in which an elliptic variational inequality for pressure must be solved at each time step, we avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition.  Our model replaces such an elliptic pressure description by a parabolic approximation.
 
@@ -286,12 +286,15 @@ For the rest of this section we will use the specific values in Table \ref{tab:c
     \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
 \hline
     $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \\
+    $c_0$ &  & $\text{m}^{2}\,\text{Pa}^{-1}\,\text{s}^{-1}$ & constant in model \eqref{eq:bluebox}: $c_0=K/(\rho_w g)$ \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient in \eqref{eq:capacity} \\
     $c_2$ & $0.04$ & & creep closure coefficient in \eqref{eq:capacity} \\
+    $E_0$ & $1.0$ & m & regularization thickness in \eqref{eq:dampeddstrong} \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
+    $K$ & $0.01$ & m $\text{s}^{-1}$ & effective hydraulic conductivity in \eqref{eq:flux} \\ % FIXME: K_min and K_max according to whether W>W_r
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
-    $W_r$ & $1$ & $\text{m}$ & roughness scale \\
+    $W_r$ & $1$ & $\text{m}$ & roughness scale in \eqref{eq:capacity} \\
     \hline
   \end{tabular}
  \label{tab:constants}
@@ -311,7 +314,7 @@ Figure \ref{fig:psteady} shows the function $P(W)$ from \eqref{eq:PofWsteady} fo
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-This is used to describe the water pressure under glaciers including the Trapridge glacier in Canada.  On the one hand their formula has features in common with equation \eqref{eq:PofWsteady}: both functions are increasing, both scale with the overburden pressure, and both give zero pressure at $W=0$ (at least in $|\bv_b|>0$ cases for \eqref{eq:PofWsteady}).  The power law form of $P_{FC}(W)$ is not, however, justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.  Also, it would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is to influence water pressure.  Furthermore the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$, a physically-inconsistent state that does not arise in \eqref{eq:PofWsteady}.  The most important contrast of the \cite{FlowersClarke2002_theory} work and the current paper, however, is that we have no such functional relationship $P(W)$ in the nonsteady theory.
+This is used to describe the water pressure under glaciers including the Trapridge glacier in Canada.  On the one hand their formula has features in common with equation \eqref{eq:PofWsteady}: both functions are increasing and both give zero pressure at $W=0$ (at least in $|\bv_b|>0$ cases for \eqref{eq:PofWsteady}).  Also, both relate the water pressure to the overburden pressure $P_o$, but while in \eqref{eq:PofWsteady} this is additive, in \eqref{eq:PofWFC} the overburden pressure is a multiplicative scaling.  The power law form of $P_{FC}(W)$ is not, however, justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.  For example, it would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is an influence on the water pressure.  Furthermore the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$, a physically-inconsistent state that does not arise in \eqref{eq:PofWsteady}.  The most important contrast of the \cite{FlowersClarke2002_theory} work and the current paper, however, is that we have no such functional relationship $P(W)$ in the nonsteady theory.
 
 \subsection*{Velocity in steady state}  For convenience in later formulas define
     $$s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.$$
@@ -345,38 +348,51 @@ First, the direction of water transport $\bV$ is determined in steady state by a
 
 The linear combination in \eqref{eq:qsteadyexpand} has coefficients which are functions of water amount $W$.  The first two coefficients, of the terms with $\grad \psi_o$ and $\grad s_b$, go to zero as $W\to 0^+$.  In this same $W\to 0^+$ limit the third flux component, the diffusive one, dominates.  Also when the water thickness closely approximates the roughness scale ($W\approx W_r$) then the second sliding term contributes little while the third diffusive term is strong.
 
-\subsection*{An exact two-dimensional solution}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are a basis for building a useful two-dimensional nearly-exact solution.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider an ice sheet geometry on a flat bedrock, and we construct a solution for $W$ and $P$ which depends only on the radial coordinate.
+\subsection*{An exact two-dimensional solution}  The above steady equations are the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock.
 
-Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} but eliminate $\bV$.  In the flat bed and radial case the resulting system is
+Assume that all quantities vary only with the radial coordinate $r = \sqrt{x^2+y^2}$.  Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} and eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
 q(r) &= - c_0 W(r)\, \left(P'(r) + \rho_w g W'(r)\right), \label{eq:rsflux} \\
-0 &= - \frac{1}{r}\left(r\,q(r)\right)' + \Phi(r), \label{eq:rsconserve} \\
-0 &= c_2 A (P_o(r) - P(r))^3 W(r) - c_1 |\bv_b(r)| (W_r - W(r))_+. \label{eq:rsopenclose}
+\frac{1}{r}\left(r\,q(r)\right)' &= \Phi(r). \label{eq:rsconserve}
 \end{align}
-We will generate a first-order ODE for $W(r)$ from this system.
-
-In the case of constant water input $\Phi(r)=\Phi_0$, which we assume for the exact solution, from \eqref{eq:rsconserve} we have
+In the case of constant water input $\Phi(r)=\Phi_0$, which we assume for the exact solution, from \eqref{eq:rsconserve} we can integrate from $0$ to $r$ and use symmetry ($q(0)=0$) to get
 \begin{equation}
-q(r) = \frac{1}{2} \Phi_0\, r \label{eq:qradial}
+q(r) = \frac{1}{2} \Phi_0\, r. \label{eq:qradial}
 \end{equation}
-by integrating from $0$ to $r$ and using symmetry so $q(0)=0$.  On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$.  From now on we assume $W(r) < W_r$, which must be verified later as a property of the constructed solution.  Also, in constructing the exact solution we will choose the sliding speed so that $s_b(r)$ has a bounded derivative.    Now, by combining \eqref{eq:rsflux}, \eqref{eq:rsopenclose}, and \eqref{eq:qradial}, the ODE for $W(r)$ can be written
-	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) - \left(s_b(r) \left(\frac{W_r - W(r)}{W(r)}\right)^{1/3}\right)' + \rho_w g W'(r)\right).$$
 
-To put the ODE in the standard form expected by a numerical ODE solver, let $\varphi_0 = \Phi_0 / (2 c_0)$ and solve the equation above for $W'(r)$:
+On the other hand, equation \eqref{eq:againPofWsteady} gives $P$ as a function of $W$ in steady state.  Assume $W(r) < W_r$ and that the scaled sliding speed $s_b(r)$ has a bounded derivative; both of these properties must be verified later for the constructed solution.  Now, by combining \eqref{eq:rsflux}, \eqref{eq:qradial}, and \eqref{eq:againPofWsteady} we can eliminate $q$ and $P$ to find
+	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) - \left[s_b(r) \left(\frac{W_r - W(r)}{W(r)}\right)^{1/3}\right]' + \rho_w g W'(r)\right).$$
+This is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, let $\varphi_0 = \Phi_0 / (2 c_0)$ and solve the equation above for $W'(r)$:
 \begin{equation}
 W'(r) = \frac{s_b'(r) W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + P_o'(r) W(r)\Big] W(r)^{1/3} \left(W_r - W(r)\right)^{2/3}}{\frac{1}{3} W_r\, s_b(r) + \rho_w g W(r)^{4/3} \left(W_r - W(r)\right)^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
-The nontrivial manipulations needed to derive this form should be carefully checked.  Note that equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
+%DONE for now:  The nontrivial manipulations needed to derive this form should be carefully checked.
+Note that equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
 
 The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  Noting that the overburden pressure gradient $P_o'(r)$ appears in \eqref{eq:WradialODE}, we choose an ice cap geometry in which this quantity is finite.  Specifically, the plug flow and flat bed solution of \cite{Bodvardsson} has bounded surface slope $|h'|$.  Extending to the radial case, equations (23) and (24) in \cite{Bodvardsson} give surface elevation
     $$h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right)$$
 where $h(0)=h_0$ is the height of the center of the ice cap and its margin, where $h(r)=0$, occurs at $r=R_0$.  It follows that
     $$P_o(r) = \rho_i g h_0 \left(1 - \frac{r^2}{R_0^2} \right), \qquad P_o'(r) = - \frac{2\rho_i g h_0}{R_0^2}\, r.$$
 
-In Bodvardsson's theory, which only applies directly in the one-dimensional case, there is an equilibrium line elevation $h_{\text{ela}}=(2/3) h_0$, a mass balance gradient $a$, and a basal friction coefficient $k$, and these are all related by $a k R_0^2 = 9 h_{\text{ela}}$.  But these details are not really our concern as we assume the ice geometry and basal sliding velocity are static as we find a subglacial water solution.
+FIXME: $v_b(r)$ and $s_b(r)$
+
+\begin{figure}[ht]
+\includegraphics[width=3.0in,keepaspectratio=true]{figs/h-vb-plot}
+\caption{Thickness and surface elevation $h(r)$ and magnitude of sliding velocity $|\bv_b|(r)$ for radial, steady state exact solution.}
+\label{fig:h-vb}
+\end{figure}
 
 By applying equation \eqref{eq:openclosesteady} at the ice margin where $P_o(r)\to 0$, and where we have $P(r)\to 0$ because $0 \le P \le P_o$, we see that $W(r)\to W_r$.  (This applies in the case $W(r)\le W_r$ which we are considering and which will be true for our exact solution.  The case $W(r)>W_r$ is a separate possibility.)  Thus $W(R_0)=W_r$ is the initial condition for solving \eqref{eq:WradialODE}.  We then integrate from $r=R_0$ to $r=0$.  The central value $W(0)$ is an unknown which is determined as part of the solution.
+
+FIXME: comment on exact $W(r)$ and $P(r)$
+
+\begin{figure}[ht]
+\includegraphics[width=2.75in,keepaspectratio=true]{figs/exact-W-plot} \, 
+\includegraphics[width=2.65in,keepaspectratio=true]{figs/exact-P-plot}
+\caption{Nearly-exact solutions for water thickness $W(r)$ (left) and pressure $P(r)$ (right) for radial, steady state exact solution.}
+\label{fig:WPexact}
+\end{figure}
 
 
 \section{Numerical scheme}  \label{sec:num}
