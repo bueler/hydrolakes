@@ -305,7 +305,7 @@ Figure \ref{fig:psteady} shows the function $P(W)$ from \eqref{eq:PofWsteady} fo
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady-vb} \, \includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady-Po}
 \medskip
-\caption{(a) The steady state function $P(W)$ equation \eqref{eq:PofWsteady} depends on the sliding speed $|\bv_b|$; four cases are shown (solid curves) using a fixed uniform ice thickness of $H=1000$ m.  Relation \eqref{eq:PofWFC} is not used in the current work (dashed black; shown with $W_{\text{crit}}=0.5$ m for comparison).  (b)  The same function $P(W)$ depends on overburden pressure $P_o=\rho_i g H$.  We fix $|\bv_b|=100$ m/a and consider four cases of uniform thickness $H$.}
+\caption{(a) The steady state function $P(W)$ (equation \eqref{eq:PofWsteady}) depends on the sliding speed $|\bv_b|$; four cases are shown (solid curves) using a fixed uniform ice thickness of $H=1000$ m.  Relation \eqref{eq:PofWFC} is shown with $W_{\text{crit}}=0.5$ m for comparison (dashed black).  (b)  The same function $P(W)$ depends on overburden pressure $P_o=\rho_i g H$.  We fix $|\bv_b|=100$ m/a and consider four cases of uniform thickness $H$.}
 \label{fig:psteady}
 \end{figure}
 
@@ -347,7 +347,7 @@ First, the direction of water transport $\bV$ is determined in steady state by a
 
 The linear combination in \eqref{eq:qsteadyexpand} has coefficients which are functions of water amount $W$.  The first two coefficients, of the terms with $\grad \psi_o$ and $\grad s_b$, go to zero as $W\to 0^+$.  In this same $W\to 0^+$ limit the third flux component, the diffusive one, dominates.  Also when the water thickness closely approximates the roughness scale ($W\approx W_r$) then the second sliding term contributes little while the third diffusive term is strong.
 
-\subsection*{An exact two-dimensional solution}  The above steady equations are the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock.
+\subsection*{A nearly-exact two-dimensional solution}  The above steady equations are the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock.
 
 Assume that all quantities vary only with the radial coordinate $r = \sqrt{x^2+y^2}$.  Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} and eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
@@ -367,22 +367,36 @@ W'(r) = \frac{s_b'(r) W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + P_o'(r
 \label{eq:WradialODE}
 \end{equation}
 %DONE for now:  The nontrivial manipulations needed to derive this form should be carefully checked.
-Note that equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
+Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$.  These functions determine $P_o'(r)$ and $s_b'(r)$, respectively, in \eqref{eq:WradialODE}.  
 
-The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  Noting that the overburden pressure gradient $P_o'(r)$ appears in \eqref{eq:WradialODE}, we choose an ice cap geometry in which this quantity is finite.  Specifically, the plug flow and flat bed solution of \cite{Bodvardsson} has bounded surface slope $|h'|$.  Extending to the radial case, equations (23) and (24) in \cite{Bodvardsson} give surface elevation
-    $$h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right)$$
-where $h(0)=h_0$ is the height of the center of the ice cap and its margin, where $h(r)=0$, occurs at $r=R_0$.  It follows that
-    $$P_o(r) = \rho_i g h_0 \left(1 - \frac{r^2}{R_0^2} \right), \qquad P_o'(r) = - \frac{2\rho_i g h_0}{R_0^2}\, r.$$
+The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  In fact, by applying equation \eqref{eq:openclosesteady} at the ice margin, where $P_o(r)\to 0$ and $P(r)\to 0$ thus because $0 \le P \le P_o$, we see that $W(r)\to W_r$ at the margin.  (This applies in the case $W(r)\le W_r$ which will be true for our nearly-exact solution.)  If $r=R_0$ is the position of the margin then $W(R_0)=W_r$ is the initial condition for solving \eqref{eq:WradialODE}.  We integrate the ODE from $r=R_0$ to $r=0$.  The central value $W(0)$ is determined as part of the solution.
 
-FIXME: $v_b(r)$ and $s_b(r)$
+We need an ice cap geometry $h(r)$ in which the surface gradient is bounded so that $P_o'(r)$ in \eqref{eq:WradialODE} is bounded.  The plug flow, flat bed solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
+\begin{equation}
+h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
+\end{equation}
+where $h(0)=h_0$ is the height of the center of the ice cap (Figure \ref{fig:h-vb}).  It follows that $P_o'(r) = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.
+
+The sliding speed could potentially be determined by a model for stresses at the ice base and within the ice \citep{Bodvardsson,GreveBlatter2009}, but this kind of coupled ice and water dynamics solution is too advanced for the current purpose of decoupled model verification.  Instead we choose a well-behaved sliding speed function to see how it affects the current model.  It has no sliding near the ice cap center, and increasing sliding near the margin:
+\begin{equation}
+|\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
+                           v_0  \left(\frac{r-R_1}{R_0-R_1}\right)^5, & R_1 < r < R_0, \\
+                           0, & R_0 \le r.
+             \end{cases}  \label{eq:choosevb}
+\end{equation}
+(See figure \ref{fig:h-vb}.)  It follows that where there is sliding (i.e.~$R_1 < r < R_0$) we have
+\begin{equation}
+s_b'(r) = - \frac{5 \tilde C}{3 (R_0-R_1)} \left(\frac{r-R_1}{R_0-R_1}\right)^{2/3}, \label{eq:determinessbprime}
+\end{equation}
+where $\tilde C = (c_1 v_0/(c_2 A))^{1/3}$, which is continuous at $r=R_1$ and bounded on $0\le r \le R_0$.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{figs/h-vb-plot}
-\caption{Thickness and surface elevation $h(r)$ and magnitude of sliding velocity $|\bv_b|(r)$ for radial, steady state exact solution.}
+\caption{Surface elevation $h(r)$ and sliding speed $|\bv_b|(r)$ for flat bed, radial, steady state, nearly-exact solution.}
 \label{fig:h-vb}
 \end{figure}
 
-By applying equation \eqref{eq:openclosesteady} at the ice margin where $P_o(r)\to 0$, and where we have $P(r)\to 0$ because $0 \le P \le P_o$, we see that $W(r)\to W_r$.  (This applies in the case $W(r)\le W_r$ which we are considering and which will be true for our exact solution.  The case $W(r)>W_r$ is a separate possibility.)  Thus $W(R_0)=W_r$ is the initial condition for solving \eqref{eq:WradialODE}.  We then integrate from $r=R_0$ to $r=0$.  The central value $W(0)$ is an unknown which is determined as part of the solution.
+
 
 FIXME: comment on exact $W(r)$ and $P(r)$
 
@@ -393,6 +407,22 @@ FIXME: comment on exact $W(r)$ and $P(r)$
 \label{fig:WPexact}
 \end{figure}
 
+
+\begin{table}[ht]
+  \centering
+  \caption{Constants used in constructing the nearly-exact solution.}
+  \begin{tabular}{lllp{3.0in}}
+    \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
+\hline
+    $\Phi_0$ & $20$ & $\text{cm}\,\text{a}^{-1}$ & water input rate \\
+    $h_0$ & $500$ & m & ice cap center thickness \\
+    $R_0$ & $25$  & km & ice cap radius \\
+    $R_1$ & $5$   & km & radial location $r=R_1$ of onset of sliding \\
+    $v_0$ & $100$ & $\text{m}\,\text{s}^{-1}$ & sliding speed scale \\
+    \hline
+  \end{tabular}
+ \label{tab:verifconstants}
+\end{table}
 
 \section{Numerical scheme}  \label{sec:num}
 
