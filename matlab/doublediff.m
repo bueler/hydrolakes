@@ -77,17 +77,17 @@ Hfloat = h / (1-p.rhoi/p.rhow);  % thickness if it were floating
 float = (p.rhoi * Hfloat < p.rhow * (-b));
 Po(float) = p.rhoi * p.g * Hfloat(float);  % if floating, set to ice base pressure
 
-% initialize state variable P
+% is initial state valid?
 if any(any(P0<0))
   error('points exist where initial pressure is negative'), end
 if any(any(P0>Po))
   error('points exist where initial pressure is above overburden'), end
-P = P0;
 
-% impose P boundary conditions based on geometry only
-P(float) = Po(float);
-icefree = (h < b + 1.0);
-P(icefree) = 0.0;
+% impose P boundary conditions based on geometry only and initialize P
+P0(float) = Po(float);
+icefree = (h < b + 1.0) & (h >= 0.0);
+P0(icefree) = 0.0;
+P = P0;
 
 if ~silent
   fprintf('running ...\n\n')
@@ -139,7 +139,6 @@ while t<te
   puy = p.c0 * dt / dy^2;
 
   % P time step
-  Pnew = P;   % will keep P at edge of computational domain unaltered
   for i=2:length(x)-1
     for j=2:length(y)-1
       psiij = psi(i,j);
@@ -150,11 +149,13 @@ while t<te
       % projection:
       Ptmp = max(0.0, Ptmp);
       Ptmp = min(Ptmp, Po(i,j));
-      Pnew(i,j) = Ptmp;
+      P(i,j) = Ptmp;
     end
   end
   P(float) = Po(float);
   P(icefree) = 0.0;
+
+  % idea: at this point we could recompute V=(alph,beta), but then dtCFL would be invalid
 
   % W time step
   Wnew = W;  % copies unaltered initial b.c.s
@@ -162,10 +163,10 @@ while t<te
   for i=2:length(x)-1
     for j=2:length(y)-1
       Wij = W(i,j);
-      upe = up(alphV(i,j),  Wij,     W(i+1,j));
-      upw = up(alphV(i-1,j),W(i-1,j),Wij);
-      upn = up(betaV(i,j),   Wij,     W(i,j+1));
-      ups = up(betaV(i,j-1), W(i,j-1),Wij);
+      upe = up(alphV(i,j),   Wij,      W(i+1,j));
+      upw = up(alphV(i-1,j), W(i-1,j), Wij);
+      upn = up(betaV(i,j),   Wij,      W(i,j+1));
+      ups = up(betaV(i,j-1), W(i,j-1), Wij);
       inputdepth = dt * Phi(i,j);
       dtlapW = mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
                muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
@@ -175,7 +176,10 @@ while t<te
     end
   end
 
-  % do volume accounting
+  %FIXME: W < 0 is not an error here if Phi < 0, but needs fix: Wnew(i,j)=0
+  if any(any(Wnew < 0)), error('negative W'), end
+
+  % do water removal at obvious cells (and volume accounting)
   losevol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
@@ -183,9 +187,31 @@ while t<te
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
-      % FIXME: if Phi<0 is possible, should check W<0 here
     end
   end
+
+  % find boundary local max where outflow
+  deltaW = zeros(size(Wnew));
+  for i=2:length(x)-1
+    for j=2:length(y)-1
+      efree = (alphV(i,j)   > 0) && icefree(i+1,j);
+      wfree = (alphV(i-1,j) < 0) && icefree(i-1,j);
+      nfree = (betaV(i,j)   > 0) && icefree(i,j+1);
+      sfree = (betaV(i,j-1) < 0) && icefree(i,j-1);
+      neighfree = efree || wfree || nfree || sfree;
+      if neighfree
+        Wneigh = [Wnew(i+1,j) Wnew(i-1,j) Wnew(i,j+1) Wnew(i,j-1)];
+        avWneigh = sum(Wneigh) / sum(Wneigh > 0);
+        if Wnew(i,j) > avWneigh
+          deltaW(i,j) = Wnew(i,j) - avWneigh;
+        end
+      end
+    end
+  end
+
+  % remove local max (and volume accounting)
+  Wnew = Wnew - deltaW;
+  losevol = losevol + sum(sum(deltaW)) * dA;
 
   % report on new state W
   sumnew = sum(sum(Wnew));
@@ -201,7 +227,7 @@ while t<te
   % actually update to new state W
   volW = volnew;
   W = Wnew;
-  P = Pnew;
+
   t = t + dt;
 end
 
