@@ -25,7 +25,8 @@ y = x;
 % dense radial grid and call to radialsteady()
 fprintf('computing exact quantities as function of r with ODE solver ...\n')
 fprintf('showing exact quantities as function of r ...\n')
-[r,Wrad,Prad,hrad,vbrad] = radialsteady(dofigs);  % use h0 and v0 defaults
+%[r,Wrad,Prad,hrad,vbrad] = radialsteady(dofigs);  % use h0 and v0 defaults
+[r,Wrad,Prad,hrad,vbrad] = radialsteady(false);  % use h0 and v0 defaults
 R0 = 25.0e3;  % must be consistent with constant in RADIALSTEADY
 
 % extend radial grid stuff so that piecewise-linear interpolation will work
@@ -64,7 +65,7 @@ if dofigs
   figure(2)
   set(gcf,'position',[100 300 1200 400])
   subplot(1,2,1)
-  imagesc(x/1000,y/1000,WEX), colorbar
+  imagesc(x/1000,y/1000,WEX,[0 p.Wr]), colorbar
   title('exact water thickness W  (m)')
   xlabel('x (km)'), ylabel('y (km)')
   subplot(1,2,2)
@@ -80,13 +81,27 @@ te = tyears * p.spera;
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 Phi = Phi0 * ones(size(h));
 %[W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
+% run silent:
 [W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true);
 
 if dofigs
-  fprintf('showing error fields ...\n')
+  fprintf('showing numerical solution fields: W, P\n')
 
   figure(3)
-  set(gcf,'position',[100 300 1200 400])
+  set(gcf,'position',[100 400 1200 400])
+  subplot(1,2,1)
+  imagesc(x/1000,y/1000,W,[0 p.Wr]), colorbar
+  title('numerical water thickness W  (m)')
+  xlabel('x (km)'), ylabel('y (km)')
+  subplot(1,2,2)
+  imagesc(x/1000,y/1000,P / 1.0e5), colorbar
+  title('numerical water pressure P  (bar)')
+  xlabel('x (km)'), ylabel('y (km)')
+
+  fprintf('showing error fields ...\n')
+
+  figure(4)
+  set(gcf,'position',[100 500 1200 400])
   subplot(1,2,1)
   imagesc(x/1000,y/1000,W-WEX), colorbar
   title('numerical water thickness error W - W_{exact}  (m)')
@@ -97,22 +112,22 @@ if dofigs
   xlabel('x (km)'), ylabel('y (km)')
 end
 
-WEXnormone = sum(sum(abs(WEX))) / (M+1)^2;
-PEXnormone = sum(sum(abs(PEX))) / (M+1)^2;
 Werrone = sum(sum(abs(W - WEX))) / (M+1)^2;
 Perrone = sum(sum(abs(P - PEX))) / (M+1)^2;
 Werrinf = max(max(abs(W - WEX)));
 Perrinf = max(max(abs(P - PEX)));
+WEXmax = max(max(WEX));  % not equal to  norm(WEX,'inf')
+PEXmax = max(max(PEX));
 
-fprintf('results:  W                              P\n')
+fprintf('results:\n')
 fprintf('          av  |W-Wexact| = %.6f m    av  |P-Pexact| = %.6f bar\n',...
         Werrone,Perrone/1e5)
 fprintf('          [relative = %.6f]          [relative = %.6f]\n',...
-        Werrone/WEXnormone,Perrone/PEXnormone)
+        Werrone/WEXmax,Perrone/PEXmax)
 fprintf('          max |W-Wexact| = %.6f m    max |P-Pexact| = %.6f bar\n',...
         Werrinf,Perrinf/1e5)
 fprintf('          [relative = %.6f]          [relative = %.6f]\n',...
-        Werrinf/norm(WEX,'inf'),Perrinf/norm(PEX,'inf'))
+        Werrinf/WEXmax,Perrinf/PEXmax)
 
 err = [Werrone Perrone Werrinf Perrinf];
 
