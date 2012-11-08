@@ -1,4 +1,4 @@
-function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
+function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 % DOUBLEDIFF  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
 % with a penalized form of the "Y=W" full-cavity condition.  The latter
@@ -40,6 +40,7 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
 % The output variables are the final values of the state variables W,P.
 
 p = params();
+if nargin<13, silent=false; end
 
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
@@ -88,9 +89,11 @@ P(float) = Po(float);
 icefree = (h < b + 1.0);
 P(icefree) = 0.0;
 
-fprintf('running ...\n\n')
-fprintf('   [max V (m/a)   dtCFL (a)   dtDIFF_W (a)   dtDIFF_P (a)  -->  dt (a)]\n')
-fprintf('t (a):   max W (m)  av W (m)  vol(km^3)  rel-bal\n\n')
+if ~silent
+  fprintf('running ...\n\n')
+  fprintf('   [max V (m/a)   dtCFL (a)   dtDIFF_W (a)   dtDIFF_P (a)  -->  dt (a)]\n')
+  fprintf('t (a):   max W (m)  av W (m)  vol(km^3)  rel-bal\n\n')
+end
 
 while t<te
   % hydraulic potential and terms in pressure equation
@@ -122,8 +125,10 @@ while t<te
 
   % report on time step
   maxV = sqrt(max(max(alphV))^2 + max(max(betaV))^2);
-  fprintf('   [%.5e  %.6f  %.6f  %.6f   -->  dt = %.6f (a)]\n',...
-          maxV*p.spera, dtCFL/p.spera, dtDIFFW/p.spera, dtDIFFP/p.spera, dt/p.spera)
+  if ~silent
+    fprintf('   [%.5e  %.6f  %.6f  %.6f   -->  dt = %.6f (a)]\n',...
+            maxV*p.spera, dtCFL/p.spera, dtDIFFW/p.spera, dtDIFFP/p.spera, dt/p.spera)
+  end
 
   % coefficients for time step
   nux = dt / dx;
@@ -187,9 +192,11 @@ while t<te
   volnew = sumnew * dA;
   vbalance = (volW + inputvol - losevol) - volnew;
   if volnew > 0, relbal = abs(vbalance/volnew); else relbal = nan; end
-  fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
-          (t+dt)/p.spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
-          volnew/(1e9),relbal)
+  if ~silent
+    fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
+            (t+dt)/p.spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
+            volnew/(1e9),relbal)
+  end
 
   % actually update to new state W
   volW = volnew;
