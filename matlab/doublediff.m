@@ -155,6 +155,9 @@ while t<te
   P(float) = Po(float);
   P(icefree) = 0.0;
 
+% DECOUPLE POINT
+%P = P0;
+
   % idea: at this point we could recompute V=(alph,beta), but then dtCFL would be invalid
 
   % W time step
@@ -227,6 +230,9 @@ while t<te
   % actually update to new state W
   volW = volnew;
   W = Wnew;
+
+% DECOUPLE POINT
+%W = W0;
 
   t = t + dt;
 end
