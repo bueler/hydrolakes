@@ -38,7 +38,7 @@ if dofigs
   vb(rr < R1) = 0.0;
   ratio = Psteady(p,Po,vb,WW) ./ Po;
   figure(97), clf
-  [cc ll] = contour(rr/1000.0,WW,ratio,[0.000001 0.999999],'linewidth',3.0);
+  [cc ll] = contour(rr/1000.0,WW,ratio,[0.000001 0.999999],'k','linewidth',1.5);
   %clabel(cc,ll,'fontsize',14.0);
   text(2,0.5,'O','fontsize',16.0)
   text(12,1.1,'O','fontsize',16.0)
@@ -50,7 +50,7 @@ if dofigs
   clear dr r rr h Po vb W WW
 end
 
-return
+%return
 % in octave this requires "odepkg", but then fails because of negative step direction
 
 % solve the ODE
@@ -60,12 +60,10 @@ wopt = odeset('RelTol', 1e-12,'AbsTol', 1e-8);
 fprintf('  [numerical ODE solution generated %d r values in 0 <= r <= R0]\n',length(r))
 
 if dofigs
-  % show ODE soln W(r)
-  figure(98), clf
-  plot(r/1000.0,W);
-  xlabel('r  (km)'), ylabel('W  (m)')
-  axis([0 R0/1000.0 0 1.2*p.Wr]), grid on
-  title(sprintf('exact solution W(r)   (note W_r = %.2f m)\n',p.Wr))
+  % show ODE soln W(r) onto existing fig
+  figure(97), hold on
+  plot(r/1000.0,W,'k--');
+  hold off
 end
 
 % compute pressure solution
@@ -79,8 +77,8 @@ P = Psteady(p,Po,vb,W);
 
 if dofigs
   % show pressure solution
-  figure(99), clf
-  plot(r/1000.0,Po/1e5,r/1000.0,P/1e5);
+  figure(98), clf
+  plot(r/1000.0,Po/1e5,'k',r/1000.0,P/1e5,'k--');
   xlabel('r  (km)'), ylabel('pressure  (bar)')
   legend('P_o(r) = overburden pressure','P(r) = exact water pressure')
 end
