@@ -96,13 +96,7 @@ if ~silent
 end
 
 while t<te
-  % hydraulic potential and terms in pressure equation
-  psi = P + p.rhow * p.g * (b + W);
-  Ocav = p.c1 * magvb .* (p.Wr - W);
-  Ocav(Ocav < 0.0) = 0.0;
-  Ccrp = p.c2 * p.A * (Po - P).^3 .* W;
-
-  % grad pressure and grad water
+  % grad pressure
   dPdx = (P(2:end,:) - P(1:end-1,:)) / dx;
   dPdy = (P(:,2:end) - P(:,1:end-1)) / dy;
 
@@ -138,12 +132,23 @@ while t<te
   pux = p.c0 * dt / dx^2;
   puy = p.c0 * dt / dy^2;
 
+  % hydraulic potential sans pressure (FIXME: needs renaming if we keep)
+  %psi = P + p.rhow * p.g * (b + W);
+  psi = p.rhow * p.g * (b + W);
+
+  % opening and closure terms in pressure equation
+  Ocav = p.c1 * magvb .* (p.Wr - W);
+  Ocav(Ocav < 0.0) = 0.0;
+  Ccrp = p.c2 * p.A * (Po - P).^3 .* W;
+
   % P time step
   for i=2:length(x)-1
     for j=2:length(y)-1
       psiij = psi(i,j);
       tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
             puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
+      tmp = tmp + dx * pux * (Wea(i,j) * dPdx(i,j) - Wea(i-1,j) * dPdx(i-1,j)) + ...
+                  dy * puy * (Wno(i,j) * dPdy(i,j) - Wno(i,j-1) * dPdy(i,j-1));
       Ptmp = P(i,j) + (Po(i,j) / p.E0) * ( tmp + dt * Ccrp(i,j) - ...
                                          dt * Ocav(i,j) + dt * Phi(i,j) );
       % projection:
@@ -232,7 +237,7 @@ while t<te
   W = Wnew;
 
 % DECOUPLE POINT
-%W = W0;
+W = W0;
 
   t = t + dt;
 end
