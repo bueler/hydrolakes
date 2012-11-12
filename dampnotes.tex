@@ -101,7 +101,7 @@ We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only 
 
 We assume that water is incompressible and of constant density.  Thus the thickness of the water layer tells us its mass.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.  Specific aquifer physics comes from choosing a form for the water flux and a closure for pressure.
 
-\subsection*{Conservation}  Suppose $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).  In two spatial dimensions the mass conservation equation is \citep{Clarke05}
+\subsection*{Mass conservation}  Suppose $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).  In two spatial dimensions the mass conservation equation is \citep{Clarke05}
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \Div \bq = \Phi
 \end{equation}
@@ -116,7 +116,7 @@ We might separate the water sources between the melt on the lower surface of the
 \end{equation}
 Here $\rho_w$ is the density of fresh liquid water, $m$ is the rate at which basal melting (refreeze) of ice adds (removes) water, and $S$ is the rate at which surface runoff or englacial drainage adds water.  For the \Nbreen, Svalbard example below we will take $m=0$ so that in fact only supraglacial drainage input is modeled.
 
-\subsection*{Darcy flow}  The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential (head) $\psi(t,x,y)$.  This quantity combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential of the top of the water layer,
+\subsection*{Hydraulic potential and Darcy flow}  The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential (head) $\psi(t,x,y)$.  This quantity combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential of the top of the water layer,
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
@@ -124,17 +124,17 @@ Here $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ is the acce
 
 We have added the term ``$\rho_w g W$'' to the best-known hydraulic potential formulas \citep[e.g.]{Clarke05} for the reason that is given by \cite{Hewittetal2012}, namely that it is correct because differences in the potential at the top of the water layer determines the driving potential gradient.  The term is important when considering local minima of the hydraulic potential, where subglacial lakes of finite (not infinitesimal) extent and finite (not infinite) depth should form.  As we will see, this term makes the mass conservation equation diffusive, though the diffusion is only significant when the water depth becomes substantial ($W\gg 1$).
 
-Water flows from high to low hydraulic potential.  The simplest applicable expression of this property, a Darcy flux model for a water sheet \citep{Clarke05}, is
+Water flows from high to low hydraulic potential.  The simplest applicable expression of this property is a Darcy flux model for a water sheet following \cite{Clarke05}, namely
 \begin{equation}  \label{eq:flux}
 \bq = - \frac{K \, W}{\rho_w g} \grad \psi
 \end{equation}
 Here $K$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  The system transmits more water for a given head gradient if either the ability of the subglacial material to conduct water is bigger (i.e.~$K$ is larger) or if the water sheet is thicker ($W$ is larger).
 
-More generally we could take
+Alternatively, following \cite{Schoofetal2012} we could take
 \begin{equation}  \label{eq:fluxalt}
 \bq = - \,\tilde k\, W^\alpha\, |\grad \psi|^{\beta-2} \grad \psi
 \end{equation}
-for $\alpha\ge 1$, $\beta>1$, and some positive coefficient $\tilde k$ \citep{Schoofetal2012}.  This more nonlinear form, which is used by \cite{Hewittetal2012} and \cite{Schoofetal2012}, is justified as an instance of a Manning or Darcy-Weisbach law.  However, we believe that nothing will be fundamentally different about our model, either its exact solutions, its explicit numerical schemes, or the degree to which parameters can be identified, if we were to adopt \eqref{eq:fluxalt} instead of \eqref{eq:flux}.
+for $\alpha> 1$, $\beta>1$, and some positive coefficient $\tilde k$.  This more nonlinear form is justified as an instance of a Manning or Darcy-Weisbach law.  Note that \eqref{eq:flux} is the $\alpha=1,\beta=2$ case of \eqref{eq:fluxalt}.  While the significance of ``$\alpha>1$'' as a restriction on the possibilities covered by \eqref{eq:fluxalt} is not clear to the current authors, we believe that nothing will be fundamentally different about our model, either its exact solutions, its explicit numerical schemes, or the degree to which parameters can be identified, if we were to adopt \eqref{eq:fluxalt} instead of \eqref{eq:flux}.
 
 Recall now that the ice is a fluid which has a pressure field of its own, with basal value $P_o$, the \emph{overburden pressure}.  In this paper we make the shallow approximation that the ice pressure is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
