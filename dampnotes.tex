@@ -211,11 +211,11 @@ To explain the role of regularization in the closing term \eqref{eq:closingform}
 \end{equation}
 The inverse function theorem implies that if $\partial\mathcal{C}/\partial N$ is nonzero for a given $Y\ge 0$ then the effective pressure is determined: $N=N(Y)$.
 
-The unique value $N(Y)$ determined by \eqref{eq:hewittsteady} may not satisfy the bounds $0\le N(Y) \le P_o$ implied by \eqref{eq:bounds}, however.  That is, the sliding speed $|\bv_b|$ may be so large that the cavitation opening rate (for this $Y < W_r$) exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  Therefore, for given distributed values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can only hold if
+The unique value $N(Y)$ determined by \eqref{eq:hewittsteady} may not satisfy the bound $N(Y) \le P_o$ implied by \eqref{eq:bounds}, however.  That is, the sliding speed $|\bv_b|$ may be so large that the cavitation opening rate (for this $Y < W_r$) exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  Therefore, for given distributed values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can only hold if
 \begin{equation}
-c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 (Y+Y_0) \le c_1 |\bv_b| W_r \qquad \text{ in steady state}. \label{eq:steadyOCbounds}
+c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 (Y+Y_0), \qquad \text{ in steady state}, \label{eq:steadyOCbound}
 \end{equation}
-applies to the steady values of $Y$ over the entire domain.  If inequalities \eqref{eq:steadyOCbounds} apply then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N$, satisfying $0\le N \le P_o$, over the whole domain, and thus a water pressure $P$ satisfying bounds \eqref{eq:bounds}.  Otherwise, steady states of systems including equations \eqref{eq:hewittcapacity}, \eqref{eq:openingform}, and \eqref{eq:closingform} do not exist.
+applies to the steady values of $Y$ over the entire domain.  If inequality \eqref{eq:steadyOCbounds} applies then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N$ satisfying $0\le N \le P_o$, over the whole domain, and thus a water pressure $P$ satisfying bounds \eqref{eq:bounds}.  Otherwise, steady states of systems including equations \eqref{eq:hewittcapacity}, \eqref{eq:openingform}, and \eqref{eq:closingform} do not exist.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
@@ -262,49 +262,38 @@ Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equat
 \begin{empheq}[box=\mybluebox]{align}
 0 &\le W, \notag \\
 0 &\le P \le P_o, \notag \\
-\psi &= P + \rho_w g (b + W), \label{eq:bluebox} \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+ + \Phi, \notag \\
+\psi &= P + \rho_w g (b + W), \notag \\
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+ + \Phi, \label{eq:bluebox} \\
 \bV &= - c_0 \grad P - K \grad b, \notag \\
 \frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(K W \grad W\right) + \Phi. \notag
 \end{empheq}
 
-Model equations \eqref{eq:bluebox} relate three classes of symbols:
+Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$, $\bV$, and $c_0$ are derived from these.)  The state functions evolve according to the mathematical model \eqref{eq:bluebox}.  Only the state functions $W$ and $P$ must be provided with initial values.  Also, only $W$ and $P$ must be saved when stopping and restarting the time-dependent model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context.  % FIXME: actually we want K to depend on W<W_r or W>W_r
+Default values must be chosen for these parameters, though the informed model user will change them and explore the parameter space.  The data functions are, in practice, supplied by an ice sheet model.  
 
 \begin{table}[h]
+\caption{Symbols used in subglacial hydrology model \eqref{eq:bluebox}.}
 \begin{tabular}{r|c}
 class & symbols \\ \hline
+\emph{state functions} & $W$, $P$ \\
 \emph{scalar parameters} & $A$, $c_1$, $c_2$, $E_0$, $g$, $K$, $\rho_i$, $\rho_w$, $W_r$, $Y_0$ \\
 \emph{data functions} & $b$, $\Phi$, $P_o$, $|\bv_b|$ \\
-\emph{state functions} & $W$, $P$
+\hline
 \end{tabular}
+\label{tab:symbols}
 \end{table}
-
-\noindent (Additional symbols $\psi$, $\bV$, and $c_0$ are derived from these.)  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context.  % FIXME: actually we want K to depend on W<W_r or W>W_r
-Default values must be chosen for these parameters, though the informed model user will change them and explore the parameter space.  The data functions are, in practice, supplied by an ice sheet model.  The state functions evolve according to the mathematical model \eqref{eq:bluebox}.  Only the state functions $W$ and $P$ must be provided with initial values.  Also, only $W$ and $P$ must be saved when stopping and restarting the time-dependent model.
 
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.
-
-Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.    Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in steady state case we can more easily find an exact solution.  Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.    Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
 \bV &= - c_0 \grad P - K \grad b, \label{eq:Vsteady} \\
 \bq &= \bV W - K W \grad W, \label{eq:qsteady} \\
 0 &= - \Div \bq + \Phi, \label{eq:masscontsteady} \\
-0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
+0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
 In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is zero.  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
-
-Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  In fact, steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} give steady states which are identical to those of the \cite{Schoofetal2012} model, where the same decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
-
-\subsection*{Functional relationship for pressure in steady state}  The above equations allow us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount:
-\begin{equation}
-P(W) = \left(P_o - \left(\frac{c_1 |\bv_b| (W_r - W)_+}{c_2 A W}\right)^{1/3}\right)_+ \qquad \text{ in steady state}.  \label{eq:PofWsteady}
-\end{equation}
-This formula applies even if $W\ge W_r$ or $\bv_b=0$; in those cases the water pressure takes the overburden value $P = P_o$.  For nonzero sliding ($|\bv_b|>0$) we define $P(0)=0$ and for zero sliding we define $P(0)=P_o$; it follows that $P$ is continuous on $W\ge 0$.
-
-For the rest of this section we will use the specific values in Table \ref{tab:constants}.  These constants will also be used in the construction of exact solutions for verification.
 
 \begin{table}[ht]
   \centering
@@ -312,8 +301,8 @@ For the rest of this section we will use the specific values in Table \ref{tab:c
   \begin{tabular}{lllp{3.0in}} 
     \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
 \hline
-    $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \\
-    $c_0$ &  & $\text{m}^{2}\,\text{Pa}^{-1}\,\text{s}^{-1}$ & constant in model \eqref{eq:bluebox}: $c_0=K/(\rho_w g)$ \\
+    $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \phantom{$\Big|$} \\
+    $c_0$ & $1.019 \times 10^{-6}$ & $\text{m}^{2}\,\text{Pa}^{-1}\,\text{s}^{-1}$ & constant in model \eqref{eq:bluebox}: $c_0=K/(\rho_w g)$ \phantom{$\Big|$} \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient in \eqref{eq:capacity} \\
     $c_2$ & $0.04$ & & creep closure coefficient in \eqref{eq:capacity} \\
     $E_0$ & $1.0$ & m & regularization thickness in \eqref{eq:dampeddstrong} \\
@@ -322,12 +311,39 @@ For the rest of this section we will use the specific values in Table \ref{tab:c
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $1$ & $\text{m}$ & roughness scale in \eqref{eq:capacity} \\
+    $Y_0$ & $0.001$ & m & regularization layer thickness \\
     \hline
   \end{tabular}
  \label{tab:constants}
 \end{table}
 
-Figure \ref{fig:psteady} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of uniform sliding speed $|\bv_b|$.  We see that as the water amount reaches the roughness scale ($W\to W_r=1$ m) the pressure rises rapidly to overburden ($P(W) \to P_o$).  At the other extreme, we see that $P(W)=0$ if $P_o^3 W < c_1 |\bv_b| (W_r - W) / (c_2 A)$, but that this only occurs if the sliding speed is sufficiently large and then only for small $W$.  If the sliding speed is modest enough so that $P_o^3 W > c_1 |\bv_b| (W_r - W) / (c_2 A)$ then the pressure also drops rapidly as $W\to 0$.
+Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  In fact, steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are identical to those of the \cite{Schoofetal2012} model, where the same decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
+
+The rest of this section uses the specific values in Table \ref{tab:constants}.  They are used in the construction of exact solutions for verification.
+
+\subsection*{Functional relationship for pressure in steady state}  Equation \eqref{eq:openclosesteady} allow us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  This fact was already pointed out in considering the steady states of equation \eqref{eq:hewittcapacity}.  In particular, steady state is only possible in our model if \eqref{eq:steadyOCbound} holds, but here with $W$ for $Y$:
+\begin{equation}
+c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 (W+Y_0) \qquad \text{ in steady state}. \label{eq:steadyboundfirst}
+\end{equation}
+This inequality only restricts $W$ from being too small; if $W\ge W_r$ then the inequality is true.  For convenience in this and later formulas define
+    $$s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.$$
+This quantity is a scaled basal sliding speed.  Then \eqref{eq:steadyboundfirst} is equivalent to
+\begin{equation}
+W \ge \frac{s_b^3 W_r - P_o^3 Y_0}{s_b^3 + P_o^3} \qquad \text{ in steady state}. \label{eq:steadyboundsecond}
+\end{equation}
+(This condition is actually less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.)  If \eqref{eq:steadyboundsecond} holds then
+\begin{equation}
+P(W) = \left(P_o - \left(\frac{c_1 |\bv_b| (W_r - W)_+}{c_2 A (W+Y_0)}\right)^{1/3}\right)_+ \qquad \text{ in steady state}.  \label{eq:PofWsteady}
+\end{equation}
+Otherwise steady state is not possible.
+
+Formula \eqref{eq:PofWsteady} may apply even if $W\ge W_r$, in which case the water pressure takes the overburden value $P = P_o$.  However, if $P_o=0$ then  the left of inequalities \eqref{eq:steadyboundsecond} implies that either $W\ge W_r$ or $|\bv_b|=0$; this is relevant to the values of $W$ and $|\bv_b|$ at ice margins.  If $|\bv_b|=0$ then the right of inequalities \eqref{eq:steadyboundsecond} implies $P_o=0$ because $Y_0>0$.
+
+Figure \ref{fig:psteady} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of uniform sliding speed $|\bv_b|$ and of overburden pressure $P_o$.  
+
+FIXME: fix the figure
+
+We see that as the water amount reaches the roughness scale ($W\to W_r=1$ m) the pressure rises rapidly to overburden ($P(W) \to P_o$).  At the other extreme, we see that $P(W)=0$ if $P_o^3 W < c_1 |\bv_b| (W_r - W) / (c_2 A)$, but that this only occurs if the sliding speed is sufficiently large and then only for small $W$.  If the sliding speed is modest enough so that $P_o^3 W > c_1 |\bv_b| (W_r - W) / (c_2 A)$ then the pressure also drops rapidly as $W\to 0$.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady-vb} \, \includegraphics[width=3.0in,keepaspectratio=true]{figs/psteady-Po}
@@ -342,9 +358,7 @@ P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
 This is used to describe the water pressure under glaciers including the Trapridge glacier in Canada.  On the one hand their formula has features in common with equation \eqref{eq:PofWsteady}: both functions are increasing and both give zero pressure at $W=0$ (at least in $|\bv_b|>0$ cases for \eqref{eq:PofWsteady}).  Also, both relate the water pressure to the overburden pressure $P_o$, but while in \eqref{eq:PofWsteady} this is additive, in \eqref{eq:PofWFC} the overburden pressure is a multiplicative scaling.  The power law form of $P_{FC}(W)$ is not, however, justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.  For example, it would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is an influence on the water pressure.  Furthermore the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$, a physically-inconsistent state that does not arise in \eqref{eq:PofWsteady}.  The most important contrast of the \cite{FlowersClarke2002_theory} work and the current paper, however, is that we have no such functional relationship $P(W)$ in the nonsteady theory.
 
-\subsection*{Velocity in steady state}  For convenience in later formulas define
-    $$s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.$$
-This quantity is a scaled basal sliding speed.  Equation \eqref{eq:PofWsteady} can be written
+\subsection*{Velocity in steady state}  Equation \eqref{eq:PofWsteady} can be written
 \begin{equation}
 P(W) = \left(P_o - s_b \left((W_r - W)_+/W\right)^{1/3}\right)_+.  \label{eq:againPofWsteady}
 \end{equation}
