@@ -327,11 +327,13 @@ c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 (W+Y_0) \qquad \text{ in steady state}. 
 \end{equation}
 In this and later formulas define
     $$s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3},$$
-a scaled basal sliding speed which has units of pressure.  Then \eqref{eq:steadyboundfirst} is equivalent to
+a scaled basal sliding speed which has units of pressure.  (One may think of $s_b$ as a scale for the amount of pressure drop associated to cavitation in steady state.)  Then \eqref{eq:steadyboundfirst} is equivalent to
 \begin{equation}
-W \ge W_c := \frac{s_b^3 W_r - P_o^3 Y_0}{s_b^3 + P_o^3} \qquad \text{ in steady state}, \label{eq:steadyboundsecond}
+W \ge W_c := \frac{s_b^3 W_r - P_o^3 Y_0}{s_b^3 + P_o^3} \qquad \text{ in steady state}. \label{eq:steadyboundsecond}
 \end{equation}
-which says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  (Inequality \eqref{eq:steadyboundfirst} is actually less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.)  If \eqref{eq:steadyboundsecond} holds then
+This condition says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  Inequalities \eqref{eq:steadyboundfirst} and \eqref{eq:steadyboundsecond} are actually less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.
+
+If \eqref{eq:steadyboundfirst} or \eqref{eq:steadyboundsecond} holds then
 \begin{equation}
 P(W) = P_o - s_b \left(\frac{(W_r - W)_+}{W+Y_0}\right)^{1/3} \qquad \text{ in steady state}.  \label{eq:PofWsteady}
 \end{equation}
@@ -387,24 +389,27 @@ Considering the $Y_0=0$ case for simplicity, the first two coefficients $\alpha(
 Thinking more generally, it is no surprise that when the ice thickness, bed elevation, sliding velocity, or water thickness are highly variable in space then we can expect a larger amount of flow, and formula \eqref{eq:Vsteadyexpand} illustrates this.  Because that the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation in the model \eqref{eq:bluebox}, large variations in the same fields will generally reduce the time steps taken by our numerical model below.
 
 
+\subsection*{The radial case}  The above steady equations will be the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock but our solution will only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  We derive the ODE now, after which we proceed to specify a particular exact solution for our verification purpose.
 
-\subsection*{A nearly-exact two-dimensional solution}  The above steady equations are the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock.
-
-Assume that all quantities vary only with the radial coordinate $r = \sqrt{x^2+y^2}$.  Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} and eliminate $\bV$.  In the flat bed case the resulting pair of equations is
+Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} and eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
-q(r) &= - c_0 W(r)\, \left(P'(r) + \rho_w g W'(r)\right), \label{eq:rsflux} \\
-\frac{1}{r}\left(r\,q(r)\right)' &= \Phi(r). \label{eq:rsconserve}
+q &= - c_0 W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
+\frac{1}{r}\frac{d}{dr}\left(r\,q\right) &= \Phi. \label{eq:rsconserve}
 \end{align}
 In the case of constant water input $\Phi(r)=\Phi_0$, which we assume for the exact solution, from \eqref{eq:rsconserve} we can integrate from $0$ to $r$ and use symmetry ($q(0)=0$) to get
 \begin{equation}
 q(r) = \frac{1}{2} \Phi_0\, r. \label{eq:qradial}
 \end{equation}
 
-On the other hand, equation \eqref{eq:againPofWsteady} gives $P$ as a function of $W$ in steady state.  Assume $W(r) < W_r$ and that the scaled sliding speed $s_b(r)$ has a bounded derivative; both of these properties must be verified later for the constructed solution.  Now, by combining \eqref{eq:rsflux}, \eqref{eq:qradial}, and \eqref{eq:againPofWsteady} we can eliminate $q$ and $P$ to find
-	$$\frac{1}{2} \Phi_0\, r = - c_0 W(r)\, \left(P_o'(r) - \left[s_b(r) \left(\frac{W_r - W(r)}{W(r)}\right)^{1/3}\right]' + \rho_w g W'(r)\right).$$
-This is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, let $\varphi_0 = \Phi_0 / (2 c_0)$ and solve the equation above for $W'(r)$:
+On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$ in steady state.  Suppose $h(r)$ is given so that $P_o(r)$ is also determined.  Assume that the scaled sliding speed $s_b(r)$ has a bounded derivative and that the solution $W(r)$ satisfies the normal pressure conditions $W_c < W < W_r$; both of these properties must be verified later for the constructed solution.  Now, by combining \eqref{eq:rsflux}, \eqref{eq:qradial}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} we can eliminate $q$ and $P$ to find
 \begin{equation}
-W'(r) = \frac{s_b'(r) W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + P_o'(r) W(r)\Big] W(r)^{1/3} \left(W_r - W(r)\right)^{2/3}}{\frac{1}{3} W_r\, s_b(r) + \rho_w g W(r)^{4/3} \left(W_r - W(r)\right)^{2/3}}.
+\varphi_0\, r = - W\, \left(\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} + \left(\frac{s_b (W_r + Y_0)}{3 (W+Y_0)^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\right)  \label{eq:ODEfirst}
+\end{equation}
+in cases where $W_c < W < W_r$ and where $\varphi_0 = \Phi_0 / (2 c_0)$. 
+
+Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, solve for $dW/dr$:
+\begin{equation}
+FIXME \frac{dW}{dr} = \frac{\frac{ds_b}{dr} W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + \frac{dP_o}{dr} W(r)\Big] W(r)^{1/3} \left(W_r - W(r)\right)^{2/3}}{\frac{1}{3} W_r\, s_b(r) + \rho_w g W(r)^{4/3} \left(W_r - W(r)\right)^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
 %DONE for now:  The nontrivial manipulations needed to derive this form should be carefully checked.
