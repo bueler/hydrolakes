@@ -139,7 +139,7 @@ while t<te
   % opening and closure terms in pressure equation
   Ocav = p.c1 * magvb .* (p.Wr - W);
   Ocav(Ocav < 0.0) = 0.0;
-  Ccrp = p.c2 * p.A * (Po - P).^3 .* W;
+  Ccrp = p.c2 * p.A * (Po - P).^3 .* (W + p.Y0);
 
   % P time step
   for i=2:length(x)-1
@@ -237,7 +237,7 @@ while t<te
   W = Wnew;
 
 % DECOUPLE POINT
-W = W0;
+%W = W0;
 
   t = t + dt;
 end

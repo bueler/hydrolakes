@@ -6,13 +6,21 @@ if nargin<1, dofigs=true; end
 p = params();
 
 % constants specific to exact solution
-h0   = 500.0;           % m     center thickness
-v0   = 100.0 / p.spera; % m/s   sliding velocity at margin
+h0   = 500.0;            % m     center thickness
+v0   = 100.0 / p.spera;  % m/s   sliding velocity at margin
 R0   = 25.0e3;           % m     ice sheet margin
 R1   = 5.0e3;            % m     onset of sliding
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 
 vphi0 = Phi0 / (2 * p.c0);
+L = 0.9 * R0;
+
+% WcL is key constant in construction
+hL  = h0 * (1 - (L/R0).^2);
+vbL = v0 * (L - R1).^5 / (R0-R1)^5;
+PoL = p.rhoi * p.g * hL;
+sbL = ( (p.c1 * vbL / (p.c2 * p.A)) )^(1/3);
+WcL = (sbL^3 * p.Wr - PoL^3 * p.Y0) / (sbL^3 + PoL^3)
 
 if dofigs
   set(0,'defaultaxesfontsize',14)
@@ -29,11 +37,12 @@ if dofigs
   ylabel(ax(1),'h = ice thickness  (m)')
   ylabel(ax(2),'|v_b| = ice sliding speed   (m/a)')
 
-  r = 0:dr:R0-dr;  % avoid location where Po=0
+  % grid for showing O, N, U regions behind exact W(r) solution
+  r = 0:dr:L;
   dW = p.Wr/500;
   W = dW:dW:1.2*p.Wr;
   [rr WW] = meshgrid(r,W);
-  Po = p.rhow * p.g * h0 * (1 - (rr/R0).^2);
+  Po = p.rhoi * p.g * h0 * (1 - (rr/R0).^2);
   vb = v0 * (rr - R1).^5 / (R0-R1)^5;
   vb(rr < R1) = 0.0;
   ratio = Psteady(p,Po,vb,WW) ./ Po;
@@ -50,7 +59,7 @@ if dofigs
   clear dr r rr h Po vb W WW
 end
 
-%return
+return
 % in octave this requires "odepkg", but then fails because of negative step direction
 
 % solve the ODE
@@ -113,10 +122,9 @@ end
     error('Psteady() requires nonnegative sliding speed vb'), end
   if any(any(W <= 0))
     error('Psteady() requires positive water thickness W'), end
-  ff = (p.Wr - W) ./ W;
-  ff(ff < 0) = 0.0;
-  CC = p.c1 / (p.c2 * p.A);
-  P  = Po - (CC * vb .* ff).^(1/3);
+  sbcube = p.c1 * vb / (p.c2 * p.A);
+  frac = max(0.0, p.Wr - W) ./ (W + p.Y0);
+  P = Po - (sbcube .* frac).^(1/3);
   P(P < 0) = 0.0;
   end
 
