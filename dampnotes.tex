@@ -215,7 +215,7 @@ The unique value $N(Y)$ determined by \eqref{eq:hewittsteady} may not satisfy th
 \begin{equation}
 c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 (Y+Y_0), \qquad \text{ in steady state}, \label{eq:steadyOCbound}
 \end{equation}
-applies to the steady values of $Y$ over the entire domain.  If inequality \eqref{eq:steadyOCbounds} applies then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N$ satisfying $0\le N \le P_o$, over the whole domain, and thus a water pressure $P$ satisfying bounds \eqref{eq:bounds}.  Otherwise, steady states of systems including equations \eqref{eq:hewittcapacity}, \eqref{eq:openingform}, and \eqref{eq:closingform} do not exist.
+applies to the steady values of $Y$ over the entire domain.  If inequality \eqref{eq:steadyOCbound} applies then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N$ satisfying $0\le N \le P_o$, over the whole domain, and thus a water pressure $P$ satisfying bounds \eqref{eq:bounds}.  Otherwise, steady states of systems including equations \eqref{eq:hewittcapacity}, \eqref{eq:openingform}, and \eqref{eq:closingform} do not exist.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
@@ -409,19 +409,22 @@ in cases where $W_c < W < W_r$ and where $\varphi_0 = \Phi_0 / (2 c_0)$.
 
 Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, solve for $dW/dr$:
 \begin{equation}
-FIXME \frac{dW}{dr} = \frac{\frac{ds_b}{dr} W(r) \left(W_r - W(r)\right) - \Big[\varphi_0\, r + \frac{dP_o}{dr} W(r)\Big] W(r)^{1/3} \left(W_r - W(r)\right)^{2/3}}{\frac{1}{3} W_r\, s_b(r) + \rho_w g W(r)^{4/3} \left(W_r - W(r)\right)^{2/3}}.
+\frac{dW}{dr} = \frac{\frac{ds_b}{dr} (W+Y_0) (W_r - W) - \Big[\varphi_0\, r W^{-1} + \frac{dP_o}{dr}\Big] (W + Y_0)^{4/3} \left(W_r - W\right)^{2/3}}{\frac{1}{3} s_b (W_r + Y_0) + \rho_w g (W + Y_0)^{4/3} (W_r - W)^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
-%DONE for now:  The nontrivial manipulations needed to derive this form should be carefully checked.
-Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$.  These functions determine $P_o'(r)$ and $s_b'(r)$, respectively, in \eqref{eq:WradialODE}.  
+Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.
 
-The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  In fact, by applying equation \eqref{eq:openclosesteady} at the ice margin, where $P_o(r)\to 0$ and $P(r)\to 0$ thus because $0 \le P \le P_o$, we see that $W(r)\to W_r$ at the margin.  (This applies in the case $W(r)\le W_r$ which will be true for our nearly-exact solution.)  If $r=R_0$ is the position of the margin then $W(R_0)=W_r$ is the initial condition for solving \eqref{eq:WradialODE}.  We integrate the ODE from $r=R_0$ to $r=0$.  The central value $W(0)$ is determined as part of the solution.
+The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  By applying equation \eqref{eq:openclosesteady} at an ice margin, where $P_o\to 0$ and $P\to 0$ because $0 \le P \le P_o$, we see that $W \to W_r$ also.  Also \eqref{eq:steadyboundsecond} says that $W_c = W_r$ if $P_o\to 0$.  It follows that at an ice margin $r=R_0$ we would necessarily set $W(R_0)=W_r$ and recover only the trivial solution $W(r)=W_r$ solving \eqref{eq:WradialODE}.
 
-We need an ice cap geometry $h(r)$ in which the surface gradient is bounded so that $P_o'(r)$ in \eqref{eq:WradialODE} is bounded.  The plug flow, flat bed solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
+To generate a nontrivial solution we start the integration at a location $r=L$ where there is a positive thickness of ice so that $P_o(L)>0$.  We will assume that at the same location there is some sliding so that $s_b(L)>0$ and indeed $s_b(L) > P_o(L)^3 Y_0 / W_r$.  Then the initial condition $W(L)$ is taken to satisfy
+	$$0 < W_c < W(L) < W_r.$$
+Then we integrate the ODE from $r=L$ to $r=0$.  The central value $W(0)$ is determined as part of the solution.
+
+It is useful to have an ice cap geometry $h(r)$ in which the surface gradient is bounded so that $dP_o/dr$ in \eqref{eq:WradialODE} is bounded.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
 h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
-where $h(0)=h_0$ is the height of the center of the ice cap (Figure \ref{fig:h-vb}).  It follows that $P_o'(r) = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.
+where $h(0)=h_0$ is the height of the center of the ice cap (Figure \ref{fig:h-vb}).  It follows that $P_o'(r) = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ for concreteness.
 
 The sliding speed could potentially be determined by a model for stresses at the ice base and within the ice \citep{Bodvardsson,GreveBlatter2009}, but this kind of coupled ice and water dynamics solution is too advanced for the current purpose of decoupled model verification.  Instead we choose a well-behaved sliding speed function to see how it affects the current model.  It has no sliding near the ice cap center, and increasing sliding near the margin:
 \begin{equation}
@@ -432,17 +435,15 @@ The sliding speed could potentially be determined by a model for stresses at the
 \end{equation}
 (See figure \ref{fig:h-vb}.)  It follows that where there is sliding (i.e.~$R_1 < r < R_0$) we have
 \begin{equation}
-s_b'(r) = - \frac{5 \tilde C}{3 (R_0-R_1)} \left(\frac{r-R_1}{R_0-R_1}\right)^{2/3}, \label{eq:determinessbprime}
+\frac{ds_b}{dr} = - \frac{5 \tilde C}{3 (R_0-R_1)} \left(\frac{r-R_1}{R_0-R_1}\right)^{2/3}, \label{eq:determinessbprime}
 \end{equation}
-where $\tilde C = (c_1 v_0/(c_2 A))^{1/3}$, which is continuous at $r=R_1$ and bounded on $0\le r \le R_0$.
+where $\tilde C = (c_1 v_0/(c_2 A))^{1/3}$.  Where $r<R_1$ we have $ds_b/dr = 0$.  Thus $ds_b/dr$ is continuous at $r=R_1$ and bounded on $0\le r \le R_0$.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{figs/h-vb-plot}
 \caption{Surface elevation $h(r)$ and sliding speed $|\bv_b|(r)$ for flat bed, radial, steady state, nearly-exact solution.}
 \label{fig:h-vb}
 \end{figure}
-
-
 
 FIXME: comment on exact $W(r)$ and $P(r)$
 
