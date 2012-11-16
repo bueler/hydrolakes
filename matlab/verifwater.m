@@ -16,10 +16,10 @@ if nargin<3, dofigs=true; end
 p = params();
 
 % grid
-L = 30.0e3;  % L > R0 in radialsteady()
-dx = L / M;
+Lx = 30.0e3;  % Lx > L in radialsteady()
+dx = Lx / M;
 dy = dx;
-x = -L:dx:L;
+x = -Lx:dx:Lx;
 y = x;
 
 % dense radial grid and call to radialsteady()
@@ -28,13 +28,14 @@ fprintf('showing exact quantities as function of r ...\n')
 %[r,Wrad,Prad,hrad,vbrad] = radialsteady(dofigs);  % use h0 and v0 defaults
 [r,Wrad,Prad,hrad,vbrad] = radialsteady(false);  % use h0 and v0 defaults
 R0 = 25.0e3;  % must be consistent with constant in RADIALSTEADY
+L = 0.9 * R0;
 
 % extend radial grid stuff so that piecewise-linear interpolation will work
-r     = [r;     (R0+1); 50.0e3];
-Wrad  = [Wrad;  0;       0];
-Prad  = [Prad;  0;       0];
-hrad  = [hrad;  0;       0];
-vbrad = [vbrad; 0;       0];
+r     = [50.0e3;  L+1;  r];
+Wrad  = [0;       0;    Wrad];
+Prad  = [0;       0;    Prad];
+hrad  = [0;       0;    hrad];
+vbrad = [0;       0;    vbrad];
 
 % lookup table action:  get gridded data and exact quantities
 [xx, yy] = ndgrid(x,y);
@@ -80,9 +81,11 @@ outline = ((abs(xx) < L) & (abs(yy) < L));
 te = tyears * p.spera;
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 Phi = Phi0 * ones(size(h));
-%[W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
+PoL = p.rhoi * p.g * hrad(1);
+Pfreebc = psteady(p,PoL,vbrad(1),Wrad(1));
+
 % run silent:
-[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true);
+[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true,Pfreebc);
 
 if dofigs
   fprintf('showing numerical solution fields: W, P\n')
