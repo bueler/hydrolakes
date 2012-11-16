@@ -1,23 +1,26 @@
-function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
+function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,Pfreebc)
 % DOUBLEDIFF  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
-% with a penalized form of the "Y=W" full-cavity condition.  The latter
-% evolves the hydraulic potential psi by a diffusion equation.
+% with a diffusion equation for the pressure P.
 %
-% ** MODEL EQUATIONS **:  The equations are described in dampnotes.pdf.
-% Here is a summary only.  The major ("state space") functions are W and P.
+% MODEL EQUATIONS:  The equations are described in dampnotes.pdf.
+% Here is a summary only.  The state space functions are W and P.
 % Derived fields are:
-%   V = - (K / (rhow g)) grad P - K grad b   % velocity of water
-%   P_o = rhoi g H                           % overburden pressure
+%   psi = P + rhow g b                hydraulic potential
+%   V   = - c0 grad P - K grad b      velocity of water
+%   P_o = rhoi g H                    overburden pressure
 % Note that the velocity V has components  (alpha,beta)  in the code.
-% The evolution equations are
-%
+% Evolution equations are
 %   dW/dt + div( V W ) = div ( K W grad W ) + Phi
-%   (E0/P_o) dP/dt = FIXME
+%   (E0/P_o) dP/dt = div ( c0 W grad psi ) + Clos(P,W) - Open(W) + Phi
+% where
+%   Open(W) = c1 magvb (Wr - W)_+
+%   Clos(P,W) = c2 A (Po - P)^3 (W + Y0)
+% Various constants come from PARAMS.
 %
-% ** USAGE **  The calling form is
+% USAGE:  The calling form is
 %
-%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin)
+%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,Pfreebc)
 %
 % The input data are given on (Mx+1) x (My+1) grids:
 %   x = coordinate vector of length Mx+1
@@ -29,18 +32,28 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 %   W0 = initial values for water thickness W in m; <same size>
 %   P0 = initial values for pressure P in Pa; <same size>
 %   Phi = melt rate as m s-1; <same size>
-% Regarding the last three scalar arguments, the code runs from times
-% ts  to  te  using at least  Nmin  time steps.  Thus the maximum time step
-% is  (te-ts)/Nmin.  But the code does adaptive time-stepping.  At each time
-% step the code reports time step, time step restrictions (CFL for advection
-% and criterion for diffusion), and total water amount.
+%
+% Other parameters last:
+%   ts = run start time
+%   te = run end time
+%   Nmin = use at least this many time steps.
+%   silent = if true then suppress all stdout
+%   Pfreebc = Dirichlet pressure boundary value for ice-free margin; default = 0
+%
+% The maximum time step is  (te-ts)/Nmin,  but the code does adaptive
+% time-stepping.  At each time step the code reports time step, time step
+% restrictions (CFL for advection and criterion for W diffusion and
+% P diffusion), and total water amount.
 %
 % Note that where outline==0 we set the water thickness W to zero.
 %
 % The output variables are the final values of the state variables W,P.
+%
+% See also PARAMS, PLOTPSTEADY, RADIALSTEADY, VERIFWATER, NBREENWATER.
 
 p = params();
 if nargin<13, silent=false; end
+if nargin<14, Pfreebc = 0.0; end % default Dirichlet pressure BC for grounded margin
 
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
@@ -133,13 +146,12 @@ while t<te
   puy = p.c0 * dt / dy^2;
 
   % hydraulic potential sans pressure (FIXME: needs renaming if we keep)
-  %psi = P + p.rhow * p.g * (b + W);
-  psi = p.rhow * p.g * (b + W);
+  psi = P + p.rhow * p.g * (b + W);
 
   % opening and closure terms in pressure equation
-  Ocav = p.c1 * magvb .* (p.Wr - W);
-  Ocav(Ocav < 0.0) = 0.0;
-  Ccrp = p.c2 * p.A * (Po - P).^3 .* (W + p.Y0);
+  Open = p.c1 * magvb .* (p.Wr - W);
+  Open(Open < 0.0) = 0.0;
+  Clos = p.c2 * p.A * (Po - P).^3 .* (W + p.Y0);
 
   % P time step
   for i=2:length(x)-1
@@ -147,10 +159,8 @@ while t<te
       psiij = psi(i,j);
       tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
             puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
-      tmp = tmp + dx * pux * (Wea(i,j) * dPdx(i,j) - Wea(i-1,j) * dPdx(i-1,j)) + ...
-                  dy * puy * (Wno(i,j) * dPdy(i,j) - Wno(i,j-1) * dPdy(i,j-1));
-      Ptmp = P(i,j) + (Po(i,j) / p.E0) * ( tmp + dt * Ccrp(i,j) - ...
-                                         dt * Ocav(i,j) + dt * Phi(i,j) );
+      Ptmp = P(i,j) + (Po(i,j) / p.E0) * ( tmp + dt * Clos(i,j) - ...
+                                           dt * Open(i,j) + dt * Phi(i,j) );
       % projection:
       Ptmp = max(0.0, Ptmp);
       Ptmp = min(Ptmp, Po(i,j));
@@ -158,7 +168,7 @@ while t<te
     end
   end
   P(float) = Po(float);
-  P(icefree) = 0.0;
+  P(icefree) = Pfreebc;
 
 % DECOUPLE POINT
 %P = P0;
