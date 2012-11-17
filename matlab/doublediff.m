@@ -137,15 +137,7 @@ while t<te
             maxV*p.spera, dtCFL/p.spera, dtDIFFW/p.spera, dtDIFFP/p.spera, dt/p.spera)
   end
 
-  % coefficients for time step
-  nux = dt / dx;
-  nuy = dt / dy;
-  mux = p.K * dt / dx^2;
-  muy = p.K * dt / dy^2;
-  pux = p.c0 * dt / dx^2;
-  puy = p.c0 * dt / dy^2;
-
-  % hydraulic potential sans pressure (FIXME: needs renaming if we keep)
+  % hydraulic potential
   psi = P + p.rhow * p.g * (b + W);
 
   % opening and closure terms in pressure equation
@@ -154,13 +146,14 @@ while t<te
   Clos = p.c2 * p.A * (Po - P).^3 .* (W + p.Y0);
 
   % P time step
+  pux = p.c0 / dx^2;
+  puy = p.c0 / dy^2;
   for i=2:length(x)-1
     for j=2:length(y)-1
       psiij = psi(i,j);
       tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
             puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
-      Ptmp = P(i,j) + (Po(i,j) / p.E0) * ( tmp + dt * Clos(i,j) - ...
-                                           dt * Open(i,j) + dt * Phi(i,j) );
+      Ptmp = P(i,j) + (dt * Po(i,j) / p.E0) * ( tmp + Clos(i,j) - Open(i,j) + Phi(i,j) );
       % projection:
       Ptmp = max(0.0, Ptmp);
       Ptmp = min(Ptmp, Po(i,j));
@@ -174,6 +167,12 @@ while t<te
 %P = P0;
 
   % idea: at this point we could recompute V=(alph,beta), but then dtCFL would be invalid
+
+  % coefficients for W time step
+  nux = dt / dx;
+  nuy = dt / dy;
+  mux = p.K * dt / dx^2;
+  muy = p.K * dt / dy^2;
 
   % W time step
   Wnew = W;  % copies unaltered initial b.c.s
@@ -207,29 +206,6 @@ while t<te
       end
     end
   end
-
-  % find boundary local max where outflow
-  deltaW = zeros(size(Wnew));
-  for i=2:length(x)-1
-    for j=2:length(y)-1
-      efree = (alphV(i,j)   > 0) && icefree(i+1,j);
-      wfree = (alphV(i-1,j) < 0) && icefree(i-1,j);
-      nfree = (betaV(i,j)   > 0) && icefree(i,j+1);
-      sfree = (betaV(i,j-1) < 0) && icefree(i,j-1);
-      neighfree = efree || wfree || nfree || sfree;
-      if neighfree
-        Wneigh = [Wnew(i+1,j) Wnew(i-1,j) Wnew(i,j+1) Wnew(i,j-1)];
-        avWneigh = sum(Wneigh) / sum(Wneigh > 0);
-        if Wnew(i,j) > avWneigh
-          deltaW(i,j) = Wnew(i,j) - avWneigh;
-        end
-      end
-    end
-  end
-
-  % remove local max (and volume accounting)
-  Wnew = Wnew - deltaW;
-  losevol = losevol + sum(sum(deltaW)) * dA;
 
   % report on new state W
   sumnew = sum(sum(Wnew));
