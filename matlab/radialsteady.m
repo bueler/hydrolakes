@@ -15,13 +15,13 @@ Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 vphi0 = Phi0 / (2 * p.c0);
 L = 0.9 * R0;
 
-% WcL is key constant in construction
+% WcL is key constant in construction; determines initial condition on W(r)
 hL  = h0 * (1 - (L/R0).^2);
 vbL = v0 * (L - R1).^5 / (R0-R1)^5;
 PoL = p.rhoi * p.g * hL;
 sbL = ( (p.c1 * vbL / (p.c2 * p.A)) )^(1/3);
 WcL = (sbL^3 * p.Wr - PoL^3 * p.Y0) / (sbL^3 + PoL^3);
-fprintf('  W(L) should be between W_c(L) = %.6f and W_r = %.6f\n',WcL,p.Wr)
+fprintf('  W(L) should satisfy  %.6f = W_c(L) <= W(L) <= %.6f = W_r\n',WcL,p.Wr)
 
 if dofigs
   set(0,'defaultaxesfontsize',14)
@@ -39,7 +39,6 @@ if dofigs
   ratio = psteady(p,Po,vb,WW) ./ Po;
   figure(97), clf
   [cc ll] = contour(rr/1000.0,WW,ratio,[0.000001 0.999999],'k','linewidth',1.5);
-  %clabel(cc,ll,'fontsize',14.0);
   text(2,0.5,'O','fontsize',16.0)
   text(12,1.1,'O','fontsize',16.0)
   text(12,0.5,'N','fontsize',16.0)
@@ -56,7 +55,7 @@ end
 % solve the ODE
 wopt = odeset('RelTol', 1e-12,'AbsTol', 1e-9);
 % others: 'InitialStep', 'MaxStep', 'NormControl', 'OutputFcn'
-[r,W] = ode45(@WODE,[L 0.0],0.95 * p.Wr,wopt);
+[r,W] = ode45(@WODE,[L 0.0],WcL,wopt);
 fprintf('  numerical ODE solution generated %d r values in 0 <= r <= L = %.3f km\n',...
         length(r),max(r)/1e3)
 
@@ -68,11 +67,21 @@ if dofigs
   hold off
 end
 
-% compute pressure solution
+% check bounds  W_c(r) <= W(r) <= W_r
 vb = v0 * (r - R1).^5 / (R0-R1)^5;
 vb(r < R1) = 0.0;
+sb = ((p.c1 * vb) ./ (p.c2 * p.A)).^(1/3);
 h = h0 * (1 - (r/R0).^2);
 Po = p.rhoi * p.g * h;
+Wc = (sb.^3 * p.Wr - Po.^3 * p.Y0) ./ (sb.^3 + Po.^3);
+if any(W < 0)
+  error('points exist where solution W(r) < 0'), end
+if any(W < Wc)
+  error('points exist where solution W(r) < W_c(r)'), end
+if any(W > p.Wr)
+  error('points exist where solution W(r) > W_r'), end
+
+% compute pressure solution
 P = psteady(p,Po,vb,W);
 
 if dofigs
@@ -82,7 +91,6 @@ if dofigs
   hold on
   plot([L L]/1000.0,[Po(1)/1e5 0],'k')
   xlabel('r  (km)'), ylabel('pressure  (bar)')
-  %legend('P_o(r) = overburden pressure','P(r) = exact water pressure')
 end
 
   function dW = WODE(r,W)
