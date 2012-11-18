@@ -1,4 +1,4 @@
-function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,Pfreebc)
+function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 % DOUBLEDIFF  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
 % with a diffusion equation for the pressure P.
@@ -20,7 +20,7 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,P
 %
 % USAGE:  The calling form is
 %
-%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,Pfreebc)
+%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 %
 % The input data are given on (Mx+1) x (My+1) grids:
 %   x = coordinate vector of length Mx+1
@@ -38,7 +38,6 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,P
 %   te = run end time
 %   Nmin = use at least this many time steps.
 %   silent = if true then suppress all stdout
-%   Pfreebc = Dirichlet pressure boundary value for ice-free margin; default = 0
 %
 % The maximum time step is  (te-ts)/Nmin,  but the code does adaptive
 % time-stepping.  At each time step the code reports time step, time step
@@ -53,7 +52,6 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,P
 
 p = params();
 if nargin<13, silent=false; end
-if nargin<14, Pfreebc = 0.0; end % default Dirichlet pressure BC for grounded margin
 
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
@@ -101,6 +99,9 @@ P0(float) = Po(float);
 icefree = (h < b + 1.0) & (h >= 0.0);
 P0(icefree) = 0.0;
 P = P0;
+
+% locations outside subglacial aquifer where W and P are known
+known = (icefree | float);
 
 if ~silent
   fprintf('running ...\n\n')
@@ -151,8 +152,13 @@ while t<te
   for i=2:length(x)-1
     for j=2:length(y)-1
       psiij = psi(i,j);
-      tmp = pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j))) + ...
-            puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
+      tmp = 0;
+      if ~known(i+1,j) & ~known(i-1,j)
+        tmp = tmp + pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j)));
+      end
+      if ~known(i,j+1) & ~known(i,j-1)
+        tmp = tmp + puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
+      end
       Ptmp = P(i,j) + (dt * Po(i,j) / p.E0) * ( tmp + Clos(i,j) - Open(i,j) + Phi(i,j) );
       % projection:
       Ptmp = max(0.0, Ptmp);
@@ -161,7 +167,7 @@ while t<te
     end
   end
   P(float) = Po(float);
-  P(icefree) = Pfreebc;
+  P(icefree) = 0.0;
 
 % DECOUPLE POINT
 %P = P0;
@@ -185,10 +191,14 @@ while t<te
       upn = up(betaV(i,j),   Wij,      W(i,j+1));
       ups = up(betaV(i,j-1), W(i,j-1), Wij);
       inputdepth = dt * Phi(i,j);
-      dtlapW = mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j))) + ...
-               muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
-      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + dtlapW + ...
-                  inputdepth;
+      tmp = 0;
+      if ~known(i+1,j) & ~known(i-1,j)
+        tmp = tmp + mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j)));
+      end
+      if ~known(i,j+1) & ~known(i,j-1)
+        tmp = tmp + muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
+      end
+      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + tmp + inputdepth;
       inputvol = inputvol + inputdepth * dA;
     end
   end
@@ -200,7 +210,7 @@ while t<te
   losevol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
-      if (outline(i,j) < 0.5) || float(i,j) || icefree(i,j)
+      if (outline(i,j) < 0.5) | known(i,j)
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
