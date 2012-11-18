@@ -31,3 +31,9 @@ axis([0.9*min(dx) 1.1*max(dx) 0.9*min(err(:,2)) 1.1*max(err(:,4))])
 set(gca,'XTick',fliplr(dx))
 legend('average P error','maximum P error')
 
+pW = polyfit(log(dx(2:end)),log(err(2:end,1)'),1);
+% pW =   1.0534  -12.4881
+pP = polyfit(log(dx(2:end)),log(err(2:end,2)'),1);
+% pP =   0.9556   -9.4883
+%FIXME: add to figures?
+
