@@ -429,7 +429,7 @@ It is useful to have an ice cap geometry $h(r)$ in which the surface gradient is
 \begin{equation}
 h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
-where $h(0)=h_0$ is the height of the center of the ice cap (Figure \ref{fig:h-vb}).  It follows that $P_o'(r) = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ for concreteness.
+where $h(0)=h_0$ is the height of the center of the ice cap.  It follows that $P_o'(r) = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ for concreteness.
 
 The sliding speed could potentially be determined by a model for stresses at the ice base and within the ice \citep{Bodvardsson,GreveBlatter2009}, but this kind of coupled ice and water dynamics solution is too advanced for the current purpose of decoupled model verification.  Instead we choose a well-behaved sliding speed function to see how it affects the current model.  It has no sliding near the ice cap center, and increasing sliding near the margin:
 \begin{equation}
@@ -438,25 +438,20 @@ The sliding speed could potentially be determined by a model for stresses at the
                            0, & R_0 \le r.
              \end{cases}  \label{eq:choosevb}
 \end{equation}
-(See figure \ref{fig:h-vb}.)  It follows that where there is sliding (i.e.~$R_1 < r < R_0$) we have
-\begin{equation}
-\frac{ds_b}{dr} = - \frac{5 \tilde C}{3 (R_0-R_1)} \left(\frac{r-R_1}{R_0-R_1}\right)^{2/3}, \label{eq:determinessbprime}
-\end{equation}
-where $\tilde C = (c_1 v_0/(c_2 A))^{1/3}$.  Where $r<R_1$ we have $ds_b/dr = 0$.  Thus $ds_b/dr$ is continuous at $r=R_1$ and bounded on $0\le r \le R_0$.
+It follows that $ds_b/dr$ is bounded and continuous on $0\le r < R_0$.
+
+FIXME: comment on exact $W(r)$ and $P(r)$ and esp.~on $O,N,U$ from \eqref{eq:PofWsteady}
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{figs/h-vb-plot}
-\caption{Surface elevation $h(r)$ and sliding speed $|\bv_b|(r)$ for flat bed, radial, steady state, nearly-exact solution.}
-\label{fig:h-vb}
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-W-plot-onu}
+\caption{Nearly-exact radial, steady solution for water thickness $W(r)$ (dashed).  In $r$-versus-$W$ space the overpressure (O), normal pressure (N), and underpressure (U) regions are determined (solid curves).}
+\label{fig:Wexact}
 \end{figure}
 
-FIXME: comment on exact $W(r)$ and $P(r)$
-
 \begin{figure}[ht]
-\includegraphics[height=2.3in,keepaspectratio=true]{figs/exact-W-plot-onu} \, 
-\includegraphics[height=2.33in,keepaspectratio=true]{figs/exact-P-plot}
-\caption{Nearly-exact solutions for water thickness $W(r)$ (left; dashed) and pressure $P(r)$ (right; dashed) for radial, steady state exact solution.  In $r$-versus-$W$ space the the overpressure (O), normal pressure (N), and underpressure (U) regions are determined (left; solid).}
-\label{fig:WPexact}
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-P-plot}
+\caption{Nearly-exact radial, steady solution pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
+\label{fig:Pexact}
 \end{figure}
 
 
@@ -580,6 +575,22 @@ Generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated 
 There is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve our bounds $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we also project to put the pressure $P_{i,j}^{l+1}$ back into the correct range.  However, because the pressure is not a conserved quantity, this projection step does not suggest an attempt to redistribute pressure.
 
 FIXME: icefree land gets $W=0$ and $P=0$.  the base of floating ice gets $W=0$ and $P=P_o$.  the water lost by these mechanisms is what is produced by the model.
+
+\subsection*{Verification of the coupled model}
+
+
+\begin{figure}[ht]
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineW}
+\caption{Average (circle) water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{1.05})$.  The maximum (star) error does not decay because of $O(1)$ water thickness errors at the ice margin.}
+\label{fig:refineW}
+\end{figure}
+
+\begin{figure}[ht]
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineP}
+\caption{Average (circle) and maximum (star) pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.955})$.}
+\label{fig:refineP}
+\end{figure}
+
 
 \small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
