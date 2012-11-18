@@ -1,12 +1,10 @@
 function [err, W, P] = verifwater(tyears,M,dofigs)
 % VERIFWATER  Runs a verification test on a square region with  M  grid spaces
 % in each direction for  tyears  years.  Initial condition is the result of
-% RADIALSTEADY, which is a nearly-exact solution.  Thus measures drift away
-% from a steady state.  Prints L_1 and L_inf errors for both W and P.
+% RADIALSTEADY, which is a nearly-exact solution so the runs here measure drift
+% away from a steady state.  Prints L_1 and L_inf errors for both W and P.
 % Form:
 %    [err, W, P] = verifwater(tyears,M,dofigs)
-% where:
-%    FIXME
 % Calls:   RADIALSTEADY, DOUBLEDIFF
 
 if nargin<1, tyears=1.0; end
@@ -25,7 +23,6 @@ y = x;
 % dense radial grid and call to radialsteady()
 fprintf('computing exact quantities as function of r with ODE solver ...\n')
 fprintf('showing exact quantities as function of r ...\n')
-%[r,Wrad,Prad,hrad,vbrad] = radialsteady(dofigs);  % use h0 and v0 defaults
 [r,Wrad,Prad,hrad,vbrad] = radialsteady(false);  % use h0 and v0 defaults
 R0 = 25.0e3;  % must be consistent with constant in RADIALSTEADY
 L = 0.9 * R0;
@@ -75,17 +72,17 @@ if dofigs
   xlabel('x (km)'), ylabel('y (km)')
 end
 
-fprintf('calling doublediff() to do run for %.3f years on %d x %d grid ...\n',...
-        tyears,M+1,M+1)
+% configure remaining fields
 outline = ((abs(xx) < L) & (abs(yy) < L));
 te = tyears * p.spera;
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 Phi = Phi0 * ones(size(h));
-PoL = p.rhoi * p.g * hrad(1);
-Pfreebc = psteady(p,PoL,vbrad(1),Wrad(1));
+Phi(h <= 0) = 0.0;
 
-% run silent:
-[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true,Pfreebc);
+fprintf('calling doublediff() to do run for %.3f years on %d x %d grid ...\n',...
+        tyears,M+1,M+1)
+% run silent
+[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true);
 
 if dofigs
   fprintf('showing numerical solution fields: W, P\n')
