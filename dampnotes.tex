@@ -370,7 +370,7 @@ This pressure model is proposed for both steady and nonsteady circumstances.  It
 
 On the one hand formula \eqref{eq:PofWFC} has features in common with equation \eqref{eq:PofWsteady}: both functions $P(W)$ and $P_{FC}(W)$ are increasing and both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is an influence on the water pressure.  For example, in the small sliding cases (e.g.~$|\bv_b| \ll 10$ m/a) creep will force $P(W) \approx P_o$ for a modest amount of water ($W\ll W_r$).  Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, a problematic condition already noted by \cite{Schoofetal2012}.  This condition $P>P_o$ does not arise in \eqref{eq:PofWsteady} nor in the \cite{Schoofetal2012} theory.  Perhaps the most important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we have no functional relationship $P=P(W)$ in nonsteady conditions.
 
-\subsection*{Velocity in steady state}  We now consider how the steady state water velocity $\bV$ depends on other quantities.  Equation \eqref{eq:PofWsteady} defines $P=P(W,P_o,s_b)$ but $\bV$ depends on $\grad P$ so we need derivatives of $P$.  In particular, in steady state we have
+\subsection*{Velocity in steady state}  We now consider how the steady state water velocity $\bV$ depends on other quantities.  Equation \eqref{eq:PofWsteady} defines $P=P(W,P_o,s_b)$ while $\bV$ depends on $\grad P$, and thus we need derivatives of $P$.  In particular, in steady state we have
 \begin{equation}
 \frac{\partial P}{\partial W} =
     \begin{cases}
@@ -380,18 +380,20 @@ On the one hand formula \eqref{eq:PofWFC} has features in common with equation \
       0, & W > W_r.
     \end{cases}  \label{eq:dPdWsteady}
 \end{equation}
-Figure \ref{fig:psteady-vb} illustrates these cases.  The case $W_c < W < W_r$ is also the ``normal pressure'' case $0 < P < P_o$.  Formula \eqref{eq:dPdWsteady} and Figure \ref{fig:psteady-vb} agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield a formula for the velocity in steady state, in the normal pressure ($W_c < W < W_r \iff 0 < P < P_o$) cases:
+Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} illustrate these cases.  Note that the condition $W_c < W < W_r$ is identical to the normal pressure condition $0 < P < P_o$ in steady state.  Formula \eqref{eq:dPdWsteady} and the Figures agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield this formula for the velocity in steady state which applies in the normal pressure cases:
 \begin{align}
 \bV &= - c_0 \grad P - K \grad b = - c_0 \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - K \grad b  \notag \\
     &= - c_0 \left[\grad \psi_o - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
 \end{align}
 We have simplified the last expression by combining terms using the purely-geometrical function $\psi_o = P_o + \rho_w g b = \rho_i g H + \rho_w g b$ which we call the \emph{overburden potential}.  It is the hydraulic potential associated to an infinitesimal amount of water in the subglacial layer if it is at zero effective pressure.
 
-Equation \eqref{eq:Vsteadyexpand} can help us understand the advective flux $\bV W$ which is part of the water flux $\bq=\bV W - K W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \psi_o$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the known diffusive flux $-K W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.  In fact, we see abstractly that in steady state we have
-	$$\bq = - \alpha(W) \grad \psi_0 - \beta(W) \grad s_b - \gamma(W,s_b) \grad W.$$
-Considering the $Y_0=0$ case for simplicity, the first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\downto 0$.  However $\gamma(W,s_b)$ remains large when $W\downto 0$, even if $K$ is small, as long as sliding is sustained ($s_b > 0$).  Thus for low water amount cases it may make sense to think of the water as diffusing in the layer \citep[compare equation (11) in][]{BBssasliding}.  When the water thickness closely approximates the roughness scale ($W\approx W_r$) then the second sliding term (i.e.~proportional to $\grad s_b$) contributes little while the third diffusive term is again strong if sliding occurs ($s_b > 0$).
+Equation \eqref{eq:Vsteadyexpand} can help us understand the advective flux $\bV W$ part of $\bq=\bV W - K W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \psi_o$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the known diffusive flux $-K W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.
 
-Thinking more generally, it is no surprise that when the ice thickness, bed elevation, sliding velocity, or water thickness are highly variable in space then we can expect a larger amount of flow, and formula \eqref{eq:Vsteadyexpand} illustrates this.  Because that the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation in the model \eqref{eq:bluebox}, large variations in the same fields will generally reduce the time steps taken by our numerical model below.
+We see that in steady state we have
+	$$\bq = - \alpha(W) \grad \psi_0 - \beta(W) \grad s_b - \gamma(W,s_b) \grad W$$
+for some coefficients $\alpha,\beta,\gamma$ which we now consider.  Restricting to the $Y_0=0$ case for simplicity, the first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  However $\gamma(W,s_b)$ remains large when $W\to 0$, even if $K$ is small, as long as sliding is sustained ($s_b > 0$).  Thus for low water amount we should think of the water as diffusing in the layer \citep[compare equation (11) in][]{BBssasliding}.  When the water thickness closely approximates the roughness scale ($W\approx W_r$) then the second sliding term (i.e.~proportional to $\grad s_b$) contributes little while the third diffusive term is again strong if there is significant sliding.
+
+Thinking more generally, it is no surprise that when the ice thickness, bed elevation, sliding velocity, or water thickness are highly variable in space then we can expect a larger amount of flow, and formula \eqref{eq:Vsteadyexpand} illustrates this.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation in the model \eqref{eq:bluebox}, large variations in the same fields will generally reduce the time steps taken by a numerical model.
 
 
 \subsection*{The radial case}  The above steady equations will be the basis for building a useful two-dimensional nearly-exact solution for $W$ and $P$.  This solution will depend on a single numerical solution of a first-order ODE which can be solved to very high precision.  Exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.  Here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock but our solution will only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  We derive the ODE now, after which we proceed to specify a particular exact solution for our verification purpose.
@@ -561,14 +563,12 @@ Now, the scheme we use for \eqref{eq:diffusionpressure} is similar to \eqref{eq:
 For implementation it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define
 	$$\omega_x = \frac{c_0 \Delta t}{\Delta x^2}, \qquad \omega_y = \frac{c_0 \Delta t}{\Delta y^2}.$$
 Also let
-\newcommand{\Ocavij}{O_{\text{cav};\, i,j}}
-\newcommand{\Ccrpij}{C_{\text{crp};\, i,j}}
-	$$\Ocavij = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \Ccrpij = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
+	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
 be the gridded values of the cavitation-opening and creep-closure rates.  Then scheme \eqref{eq:Pfd} is equivalent to this form:
 \begin{align}
 P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
       &\qquad\qquad\qquad\quad + \omega_y W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
-      &\qquad\qquad\qquad\quad + \Delta t\, \left(\Ccrpij - \Ocavij + \Phi_{i,j}\right)\bigg]. \notag
+      &\qquad\qquad\qquad\quad + \Delta t\, \left(\mathcal{C}_{ij} - \mathcal{O}_{ij} + \Phi_{i,j}\right)\bigg]. \notag
 \end{align}
 
 \subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$ and $P$.  One time step of this evolution is described as follows.
