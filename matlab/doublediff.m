@@ -84,9 +84,10 @@ if any(any(h < b))
 if any(any(h < 0))
   error('points exist where ice surface is below sea level'), end
 Po = p.rhoi * p.g * (h - b);
-Hfloat = h / (1-p.rhoi/p.rhow);  % thickness if it were floating
-float = (p.rhoi * Hfloat < p.rhow * (-b));
-Po(float) = p.rhoi * p.g * Hfloat(float);  % if floating, set to ice base pressure
+rhosw = 1028.0;
+Hfloat = h / (1 - p.rhoi / rhosw);  % h=surfelev; Hfloat = thickness if it were floating
+float = (p.rhoi * Hfloat < rhosw * (-b));
+Po(float) = p.rhoi * p.g * Hfloat(float);  % if floating, reset to ice base pressure
 
 % is initial state valid?
 if any(any(P0<0))
@@ -140,6 +141,7 @@ while t<te
 
   % hydraulic potential
   psi = P + p.rhow * p.g * (b + W);
+  psi(float) = Po(float);
 
   % opening and closure terms in pressure equation
   Open = p.c1 * magvb .* (p.Wr - W);
