@@ -194,11 +194,17 @@ while t<te
       ups = up(betaV(i,j-1), W(i,j-1), Wij);
       inputdepth = dt * Phi(i,j);
       tmp = 0;
-      if ~known(i+1,j) & ~known(i-1,j)
-        tmp = tmp + mux * (Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j)));
+      if ~known(i,j) & ~known(i+1,j)
+        tmp = tmp + mux * Wea(i,j)   * (W(i+1,j)-Wij);
       end
-      if ~known(i,j+1) & ~known(i,j-1)
-        tmp = tmp + muy * (Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)));
+      if ~known(i,j) & ~known(i-1,j)
+        tmp = tmp - mux * Wea(i-1,j) * (Wij-W(i-1,j));
+      end
+      if ~known(i,j) & ~known(i,j+1)
+        tmp = tmp + muy * Wno(i,j)   * (W(i,j+1)-Wij);
+      end
+      if ~known(i,j) & ~known(i,j-1)
+        tmp = tmp - muy * Wno(i,j-1) * (Wij-W(i,j-1));
       end
       Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + tmp + inputdepth;
       inputvol = inputvol + inputdepth * dA;

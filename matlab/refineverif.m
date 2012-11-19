@@ -33,9 +33,7 @@ axis([0.9*375 1.1*6000 0.009 1.05])
 set(gca,'XTick',fliplr(dx))
 legend('average P error','maximum P error','Location','NorthWest')
 
-pW = polyfit(log(dx(2:end)),log(err(2:end,1)'),1);
-% pW =   1.0534  -12.4881
-pP = polyfit(log(dx(2:end)),log(err(2:end,2)'),1);
-% pP =   0.9556   -9.4883
-%FIXME: add to figures?
+pW = polyfit(log(dx(2:end)),log(err(2:end,1)'),1)
+pP = polyfit(log(dx(2:end)),log(err(2:end,2)'),1)
+%FIXME: add line to figures?
 
