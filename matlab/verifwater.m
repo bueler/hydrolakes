@@ -73,7 +73,7 @@ if dofigs
 end
 
 % configure remaining fields
-outline = ((abs(xx) < L) & (abs(yy) < L));
+outline = ones(size(xx));
 te = tyears * p.spera;
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 Phi = Phi0 * ones(size(h));
