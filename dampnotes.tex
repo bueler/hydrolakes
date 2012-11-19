@@ -536,16 +536,15 @@ The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof 
 \begin{equation}
 \Delta t_P\, \left(\frac{2 K \rho_i \max H \max W}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
 \end{equation}
-
 The resulting time step $\Delta t_P$ is a fraction of $\Delta t_W$ from \eqref{eq:dtDIFFW}:
 \begin{equation}
-\Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.
+\Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.  \label{eq:dtDIFFPfromW}
 \end{equation}
 In fact, with the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have $\Delta t_P$ which is about 1000 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get
 \begin{align*}
   \Delta t_{\text{CFL}} &\approx 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
   \Delta t_W            &\approx 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
-  \Delta t_P            &\approx 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP}.}
+  \Delta t_P            &\approx 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFP} or \eqref{eq:dtDIFFPfromW}.}
 \end{align*}
 Thus the numerical scheme for pressure diffusion, given next, has the shortest time step.  This analysis says if is only about 10 times shorter than the CFL restriction for the advection, however.  Furthermore, the precise size of the stable time step $\Delta t_P$ scales inversely with the adjustable small thickness $E_0$.  By choosing $E_0$ larger or smaller we can make the time step restriction on $\Delta t_P$ less or more severe, respectively.
 
@@ -568,26 +567,43 @@ P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_
 
 \subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$ and $P$.  One time step of this evolution is described as follows.
 
-Assume geometry fixed and thus $h_{i,j}$, $b_{i,j}$ and $(P_o)_{i,j}$ are determined for the duration of the run.  We start the step with values $\Wlij$, $\Plij$ which satisfy the bounds $W\ge 0$ and $0 \le P \le P_o$.  Get velocity components at staggered grid locations from \eqref{eq:velocitycomp}.  Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.  Compute the current values of the hydraulic potential, $\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij)$.  Use \eqref{eq:Wfd} and \eqref{eq:Pfdupdate} to compute preliminary values for $W_{i,j}^{l+1}$ and $P_{i,j}^{l+1}$.
+This description assumes that the ice geometry and ice sliding speed are fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all determined for the duration of the run.  The ice geometry may be quite general, with ice-free land and floating ice allowed.  In fact, the ice geometry determines true-false masks for grid cell state based on a sea level of elevation zero:
+\begin{align*}
+\text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
+\text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
+\end{align*}
+Here $H_{\text{float}}=h_{i,j} / (1 - r)$ is the thickness of the ice if it is floating, $r=\rho_i / \rho_{sw}$, and we take a sea-water density $\rho_{sw}=1028.0$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean.  While the subglacial layer we are attempting to model has both \texttt{icefree} and \texttt{float} masks false, the other cases provide boundary conditions.
 
-Generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values, that is, we project.  Thus, if $W_{i,j}^{l+1}<0$ at the end of a step we reset $W_{i,j}^{l+1}=0$.  The amount of mass created by this projection should be accounted for.  As the temporal grid is refined, however, this mass conservation error should decrease.  Alternatively we could redistribute mass to preserve exact conservation.
+Thus one time step follows this algorithm:
+\renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
+\begin{enumerate}
+\item Start with values $\Wlij$, $\Plij$ which satisfy the bounds $W\ge 0$ and $0 \le P \le P_o$.
+\item Compute the current values of the hydraulic potential, $\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij)$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
+\item Compute velocity components at staggered grid locations from \eqref{eq:velocitycomp}.   %FIXME: however, dPdx and dPdy should not difference outside the ice domain?
+\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
+%FIXME: however, Wea and Wno should not average from outside the ice domain?
+\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.  (As noted, $\Delta t = \Delta t_P$ is expected for most grids.)
+\item Use \eqref{eq:Wfd} to compute preliminary values for $W_{i,j}^{l+1}$.  Don't use diffusive flux when a point or its neighbor is \texttt{icefree} or \texttt{float}.
+\item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$; this applies only when $\Phi<0$ because the rest of the method is positivity-preserving (see Appendix).
+\item Use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$.  Don't compute divergence of diffusive flux when neighbors are \texttt{icefree} or \texttt{float}.
+\item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) back into the correct range.
+\item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
+\end{enumerate}
 
-There is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve our bounds $0\le P \le P_o$.  Thus, at the end of each pressure-update time step we also project to put the pressure $P_{i,j}^{l+1}$ back into the correct range.  However, because the pressure is not a conserved quantity, this projection step does not suggest an attempt to redistribute pressure.
-
-FIXME: icefree land gets $W=0$ and $P=0$.  the base of floating ice gets $W=0$ and $P=P_o$.  the water lost by these mechanisms is what is produced by the model.
+The mass accounting scheme must keep track of the projections in step \emph{(vii)}.  In particular, that water which is lost at the margin where either the thickness goes to zero on land or the ice becomes floating (grounding line) may be part of the intended modeling goal.  On the other hand there is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve bounds $0\le P \le P_o$.  The pressure is not a conserved quantity, so projection step \emph{(ix)} requires no accounting.
 
 \subsection*{Verification of the coupled model}
 
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineW}
-\caption{Average (circle) water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{1.05})$.  The maximum (star) error does not decay because of $O(1)$ water thickness errors at the ice margin.}
+\includegraphics[width=4.0in,keepaspectratio=true]{figs/refineW}
+\caption{Average (circle) water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.74})$.  The maximum (star) error does not decay.  In fact the maximum $W$ error at the ice margin is approximately 1 m in the $\Delta x=375$ m case (off scale).}
 \label{fig:refineW}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineP}
-\caption{Average (circle) and maximum (star) pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.955})$.}
+\includegraphics[width=4.0in,keepaspectratio=true]{figs/refineP}
+\caption{Average (circle) and maximum (star) pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.96})$.}
 \label{fig:refineP}
 \end{figure}
 
