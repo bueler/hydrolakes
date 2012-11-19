@@ -55,7 +55,8 @@ end
 % solve the ODE
 wopt = odeset('RelTol', 1e-12,'AbsTol', 1e-9);
 % others: 'InitialStep', 'MaxStep', 'NormControl', 'OutputFcn'
-[r,W] = ode45(@WODE,[L 0.0],WcL,wopt);
+%[r,W] = ode45(@WODE,[L 0.0],WcL,wopt);
+[r,W] = ode15s(@WODE,[L 0.0],WcL,wopt);  % stiff solver gives same result but more efficiently
 fprintf('  numerical ODE solution generated %d r values in 0 <= r <= L = %.3f km\n',...
         length(r),max(r)/1e3)
 
