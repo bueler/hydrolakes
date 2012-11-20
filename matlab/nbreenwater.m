@@ -131,6 +131,20 @@ if true
   title('water pressure P  (Pa)')
   xlabel('x (km)'), ylabel('y (km)')
 
+  %fix figs so printable with "print -dpdf" or "print -depsc"
+  for j=1:5
+    figure(j)
+    set(gcf,'PaperOrientation','landscape','PaperPositionMode','auto')
+  end
+  doprint = false;
+  if doprint
+    figure(1), print -depsc bed-surf.eps
+    figure(2), print -depsc icethk-icefree-float-250m.eps
+    figure(3), print -depsc outline-input.eps
+    figure(4), print -depsc W-Pmask.eps
+    figure(5), print -depsc Po-P.eps
+  end
+
   figure(6)
   Wpos=W(W>0);  Ppos=P(W>0);  Popos=Po(W>0);
   plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',8)
