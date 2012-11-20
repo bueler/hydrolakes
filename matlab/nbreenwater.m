@@ -1,6 +1,6 @@
-function [W, P] = nbreenwater(tyears,nn,W0,P0)
+function [x, y, W, P] = nbreenwater(tyears,nn,W0,P0)
 % NBREENWATER  **FIXME this comment**
-% Form:  [W, P] = nbreenwater(tyears,nn,W0,P0)
+% Form:  [x, y, W, P] = nbreenwater(tyears,nn,W0,P0)
 % All input and output arguments are optional (and have given defaults).
 % Calls:   BUILDNBREEN, CONSERVEWATER, DOUBLEDIFF
 % Depends: NETCDF
@@ -11,28 +11,22 @@ if nargin<2, nn=4; end
 filename = 'nbreen_input.nc';
 
 fprintf('reading variables x,y,thk,topg,usurf,icemask\n  from text files %s\n',filename)
-[x,y,thk,topg,usurf,icemask,outline] = buildnbreen(0,filename);
+[x,y,~,topg,usurf,~,outline] = buildnbreen(0,filename);
 
 dx = x(2)-x(1);
 fprintf('subsampling to %d m resolution\n', dx*nn)
-clear dx
 x = x(1:nn:end);
 y = y(1:nn:end);
 topg = topg(1:nn:end,1:nn:end);
 usurf = usurf(1:nn:end,1:nn:end);
 outline = outline(1:nn:end,1:nn:end);
 
-%thk = thk(1:nn:end,1:nn:end);  <-- inconsistent
-clear thk
+% consistent thickness (ignores values in file)
 thk = usurf - topg;
 thk(thk < 0) = 0.0;
 
-%icemask = icemask(1:nn:end,1:nn:end);  <-- not used by doublediff
-clear icemask
-
 % create floating and ice free masks used inside doublediff()
 p = params();
-Po = p.rhoi * p.g * thk;
 Hfloat = usurf / (1-p.rhoi/p.rhow);  % thickness if it were floating
 float = (p.rhoi * Hfloat < p.rhow * (-topg));
 icefree = (usurf < topg + 1.0);
@@ -54,8 +48,9 @@ end
 if true
   fprintf('showing initial fields ...\n')
 
+  sqw = 1000;  sqh = 310;  % sizes so pixels are square
   figure(1)
-  set(gcf,'position',[100 500 1200 400])
+  set(gcf,'position',[100 250 sqw sqh])
   subplot(1,2,1)
   maxelev = max([max(max(topg)) max(max(usurf))]);
   minelev = min([min(min(topg)) min(min(usurf))]);
@@ -68,7 +63,7 @@ if true
   xlabel('x (km)'), ylabel('y (km)')
 
   figure(2)
-  set(gcf,'position',[100 400 1200 400])
+  set(gcf,'position',[100 200 sqw sqh])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(thk)), colorbar
   title('ice thickness  (m)')
@@ -82,7 +77,7 @@ if true
   xlabel('x (km)'), ylabel('y (km)')
 
   figure(3)
-  set(gcf,'position',[100 300 1200 400])
+  set(gcf,'position',[100 150 sqw sqh])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(outline)), colorbar
   title('outline')
@@ -91,7 +86,6 @@ if true
   imagesc(x/1000,flipud(-y)/1000,flipud(Phi*p.spera)), colorbar
   title('water input  (m/a)')
   xlabel('x (km)'), ylabel('y (km)')
-
 end
 
 if nargin < 3
@@ -106,15 +100,13 @@ magvb = vb * ones(size(topg));
 ts = 0.0;
 te = tyears*p.spera;
 fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
-%W = conservewater(x,y,topg,usurf,outline,W0,Phi,ts,te,5);
-%[W, Y, P] = damper(x,y,topg,usurf,magvb,outline,W0,Y0,Phi,ts,te,5);
 [W, P] = doublediff(x,y,topg,usurf,magvb,outline,W0,P0,Phi,ts,te,5);
 
 if true
   fprintf('showing final fields: W, P\n')
 
   figure(4)
-  set(gcf,'position',[100 200 1200 400])
+  set(gcf,'position',[100 100 sqw sqh])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(W)), colorbar
   title('water thickness W  (m)')
@@ -129,7 +121,7 @@ if true
   xlabel('x (km)'), ylabel('y (km)')
 
   figure(5)
-  set(gcf,'position',[100 100 1200 400])
+  set(gcf,'position',[100 50 sqw sqh])
   subplot(1,2,1)
   imagesc(x/1000,flipud(-y)/1000,flipud(Po),[0 5.0e6]), colorbar
   title('overburden pressure P_o  (Pa)')
@@ -142,10 +134,13 @@ if true
   figure(6)
   Wpos=W(W>0);  Ppos=P(W>0);  Popos=Po(W>0);
   plot(Wpos(:),Ppos(:)./Popos(:),'ko','markersize',8)
-  hold on, WFC=0:.01:1.5*p.Wr; plot(WFC,(WFC/p.Wr).^(7/2),'r--'), hold off
+  WFC=0:.01:1.5*p.Wr;
+  hold on,  plot(WFC,(WFC/p.Wr).^(7/2),'r--','linewidth',2.0), hold off
+  %hold on,  plot(WFC,(WFC/(p.Wr/3)).^(7/2),'r--','linewidth',2.0), hold off
   axis([0 1.5*p.Wr 0 1.2])
   xlabel('water thickness W  (m)')
-  ylabel('water pressure P as fraction of overburden')
-  title('is P=P(W)?  (Flowers & Clarke is red dashed)')
+  ylabel('water pressure P as fraction of overburden P_o')
+  %title('is P=P(W)?  (Flowers & Clarke is red dashed)')
+  %print -dpdf isPofW.pdf
 end
 
