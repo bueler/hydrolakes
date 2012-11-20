@@ -509,25 +509,25 @@ We compute the pressure diagnostically from the steady state functional relation
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection*{Numerical scheme for the mass conservation equation}  The mass conservation equation \eqref{eq:adeqn} will be discretized by an explicit conservative first-order upwind method for the advection part and an explicit centered, second-order scheme for the nonlinear diffusion part.  We consider stable time steps for this scheme immediately.  The time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion in \eqref{eq:adeqn}.  In fact, in the Appendix it is shown that for stability the time step should satisfy $\Delta t \le \Delta t_{\text{CFL}}$ where
+\subsection*{Numerical scheme for the mass conservation equation}  The mass conservation equation \eqref{eq:adeqn} will be discretized by an explicit conservative finite difference method.  A first-order upwind scheme is applied to the advection part and a centered, second-order scheme to the nonlinear diffusion part.
+
+We first consider stable time steps for this scheme and then state the scheme in detail.  The time step restriction for the advective part, i.e.~the CFL condition on the upwind scheme, is much more restrictive than the time-step restriction for the diffusion.  In the Appendix it is shown that for stability the time step should satisfy $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-Here $V=(\alpha,\beta)$ is the advection velocity, for the upwind part of the scheme to maintain stability.  Because of the diffusion part, the time step should also satisfy $\Delta t \le \Delta t_{W}$ where
+Here $\bV=(\alpha,\beta)$ is the advection velocity.  Because of the diffusion part, the time step should also satisfy $\Delta t \le \Delta t_{W}$ where
 \begin{equation}
 \Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFW}
 \end{equation}
-for the diffusion scheme to be stable.
+for the diffusion scheme to be stable.  The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of this scheme \citep{MortonMayers}
 
-To understand the significance of these time step restrictions, we consider typical values of the parameters.  We are interested in grids of size $\Delta x = \Delta y = 500$ m or larger.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  (There is significant uncertainty in estimating such velocities, which are part of the solutions to the model, not data provided to it.)  We take $K=10^{-2}$ m/s and $\max W=1$ m as representative values.  With these values the advective restriction \eqref{eq:dtCFL} gives $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.
+To understand the significance of these time step restrictions, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  (There is significant uncertainty in estimating such maximum speeds as the velocity field is a solution to the model.)  We take $K=10^{-2}$ m/s from \ref{tab:constants} and $\max W=1$ m as a representative value.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.
 
 To explain the upwind method for \eqref{eq:adeqn}, consider the model equation
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
-for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  A ``donor cell'' upwind scheme can be described as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the cell interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which cell contributes the advected quantity $U$ based on the sign of the velocity $v(x)$ at these interfaces.
-
-The scheme is easier to display if we define the following upwind notation,
+for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  A ``donor cell'' upwind scheme can be described as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the cell interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which cell contributes the advected quantity $U$ based on the sign of the velocity $v(x)$ at these interfaces.  To display the scheme we define the following upwind notation,
 \newcommand{\up}[2]{\big<#1\big|\,#2\big>}
 	$$\up{v}{U_j} := v \begin{Bmatrix} U_j, & v \ge 0 \\ U_{j+1}, & v < 0 \end{Bmatrix}.$$
 For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ we set
@@ -630,7 +630,7 @@ The mass accounting scheme must keep track of the projections in step \emph{(vii
 
 \section{Numerical results}  \label{sec:results}
 
-\subsection*{Verification of the coupled model}
+\subsection*{Verification of the coupled model}  FIXME: some text on verification procedure
 
 \begin{figure}[ht]
 \includegraphics[width=4.0in,keepaspectratio=true]{figs/refineW}
@@ -646,7 +646,7 @@ The mass accounting scheme must keep track of the projections in step \emph{(vii
 
 \subsection*{Steady results for a tidewater glacier}
 
-FIXME:  at minimum add scatter plot that justifies \eqref{eq:PofWFC}
+FIXME:  scatter plot that justifies \eqref{eq:PofWFC}, and more
 
 
 
