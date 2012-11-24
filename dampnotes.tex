@@ -529,9 +529,9 @@ There is significant uncertainty in this estimated time step restriction because
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=2.5in,keepaspectratio=true]{figs/diffstencil}
+\includegraphics[width=2.9in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
-\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} uses a grid-centered cell (dashed line).  The velocities, diffusivities, and fluxes are evaluated at the staggered grid locations (triangles) which are denoted with compass direction ($e,w,n,s$).  The state functions $W,P$ live at the regular grid points (diamonds).}
+\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} uses a grid-centered cell (dashed line).  The velocities, diffusivities, and fluxes are evaluated at the staggered grid locations (triangles) which are denoted with compass direction ($e,w,n,s$).  The state functions $W,P$ live at the regular grid points (diamonds).  Scheme \eqref{eq:Pfd} has the same stencil.}
 \label{fig:stencil}
 \end{figure}
 
@@ -555,20 +555,17 @@ Now we can state our scheme for equation \eqref{eq:adeqn}:
 If the flux components $Q$ had their exact continuum values, instead of discrete approximations as they are in fact, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
 
-\subsection*{Flux discretization}  FIXME:  To explain the upwind method for \eqref{eq:adeqn}, consider the model equation
+\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated evolution PDE, the well-known goals for discretizing the fluxes include both reduced truncation error and also non-oscillation and positivity \citep{HundsdorferVerwer2010}.  Two alternative schemes addressing these goals are described in this section, one simpler, linear, and low-order and the other more-complicated, non-linear, and higher-order.  These schemes, which are often associated to finite volume discretization \citep{LeVeque}, are introduced using an advection-only model equation.
+
+Consider the model equation
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
-for some quantity $u(t,x)$ transported by a flux $q = v(x) u$.  A ``donor cell'' upwind scheme can be described as a finite volume scheme \citep{LeVeque} wherein a grid point $x_j$ is the center of a cell.  We consider the flux at the cell interfaces $x_{j-1/2}$ and $x_{j+1/2}$.  We decide which cell contributes the advected quantity $U$ based on the sign of the velocity $v(x)$ at these interfaces.  To display the scheme we define the following upwind notation,
-\newcommand{\up}[2]{\big<#1\big|\,#2\big>}
-	$$\up{v}{U_j} := v \begin{Bmatrix} U_j, & v \ge 0 \\ U_{j+1}, & v < 0 \end{Bmatrix}.$$
-For the model equation \eqref{eq:modeladvect} on a space-time grid $(t_l,x_j)$ we set
-\begin{equation}\label{eq:modelfdadvect}
-\frac{U_j^{l+1} - U_j^l}{\Delta t} + \frac{\up{v_+}{U_j^l} - \up{v_-}{U_{j-1}^l}}{\Delta x} = 0
-\end{equation}
-where $v_+ = v(x_{j+1/2})$ and $v_-=v(x_{j-1/2})$.
+for some quantity $u(t,x)$ transported by a flux $Q = v(x) u$.  Though we allow the velocity $v(x)$ to vary spatially in this discussion, let us assume that $v(x)\ge 0$.  Suppose that a grid point $x_i$ is the center of a cell and consider the flux at the cell interfaces $x_{i-1/2}=x_e$ and $x_{i+1/2}=x_w$.  Suppose we discretize space but not time so that $u_i=u_i(t)$, and denote time derivatives by dot: $\dot u_i = du_i/dt$.
 
-FIXME: This scheme, which uses first-order upwinding, has $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error.
+FIXME: compare 1stupwind = "donor cell", centered, flux-limited a la H\&V page 216
+
+FIXME: first-order upwinding gives low order $O(\Delta t^1 + \Delta x^1 + \Delta y^1)$ truncation error and flux-limited is better but still low order near extrema of $u(x)$
 
 FIXME: Because of the positivity proven in the appendix for this scheme, if $\Phi\ge 0$ then the lower bound $W\ge 0$ is true for the updated values at the new time $t_{l+1}$ if it is true at time $t_l$.  However, because refreeze is possible, generally $\Phi$ has either sign and so we must enforce $W\ge 0$ on the updated values.
 
