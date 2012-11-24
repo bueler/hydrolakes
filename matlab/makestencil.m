@@ -35,8 +35,9 @@ hold off
    plot([-0.5*ones(size(xcell)); 0.5*ones(size(xcell))],xcell','k--',...
         'LineWidth',clwidth)
 
-   % label the regular grid positions
+   % label the grid locations
    fsize = 16;
+   % regular
    text(-1,-1.5,'i-1','FontSize',fsize,'FontAngle','italic',...
       'HorizontalAlignment','center')
    text(0,-1.5,'i','FontSize',fsize,'FontAngle','italic',...
@@ -46,5 +47,10 @@ hold off
    text(-1.6,-1,'j-1','FontSize',fsize,'FontAngle','italic')
    text(-1.5,0,'j','FontSize',fsize,'FontAngle','italic')
    text(-1.62,1,'j+1','FontSize',fsize,'FontAngle','italic')
+   % staggered
+   text(-0.65,+0.2,'w','FontSize',fsize,'FontAngle','italic')
+   text(+0.6, +0.2,'e','FontSize',fsize,'FontAngle','italic')
+   text(+0.1, -0.7,'s','FontSize',fsize,'FontAngle','italic')
+   text(+0.1, +0.7,'n','FontSize',fsize,'FontAngle','italic')
    hold off
 
