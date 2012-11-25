@@ -182,17 +182,36 @@ while t<te
   mux = p.K * dt / dx^2;
   muy = p.K * dt / dy^2;
 
+  % build Q: FIXME: this is first-order only
+  Qe = zeros(size(alphV));
+  for i=1:length(x)-1
+    for j=1:length(y)
+      ve = alphV(i,j);
+      if ve >= 0
+        Qe(i,j) = ve * W(i,j);
+      else
+        Qe(i,j) = ve * W(i+1,j);
+      end
+    end
+  end
+  Qn = zeros(size(betaV));
+  for i=1:length(x)
+    for j=1:length(y)-1
+      vn = betaV(i,j);
+      if vn >= 0
+        Qn(i,j) = vn * W(i,j);
+      else
+        Qn(i,j) = vn * W(i,j+1);
+      end
+    end
+  end
+
   % W time step
   Wnew = W;  % copies unaltered initial b.c.s
   inputvol = 0.0;
   for i=2:length(x)-1
     for j=2:length(y)-1
       Wij = W(i,j);
-      upe = up(alphV(i,j),   Wij,      W(i+1,j));
-      upw = up(alphV(i-1,j), W(i-1,j), Wij);
-      upn = up(betaV(i,j),   Wij,      W(i,j+1));
-      ups = up(betaV(i,j-1), W(i,j-1), Wij);
-      inputdepth = dt * Phi(i,j);
       tmp = 0;
       if ~known(i,j) & ~known(i+1,j)
         tmp = tmp + mux * Wea(i,j)   * (W(i+1,j)-Wij);
@@ -206,7 +225,9 @@ while t<te
       if ~known(i,j) & ~known(i,j-1)
         tmp = tmp - muy * Wno(i,j-1) * (Wij-W(i,j-1));
       end
-      Wnew(i,j) = Wij - nux * (upe - upw) - nuy * (upn - ups) + tmp + inputdepth;
+      inputdepth = dt * Phi(i,j);
+      Wnew(i,j) = Wij - nux * (Qe(i,j) - Qe(i-1,j)) - nuy * (Qn(i,j) - Qn(i,j-1)) ...
+                    + tmp + inputdepth;
       inputvol = inputvol + inputdepth * dA;
     end
   end
@@ -245,11 +266,4 @@ while t<te
 
   t = t + dt;
 end
-
-   function z = up(v,L,R)
-   if v >= 0
-     z = v * L;
-   else
-     z = v * R;
-   end
 
