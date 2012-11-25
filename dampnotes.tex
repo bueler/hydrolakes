@@ -555,13 +555,62 @@ Now we can state our scheme for equation \eqref{eq:adeqn}:
 If the flux components $Q$ had their exact continuum values, instead of discrete approximations as they are in fact, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
 
-\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated evolution PDE, the well-known goals for discretizing the fluxes include both reduced truncation error and also non-oscillation and positivity \citep{HundsdorferVerwer2010}.  Two alternative schemes addressing these goals are described in this section, one simpler, linear, and low-order and the other more-complicated, non-linear, and higher-order.  These schemes, which are often associated to finite volume discretization \citep{LeVeque}, are introduced using an advection-only model equation.
+\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated PDE, well-known goals for discretizing the fluxes include non-oscillation and/or positivity properties \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}, are introduced here using an advection-only model equation.
 
 Consider the model equation
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
-for some quantity $u(t,x)$ transported by a flux $Q = v(x) u$.  Though we allow the velocity $v(x)$ to vary spatially in this discussion, let us assume that $v(x)\ge 0$.  Suppose that a grid point $x_i$ is the center of a cell and consider the flux at the cell interfaces $x_{i-1/2}=x_e$ and $x_{i+1/2}=x_w$.  Suppose we discretize space but not time so that $u_i=u_i(t)$, and denote time derivatives by dot: $\dot u_i = du_i/dt$.
+in which some quantity $u(t,x)$ is transported by a flux $Q = v(x) u$ with velocity $v(x)$.  We allow the velocity $v(x)$ to vary spatially but we assume that $v(x)\ge 0$.  Suppose that grid points $x_i$ are the centers of a cell, that there is equal spacing $\Delta x$, and that we denote cell interfaces $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time: denote $u_i=u_i(t)$ and time derivatives $\dot u_i = du_i/dt$.
+
+We say a discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  Of course, such a property is desirable for any conservation scheme for the water thickness $W\ge 0$.  The simplest positive scheme for \eqref{eq:modeladvect} is first-order upwinding in conservative (flux) form \citep[section I.4.3]{HundsdorferVerwer2010}:
+\begin{equation}
+\dot u_i + \frac{v_e u_i - v_w u_{i-1}}{\Delta x} = 0 \label{eq:upwindfirst}
+\end{equation}
+where $v_e = v(x_e)$ and $v_w = v(x_w)$.  This scheme is also called the ``donor cell'' upwind method \citep{LeVeque}.  In \eqref{eq:upwindfirst} we suppose that the upwinded flux at $x_{i+1/2}=x_e$ uses $u_i$ because $v_e\ge 0$:
+\begin{equation}
+Q_e = v_e u_i. \label{eq:upwindfluxfirst}
+\end{equation}
+A second-order truncation error, but \emph{not} positive, scheme is to use centered fluxes.  This adds a correction to the first-order upwind form:
+\begin{equation}
+Q_e = v_e \frac{u_i+u_{i+1}}{2} = v_e \left[u_i + \frac{1}{2} (u_{i+1} - u_i)\right]. \label{eq:centerfluxfirst}
+\end{equation}
+This scheme, which can be stable when the time-discretization is implicit, causes oscillations and is not positive.  Another such scheme is third-order upwind-biased fluxes which can again be written as a correction to first-order upwinding:
+\begin{equation}
+Q_e = v_e \frac{-u_{j-1} + 5 u_i + 2 u_{i+1}}{6} = v_e \left[u_i + \left(\frac{1}{3}+\frac{1}{6} \theta_i \right) (u_{i+1} - u_i)\right] \label{eq:thirdfluxfirst}
+\end{equation}
+where
+\begin{equation}
+\theta_i = \frac{u_{i} - u_{i-1}}{u_{i+1} - u_i}.  \label{eq:thetadefine}
+\end{equation}
+Unfortunately, despite the upwind-biasing, this scheme is also oscillatory and non-positive.
+
+The approach of flux-limiting is that the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} are too large, especially near local extrema and rapid variation areas, if we seek to preserve positivity \citep[section III.1.1]{HundsdorferVerwer2010}.  Unfortunately, Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive, but it nonlinear forms do exist.  Because the schemes under consideration are explicit, such nonlinearity does not represent a significant computational cost.
+
+These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
+\begin{equation}
+Q_e = v_e \left[u_i + \psi(\theta_i) (u_{i+1} - u_i)\right]. \label{eq:fluxlimiterform}
+\end{equation}
+Table \ref{tab:fluxlimiters} shows several cases for $\psi$ including those already considered.  Note that $\theta_i$ in \eqref{eq:thetadefine} can take any real value.  For the time-discretizations we will consider, sufficient conditions on $\psi(\theta)$ to give a positive advection scheme for model equation \eqref{eq:modeladvect} are
+\begin{equation}
+0 \le \psi(\theta) \le 1, \qquad 0 \le \frac{\psi(\theta)}{\theta} \le 1 \qquad \text{ for all } \theta \in \RR.
+\end{equation}
+
+\begin{table}[ht]
+  \centering
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}.}
+  \begin{tabular}{ll}
+    \textbf{scheme ($\ast=$ positive)} & \textbf{formula} \\
+\hline
+    $\ast$ first-order conservative upwinding & $\phantom{\Big|}\psi(\theta) = 0$ \\
+    \phantom{$\ast$} second-order centered              & $\phantom{\Big|}\psi(\theta) = \frac{1}{2}$  \\
+    \phantom{$\ast$} third-order upwind-biased          & $\phantom{\Big|}\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
+    $\ast$ \cite{Koren1993}                   & $\phantom{\Big|}\psi(\theta) = \max\left\{0,\min\{1,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
+    $\ast$ \cite{vanLeer1974}                 & $\phantom{\Big|}\psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    \hline
+  \end{tabular}
+ \label{tab:fluxlimiters}
+\end{table}
 
 FIXME: compare 1stupwind = "donor cell", centered, flux-limited a la H\&V page 216
 
