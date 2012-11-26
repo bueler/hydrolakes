@@ -3,9 +3,9 @@
 tyears = 1/12;  % one month coupled runs
 
 %M = [10 20 40 80 160 200];
-M = [10 20 40 80 160];
+%M = [10 20 40 80 160];
 %M = [13 25 50 100 200];
-%M = [10 20 40];
+M = [10 20 40];
 dx = zeros(1,length(M));
 err = ones(length(M),4);
 for j = 1:length(M)

@@ -182,26 +182,53 @@ while t<te
   mux = p.K * dt / dx^2;
   muy = p.K * dt / dy^2;
 
-  % build Q: FIXME: this is first-order only
+  % build Qe using either first-order or limiter
   Qe = zeros(size(alphV));
   for i=1:length(x)-1
     for j=1:length(y)
       ve = alphV(i,j);
-      if ve >= 0
-        Qe(i,j) = ve * W(i,j);
+      if ~limiter
+        psi = 0.0;
       else
-        Qe(i,j) = ve * W(i+1,j);
+        if ve >= 0
+          if (i == 1) | (W(i+1,j) == W(i,j))
+            psi = 0;
+          else
+            theta = ( W(i,j) - W(i-1,j) ) / ( W(i+1,j) - W(i,j) );
+            psi = psikoren(theta);
+          end
+        else
+          if (i == length(x)-1) | (W(i+1,j) == W(i,j))
+            psi = 0;
+          else
+            FIXME: check this!!
+            thetainv = ( W(i+2,j) - W(i+1,j) ) / ( W(i+1,j) - W(i,j) );
+            psi = psikoren(thetainv);
+          end
+        end
+      end
+      % now compute Q
+      if ve >= 0
+        Qe(i,j) = ve * ( W(i,j)   + psi * ( W(i+1,j) -   W(i,j) ) );
+      else
+        Qe(i,j) = ve * ( W(i+1,j) + psi * ( W(i,j)   - W(i+1,j) ) );
       end
     end
   end
+
+  % build Qe using either first-order or limiter
+  FIXME: to do
   Qn = zeros(size(betaV));
   for i=1:length(x)
     for j=1:length(y)-1
       vn = betaV(i,j);
-      if vn >= 0
-        Qn(i,j) = vn * W(i,j);
+      if limiter
       else
-        Qn(i,j) = vn * W(i,j+1);
+        if vn >= 0
+          Qn(i,j) = vn * W(i,j);
+        else
+          Qn(i,j) = vn * W(i,j+1);
+        end
       end
     end
   end
@@ -266,4 +293,8 @@ while t<te
 
   t = t + dt;
 end
+
+  function z = psikoren(theta)
+    z = 0.0;  %FIXME
+  end
 
