@@ -1,7 +1,11 @@
-function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
+function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,limiter)
 % DOUBLEDIFF  A nearly-full-cavity, Darcy flux subglacial hydrology model.
 % This model combines an advection-diffusion equation for water thickness W
-% with a diffusion equation for the pressure P.
+% with a diffusion equation for the pressure P.  The W equation is solved
+% by an explicit finite difference scheme which uses either a third-order
+% flux-limited method or first-order upwinding for the advection part, and
+% a centered difference for the diffusion part.  The P equation is solved
+% by an explicit centered difference scheme.
 %
 % MODEL EQUATIONS:  The equations are described in dampnotes.pdf.
 % Here is a summary only.  The state space functions are W and P.
@@ -20,7 +24,7 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 %
 % USAGE:  The calling form is
 %
-%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
+%      [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent,limiter)
 %
 % The input data are given on (Mx+1) x (My+1) grids:
 %   x = coordinate vector of length Mx+1
@@ -37,7 +41,9 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 %   ts = run start time
 %   te = run end time
 %   Nmin = use at least this many time steps.
-%   silent = if true then suppress all stdout
+%   silent = if true then suppress all stdout; default is false
+%   limiter = if true then use third-order Koren flux-limited scheme
+%             for advection; default is true
 %
 % The maximum time step is  (te-ts)/Nmin,  but the code does adaptive
 % time-stepping.  At each time step the code reports time step, time step
@@ -48,19 +54,17 @@ function [W, P] = doublediff(x,y,b,h,magvb,outline,W0,P0,Phi,ts,te,Nmin,silent)
 %
 % The output variables are the final values of the state variables W,P.
 %
+% Documented in dampnotes.pdf.
 % See also PARAMS, PLOTPSTEADY, RADIALSTEADY, VERIFWATER, NBREENWATER.
 
 p = params();
-if nargin<13, silent=false; end
+if nargin<13, silent = false; end
+if nargin<14, limiter = true; end
 
 % get grid parameters from W0; other fields must match but code does not check
 [Mx, My] = size(W0);   Mx = Mx-1;   My = My-1;
 dx = x(2) - x(1);
 dy = y(2) - y(1);
-
-% generate staggered grid
-xs = 0.5 * (x(1:end-1) + x(2:end));
-ys = 0.5 * (y(1:end-1) + y(2:end));
 
 % bed slope components onto staggered grid
 dbdx = (b(2:end,:) - b(1:end-1,:)) / dx;
@@ -155,10 +159,10 @@ while t<te
     for j=2:length(y)-1
       psiij = psi(i,j);
       tmp = 0;
-      if ~known(i+1,j) & ~known(i-1,j)
+      if ~known(i+1,j) && ~known(i-1,j)
         tmp = tmp + pux * (Wea(i,j) * (psi(i+1,j)-psiij) - Wea(i-1,j) * (psiij-psi(i-1,j)));
       end
-      if ~known(i,j+1) & ~known(i,j-1)
+      if ~known(i,j+1) && ~known(i,j-1)
         tmp = tmp + puy * (Wno(i,j) * (psi(i,j+1)-psiij) - Wno(i,j-1) * (psiij-psi(i,j-1)));
       end
       Ptmp = P(i,j) + (dt * Po(i,j) / p.E0) * ( tmp + Clos(i,j) - Open(i,j) + Phi(i,j) );
@@ -183,52 +187,66 @@ while t<te
   muy = p.K * dt / dy^2;
 
   % build Qe using either first-order or limiter
+  % for limiter see pp. 216--217 of Hundsdorfer & Verwer (2010)
   Qe = zeros(size(alphV));
   for i=1:length(x)-1
     for j=1:length(y)
       ve = alphV(i,j);
-      if ~limiter
-        psi = 0.0;
-      else
+      psil = 0.0;  % psi(theta) for limiter
+      if limiter
         if ve >= 0
-          if (i == 1) | (W(i+1,j) == W(i,j))
-            psi = 0;
+          if (i == 1) || (W(i+1,j) == W(i,j))
+            psil = 0;
           else
             theta = ( W(i,j) - W(i-1,j) ) / ( W(i+1,j) - W(i,j) );
-            psi = psikoren(theta);
+            psil = max(0, min([1, theta, (1+theta/2)/3]));
           end
-        else
-          if (i == length(x)-1) | (W(i+1,j) == W(i,j))
-            psi = 0;
+        else % ve < 0
+          if (i == length(x)-1) || (W(i+1,j) == W(i,j))
+            psil = 0;
           else
-            FIXME: check this!!
             thetainv = ( W(i+2,j) - W(i+1,j) ) / ( W(i+1,j) - W(i,j) );
-            psi = psikoren(thetainv);
+            psil = max(0, min([1, thetainv, (1+thetainv/2)/3]));
           end
         end
-      end
-      % now compute Q
+      end % if limiter
+      % now compute Qe
       if ve >= 0
-        Qe(i,j) = ve * ( W(i,j)   + psi * ( W(i+1,j) -   W(i,j) ) );
+        Qe(i,j) = ve * ( W(i,j)   + psil * ( W(i+1,j) -   W(i,j) ) );
       else
-        Qe(i,j) = ve * ( W(i+1,j) + psi * ( W(i,j)   - W(i+1,j) ) );
+        Qe(i,j) = ve * ( W(i+1,j) + psil * ( W(i,j)   - W(i+1,j) ) );
       end
     end
   end
 
-  % build Qe using either first-order or limiter
-  FIXME: to do
+  % build Qn using either first-order or limiter
   Qn = zeros(size(betaV));
   for i=1:length(x)
     for j=1:length(y)-1
       vn = betaV(i,j);
+      psil = 0.0; % psi(theta) for limiter
       if limiter
-      else
         if vn >= 0
-          Qn(i,j) = vn * W(i,j);
-        else
-          Qn(i,j) = vn * W(i,j+1);
+          if (j == 1) || (W(i,j+1) == W(i,j))
+            psil = 0;
+          else
+            theta = ( W(i,j) - W(i,j-1) ) / ( W(i,j+1) - W(i,j) );
+            psil = max(0, min([1, theta, (1+theta/2)/3]));
+          end
+        else % vn < 0
+          if (j == length(y)-1) || (W(i,j+1) == W(i,j))
+            psil = 0;
+          else
+            thetainv = ( W(i,j+2) - W(i,j+1) ) / ( W(i,j+1) - W(i,j) );
+            psil = max(0, min([1, thetainv, (1+thetainv/2)/3]));
+          end
         end
+      end % if limiter
+      % now compute Qn
+      if vn >= 0
+        Qn(i,j) = vn * ( W(i,j)   + psil * ( W(i,j+1) -   W(i,j) ) );
+      else
+        Qn(i,j) = vn * ( W(i,j+1) + psil * ( W(i,j)   - W(i,j+1) ) );
       end
     end
   end
@@ -240,16 +258,16 @@ while t<te
     for j=2:length(y)-1
       Wij = W(i,j);
       tmp = 0;
-      if ~known(i,j) & ~known(i+1,j)
+      if ~known(i,j) && ~known(i+1,j)
         tmp = tmp + mux * Wea(i,j)   * (W(i+1,j)-Wij);
       end
-      if ~known(i,j) & ~known(i-1,j)
+      if ~known(i,j) && ~known(i-1,j)
         tmp = tmp - mux * Wea(i-1,j) * (Wij-W(i-1,j));
       end
-      if ~known(i,j) & ~known(i,j+1)
+      if ~known(i,j) && ~known(i,j+1)
         tmp = tmp + muy * Wno(i,j)   * (W(i,j+1)-Wij);
       end
-      if ~known(i,j) & ~known(i,j-1)
+      if ~known(i,j) && ~known(i,j-1)
         tmp = tmp - muy * Wno(i,j-1) * (Wij-W(i,j-1));
       end
       inputdepth = dt * Phi(i,j);
@@ -264,9 +282,9 @@ while t<te
 
   % do water removal at obvious cells (and volume accounting)
   losevol = 0.0;
-  for i=2:length(x)-1
-    for j=2:length(y)-1
-      if (outline(i,j) < 0.5) | known(i,j)
+  for i=1:length(x)
+    for j=1:length(y)
+      if (outline(i,j) < 0.5) || known(i,j)
         losevol = losevol + Wnew(i,j)*dA;
         Wnew(i,j) = 0.0;
       end
@@ -293,8 +311,4 @@ while t<te
 
   t = t + dt;
 end
-
-  function z = psikoren(theta)
-    z = 0.0;  %FIXME
-  end
 
