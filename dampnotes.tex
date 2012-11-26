@@ -91,14 +91,16 @@
 
 \section{Introduction}
 
-Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by motion (sliding) of the overlying ice, and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  This paper describes such a model for distributed systems of linked cavities. 
+Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by motion (sliding) of the overlying ice and wall melt, and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  
 
-We model water pressure using a damped approximation of a full-cavity formulation of a distributed system \cite{Schoofetal2012}.  In our model pressure is determined non-locally over each connected component of the hydrological system.  However, unlike the \cite{Schoofetal2012} model in which an elliptic variational inequality for pressure must be solved at each time step, we avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition.  Our model replaces such an elliptic pressure description by a parabolic approximation.
+This paper describes such a model for distributed systems of linked cavities.  These cavities open by sliding of the ice and they close by ice creep.  Channels are not included in the model.  Wall melt is included as a contribution to the conservation equation but not in the cavity evolution equation.
+
+We model water pressure using a damped approximation of a full-cavity formulation of a distributed system \cite{Schoofetal2012}.  In our model pressure is determined non-locally over each connected component of the hydrological system.  However, unlike the \cite{Schoofetal2012} model in which an elliptic variational inequality for pressure must be solved at each time step, we avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition.  Our model replaces the elliptic pressure description by a parabolic approximation.
 
 
 \section{Elements of a subglacial hydrology continuum model}
 
-We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only meaningful compared to observations if it is regarded as an average \citep{FlowersClarke2002_theory} over a horizontal scale of tens to thousands of meters.  As the hydrologic system has fine spatial variation which one is unable to model with cells of kilometer size, we only attempt to model such spatially-averaged versions of water amount and water pressure.
+We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  As the hydrologic system has fine spatial variation which one is unable to model with cells of kilometer size, we only attempt to model such spatially-averaged versions of water amount and water pressure.
 
 We assume that water is incompressible and of constant density.  Thus the thickness of the water layer tells us its mass.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.  Specific aquifer physics comes from choosing a form for the water flux and a closure for pressure.
 
@@ -250,7 +252,9 @@ where $\hat\bV = - K \grad b$.  In the flat bedrock case the model that follows 
 \end{equation}
 The main idea in such an equation is that the direction of the flux is always $-\grad W$.
 
-In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use either of the above closures.  However, in steady state our theory, and also that of \cite{Schoofetal2012}, allow the recovery of a functional relation $P=P(W)$.  This functional form is not, however, of power form \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and  and thus \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
+FIXME: describe form used in \cite{BBssasliding} with equation (X)
+
+In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use any of the above closures \eqref{eq:Pisoverburden}, \eqref{eq:PofWFC}, or (X).  However, in steady state our theory, and also that of \cite{Schoofetal2012}, allows the recovery of a functional relation $P=P(W)$.  This functional form is not, however, of power form \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and  and thus \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
 
 \subsection*{Full-cavity closure}  Requiring the aquifer to be full is a closure:
 \begin{equation}
@@ -531,7 +535,7 @@ There is significant uncertainty in this estimated time step restriction because
 \centering
 \includegraphics[width=2.9in,keepaspectratio=true]{figs/diffstencil}
 \bigskip
-\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} uses a grid-centered cell (dashed line).  The velocities, diffusivities, and fluxes are evaluated at the staggered grid locations (triangles) which are denoted with compass direction ($e,w,n,s$).  The state functions $W,P$ live at the regular grid points (diamonds).  Scheme \eqref{eq:Pfd} has the same stencil.}
+\caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} uses a grid-centered cell (dashed line).  The velocities, diffusivities, and fluxes are evaluated at the staggered grid locations (triangles) which are denoted with compass direction ($e,w,n,s$).  Scheme \eqref{eq:Pfd} has the same stencil.  The state functions $W,P$ live at the regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
