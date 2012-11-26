@@ -1,15 +1,16 @@
-function [err, W, P] = verifwater(tyears,M,dofigs)
+function [err, W, P] = verifwater(tyears,M,dofigs,limiter)
 % VERIFWATER  Runs a verification test on a square region with  M  grid spaces
 % in each direction for  tyears  years.  Initial condition is the result of
 % RADIALSTEADY, which is a nearly-exact solution so the runs here measure drift
 % away from a steady state.  Prints L_1 and L_inf errors for both W and P.
 % Form:
-%    [err, W, P] = verifwater(tyears,M,dofigs)
+%    [err, W, P] = verifwater(tyears,M,dofigs,limiter)
 % Calls:   RADIALSTEADY, DOUBLEDIFF
 
 if nargin<1, tyears=1.0; end
 if nargin<2, M=50; end
 if nargin<3, dofigs=true; end
+if nargin<4, limiter=true; end
 
 p = params();
 
@@ -82,7 +83,7 @@ Phi(h <= 0) = 0.0;
 fprintf('calling doublediff() to do run for %.3f years on %d x %d grid ...\n',...
         tyears,M+1,M+1)
 % run silent
-[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true);
+[W, P] = doublediff(x,y,zeros(size(h)),h,vb,outline,WEX,PEX,Phi,0.0,te,5,true,limiter);
 
 if dofigs
   fprintf('showing numerical solution fields: W, P\n')
