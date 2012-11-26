@@ -257,22 +257,11 @@ while t<te
   for i=2:length(x)-1
     for j=2:length(y)-1
       Wij = W(i,j);
-      tmp = 0;
-      if ~known(i,j) && ~known(i+1,j)
-        tmp = tmp + mux * Wea(i,j)   * (W(i+1,j)-Wij);
-      end
-      if ~known(i,j) && ~known(i-1,j)
-        tmp = tmp - mux * Wea(i-1,j) * (Wij-W(i-1,j));
-      end
-      if ~known(i,j) && ~known(i,j+1)
-        tmp = tmp + muy * Wno(i,j)   * (W(i,j+1)-Wij);
-      end
-      if ~known(i,j) && ~known(i,j-1)
-        tmp = tmp - muy * Wno(i,j-1) * (Wij-W(i,j-1));
-      end
+      adv = nux * (Qe(i,j) - Qe(i-1,j)) + nuy * (Qn(i,j) - Qn(i,j-1));
+      dif = mux * ( Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j)) ) + ...
+            muy * ( Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)) );
       inputdepth = dt * Phi(i,j);
-      Wnew(i,j) = Wij - nux * (Qe(i,j) - Qe(i-1,j)) - nuy * (Qn(i,j) - Qn(i,j-1)) ...
-                    + tmp + inputdepth;
+      Wnew(i,j) = Wij - adv + dif + inputdepth;
       inputvol = inputvol + inputdepth * dA;
     end
   end
@@ -280,13 +269,14 @@ while t<te
   %FIXME: W < 0 is not an error here if Phi < 0, but needs fix: Wnew(i,j)=0
   if any(any(Wnew < 0)), error('negative W'), end
 
-  % do water removal at obvious cells (and volume accounting)
+  % do water removal at cells where we know what the W value is supposed to be
+  % (i.e. reset value to W0);  also do volume accounting so we can report balance
   losevol = 0.0;
   for i=1:length(x)
     for j=1:length(y)
       if (outline(i,j) < 0.5) || known(i,j)
-        losevol = losevol + Wnew(i,j)*dA;
-        Wnew(i,j) = 0.0;
+        losevol = losevol + (Wnew(i,j) - W0(i,j))*dA;
+        Wnew(i,j) = W0(i,j);
       end
     end
   end
@@ -295,7 +285,11 @@ while t<te
   sumnew = sum(sum(Wnew));
   volnew = sumnew * dA;
   vbalance = (volW + inputvol - losevol) - volnew;
-  if volnew > 0, relbal = abs(vbalance/volnew); else relbal = nan; end
+  if volnew > 0
+    relbal = abs(vbalance/volnew);
+  else
+    relbal = nan;
+  end
   if ~silent
     fprintf('t = %.5f (a):  %7.3f  %7.3f        %.3f        %.0e\n',...
             (t+dt)/p.spera, max(max(Wnew)), sumnew/((Mx+1)*(My+1)),...
