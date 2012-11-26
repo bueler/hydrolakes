@@ -260,6 +260,16 @@ while t<te
       adv = nux * (Qe(i,j) - Qe(i-1,j)) + nuy * (Qn(i,j) - Qn(i,j-1));
       dif = mux * ( Wea(i,j) * (W(i+1,j)-Wij) - Wea(i-1,j) * (Wij-W(i-1,j)) ) + ...
             muy * ( Wno(i,j) * (W(i,j+1)-Wij) - Wno(i,j-1) * (Wij-W(i,j-1)) );
+      %Qde = mux * Wea(i,j)   * (W(i+1,j)-Wij);
+      %Qdw = mux * Wea(i-1,j) * (Wij-W(i-1,j));
+      %Qdn = muy * Wno(i,j)   * (W(i,j+1)-Wij);
+      %Qds = muy * Wno(i,j-1) * (Wij-W(i,j-1));
+      %enhance = 999.0;
+      %enhance = 0.0;
+      %dif =       (1 + enhance * known(i+1,j)) * Qde;
+      %dif = dif - (1 + enhance * known(i-1,j)) * Qdw;
+      %dif = dif + (1 + enhance * known(i,j+1)) * Qdn;
+      %dif = dif - (1 + enhance * known(i,j-1)) * Qds;
       inputdepth = dt * Phi(i,j);
       Wnew(i,j) = Wij - adv + dif + inputdepth;
       inputvol = inputvol + inputdepth * dA;
