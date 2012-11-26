@@ -28,11 +28,11 @@ R0 = 25.0e3;  % must be consistent with constant in RADIALSTEADY
 L = 0.9 * R0;
 
 % extend radial grid stuff so that piecewise-linear interpolation will work
-r     = [50.0e3;  L+1;  r];
-Wrad  = [0;       0;    Wrad];
-Prad  = [0;       0;    Prad];
-hrad  = [0;       0;    hrad];
-vbrad = [0;       0;    vbrad];
+r     = [50.0e3;      L+1;     r];
+Wrad  = [Wrad(1); Wrad(1);  Wrad];
+Prad  = [0;             0;  Prad];
+hrad  = [0;             0;  hrad];
+vbrad = [0;             0; vbrad];
 
 % lookup table action:  get gridded data and exact quantities
 [xx, yy] = ndgrid(x,y);
