@@ -1,20 +1,27 @@
 % REFINEVERIF call verifwater along a refinement path
 
 tyears = 1/12;  % one month coupled runs
+reload = false;
 
 M = [10 20 40 80 160];
 %M = [10 20 40 80];
 %M = [10 20 40];
 
-dx = zeros(1,length(M));
-err = ones(2*length(M),4);
-for j = 1:length(M)
-  dx(j) = 60e3 / M(j);
-  tic
-  err(2*j-1,:) = verifwater(tyears,M(j),false,true);  % limiter
-  toc, tic
-  err(2*j,:)   = verifwater(tyears,M(j),false,false); % 1st-order
-  toc
+if reload
+    load('PWerrdx.mat')
+    whos
+else
+    dx = zeros(1,length(M));
+    err = ones(2*length(M),4);
+    for j = 1:length(M)
+      dx(j) = 60e3 / M(j);
+      tic
+      err(2*j-1,:) = verifwater(tyears,M(j),false,true);  % limiter
+      toc, tic
+      err(2*j,:)   = verifwater(tyears,M(j),false,false); % 1st-order
+      toc
+    end
+    save('PWerrdx.mat')
 end
 
 figure(21)
