@@ -514,22 +514,19 @@ We compute the pressure diagnostically from the steady state functional relation
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection*{Discretization of the mass conservation equation}  The mass conservation equation \eqref{eq:adeqn} will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the nonlinear diffusion part.  A pair of schemes for the advection part will be compared, first-order upwinding and a higher-order flux-limited upwind-biased method.  We first consider stable time steps.  Then we state these schemes in detail.
+\subsection*{Discretization of the mass conservation equation}  The mass conservation equation \eqref{eq:adeqn} will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the nonlinear diffusion part.  A pair of schemes for the advection part will be compared, first-order upwinding and a higher-order flux-limited upwind-biased method.
 
-The time step restriction for the advective part, i.e.~the CFL condition for any of the schemes under consideration, is much more restrictive than the time-step restriction for the diffusion.  In the Appendix it is shown that stability for the first-order upwind scheme occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
+We first consider stable time steps.  The time step restriction for the advective part, namely the CFL condition for either of the schemes under consideration, is much more restrictive in this case than the time-step restriction for the diffusion.  Stability for these schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-Here $\bV=(\alpha,\beta)$ is the advection velocity.  The higher-order advection scheme has the same restriction.  %FIXME: check this
-The time step should also satisfy $\Delta t \le \Delta t_{W}$ where
+Here $\bV=(\alpha,\beta)$ is the advection velocity.  The Appendix shows that this condition is sufficient for the first-order upwind scheme, but standard theory suggests the higher-order advection scheme has the same restriction \citep{HundsdorferVerwer2010}.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$ \citep{MortonMayers} where
 \begin{equation}
 \Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
 \end{equation}
-This is for the diffusion scheme to be stable.  The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of this scheme \citep{MortonMayers}
+The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of the overall scheme for \eqref{eq:adeqn}.
 
-To understand the significance of these time step restrictions, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s from Table \ref{tab:constants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.
-
-There is significant uncertainty in this estimated time step restriction because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+To understand these restrictions quantitatively, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s from Table \ref{tab:constants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
 
 \begin{figure}[ht]
 \centering
@@ -707,13 +704,13 @@ The mass accounting scheme must keep track of the projections in step \emph{(vii
 
 \begin{figure}[ht]
 \includegraphics[width=4.0in,keepaspectratio=true]{figs/refineW}
-\caption{Average (circle) water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.74})$.  The maximum (star) error does not decay.  In fact the maximum $W$ error at the ice margin is approximately 1 m in the $\Delta x=375$ m case (off scale).}
+\caption{Average water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.81})$ for both the flux-limited higher resolution scheme (\Large$\circ$\normalsize) and the first-order upwind scheme (\scriptsize\,$\square$\,\normalsize).  The maximum errors essentially coincide for the two schemes (\large$\ast$ \normalsize for higher-resolution and $\times$ for first-order).  The maximum error does not decay because of $O(1)$ errors localized at the ice margin.}
 \label{fig:refineW}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=4.0in,keepaspectratio=true]{figs/refineP}
-\caption{Average (circle) and maximum (star) pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.96})$.}
+\caption{Average and maximum pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{1.04})$ for the flux-limited higher resolution scheme (\Large$\circ$\normalsize) and slightly slower at $O(\Delta x^{0.95})$ for the first-order upwind scheme (\scriptsize\,$\square$\,\normalsize).  Again the maximum errors essentially coincide for the two schemes.}
 \label{fig:refineP}
 \end{figure}
 
