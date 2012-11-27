@@ -614,7 +614,7 @@ For smooth functions and fine grids we have $\theta_i\approx 1$ except near extr
   \begin{tabular}{ll}
     \textbf{scheme ($\ast=$ positive)} & \textbf{formula} \\
 \hline
-    $\ast$ first-order conservative upwinding  & $\phantom{\Big|}\psi(\theta) = 0$ \\
+    $\ast$ first-order upwinding               & $\phantom{\Big|}\psi(\theta) = 0$ \\
     \phantom{$\ast$} second-order centered     & $\phantom{\Big|}\psi(\theta) = \frac{1}{2}$  \\
     \phantom{$\ast$} third-order upwind-biased & $\phantom{\Big|}\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
     $\ast$ van Leer 1974                       & $\phantom{\Big|}\psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
@@ -632,7 +632,7 @@ The above discussion was limited to the spatial discretization; we have applied 
 \end{equation}
 as proven in section III.1.1 of \cite{HundsdorferVerwer2010}.  Section III.1.3 of the same reference shows these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We will identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
-Finally we can state the two alternatives we will test as discrete flux schemes in equation \eqref{eq:Wfd}.  Recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(\alpha_e)$'' and the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(\beta_n)$.''  Recall also that the velocity has components $\bV=(\alpha,\beta)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$''.  Thus we simply give formulas for $Q_e$ and $Q_n$:
+At this point we can state the two alternatives which we will actually test as discrete flux schemes in equation \eqref{eq:Wfd}.  Recall that the velocity has components $\bV=(\alpha,\beta)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  Also recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(\alpha_e)$'' and that the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(\beta_n)$.''  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$''.  Thus we simply give formulas for $Q_e$ and $Q_n$:
 \begin{align}
 Q_e(\alpha_e) &= \begin{cases} \alpha_e \left[W_{i,j} + \psi(\theta_{i}) (W_{i+1,j} - W_{i,j})\right], & \alpha_e \ge 0, \\ \alpha_e \left[W_{i+1,j} + \psi\left((\theta_{i+1})^{-1}\right) (W_{i,j} - W_{i+1,j})\right], & \alpha_e < 0, \end{cases} \label{eq:adfluxes} \\
 Q_n(\beta_n) &= \begin{cases} \beta_n \left[W_{i,j} + \psi(\theta_{j}) (W_{i,j+1} - W_{i,j})\right], & \beta_n \ge 0, \\ \beta_n \left[W_{i,j+1} + \psi\left((\theta_{j+1})^{-1}\right) (W_{i,j} - W_{i,j+1})\right], & \beta_n < 0. \end{cases} \notag
@@ -642,9 +642,11 @@ The flux-limiters which we will consider are the first-order upwind ($\psi(\thet
 \theta_i &= \frac{W_{i,j}-W_{i-1,j}}{W_{i+1,j} - W_{i,j}}, & (\theta_{i+1})^{-1} &= \frac{W_{i+2,j}-W_{i+1,j}}{W_{i+1,j} - W_{i,j}}, \\
 \theta_j &= \frac{W_{i,j}-W_{i,j-1}}{W_{i,j+1} - W_{i,j}}, & (\theta_{j+1})^{-1} &= \frac{W_{i,j+2}-W_{i,j+1}}{W_{i,j+1} - W_{i,j}}.
 \end{align*}
-Clearly one need not compute these ``$\theta$s'' when using first-order upwind.  On the other hand, when using the Koren or van Leer forms the stencil in Figure \ref{fig:stencil} is incomplete; the additional regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are each (potentially) involved in updating $W_{i,j}$.
+Clearly one need not compute these ``$\theta$s'' when using first-order upwind.
 
-For either one of the positive advection schemes compared below, and even if the combined advection-diffusion scheme is still positive as is proved in the Appendix for first-order upwinded fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection and diffusion schemes is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$), and so we must project (reset) $W$ to be nonnegative at the end of each time step anyway.
+When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is incomplete.  In particular the additional regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are each (potentially) involved in updating $W_{i,j}$.
+
+For either the first-order or high-resolution flux schemes, and even if the combined advection-diffusion scheme is still structurally-positive as is proved in the Appendix for first-order upwind fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).  Generally we must project (reset) $W$ to be nonnegative at the end of each time step.
 
 
 \subsection*{Discretization of the pressure evolution equation}  The pressure evolution equation \eqref{eq:diffusionpressure} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  Unlike \eqref{eq:adeqn} there is no dominating advection term.  We discretize it using an explicit centered, second-order scheme.  Again, because this is an explicit scheme, we consider stable time steps immediately.
