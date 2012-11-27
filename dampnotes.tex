@@ -556,29 +556,29 @@ Now we can state our scheme for equation \eqref{eq:adeqn}:
 If the flux components $Q$ had their exact continuum values, instead of discrete approximations as they are in fact, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
 
-\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated PDE, well-known goals for discretizing the fluxes include non-oscillation and/or positivity properties \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}, are introduced here using an advection-only model equation.
-
-Consider the model equation
+\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated PDE, the well-known goals for discretizing the fluxes include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}, are introduced here using the following advection-only model equation in which some quantity $u(t,x)$ is transported by a flux $Q = v(x) u$ with velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
-in which some quantity $u(t,x)$ is transported by a flux $Q = v(x) u$ with velocity $v(x)$.  We allow the velocity $v(x)$ to vary spatially but we assume that $v(x)\ge 0$.  Suppose that grid points $x_i$ are the centers of a cell, that there is equal spacing $\Delta x$, and that we denote cell interfaces $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time: denote $u_i=u_i(t)$ and time derivatives $\dot u_i = du_i/dt$.
+We allow the velocity $v(x)$ to vary spatially but we assume that $v(x)\ge 0$.
 
-We say a discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  Of course, such a property is desirable for any conservation scheme for the water thickness $W\ge 0$.  The basic discretization of \eqref{eq:modeladvect} is
+Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  We denote cell interfaces $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time and instead we denote $u_i=u_i(t)$ and time derivatives $\dot u_i = du_i/dt$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  Clearly such a property is desirable for any conservation scheme for the water thickness $W$ because thicknesses are intrinsically nonnegative.
+
+The basic discretization of \eqref{eq:modeladvect} is
 \begin{equation}
 \dot u_i + \frac{Q_e - Q_w}{\Delta x} = 0, \label{eq:basicmodelFD}
 \end{equation}
-but we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative (flux) form \citep[section I.4.3]{HundsdorferVerwer2010}:
+but we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative form \citep[section I.4.3]{HundsdorferVerwer2010}:
 \begin{equation}
 Q_e = v_e u_i \label{eq:upwindfluxfirst}
 \end{equation}
-This scheme is also called the ``donor cell'' upwind method \citep{LeVeque}.  In \eqref{eq:upwindfluxfirst} we suppose that the upwinded flux at $x_{i+1/2}=x_e$ uses $u_i$ because $v_e\ge 0$.
+This scheme is also called the ``donor cell'' upwind method \citep{LeVeque}.  We have used the upwind value $u_i$ for the flux at $x_e=x_{i+1/2}$ because $v_e\ge 0$.
 
-A second-order truncation error scheme which is \emph{not} positive uses centered differences for the flux.  This adds a correction to the first-order upwind form:
+A second-order truncation error scheme which is \emph{not} positive uses a centered average in computing the flux.  We can regard this as a correction to the first-order upwind form:
 \begin{equation}
 Q_e = v_e \frac{u_i+u_{i+1}}{2} = v_e \left[u_i + \frac{1}{2} (u_{i+1} - u_i)\right]. \label{eq:centerfluxfirst}
 \end{equation}
-This scheme, which can be stable when the time-discretization is implicit, causes oscillations and is not positive.  Another such scheme is third-order upwind-biased fluxes which can again be written as a correction to first-order upwinding:
+A yet higher-resolution scheme is third-order upwind-biased fluxes which can again be written as a correction to first-order upwinding:
 \begin{equation}
 Q_e = v_e \frac{-u_{j-1} + 5 u_i + 2 u_{i+1}}{6} = v_e \left[u_i + \left(\frac{1}{3}+\frac{1}{6} \theta_i \right) (u_{i+1} - u_i)\right] \label{eq:thirdfluxfirst}
 \end{equation}
@@ -586,27 +586,27 @@ where
 \begin{equation}
 \theta_i = \frac{u_{i} - u_{i-1}}{u_{i+1} - u_i}.  \label{eq:thetadefine}
 \end{equation}
-Unfortunately, despite the upwind-biasing, this scheme is also oscillatory and non-positive.
+Unfortunately, despite even the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
 
-The approach of flux-limiting is that the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} are too large if we seek to preserve positivity \citep[section III.1.1]{HundsdorferVerwer2010}.  That is, the correction is too large near local extrema.  Unfortunately, Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  Fortunately, nonlinear ``flux-limited'' (correction-limited) formulas with these properties do exist.  Because the schemes under consideration are explicit, such nonlinearity does not represent a significant computational cost.
+The approach of flux-limiting is to regard the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large, especially near local extrema, for positivity \citep[section III.1.1]{HundsdorferVerwer2010}.  Unfortunately, Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  On the other hand there exist nonlinear ``flux-limited'' (correction-limited) formulas which restore these properties.  Because the schemes under consideration are explicit, the nonlinearity itself does not represent a significant computational cost.
 
 These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
 \begin{equation}
 Q_e = v_e \left[u_i + \psi(\theta_i) (u_{i+1} - u_i)\right], \qquad v_e \ge 0. \label{eq:fluxlimiterform}
 \end{equation}
-If in the model equation we have $v(x)<0$ then the same function $\psi$ should be used but with the direction of differencing reversed \citep[section III.1.1]{HundsdorferVerwer2010}:
+If we have $v(x)<0$ in \eqref{eq:modeladvect} then the same function $\psi$ should be used but with the direction reversed \citep[section III.1.1]{HundsdorferVerwer2010}:
 \begin{equation}
 Q_e = v_e \left[u_{i+1} + \psi\left((\theta_{i+1})^{-1}\right) (u_i - u_{i+1})\right], \qquad v_e < 0. \label{eq:fluxlimiterformreversed}
 \end{equation}
-The forms for $Q_w$ in \eqref{eq:basicmodelFD} are the same as these but with $Q_e\to Q_w$, $v_e \to v_w$, $i\to i-1$, and $i+1\to i$.
+The forms for $Q_w$ in \eqref{eq:basicmodelFD} simply replace $v_e \to v_w$, $i\to i-1$, and $i+1\to i$.  Table \ref{tab:fluxlimiters} shows several cases for $\psi$ including those already considered.
 
-Table \ref{tab:fluxlimiters} shows several cases for $\psi$ including those already considered.  Note that $\theta_i$ in \eqref{eq:thetadefine} can take any real value.  For the time-discretizations we will consider, sufficient conditions on $\psi(\theta)$ to give a positive advection scheme for model equation \eqref{eq:modeladvect} are
+The difference ratio $\theta_i$ in \eqref{eq:thetadefine} can take any real value.  For the time-discretizations we will consider, sufficient conditions on $\psi(\theta)$ to give a positive advection scheme for model equation \eqref{eq:modeladvect} are
 \begin{equation}
 0 \le \psi(\theta) \le 1, \qquad 0 \le \frac{\psi(\theta)}{\theta} \le 1 \qquad \text{ for all } \theta \in \RR.
 \end{equation}
 The schemes in Table \ref{tab:fluxlimiters} which satisfy these conditions are marked with ``$\ast$''.
 
-From \eqref{eq:thetadefine} we see that for smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  The Koren flux-limiter in Table \ref{tab:fluxlimiters}, which we will use in practice, has $\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  We can think of the resulting scheme as a positive form of the third-order upwind-biased scheme.
+For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that in every case in Table \ref{tab:fluxlimiters} where there is a correction ($\psi(\theta)\ne 0$) we have $\psi(1)=1/2$.  The Koren flux-limiter in Table \ref{tab:fluxlimiters}, which we will demonstrate in practice, has $\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  Therefore we can think of the Koren scheme as a positive form of the third-order upwind-biased scheme.
 
 \begin{table}[ht]
   \centering
@@ -617,20 +617,34 @@ From \eqref{eq:thetadefine} we see that for smooth functions and fine grids we h
     $\ast$ first-order conservative upwinding  & $\phantom{\Big|}\psi(\theta) = 0$ \\
     \phantom{$\ast$} second-order centered     & $\phantom{\Big|}\psi(\theta) = \frac{1}{2}$  \\
     \phantom{$\ast$} third-order upwind-biased & $\phantom{\Big|}\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
-    $\ast$ Koren                               & $\phantom{\Big|}\psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
-    $\ast$ van Leer                            & $\phantom{\Big|}\psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    $\ast$ van Leer 1974                       & $\phantom{\Big|}\psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    $\ast$ Koren 1993                          & $\phantom{\Big|}\psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
     \hline
   \end{tabular}
  \label{tab:fluxlimiters}
 \end{table}
 
-To summarize our understanding of our schemes for the model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error.  Second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from difficult areas (i.e.~near extrema and non-smooth areas where $\theta_j$ is not near one), but they revert to first-order in these difficult areas.
+To summarize our understanding of flux discretizations for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from difficult areas (i.e.~near extrema and non-smooth areas where $\theta_j$ is not near one), but they revert to first-order in these difficult areas.
 
-FIXME: address time-stepping
+The above discussion was limited to the spatial discretization; we have applied ``method of lines'' only.  A time discretization is also required, and for this we simply choose forward Euler.  Using one of the positive spatial discretizations above, the resulting fully discrete system is positive if
+\begin{equation}
+\max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2}, \label{eq:CFL}
+\end{equation}
+as proven in section III.1.1 of \cite{HundsdorferVerwer2010}.  Section III.1.3 of the same reference shows these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We will identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
-FIXME: actually give formulas which apply to \eqref{eq:Wfd}
+Finally we can state the two alternatives we will test as discrete flux schemes in equation \eqref{eq:Wfd}.  Recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(\alpha_e)$'' and the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(\beta_n)$.''  Recall also that the velocity has components $\bV=(\alpha,\beta)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$''.  Thus we simply give formulas for $Q_e$ and $Q_n$:
+\begin{align}
+Q_e(\alpha_e) &= \begin{cases} \alpha_e \left[W_{i,j} + \psi(\theta_{i}) (W_{i+1,j} - W_{i,j})\right], & \alpha_e \ge 0, \\ \alpha_e \left[W_{i+1,j} + \psi\left((\theta_{i+1})^{-1}\right) (W_{i,j} - W_{i+1,j})\right], & \alpha_e < 0, \end{cases} \label{eq:adfluxes} \\
+Q_n(\beta_n) &= \begin{cases} \beta_n \left[W_{i,j} + \psi(\theta_{j}) (W_{i,j+1} - W_{i,j})\right], & \beta_n \ge 0, \\ \beta_n \left[W_{i,j+1} + \psi\left((\theta_{j+1})^{-1}\right) (W_{i,j} - W_{i,j+1})\right], & \beta_n < 0. \end{cases} \notag
+\end{align}
+The flux-limiters which we will consider are the first-order upwind ($\psi(\theta)=0$) and Koren ($\psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$) cases in Table \ref{tab:fluxlimiters}.  The subscripted $\theta$ quotients are as follows:
+\begin{align*}
+\theta_i &= \frac{W_{i,j}-W_{i-1,j}}{W_{i+1,j} - W_{i,j}}, & (\theta_{i+1})^{-1} &= \frac{W_{i+2,j}-W_{i+1,j}}{W_{i+1,j} - W_{i,j}}, \\
+\theta_j &= \frac{W_{i,j}-W_{i,j-1}}{W_{i,j+1} - W_{i,j}}, & (\theta_{j+1})^{-1} &= \frac{W_{i,j+2}-W_{i,j+1}}{W_{i,j+1} - W_{i,j}}.
+\end{align*}
+Clearly one need not compute these ``$\theta$s'' when using first-order upwind.  On the other hand, when using the Koren or van Leer forms the stencil in Figure \ref{fig:stencil} is incomplete; the additional regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are each (potentially) involved in updating $W_{i,j}$.
 
-Even for one of the positive advection schemes described here, and even if the combined advection-diffusion scheme is still positive as is proved in the Appendix for first-order upwinded fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection and diffusion parts is good but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).
+For either one of the positive advection schemes compared below, and even if the combined advection-diffusion scheme is still positive as is proved in the Appendix for first-order upwinded fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection and diffusion schemes is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$), and so we must project (reset) $W$ to be nonnegative at the end of each time step anyway.
 
 
 
@@ -669,7 +683,7 @@ P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_
       &\qquad\qquad\qquad\quad + \Delta t\, \left(\mathcal{C}_{ij} - \mathcal{O}_{ij} + \Phi_{i,j}\right)\bigg]. \notag
 \end{align}
 
-\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$ and $P$.  One time step of this evolution is described as follows.
+\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$ and $P$.  One time step of the fully-discretized evolution is described as follows.
 
 This description assumes that the ice geometry and ice sliding speed are fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all determined for the duration of the run.  The ice geometry may be quite general, with ice-free land and floating ice allowed.  In fact, the ice geometry determines true-false masks for grid cell state based on a sea level of elevation zero:
 \begin{align*}
@@ -687,20 +701,22 @@ Thus one time step follows this algorithm:
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
 %FIXME: however, Wea and Wno should not average from outside the ice domain?
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.  (As noted, $\Delta t = \Delta t_P$ is expected for most grids.)
-\item Use \eqref{eq:Wfd} to compute preliminary values for $W_{i,j}^{l+1}$.  Don't use diffusive flux when a point or its neighbor is \texttt{icefree} or \texttt{float}.
+\item Using \eqref{eq:adfluxes}, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.  
+\item Use \eqref{eq:Wfd} to compute preliminary values for $W_{i,j}^{l+1}$.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$; this applies only when $\Phi<0$ because the rest of the method is positivity-preserving (see Appendix).
 \item Use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$.  Don't compute divergence of diffusive flux when neighbors are \texttt{icefree} or \texttt{float}.
 \item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) back into the correct range.
 \item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
 \end{enumerate}
-
-The mass accounting scheme must keep track of the projections in step \emph{(vii)}.  In particular, that water which is lost at the margin where either the thickness goes to zero on land or the ice becomes floating (grounding line) may be part of the intended modeling goal.  On the other hand there is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve bounds $0\le P \le P_o$.  The pressure is not a conserved quantity, so projection step \emph{(ix)} requires no accounting.
+The mass accounting scheme must keep track of the projections in step \emph{(viii)}.  In particular, that water which is lost at the margin where either the thickness goes to zero on land or the ice becomes floating (grounding line) may be part of the intended modeling goal.  On the other hand there is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve bounds $0\le P \le P_o$.  As pressure is not a conserved quantity, however, the projection step \emph{(ix)} requires no accounting.
 
 
 
 \section{Numerical results}  \label{sec:results}
 
-\subsection*{Verification of the coupled model}  FIXME: some text on verification procedure
+\subsection*{Verification of the coupled model}  By using the steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can now verify the numerical schemes described in section \ref{sec:num}.  Verification refers to the process of measuring the errors made by the numerical scheme, relative to the exact solution, especially as the numerical grid is refined.  In this case our exact solution is for the steady-state so we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  That is, we measure the drift away from the exact steady solution, and we take the magnitude of that drift to depend on the spatial grid size.
+
+We use the constants in Table \ref{tab:verifconstants}.  The exact solution is shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}.  We do a one month run on grids with resolutions decreasing by factors of two from $6$ km to $375$ m.  The results are shown in Figures \ref{fig:refineW} and \ref{fig:refineP}.
 
 \begin{figure}[ht]
 \includegraphics[width=4.0in,keepaspectratio=true]{figs/refineW}
@@ -714,6 +730,9 @@ The mass accounting scheme must keep track of the projections in step \emph{(vii
 \label{fig:refineP}
 \end{figure}
 
+These results suggest that our numerical solution method for these coupled advection-diffusion (for $W$) and diffusion-reaction (for $P$) equations are being solved correctly; we have evidence for numerical convergence.  However the rate of convergence is not great.  Note that the location of the large errors is entirely in the neighborhood of the ice margin $r=L$.  The method for handling boundary conditions is critical to determining the magnitude of the error and its rate of decay.  Further research is needed to decide how to handle this boundary in a more-nearly optimal manner.
+
+
 \subsection*{Steady results for a tidewater glacier}
 
 FIXME: results from nbreen
@@ -721,31 +740,31 @@ FIXME: results from nbreen
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{figs/bed-surf-250m}
 \caption{FIXME}
-%\label{fig:refineP}
+%\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{figs/icethk-icefree-float-250m}
 \caption{FIXME}
-%\label{fig:refineP}
+%\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{figs/outline-input-250m}
 \caption{FIXME}
-%\label{fig:refineP}
+%\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{figs/W-Pmask-250m}
 \caption{FIXME}
-%\label{fig:refineP}
+%\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{figs/Po-P-250m}
 \caption{FIXME}
-%\label{fig:refineP}
+%\label{fig:X}
 \end{figure}
 
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
@@ -757,12 +776,14 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 \label{fig:isPofWnbreen}
 \end{figure}
 
+
 \clearpage\newpage
 
 \small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
 \normalsize
+
 
 \clearpage\newpage
 \appendix
