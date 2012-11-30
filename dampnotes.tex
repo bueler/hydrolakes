@@ -242,19 +242,21 @@ At an almost opposite extreme in terms of the mathematical form, one might hypot
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ and they make the approximation that the water layer thickness is small so it can be ignored in the hydraulic potential.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get
+For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ and they make the approximation that the water layer thickness is small so it can be ignored in the hydraulic potential.  One obvious problem with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W>W_{\text{crit}}$).
+
+For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get
 \begin{equation}
   \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{KW}{\rho_w g} \grad P_{FC}(W)\right) + \Phi \label{eq:PofWFCConservation}
 \end{equation}
-where $\hat\bV = - K \grad b$.  In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012}, the model is a porous-medium equation \citep{VazquezPME} like
+where $\hat\bV = - K \grad b$.  In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012}, the model is a porous-medium equation \citep{VazquezPME} of the generic form $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$.  The main idea in such a nonlinear diffusion is that the \emph{direction} of the flux is always $-\grad W$.
+
+An ad hoc pressure functional form, comparable to \eqref{eq:PofWFC} but different in detail, was used by \cite{BBssasliding} to generate distributions of till-layer yield stress under ice sheets.  They make pressure proportional to water amount but cap the result at a fixed fraction of overburden:
 \begin{equation}
-\frac{\partial W}{\partial t} = \Div \left(\grad (W^\gamma)\right).  \label{eq:literalPME}
+P_{BB}(W) = \lambda\,P_o \min\left\{1,\frac{W}{W_{\text{crit}}}\right\} \label{eq:PofWBB}
 \end{equation}
-The main idea in such an equation is that the direction of the flux is always $-\grad W$.
+where values $\lambda=0.95$ and $W_{\text{crit}}=2$ m are used in \citep{BBssasliding}.  While this particular functional form is unmotivated, the ``obvious problem'' mentioned above is addressed in \eqref{eq:PofWBB} by construction.
 
-FIXME: describe form used in \cite{BBssasliding} with equation (X)
-
-In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use any of the above closures \eqref{eq:Pisoverburden}, \eqref{eq:PofWFC}, or (X).  However, in steady state our theory, and also that of \cite{Schoofetal2012}, allows the recovery of a functional relation $P=P(W)$.  This functional form is not, however, of power form \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and  and thus \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
+In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use any of the above closures \eqref{eq:Pisoverburden}, \eqref{eq:PofWFC}, or \eqref{eq:PofWBB}.  However, in steady state conditions our theory, and also that of \cite{Schoofetal2012}, allows the recovery of a functional relation $P=P(W)$.  This functional form is not, however, of power form \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
 
 \subsection*{Full-cavity closure}  Requiring the aquifer to be full is a closure:
 \begin{equation}
@@ -386,7 +388,7 @@ Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady}
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{figs/psteady-vb}
 \medskip
-\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed.  Four cases are shown using a fixed uniform ice thickness of $H=1000$ m: $|\bv_b|=0$ m/a (blue), $10$ m/a (green), $100$ m/a (red), and $1000$ m/a (cyan).  The values of $W_c$ for these cases are indicated by black dots with $P(W_c)=0$.  Relation \eqref{eq:PofWFC} is shown with $W_{\text{crit}}=W_r$ for comparison (dashed black).}
+\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed.  Four cases are shown (in color) using a fixed uniform ice thickness of $H=1000$ m: $|\bv_b|=0$ m/a (blue), $10$ m/a (green), $100$ m/a (red), and $1000$ m/a (cyan).  The values of $W_c$ for these cases are indicated by black dots with $P(W_c)=0$.  Relations \eqref{eq:PofWFC} (dashed black) and \eqref{eq:PofWBB} (dash-dot black) are shown with $W_{\text{crit}}=W_r$ for comparison.}
 \label{fig:psteady-vb}
 \end{figure}
 
