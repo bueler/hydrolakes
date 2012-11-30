@@ -696,22 +696,27 @@ This description assumes that the ice geometry and ice sliding speed are fixed s
 Here $H_{\text{float}}=h_{i,j} / (1 - r)$ is the thickness of the ice if it is floating, $r=\rho_i / \rho_{sw}$, and we take a sea-water density $\rho_{sw}=1028.0$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean.  While the subglacial layer we are attempting to model has both \texttt{icefree} and \texttt{float} masks false, the other cases provide boundary conditions.
 
 Thus one time step follows this algorithm:
+
+\bigskip\medskip
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $\Wlij$, $\Plij$ which satisfy the bounds $W\ge 0$ and $0 \le P \le P_o$.
 \item Compute the current values of the hydraulic potential, $\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij)$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
-\item Compute velocity components at staggered grid locations from \eqref{eq:velocitycomp}.   %FIXME: however, dPdx and dPdy should not difference outside the ice domain?
-\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
+\item Compute velocity components at staggered grid locations from \eqref{eq:velocitycomp}.   \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
 %FIXME: however, Wea and Wno should not average from outside the ice domain?
-\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.  (As noted, $\Delta t = \Delta t_P$ is expected for most grids.)
-\item Using \eqref{eq:adfluxes}, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.  
+\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.  Observe that $\Delta t = \Delta t_P$ is expected for most grids.
+\item Use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$.  Don't compute the $x$-($y$-)direction divided difference of the flux when either of the $x$-($y$-)neighbors are \texttt{icefree} or \texttt{float}.
+\item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) back into the correct range.
+\item Using \eqref{eq:adfluxes} and a particular flux-limiter, or first-order upwinding without flux limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.  
 \item Use \eqref{eq:Wfd} to compute preliminary values for $W_{i,j}^{l+1}$.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$; this applies only when $\Phi<0$ because the rest of the method is positivity-preserving (see Appendix).
-\item Use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$.  Don't compute divergence of diffusive flux when neighbors are \texttt{icefree} or \texttt{float}.
-\item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) back into the correct range.
 \item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
 \end{enumerate}
-The mass accounting scheme must keep track of the projections in step \emph{(viii)}.  In particular, that water which is lost at the margin where either the thickness goes to zero on land or the ice becomes floating (grounding line) may be part of the intended modeling goal.  On the other hand there is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve bounds $0\le P \le P_o$.  As pressure is not a conserved quantity, however, the projection step \emph{(ix)} requires no accounting.
+
+\bigskip\medskip
+There is no expectation that pressure update \eqref{eq:Pfdupdate} will preserve bounds $0\le P \le P_o$.  As pressure is not a conserved quantity, however, the projection step \emph{(vii)} requires no special accounting.
+
+However, any useful mass accounting scheme will keep track of the projections in step \emph{(x)}.  In particular, water which is lost at the margin where either the thickness goes to zero on land, or at locations where the ice becomes floating (i.e.~at the grounding line), indeed may be the modeling goal.  Most users will be interested in the subglacial hydrological discharge at (grounded) glacial margin locations or at grounding lines.
 
 
 
@@ -813,11 +818,11 @@ so that the new value is a linear combination of the old values, plus a source t
 \begin{equation}
 W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij + \Delta t \Phi_{ij}. \label{eq:lincomb}
 \end{equation}
-Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, we see that coefficients $A,B,C,D$ are all nonnegative, and that only $E$ could be negative.  Thus we can state a sufficient condition based on an equal split between advective and diffusive parts.  Assume a CFL restriction for the advection term in \eqref{eq:adeqn}; this generalizes \eqref{eq:CFL}:
+Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, we see that coefficients $A,B,C,D$ are all nonnegative, and that only $E$ could be negative.  Thus we can state a sufficient condition based on an equal split between advective and diffusive parts.  Assume a CFL restriction for the advection term in \eqref{eq:adeqn}; this condition generalizes \eqref{eq:CFL}:
 \begin{equation}
 \nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
 \end{equation}
-Also assume a second time-step restriction on the diffusion:
+Also assume a second time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
 \begin{equation}
 \mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
 \end{equation}
