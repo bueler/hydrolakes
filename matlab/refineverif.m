@@ -1,11 +1,12 @@
+function refineverif(M)
 % REFINEVERIF call verifwater along a refinement path
+% Example:
+% >> refineverif  % default run with M = [10 20 40 80 160]
+% >> refineverif([10 20 40])
 
+if nargin<1, M = [10 20 40 80 160]; end
 tyears = 1/12;  % one month coupled runs
 reload = false;
-
-M = [10 20 40 80 160];
-%M = [10 20 40 80];
-%M = [10 20 40];
 
 if reload
     load('PWerrdx.mat')
