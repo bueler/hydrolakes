@@ -365,11 +365,11 @@ In this and later formulas define
 \begin{equation}
 s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3},  \label{eq:definesb}
 \end{equation}
-a scaled basal sliding speed which has units of pressure.  (One may think of $s_b$ as a scale for the amount of pressure drop associated to cavitation in steady state.)  Then \eqref{eq:steadyboundfirst} is equivalent to
+a scaled basal sliding speed which has units of pressure.  (One may think of $s_b$ as a scale for the pressure drop associated to cavitation in steady state.)  Then \eqref{eq:steadyboundfirst} is equivalent to
 \begin{equation}
 W \ge W_c := \frac{s_b^3 W_r - P_o^3 Y_0}{s_b^3 + P_o^3} \qquad \text{ in steady state}. \label{eq:steadyboundsecond}
 \end{equation}
-This condition says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  Inequalities \eqref{eq:steadyboundfirst} and \eqref{eq:steadyboundsecond} are actually less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.
+This condition says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  Inequalities \eqref{eq:steadyboundfirst} and \eqref{eq:steadyboundsecond} are less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.
 
 If \eqref{eq:steadyboundfirst} or \eqref{eq:steadyboundsecond} holds then
 \begin{equation}
@@ -454,22 +454,21 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 \end{equation}
 Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.
 
-The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin inward toward the center.  To generate a nontrivial solution we assume a positive thickness of ice at the margin so that $P_o(L^-)>0$.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we assume (and check) that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  By our assumptions the initial condition also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
+The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin at $r=L$ inward toward the center.  As shown in Figure \ref{fig:Pexact}, to generate a nontrivial solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; there will be a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we assume (and check) that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
 h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
-where $h(0)=h_0$ is the height of the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  Also we choose $L=0.9 R_0$ so that $P_o(L)>0$.
+where $h(0)=h_0$ is the height of the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $h(L)=0.19 h_0$ in \eqref{eq:choosebodvardssonh}.
 
-The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but this kind of coupled ice and water dynamics solution is too advanced for the current purpose of hydrology model verification.  We choose a well-behaved sliding speed function which has no sliding near the ice cap center, and which increases in the radial direction:
+The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is too advanced for the current purpose of primary hydrology model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, and which increases in the radial direction:
 \begin{equation}
 |\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
-                           v_0  \left(\frac{r-R_1}{R_0-R_1}\right)^5, & R_1 < r < R_0, \\
-                           0, & R_0 \le r.
+                           v_0  \left(\frac{r-R_1}{L-R_1}\right)^5, & R_1 < r \le L.
              \end{cases}  \label{eq:choosevb}
 \end{equation}
-It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r < R_0$.
+It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
 
 Nw we can solve ODE \eqref{eq:WradialODE} with these data functions, the initial condition $W(L)$, and the specific values in Table \ref{tab:verifconstants}.  We do this using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Note that from \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} there is a unique pressure value $P=P(W,r)$ from \eqref{eq:PofWsteady}.  This allows us to show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure.  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.
 
@@ -481,9 +480,10 @@ Nw we can solve ODE \eqref{eq:WradialODE} with these data functions, the initial
 \hline
     $\Phi_0$ & $20$ & $\text{cm}\,\text{a}^{-1}$ & water input rate \\
     $h_0$ & $500$ & m & ice cap center thickness \\
-    $R_0$ & $25$  & km & ice cap radius \\
+    $L$ & $22.5$ & m & $=0.9 R_0$; actual ice cap margin \\ 
+    $R_0$ & $25$  & km & ideal ice cap radius \\
     $R_1$ & $5$   & km & radial location $r=R_1$ of onset of sliding \\
-    $v_0$ & $100$ & $\text{m}\,\text{s}^{-1}$ & sliding speed scale \\
+    $v_0$ & $100$ & $\text{m}\,\text{a}^{-1}$ & sliding speed scale \\
     \hline
   \end{tabular}
  \label{tab:verifconstants}
@@ -495,7 +495,7 @@ Nw we can solve ODE \eqref{eq:WradialODE} with these data functions, the initial
 \label{fig:Wexact}
 \end{figure}
 
-To generate Figure \ref{fig:Wexact} we used both the standard, non-stiff Runge-Kutta 4(5) Dormand-Prince method, which is \Matlab's \texttt{ode45}, and the stiff, variable-order solver \texttt{ode15s}, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with identical results.
+To generate Figure \ref{fig:Wexact} we used both the standard, non-stiff Runge-Kutta 4(5) Dormand-Prince method, which is \Matlab's \texttt{ode45}, and the stiff, variable-order solver \texttt{ode15s}, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with essentially identical results.
 % could cite Shampine,Gladwell,Thompson (2003) on Matlab ODE solvers
 Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed for $r\approx R_1$, however.  The reason is that as the sliding goes to zero, the cavitation also goes to zero ($|\bv_b|\to 0$).  Because creep closure balances cavitation in steady state, it also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are variation in overburden pressure and the rate of water input.  They must balance according to the steady mass conservation equation \eqref{eq:masscontsteady}.  In this case with no sliding ($s_b=0$), ODE \eqref{eq:WradialODE} reduces to the much simpler form
 \begin{equation}
@@ -510,6 +510,7 @@ We compute the pressure diagnostically from the steady state functional relation
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-P-plot}
 \caption{Nearly-exact radial, steady solution pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
+% FIXME:  add second axis for velocity
 \label{fig:Pexact}
 \end{figure}
 

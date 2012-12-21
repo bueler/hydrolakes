@@ -8,18 +8,17 @@ p = params();
 % constants specific to exact solution
 h0   = 500.0;            % m     center thickness
 v0   = 100.0 / p.spera;  % m/s   sliding velocity at margin
-R0   = 25.0e3;           % m     ice sheet margin
+R0   = 25.0e3;           % m     ideal ice cap radius
 R1   = 5.0e3;            % m     onset of sliding
 Phi0 = 0.2 / p.spera;    % m/s   water input rate is 20 cm/a
 
 vphi0 = Phi0 / (2 * p.c0);
-L = 0.9 * R0;
+L = 0.9 * R0;            % m     actual margin location
 
-% WcL is key constant in construction; determines initial condition on W(r)
+% WcL is key constant in construction; is initial condition on W(r)
 hL  = h0 * (1 - (L/R0).^2);
-vbL = v0 * (L - R1).^5 / (R0-R1)^5;
 PoL = p.rhoi * p.g * hL;
-sbL = ( (p.c1 * vbL / (p.c2 * p.A)) )^(1/3);
+sbL = ( (p.c1 * v0 / (p.c2 * p.A)) )^(1/3);
 WcL = (sbL^3 * p.Wr - PoL^3 * p.Y0) / (sbL^3 + PoL^3);
 fprintf('  W(L) should satisfy  %.6f = W_c(L) <= W(L) <= %.6f = W_r\n',WcL,p.Wr)
 
@@ -34,7 +33,7 @@ if dofigs
   W = dW:dW:1.2*p.Wr;
   [rr WW] = meshgrid(r,W);
   Po = p.rhoi * p.g * h0 * (1 - (rr/R0).^2);
-  vb = v0 * (rr - R1).^5 / (R0-R1)^5;
+  vb = v0 * (rr - R1).^5 / (L - R1)^5;
   vb(rr < R1) = 0.0;
   ratio = psteady(p,Po,vb,WW) ./ Po;
   figure(97), clf
@@ -69,7 +68,7 @@ if dofigs
 end
 
 % check bounds  W_c(r) <= W(r) <= W_r
-vb = v0 * (r - R1).^5 / (R0-R1)^5;
+vb = v0 * (r - R1).^5 / (L - R1)^5;
 vb(r < R1) = 0.0;
 sb = ((p.c1 * vb) ./ (p.c2 * p.A)).^(1/3);
 h = h0 * (1 - (r/R0).^2);
@@ -101,12 +100,10 @@ end
     dsb = 0.0;
   else
     CC  = p.c1 / (p.c2 * p.A);
-    % vb = v0 * (r - R1).^5 / (R0-R1)^5   and   sb = (CC * vb)^(1/3)
-    CZ  = (CC * v0)^(1/3);
-    zz  = ((r - R1) / (R0 - R1)).^(1/3);
-    sb  = CZ * zz.^5;
-    CD  = (5 * CZ) / (3 * (R0 - R1));
-    dsb = CD * zz.^2;
+    % vb = v0 * (r - R1).^5 / (L - R1)^5   and   sb = (CC * vb)^(1/3)
+    CZ  = ( CC * v0 / (L-R1)^5 )^(1/3);
+    sb  = CZ * (r - R1).^(5/3);
+    dsb = (5/3) * CZ * (r - R1).^(2/3);
   end
   dPo   = - (2 * p.rhoi * p.g * h0 / R0^2) * r;
   numer = dsb .* (W + p.Y0) .* (p.Wr - W);
