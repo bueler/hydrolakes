@@ -91,7 +91,7 @@
 
 \section{Introduction}
 
-Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by motion (sliding) of the overlying ice and wall melt, and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  
+Any reasonable dynamical model of the subglacial aquifer (liquid water layer) under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Physical processes also control the geometry of the aquifer, including the opening of cavities by sliding of the overlying ice past bedrock bumps (i.e.~cavitation), wall melt, and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  
 
 This paper describes such a model for distributed systems of linked cavities.  These cavities open by sliding of the ice and they close by ice creep.  Channels are not included in the model.  Wall melt is included as a contribution to the conservation equation but not in the cavity evolution equation.
 
@@ -213,7 +213,7 @@ To explain the role of regularization in the closing term \eqref{eq:closingform}
 \begin{equation}
 \mathcal{O}(|\bv_b|,Y) = \mathcal{C}(N,Y). \label{eq:hewittsteady}
 \end{equation}
-The implicit function theorem says that if $\partial\mathcal{C}/\partial N$ is nonzero for a given $Y\ge 0$ then the effective pressure is determined: $N=N(Y)$.  At $Y=0$ we have $\partial\mathcal{C}/\partial N=0$ in the unregularized case $Y_0=0$.
+The implicit function theorem says that if $\partial\mathcal{C}/\partial N$ is nonzero for a given $Y\ge 0$ then the effective pressure is determined: $N=N(Y)$.  Such applies for all $Y\ge 0$ because $Y_0>0$.  By contrast, in the unregularized case $Y_0=0$ we have $\partial\mathcal{C}/\partial N=0$ at $Y=0$.
 
 If $Y<W_r$ and $Y_0>0$ then the unique value $N(Y)>0$ determined by \eqref{eq:hewittsteady} may not, however, satisfy the bound $N(Y) \le P_o$ implied by \eqref{eq:bounds}.  That is, the sliding speed $|\bv_b|$ may be so large that the cavitation opening rate exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  Therefore, for given distributed values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can only hold if
 \begin{equation}
@@ -224,21 +224,21 @@ Condition \eqref{eq:steadyOCbound} must hold for the steady values of $Y$ over t
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-At this point we do not know how to compute the water pressure $P$ or the effective pressure $N$ given the data of the problem, namely $b$, $H$, $\Phi$, and $|\bv_b|$.  The apparent state variables of the model so far are $W$, $Y$, and $P$, but the above equations can be simplified only to two partial differential equations in these three unknowns.   A closure is needed.
+At this point we do not know how to compute the water pressure $P$ or the effective pressure $N$ given values of the other data of the problem, namely $b$, $H$, $\Phi$, and $|\bv_b|$.  The apparent state variables of the model so far are $W$, $Y$, and $P$, but the above equations can be simplified only to two partial differential equations in these three unknowns.   A closure is needed.
 
-\subsection*{Closures without cavity geometry evolution}  We first consider two closures which appear in the literature.  Their consequences emerge as limiting cases of our more complete theory, but only near steady state.  These two closures combine with mass conservation to give fundamentally-different mathematical forms for the mass conservation equation.
+\subsection*{Closures without cavity geometry evolution}  To start we briefly consider three simple closures which appear in the literature.  Their consequences emerge as limiting cases of our more complete theory, but only near steady state.  These closures are also distinguished by the mathematical form they imply for the mass conservation equation.
 
-At the simplest level one may assume that the pressure is equal to the overburden pressure,
+The first simple closure assumes that the pressure is equal to the overburden pressure,
 \begin{equation}
 P = P_o.\label{eq:Pisoverburden}
 \end{equation}
-This model is sometimes used for routing subglacial water under ice sheets \citep[for example]{Siegertetal2009}.  Under this assumption, and accepting the commonly-used approximation that the water layer thickness is small so it can be ignored in defining the hydraulic potential, we have $\psi=P_o+\rho_w g b$.  Straightforward calculations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that mass conservation equation \eqref{eq:adeqn} becomes a pure advection with a source term,
+This model is sometimes used for routing subglacial water under ice sheets \citep[for example]{Siegertetal2009}.  Under this assumption, and accepting the commonly-used approximation that the water layer thickness is small so it can be ignored in defining the hydraulic potential, we have $\psi=P_o+\rho_w g b$.  Straightforward calculations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that mass conservation equation \eqref{eq:adeqn} becomes a pure advection with a source term and a geometrically-determined velocity.  Specifically,
 \begin{equation}
   \frac{\partial W}{\partial t} + \Div\left(\tilde\bV\, W\right) = \Phi  \label{eq:PisoverConservation}
 \end{equation}
-where $\tilde\bV = - K \left[R \grad h + (1-R) \grad b\right]$ and $R=\rho_i/\rho_w$.  As a true advection, \eqref{eq:PisoverConservation} possesses characteristic curves \citep{Evans}, the trajectories for the velocity field $\tilde\bV$.  These give the direction of water flow while mass conservation gives the magnitude of the flux.
+where $\tilde\bV = - K \left[R \grad h + (1-R) \grad b\right]$ and $R=\rho_i/\rho_w$.  As a true advection, \eqref{eq:PisoverConservation} possesses characteristic curves \citep{Evans}, the trajectories of the water flow.
 
-At an almost opposite extreme in terms of the mathematical form, one might hypothesize that the water pressure is determined by the amount of water.  This situation which would arise, among other situations, from a subglacial hydrology which is well-connected to an englacial system in a temperate glacier \citep{FlowersClarke2002_trapridge}.  Specifically, \cite{FlowersClarke2002_theory} propose the closure that
+At an almost opposite extreme in terms of the mathematical form, one might hypothesize that the water pressure is determined by the amount of water.  This situation which would arise, among other situations, from a subglacial hydrology which is well-connected to an englacial system in a temperate glacier \citep{FlowersClarke2002_trapridge}.  Specifically, \cite{FlowersClarke2002_theory} propose a second closure, again without explicit cavity evolution, that says
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
@@ -250,13 +250,13 @@ For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Po
 \end{equation}
 where $\hat\bV = - K \grad b$.  In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012}, the model is a porous-medium equation \citep{VazquezPME} of the generic form $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$.  The main idea in such a nonlinear diffusion is that the \emph{direction} of the flux is always $-\grad W$.
 
-An ad hoc pressure functional form, comparable to \eqref{eq:PofWFC} but different in detail, was used by \cite{BBssasliding} to generate distributions of till-layer yield stress under ice sheets.  They make pressure proportional to water amount but cap the result at a fixed fraction of overburden:
+The third simple closure is an ad hoc pressure functional form, comparable to \eqref{eq:PofWFC} but different in detail, which was used by \cite{BBssasliding} to generate distributions of till-layer yield stress under ice sheets.  Pressure is proportional to water amount but it is capped at a fixed fraction of overburden:
 \begin{equation}
-P_{BB}(W) = \lambda\,P_o \min\left\{1,\frac{W}{W_{\text{crit}}}\right\} \label{eq:PofWBB}
+P_{BB}(W) = \lambda\,P_o \min\left\{1,W/W_{\text{crit}}\right\} \label{eq:PofWBB}
 \end{equation}
 where values $\lambda=0.95$ and $W_{\text{crit}}=2$ m are used in \citep{BBssasliding}.  While this particular functional form is unmotivated, the ``obvious problem'' mentioned above is addressed in \eqref{eq:PofWBB} by construction.
 
-In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use any of the above closures \eqref{eq:Pisoverburden}, \eqref{eq:PofWFC}, or \eqref{eq:PofWBB}.  However, in steady state conditions our theory, and also that of \cite{Schoofetal2012}, allows the recovery of a functional relation $P=P(W)$.  This functional form is not, however, of power form \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
+In this paper we apply the evolution model \eqref{eq:hewittcapacity} for the capacity of the distributed system, and thus we do not use any of the above closures \eqref{eq:Pisoverburden}, \eqref{eq:PofWFC}, or \eqref{eq:PofWBB}.  However, in steady state conditions our theory, and also that of \cite{Schoofetal2012}, recover a functional relation $P=P(W)$.  This relation is not, however, of a power form like \eqref{eq:PofWFC}.  Under steady conditions where the sliding also goes to zero, our theory also recovers \eqref{eq:Pisoverburden} and \eqref{eq:PisoverConservation}.  These connections are exposed in section \ref{sec:steadyverif} below.
 
 \subsection*{Full-cavity closure}  Requiring the aquifer to be full is a closure:
 \begin{equation}
@@ -266,7 +266,7 @@ The consequences of this ``strong'' closure are explored at some length by \cite
 \begin{equation}
 \Div \left(\frac{K\,W}{\rho_w g} \grad \psi \right) + \Phi = c_1 |\bv_b| (W_r - W)_+ - c_2 A (P_o - P)^3 (W+Y_0).\label{eq:ellipticpressure}
 \end{equation}
-If $Y_0=0$ then equation \eqref{eq:ellipticpressure} is the same as the $\alpha=1$, $\beta=2$ cases of equations (2.12) and/or (4.17) in \citep{Schoofetal2012}.
+If $Y_0=0$ then equation \eqref{eq:ellipticpressure} is the same as the $\alpha=1$, $\beta=2$ cases of equations (2.12) and/or (4.17) in \citep{Schoofetal2012}.  The regularization we propose, namely $Y_0>0$, implies in this full-aquifer case that cavities are still creeping shut even at zero water amount ($W=0$).
 
 Though we will not solve \eqref{eq:ellipticpressure}, it provides understanding of the structure of our mathematical model below.  Specifically, in a region where a given water thickness field $W$ is positive, \eqref{eq:ellipticpressure} is an elliptic PDE for $P$.  \cite{Schoofetal2012} show that the time-independent mathematical problem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and appropriate pressure boundary conditions can be written, together, as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  The numerical analysis of such problems, which appear in other glaciological free boundary contexts \citep{SchoofStream,JouvetBueler2012}, can be addressed with a finite element approach \citep{Ciarlet}.
 
