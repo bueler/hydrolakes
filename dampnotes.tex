@@ -538,15 +538,14 @@ To understand these restrictions quantitatively, we consider typical values of t
 \end{figure}
 
 To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV = - c_0 \grad P - K \grad b$ and let $\bQ=\bV W$ so that $\Div \bQ = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.  We use ``compass'' notation like $\alpha_e = \alpha_{i+1/2,j}$, and so on, for the components:
-\begin{align}
-\alpha_e &= - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \alpha_w = - c_0 \frac{P_{i,j}-P_{i-1,j}}{\Delta x} - K \frac{b_{i,j}-b_{i-1,j}}{\Delta x}, \label{eq:velocitycomp} \\
-\beta_n  &= - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}, \qquad \beta_s = - c_0 \frac{P_{i,j}-P_{i,j-1}}{\Delta y} - K \frac{b_{i,j}-b_{i,j-1}}{\Delta y}. \notag
-\end{align}
-The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are functions of several regular-grid values of $W$, as described in more detail below, but they use only the single, stated velocity component at these staggered locations.  Finally, for the diffusive term the staggered-grid values of $W$ are computed by averaging, and again we use compass notation:
-\begin{align}
-W_e &= (W_{i,j}^l + W_{i+1,j}^l)/2, & W_w &= (W_{i-1,j}^l + W_{i,j}^l)/2, \label{eq:stagW} \\
-W_n &= (W_{i,j}^l + W_{i,j+1}^l)/2, & W_s &= (W_{i,j-1}^l + W_{i,j}^l)/2. \notag
-\end{align}
+\begin{equation}
+\alpha_e = - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \beta_n  = - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \label{eq:velocitycomp}
+\end{equation}
+Note that $\alpha_w = \alpha_e\big|_{(i-1,j)}$ and $\beta_s = \beta_n\big|_{(i,j-1)}$ so there are two distinct staggered grid values (i.e.~$\alpha_e,\beta_n$) to compute per regular grid location $(x_i,y_j)$.  The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection, but they use only the single, stated velocity component at these staggered locations.  Finally, for the diffusive term the staggered-grid values of $W$ are needed.  They are computed by averaging:
+\begin{equation}
+W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
+\end{equation}
+Again $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.
 
 Now we can state our scheme for equation \eqref{eq:adeqn}:
 \begin{align}
@@ -554,7 +553,7 @@ Now we can state our scheme for equation \eqref{eq:adeqn}:
       &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
       &\qquad\qquad\qquad + \frac{W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}\bigg] + \Phi_{ij}. \notag
 \end{align}
-If the flux components $Q$ had their exact continuum values, instead of discrete approximations as they are in fact, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
+Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
 
 \subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated PDE, the well-known goals for discretizing the fluxes include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}, are introduced here using the following advection-only model equation in which some quantity $u(t,x)$ is transported by a flux $Q = v(x) u$ with velocity $v(x)$:
