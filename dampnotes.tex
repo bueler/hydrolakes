@@ -470,7 +470,7 @@ The sliding speed could be determined by a model for stresses at the ice base an
 \end{equation}
 It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
 
-Nw we can solve ODE \eqref{eq:WradialODE} with these data functions, the initial condition $W(L)$, and the specific values in Table \ref{tab:verifconstants}.  We do this using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Note that from \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} there is a unique pressure value $P=P(W,r)$ from \eqref{eq:PofWsteady}.  This allows us to show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure.  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.
+Now we can solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ and the specific values in Table \ref{tab:verifconstants} by using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  If we use equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} then there is a unique pressure value $P=P(W,r)$ from \eqref{eq:PofWsteady}, and this is shown in Figure \ref{fig:Pexact}.  The pressure function $P(W,r)$ allows us to also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure.  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$ where it switches into the overpressure case because there is no sliding.
 
 \begin{table}[ht]
   \centering
@@ -495,17 +495,15 @@ Nw we can solve ODE \eqref{eq:WradialODE} with these data functions, the initial
 \label{fig:Wexact}
 \end{figure}
 
-To generate Figure \ref{fig:Wexact} we used both the standard, non-stiff Runge-Kutta 4(5) Dormand-Prince method, which is \Matlab's \texttt{ode45}, and the stiff, variable-order solver \texttt{ode15s}, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with essentially identical results.
+To generate $W(r)$ in Figure \ref{fig:Wexact} we used both the standard, non-stiff Runge-Kutta 4(5) Dormand-Prince method, which is \Matlab's \texttt{ode45}, and the stiff, variable-order solver \texttt{ode15s}, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with essentially identical results.
 % could cite Shampine,Gladwell,Thompson (2003) on Matlab ODE solvers
-Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed for $r\approx R_1$, however.  The reason is that as the sliding goes to zero, the cavitation also goes to zero ($|\bv_b|\to 0$).  Because creep closure balances cavitation in steady state, it also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are variation in overburden pressure and the rate of water input.  They must balance according to the steady mass conservation equation \eqref{eq:masscontsteady}.  In this case with no sliding ($s_b=0$), ODE \eqref{eq:WradialODE} reduces to the much simpler form
+Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed for $r\approx R_1$, however.  The reason is that as the sliding goes to zero, the cavitation also goes to zero ($|\bv_b|\to 0$).  Because creep closure balances cavitation in steady state, it also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are variation in overburden pressure and the rate of water input.  They must exactly balance according to the steady mass conservation equation \eqref{eq:masscontsteady}.  In this case with no sliding ($s_b=0$), ODE \eqref{eq:WradialODE} reduces to the much simpler form
 \begin{equation}
 \frac{dW}{dr} = - \frac{\varphi_o r W^{-1} + \frac{dP_o}{dr}}{\rho_w g}. \label{eq:WradialODEnoslide}
 \end{equation}
 Equation \eqref{eq:WradialODEnoslide} is actually the steady radial form of the mass conservation equation under the ``$P=P_o$'' closure, namely equation \eqref{eq:PisoverConservation}.
 
 In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \varphi_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W=\tilde W= 0.21764$ m because $\Phi_0$ is constant and $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers mentioned above confirm that $W(r)$ is asymptotic to this constant value $\tilde W$ as $r\to 0$, and that $W(r)\approx \tilde W$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
-
-We compute the pressure diagnostically from the steady state functional relationship \eqref{eq:PofWsteady}.  The result is shown in Figure \ref{fig:Pexact}.
 
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-P-plot}
