@@ -1,0 +1,32 @@
+bueler@bueler-lemur ~/pism/test/regression[bwp-in-hydro*]$ ./verifTestP.sh 
+results for Mx=My=11:
+ averrbwat = 0.0080075164076071 ;
+ maxerrbwat = 0.0351964984097485 ;
+ averrbwp = 12348.1000386708 ;
+ maxerrbwp = 65593.8432133918 ;
+results for Mx=My=21:
+ averrbwat = 0.00427321106946256 ;
+ maxerrbwat = 0.0346826933139003 ;
+ averrbwp = 8049.52281631605 ;
+ maxerrbwp = 95060.2163507779 ;
+results for Mx=My=41:
+ averrbwat = 0.00220526759781833 ;
+ maxerrbwat = 0.0215756229507675 ;
+ averrbwp = 4274.9638222575 ;
+ maxerrbwp = 40232.1729595878 ;
+results for Mx=My=81:
+ averrbwat = 0.00102808297334371 ;
+ maxerrbwat = 0.0134957291088889 ;
+ averrbwp = 1743.34486665902 ;
+ maxerrbwp = 17004.3119160442 ;
+results for Mx=My=161:
+ averrbwat = 0.000596940509820174 ;
+ maxerrbwat = 0.0258185202795488 ;
+ averrbwp = 626.340522093786 ;
+ maxerrbwp = 6018.42428602827 ;
+results for Mx=My=321:
+ averrbwat = 0.000438677606190456 ;
+ maxerrbwat = 0.147153987444368 ;
+ averrbwp = 411.84169109693 ;
+ maxerrbwp = 3836.14000857164 ;
+
