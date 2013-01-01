@@ -452,9 +452,10 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 \frac{dW}{dr} = \frac{\frac{ds_b}{dr} (W+Y_0) (W_r - W) - \Big[\varphi_0\, r W^{-1} + \frac{dP_o}{dr}\Big] (W + Y_0)^{4/3} \left(W_r - W\right)^{2/3}}{\frac{1}{3} s_b (W_r + Y_0) + \rho_w g (W + Y_0)^{4/3} (W_r - W)^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
-Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.
+Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.  The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin at $r=L$ inward toward the center.
 
-The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin at $r=L$ inward toward the center.  As shown in Figure \ref{fig:Pexact}, to generate a nontrivial solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; there will be a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we assume (and check) that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
+
+\subsection*{An exact solution}  As shown in Figure \ref{fig:Pexact}, to generate a nontrivial solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; there will be a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we assume (and check) that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
@@ -741,6 +742,15 @@ These results suggest that our numerical solution method for these coupled advec
 The rate of convergence is not great.  The location of the large errors is entirely in the neighborhood of the ice margin $r=L$ (not shown).  The method for handling boundary conditions is critical to determining the magnitude of the error and its rate of decay.  Further research is needed to decide how to handle this boundary in a more-nearly optimal manner.
 
 The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme.  Our problem is a combined advection diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, and thus it is hard to analyze the difference between these schemes.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be modest compared to continuum model (i.e.~desirable) diffusivity.  In any case, based on this verification evidence it is reasonable to stick with first-order upwinding.
+
+The above results were generated from Matlab codes.  As a result of this analysis, only the first-order upwind scheme was implemented in the Parallel Ice Sheet Model (PISM).  Figures \ref{fig:refineWPpism} show results from one month PISM runs using 4 processors on grids with spacing decreasing by factors of two from $5$ km to $156$ m.  This suggests that the PISM implementation is also correct.
+
+\begin{figure}[ht]
+\includegraphics[width=3.0in,keepaspectratio=true]{figs/refineWpism} \quad \includegraphics[width=3.0in,keepaspectratio=true]{figs/refinePpism}
+\caption{Average water thickness error $|W-W_{exact}|$ decays as $O(\Delta x^{0.85})$ and average pressure error $|P-P_{exact}|$ decays as $O(\Delta x^{1.13})$ in the PISM implementation.}
+\label{fig:refineWPpism}
+\end{figure}
+
 
 \subsection*{Steady results for a tidewater glacier}
 
