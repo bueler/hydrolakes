@@ -13,13 +13,13 @@ if nargin < 2, filename = 'nbreen_input.nc'; end
 
 S = netcdf(filename);  % reads NetCDF file into a large structure
 
-y = double(S.VarArray(1).Data);
-x = double(S.VarArray(2).Data);
+y = double(S.VarArray(1).Data); % = "x" in file
+x = double(S.VarArray(2).Data); % = "y" in file
 topg = squeeze(double(S.VarArray(3).Data));
 thk = squeeze(double(S.VarArray(4).Data));
 usurf = squeeze(double(S.VarArray(5).Data));
-icemask = squeeze(double(S.VarArray(6).Data));
-outline = squeeze(double(S.VarArray(7).Data));
+icemask = squeeze(double(S.VarArray(6).Data));  % = "outline" in file
+outline = squeeze(double(S.VarArray(7).Data));  % = "nbreen" in file
 for i=1:size(icemask,1)
     for j=1:size(icemask,2)
 %         if (i==1 || j==1 || i==size(icemask,1) || j==size(icemask,2))
