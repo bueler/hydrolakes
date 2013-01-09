@@ -245,7 +245,7 @@ For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.
 
 For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get
 \begin{equation}
-  \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{K(W) W}{\rho_w g} \grad P_{FC}(W)\right) + \Phi \label{eq:PofWFCConservation}
+  \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{K(W)\,W}{\rho_w g} \grad P_{FC}(W)\right) + \Phi \label{eq:PofWFCConservation}
 \end{equation}
 where $\hat\bV = - K \grad b$.  In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012}, the model generalizes the porous-medium equation $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion is that the \emph{direction} of the flux is $-\grad W$.
 
@@ -272,37 +272,53 @@ Though we will not solve \eqref{eq:ellipticpressure}, it provides understanding 
 
 However, the goal of the current work is the selection of an implementable subglacial hydrology model which can be straightforwardly coupled to three-dimensional ice dynamics and which can be parallelized.  We need to determine parameters for this model from observations at the surface of glaciers.  These goals suggest that we seek a more easily-implemented model which does not require the solution of an elliptic problem at each time step.  We find such a model by weakening closure \eqref{eq:strongclosure}, as follows.
 
-\subsection*{Diffusive nearly-full closure}  We now propose a damped version of the full-cavity relation $Y=W$, and this implies a diffusive, parabolic version of \eqref{eq:ellipticpressure}.
-
-First we replace $Y$ by $W$ in the right side of \eqref{eq:hewittcapacity}, giving
+\subsection*{Diffusive nearly-full closure}  We now propose a damped version of the full-cavity relation $Y=W$, and this implies a diffusive, parabolic version of \eqref{eq:ellipticpressure}.  First we replace $Y$ by $W$ in the right side of \eqref{eq:hewittcapacity}, giving
 \begin{equation}
 \frac{\partial Y}{\partial t} = c_1 |\bv_b| (W_r - W)_+ - c_2 A (P_o - P)^3 (W+Y_0), \label{eq:capacity}
 \end{equation}
-using the opening and closing terms given by \eqref{eq:openingform} and \eqref{eq:closingform}.  For equation \eqref{eq:capacity} we have used the full closure $W=Y$ directly.
+using the opening and closing terms given by \eqref{eq:openingform} and \eqref{eq:closingform}.
 
 Now let $E_0>0$ be a fixed, small vertical distance.  It is intended to be a fraction of the typical aquifer thickness.  We approximate the full-closure time derivative identity $\partial W/\partial t = \partial Y/\partial t$ by this new damped version:
 \begin{equation}
 \frac{E_0}{P_o} \frac{\partial P}{\partial t} =  \frac{\partial W}{\partial t}  - \frac{\partial Y}{\partial t}.\label{eq:dampeddstrong}
 \end{equation}
-Intuitively, Equation \eqref{eq:dampeddstrong} represents a kind of penalty method \citep{NocedalWright} for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$.  Now use expressions \eqref{eq:conserve} and \eqref{eq:flux} for $\partial W/\partial t$ and \eqref{eq:capacity} for $\partial Y/\partial t$:
+Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, the pressure decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).  Also, Equation \eqref{eq:dampeddstrong} represents a kind of ``penalty method'' \citep{NocedalWright} for enforcing constraint \eqref{eq:strongclosure}.  The $E_0\to 0$ (singular) limit of equation \eqref{eq:dampeddstrong} recovers $\partial W/\partial t = \partial Y/\partial t$ and thus \eqref{eq:ellipticpressure}.
+
+Now use expressions \eqref{eq:conserve} and \eqref{eq:flux} for $\partial W/\partial t$ and \eqref{eq:capacity} for $\partial Y/\partial t$:
 \begin{align}
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K\,W}{\rho_w g} \grad \psi\right) + \Phi - c_1 |\bv_b| (W_r - W)_+  + c_2 A (P_o - P)^3 (W+Y_0). \label{eq:diffusionpressure}
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K(W)\,W}{\rho_w g} \grad \psi\right) + \Phi - c_1 |\bv_b| (W_r - W)_+  + c_2 A (P_o - P)^3 (W+Y_0). \label{eq:diffusionpressure}
 \end{align}
-In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.
+In any region where $W>0$, equation \eqref{eq:diffusionpressure} is a diffusion, a parabolic equation for $P$.  Note that the steady state case converts \eqref{eq:diffusionpressure} to \eqref{eq:ellipticpressure}.
 
-Intuitively, because $E_0/P_o$ is positive in any glacier-covered area, by equation \eqref{eq:dampeddstrong} the pressure increases when $W$ is growing faster than $Y$ (e.g.~if the aquifer is being forced open by water).  Conversely, the pressure decreases when $Y$ is growing faster than $W$ (e.g.~if cavitation is opening space for water but water is being supplied more slowly).  Recombining equations \eqref{eq:diffusionpressure} and \eqref{eq:dampeddstrong} allows us to see that a difference between the rates of change $\partial W/\partial t$ and $\partial Y/\partial t$ is generated by an imbalance of the mechanisms that are exactly balanced when equation \eqref{eq:ellipticpressure} holds.  Of course, the steady state case converts \eqref{eq:diffusionpressure} to \eqref{eq:ellipticpressure}.
 
-\subsection*{A new subglacial hydrology model}  At this point we have a new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  Defining $c_0 = K / \rho_w g$, here is the model:
+\section{A new subglacial hydrology model}
+
+At this point we nearly have a complete new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  The conductivity function $K(W)$ remains to be specified.  As noted, we will consider both the constant case $K(W)=K_0$ and a nontrivial case.  For the latter we choose this specific form based on the idea that when the water exceeds the roughness scale the conductivity rises abruptly, but also we desire $\partial K/\partial W$ to be finite.  Let $K_0 \le K_1$ be positive constants.  Then:
+\begin{align}
+K(W) &= \begin{cases} K_0, & 0 \le W \le W_r \\ K_1 + (K_0-K_1) e^{(W-W_r)/W_r}, & W > W_r \end{cases} \label{eq:nontrivialK} \\
+  &= K_1 + (K_0-K_1) \exp\left((W-W_r)_+/W_r\right). \notag
+\end{align}
+Generally we choose $K_1$ to be much larger than $K_0$ and we note that $\lim_{W\to\infty}K(W)=K_1$.  On the other hand, setting $K_1=K_0$ in \eqref{eq:nontrivialK} recovers the constant formula $K(W)=K_0$.  Figure \ref{fig:Kcompare} shows this function.
+
+\begin{figure}[ht]
+\includegraphics[width=3.5in,keepaspectratio=true]{figs/Kcompare}
+\medskip
+\caption{Function $K(W)$ defined by \eqref{eq:nontrivialK} (solid) has a bounded derivative but also has an abrupt change in behavior at $W=W_r$.  The constant case $K(W)=K_0$ is also shown (dashed).  Parameters $W_r=1,K_0=0.01,K_1=0.1$ are chosen for illustration.}
+\label{fig:Kcompare}
+\end{figure}
+
+The mathematical model is now fully-specified:
 \begin{empheq}[box=\mybluebox]{align}
 0 &\le W, \notag \\
 0 &\le P \le P_o, \notag \\
 \psi &= P + \rho_w g (b + W), \notag \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(c_0\,W\, \grad \psi \right) + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+ + \Phi, \label{eq:bluebox} \\
-\bV &= - c_0 \grad P - K \grad b, \notag \\
-\frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(K W \grad W\right) + \Phi. \notag
+K(W) &= K_1 + (K_0-K_1) \exp\left((W-W_r)_+/W_r\right), \notag \\
+\bV &= - \frac{K(W)\,W}{\rho_w g} \grad P - K(W) \grad b, \label{eq:bluebox} \\
+\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K(W)\,W}{\rho_w g}\, \grad \psi \right) + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+ + \Phi, \notag \\
+\frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(K(W)\, W \grad W\right) + \Phi. \notag
 \end{empheq}
 
-Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$, $\bV$, and $c_0$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context, though they could be allowed to vary spatially if desired.
+Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context, though they could be allowed to vary spatially if desired.
 % FIXME: actually we want K to depend on W<W_r or W>W_r
 Default values must be chosen for these parameters, but exploration of the parameter space is appropriate.  The data functions are, in practice, supplied by an ice sheet model.  
 
@@ -311,7 +327,7 @@ Default values must be chosen for these parameters, but exploration of the param
 \begin{tabular}{r|c}
 class & symbols \\ \hline
 \emph{state functions} & $W$, $P$ \\
-\emph{scalar parameters} & $A$, $c_1$, $c_2$, $E_0$, $g$, $K$, $\rho_i$, $\rho_w$, $W_r$, $Y_0$ \\
+\emph{scalar parameters} & $A$, $c_1$, $c_2$, $E_0$, $g$, $K_0$, $K_1$, $\rho_i$, $\rho_w$, $W_r$, $Y_0$ \\
 \emph{data functions} & $b$, $\Phi$, $P_o$, $|\bv_b|$ \\
 \hline
 \end{tabular}
