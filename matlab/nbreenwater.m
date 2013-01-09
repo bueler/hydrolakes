@@ -45,10 +45,10 @@ for i=1:length(x)
     end
 end
 
-if true
+sqw = 1000;  sqh = 310;  % sizes so pixels are square
+if false
   fprintf('showing initial fields ...\n')
 
-  sqw = 1000;  sqh = 310;  % sizes so pixels are square
   figure(1)
   set(gcf,'position',[100 250 sqw sqh])
   subplot(1,2,1)
@@ -100,7 +100,8 @@ magvb = vb * ones(size(topg));
 ts = 0.0;
 te = tyears*p.spera;
 fprintf('calling doublediff() to do run for %.3f years:\n\n',tyears)
-[W, P] = doublediff(x,y,topg,usurf,magvb,outline,W0,P0,Phi,ts,te,5);
+%[W, P] = doublediff(x,y,topg,usurf,magvb,outline,W0,P0,Phi,ts,te,5);
+[W, P] = doublediff(x,y,topg,usurf,magvb,outline,W0,P0,Phi,ts,te,5,false,false);
 
 if true
   fprintf('showing final fields: W, P\n')
