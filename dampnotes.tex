@@ -303,7 +303,7 @@ Generally we choose $K_1$ to be much larger than $K_0$ and we note that $\lim_{W
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{figs/Kcompare}
 \medskip
-\caption{Function $K(W)$ defined by \eqref{eq:nontrivialK} (solid) has a bounded derivative but also has an abrupt change in behavior at $W=W_r$.  The constant case $K(W)=K_0$ is also shown (dashed).  Parameters $W_r=1,K_0=0.01,K_1=0.1$ are chosen for illustration.}
+\caption{Function $K(W)$ defined by \eqref{eq:nontrivialK} (solid) has a bounded derivative but also has an abrupt change in behavior at $W=W_r$.  The constant case $K(W)=K_0$ is also shown (dashed).  Parameters $W_r=1,K_0=0.001,K_1=0.01$ are chosen for illustration.}
 \label{fig:Kcompare}
 \end{figure}
 
@@ -318,9 +318,7 @@ K(W) &= K_1 + (K_0-K_1) \exp\left((W-W_r)_+/W_r\right), \notag \\
 \frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(K(W)\, W \grad W\right) + \Phi. \notag
 \end{empheq}
 
-Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context, though they could be allowed to vary spatially if desired.
-% FIXME: actually we want K to depend on W<W_r or W>W_r
-Default values must be chosen for these parameters, but exploration of the parameter space is appropriate.  The data functions are, in practice, supplied by an ice sheet model.  
+Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context, though they could be allowed to vary spatially if desired.  Default values must be chosen for these parameters, but exploration of the parameter space is appropriate.  The data functions are, in practice, supplied by an ice sheet model.  
 
 \begin{table}[ht]
 \caption{Symbols used in subglacial hydrology model \eqref{eq:bluebox}.}
@@ -337,12 +335,12 @@ class & symbols \\ \hline
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
+\subsection*{Processes become decoupled in steady state}  In this section we address only the $K(W)=K_0$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
 
-Recall that the flux has two expressions $\bq = - c_0 W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+Recall that the flux has two expressions $\bq = - K_0 (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
-\bV &= - c_0 \grad P - K \grad b, \label{eq:Vsteady} \\
-\bq &= \bV W - K W \grad W, \label{eq:qsteady} \\
+\bV &= - \frac{K_0}{\rho_w g} \grad P - K_0 \grad b, \label{eq:Vsteady} \\
+\bq &= \bV W - K_0 W \grad W, \label{eq:qsteady} \\
 0 &= - \Div \bq + \Phi, \label{eq:masscontsteady} \\
 0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
@@ -350,17 +348,15 @@ In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is ze
 
 \begin{table}[ht]
   \centering
-  \caption{Physical constants and major model parameters.}
+  \caption{Physical constants and major model parameters used throughout the paper.}
   \begin{tabular}{lllp{3.0in}} 
     \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
 \hline
     $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \phantom{$\Big|$} \\
-    $c_0$ & $1.0194\times 10^{-6}$ & $\text{m}^{2}\,\text{Pa}^{-1}\,\text{s}^{-1}$ & constant in model \eqref{eq:bluebox}: $c_0=K/(\rho_w g)$ \phantom{$\Big|$} \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient in \eqref{eq:capacity} \\
     $c_2$ & $0.04$ & & creep closure coefficient in \eqref{eq:capacity} \\
     $E_0$ & $1.0$ & m & regularization thickness in \eqref{eq:dampeddstrong} \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
-    $K$ & $0.01$ & m $\text{s}^{-1}$ & effective hydraulic conductivity in \eqref{eq:flux} \\ % FIXME: K_min and K_max according to whether W>W_r
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $1$ & $\text{m}$ & roughness scale in \eqref{eq:capacity} \\
@@ -429,12 +425,12 @@ Recall that \cite{FlowersClarke2002_theory} propose the functional relation \eqr
 \end{equation}
 Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} illustrate these cases.  Note that the condition $W_c < W < W_r$ is identical to the normal pressure condition $0 < P < P_o$ in steady state.  Formula \eqref{eq:dPdWsteady} and the Figures agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield this formula for the velocity in steady state which applies in the normal pressure cases:
 \begin{align}
-\bV &= - c_0 \grad P - K \grad b = - c_0 \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - K \grad b  \notag \\
-    &= - c_0 \left[\grad \psi_o - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
+\bV &= - \frac{K_0}{\rho_w g} \grad P - K_0 \grad b = - \frac{K_0}{\rho_w g} \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - K_0 \grad b  \notag \\
+    &= - \frac{K_0}{\rho_w g} \left[\grad \psi_o - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
 \end{align}
 We have simplified the last expression by combining terms using the purely-geometrical function $\psi_o = P_o + \rho_w g b = \rho_i g H + \rho_w g b$ which we call the \emph{overburden potential}.  It is the hydraulic potential associated to an infinitesimal amount of water in the subglacial layer if it is at zero effective pressure.
 
-Equation \eqref{eq:Vsteadyexpand} can help us understand the advective flux $\bV W$ part of $\bq=\bV W - K W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \psi_o$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the known diffusive flux $-K W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.
+Equation \eqref{eq:Vsteadyexpand} can help us understand the advective flux $\bV W$ part of $\bq=\bV W - K_0 W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \psi_o$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the known diffusive flux $-K_0 W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.
 
 We see that in steady state we have
 \begin{equation}
@@ -449,7 +445,7 @@ Thinking more generally, it is no surprise that when the ice thickness, bed elev
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} and eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
-q &= - c_0 W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
+q &= - \frac{K_0}{\rho_w g} W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
 \frac{1}{r}\frac{d}{dr}\left(r\,q\right) &= \Phi. \label{eq:rsconserve}
 \end{align}
 In the case of constant water input $\Phi(r)=\Phi_0$, which we assume for the exact solution, from \eqref{eq:rsconserve} we can integrate from $0$ to $r$ and use symmetry ($q(0)=0$) to get
@@ -461,7 +457,7 @@ On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$
 \begin{equation}
 \varphi_0\, r = - W\, \left(\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} + \left(\frac{s_b (W_r + Y_0)}{3 (W+Y_0)^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\right)  \label{eq:ODEfirst}
 \end{equation}
-in cases where $W_c < W < W_r$ and where $\varphi_0 = \Phi_0 / (2 c_0)$. 
+in cases where $W_c < W < W_r$ and where $\varphi_0 = \rho_w g \Phi_0 (2 K_0)^{-1}$. 
 
 Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, solve for $dW/dr$:
 \begin{equation}
@@ -471,9 +467,11 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.  The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin at $r=L$ inward toward the center.
 
 
-\subsection*{An exact solution}  To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$.  Thus Figure \ref{fig:Pexact} shows a small cliff at the margin in the exact solution generated in this section.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
+\section{A nearly-exact steady solution}
 
-It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
+To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$.  Thus Figure \ref{fig:Pexact} shows a small cliff at the margin in the exact solution generated in this section.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$, and the central value $W(0)$ is determined as part of the solution.
+
+\subsection*{Chosen surface elevation and sliding velocity}  It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
 h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
@@ -487,7 +485,7 @@ The sliding speed could be determined by a model for stresses at the ice base an
 \end{equation}
 It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
 
-Now we can solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ and the specific values in Table \ref{tab:verifconstants} by using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} also imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}.  This relation allows us to also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure (solid curves).  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.  At $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.
+\subsection*{Numerical solution of radial ODE to give nearly-exact $W(r)$}  Now we can solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ and the specific values in Table \ref{tab:verifconstants} by using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} also imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}.  This relation allows us to also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure (solid curves).  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.  At $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.
 
 \begin{table}[ht]
   \centering
@@ -497,6 +495,7 @@ Now we can solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ 
 \hline
     $\Phi_0$ & $20$ & $\text{cm}\,\text{a}^{-1}$ & water input rate \\
     $h_0$ & $500$ & m & ice cap center thickness \\
+    $K_0$ & $0.01$ & $\text{m}\,\text{s}^{-1}$ & constant hydraulic conductivity \\
     $L$   & $22.5$& km & $=0.9 R_0$; actual ice cap margin \\
     $R_0$ & $25$  & km & ideal ice cap radius \\
     $R_1$ & $5$   & km & radial location $r=R_1$ of onset of sliding \\
@@ -540,11 +539,11 @@ We first consider stable time steps.  The time step restriction for the advectiv
 \end{equation}
 Here $\bV=(\alpha,\beta)$ is the advection velocity.  The Appendix shows that this condition is sufficient for the first-order upwind scheme, but standard theory suggests the higher-order advection scheme has the same restriction \citep{HundsdorferVerwer2010}.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$ \citep{MortonMayers} where
 \begin{equation}
-\Delta t_W\, (2 K \max W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
+\Delta t_W\, 2 \max(K(W) W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
 \end{equation}
 The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of the overall scheme for \eqref{eq:adeqn}.
 
-To understand these restrictions quantitatively, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K=10^{-2}$ m/s from Table \ref{tab:constants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+To understand these restrictions quantitatively, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K(W)=K_0=10^{-2}$ m/s from Table \ref{tab:verifconstants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
 
 \begin{figure}[ht]
 \centering
@@ -554,21 +553,28 @@ To understand these restrictions quantitatively, we consider typical values of t
 \label{fig:stencil}
 \end{figure}
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV = - c_0 \grad P - K \grad b$ and let $\bQ=\bV W$ so that $\Div \bQ = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.  We use ``compass'' notation like $\alpha_e = \alpha_{i+1/2,j}$, and so on, for the components:
-\begin{equation}
-\alpha_e = - c_0 \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \qquad \beta_n  = - c_0 \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \label{eq:velocitycomp}
-\end{equation}
-Note that $\alpha_w = \alpha_e\big|_{(i-1,j)}$ and $\beta_s = \beta_n\big|_{(i,j-1)}$ so there are two distinct staggered grid values (i.e.~$\alpha_e,\beta_n$) to compute per regular grid location $(x_i,y_j)$.  The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection, but they use only the single, stated velocity component at these staggered locations.  Finally, for the diffusive term the staggered-grid values of $W$ are needed.  They are computed by averaging:
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W$ so that $\Div \bQ = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.
+
+We use ``compass'' notation such as $\alpha_e = \alpha_{i+1/2,j}$ for the ``east'' staggered component.  Also when defining the velocity and the diffusive term (below) we will need staggered grid values of the water layer thickness, and again we use compass notation for these.  They are computed by averaging regular grid values:
 \begin{equation}
 W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
 \end{equation}
-Again $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.
+In this case we can compute the ``west'' and ``south'' values by shifting our base point by one space: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.
+
+Now we can get the velocity components needed at staggered locations:
+\begin{align}
+\alpha_e &= - \frac{K(W_e)}{\rho_w g} \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K(W_e) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \label{eq:velocitycomp} \\
+\beta_n  &= - \frac{K(W_n)}{\rho_w g} \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K(W_n) \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \notag
+\end{align}
+Again $\alpha_w = \alpha_e\big|_{(i-1,j)}$ and $\beta_s = \beta_n\big|_{(i,j-1)}$; there are only two distinct staggered grid values (i.e.~$\alpha_e,\beta_n$) to compute per regular grid location $(x_i,y_j)$.
+
+The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the co-located (staggered) velocity component but there is upwinding to determine which $W$ value(s) are used.
 
 Now we can state our scheme for equation \eqref{eq:adeqn}:
 \begin{align}
  &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{Q_e(\alpha_e) - Q_w(\alpha_w)}{\Delta x} + \frac{Q_n(\beta_n) - Q_s(\beta_s)}{\Delta y}  \label{eq:Wfd} \\
-      &\qquad = K \bigg[\frac{W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
-      &\qquad\qquad\qquad + \frac{W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}\bigg] + \Phi_{ij}. \notag
+      &\qquad = \frac{K(W_e) W_e \left(W_{i+1,j}^l - \Wlij\right) - K(W_w) W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{K(W_n) W_n \left(W_{i,j+1}^l - \Wlij\right) - K(W_s) W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2} + \Phi_{ij}. \notag
 \end{align}
 Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
@@ -665,17 +671,24 @@ When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is inc
 For either the first-order or high-resolution flux schemes, and even if the combined advection-diffusion scheme is still structurally-positive as is proved in the Appendix for first-order upwind fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).  Generally we must project (reset) $W$ to be nonnegative at the end of each time step.
 
 
-\subsection*{Discretization of the pressure evolution equation}  The pressure evolution equation \eqref{eq:diffusionpressure} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  Unlike \eqref{eq:adeqn} there is no dominating advection term.  We discretize it using an explicit centered, second-order scheme.  Again, because this is an explicit scheme, we consider stable time steps immediately.
+\subsection*{A numerical scheme for the ``lakes'' model}  Recall equation \eqref{eq:PisoverConservation} which came from the mass conservation equation and the assumption that the subglacial water pressure was equal to the overburden pressure.  We call this the ``lakes'' model because its primary purpose in the literature has been in the identification of the locations of subglacial lakes in Antarctica.  It simply pushes water toward the minima of the hydraulic potential.  We now have a numerical scheme that suffices for this model, and the more complete model we seek only adds a new pressure equation to this ``lakes'' model.
+
+To be a little more careful, consider the model consisting of advection-decomposition equations \eqref{eq:vexpression} and \eqref{eq:adeqn}.  Furthermore suppose $P=\lambda P_o$ with $0<\lambda\le 1$ so that the pressure is a fixed fraction of overburden.  Then this model has advection-diffusion form \eqref{eq:adeqn} and it is well-posed.  Taken literally, the model \eqref{eq:PisoverConservation} which appears in the literature generally predicts subglacial lakes of infinitesimal extent if the bed elevation is differentiable but not continuously-so (and infinite depth in steady state); it is not well-posed in that sense.  Here the addition of the term ``$\rho_w g W$'' to the hydraulic potential, as used in this paper, provides a diffusive term which implies finite lakes.
+
+The numerical schemes above suffice for this continuum ``lakes'' model, and they are implemented in PISM.  The more complete model, whose numerical implementation is described next, is logically an extension of this ``lakes'' (sub)model in which the artificial closure $P=\lambda P_o$ is replaced by a physically-motivated closure based on cavity opening and closing processes.
+
+
+\subsection*{Discretization of the pressure evolution equation}  The pressure evolution equation \eqref{eq:diffusionpressure} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  Unlike solving \eqref{eq:adeqn} for $W$, when solving \eqref{eq:diffusionpressure} for $P$ there is no dominating advection term.  Therefore we discretize it using an explicit centered, second-order scheme.  Again, because this is an explicit scheme, we consider stable time steps immediately.
 
 The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof in the appendix does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  Noting that $P_o=\rho_i g H$, the time step must satisfy $\Delta t \le \Delta t_P$ where
 \begin{equation}
-\Delta t_P\, \left(\frac{2 K \rho_i \max H \max W}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
+\Delta t_P\, \left(\frac{2 \rho_i \max H \max(K(W) W)}{\rho_w E_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
 \end{equation}
 The resulting time step $\Delta t_P$ is a fraction of $\Delta t_W$ from \eqref{eq:dtDIFFW}:
 \begin{equation}
 \Delta t_P = \frac{\rho_w E_0}{\rho_i \max H}\, \Delta t_W.  \label{eq:dtDIFFPfromW}
 \end{equation}
-In fact, with the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have $\Delta t_P$ which is about 1000 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K=10^{-2}$ m/s and $\max W=1$ m) we get
+In fact, with the estimates $\rho_w/\rho_i \approx 1$, $E_0\approx 1$ m, and $\max H \approx 1000$ m we have $\Delta t_P$ which is about 1000 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $K_0=10^{-2}$ m/s and $\max W=1$ m) we get
 \begin{align*}
   \Delta t_{\text{CFL}} &\approx 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
   \Delta t_W            &\approx 0.1    \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
@@ -685,18 +698,18 @@ Thus the numerical scheme for pressure diffusion, given next, has the shortest t
 
 Now, the scheme we use for \eqref{eq:diffusionpressure} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn} but without a need for approximating advection:
 \begin{align}
-\frac{E_0}{(P_o)_{i,j}} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= c_0 \bigg[\frac{W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
-      &\qquad\qquad + \frac{W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
+\frac{E_0}{(P_o)_{i,j}} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{1}{\rho_w g} \bigg[\frac{K(W_e)\,W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - K(W_w)\,W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
+      &\qquad\qquad + \frac{K(W_n)\,W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - K(W_s)\,W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
       &\qquad + c_2 A \left(\rho_i g H_{i,j}- \Plij\right)^3 \Wlij - c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+ + \Phi_{i,j}. \notag
 \end{align}
 For implementation it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define
-	$$\omega_x = \frac{c_0 \Delta t}{\Delta x^2}, \qquad \omega_y = \frac{c_0 \Delta t}{\Delta y^2}.$$
+	$$\omega_x = \frac{\Delta t}{\rho_w g \Delta x^2}, \qquad \omega_y = \frac{\Delta t}{\rho_w g \Delta y^2}.$$
 Also let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
 be the gridded values of the cavitation-opening and creep-closure rates.  Then scheme \eqref{eq:Pfd} is equivalent to this form:
 \begin{align}
-P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
-      &\qquad\qquad\qquad\quad + \omega_y W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
+P_{i,j}^{l+1} &= \Plij +  \frac{(P_o)_{i,j}}{E_0} \bigg[\omega_x K(W_e) W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x K(W_w) W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
+      &\qquad\qquad\qquad\quad + \omega_y K(W_n) W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y K(W_s) W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
       &\qquad\qquad\qquad\quad + \Delta t\, \left(\mathcal{C}_{ij} - \mathcal{O}_{ij} + \Phi_{i,j}\right)\bigg]. \notag
 \end{align}
 
@@ -821,7 +834,7 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
 Explicit numerical scheme \eqref{eq:Wfd} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case ($\psi=0$) of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its properties.  For this scheme we sketch a maximum principle argument \citep{MortonMayers} which shows both stability and positivity (if the water input $\Phi$ is nonnegative and the discrete water thicknesses $\Wlij$ are nonnegative then the updated values $W_{i,j}^{l+1}$ are also nonnegative) for the whole advection-diffusion discretization.    We consider only the case where all of the discrete velocities at the centers of cell interfaces are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The other upwinding cases, wherein these velocity components have various signs, can be handled by similar special-case arguments like the present one.
 
-Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K \Delta t / (\Delta x)^2$, and $\mu_y = K \Delta t / (\Delta y)^2$.  We rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
+Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = K_0 \Delta t / (\Delta x)^2$, and $\mu_y = K_0 \Delta t / (\Delta y)^2$.  We rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
 \begin{align*}
  W_{i,j}^{l+1} &= \Wlij - \nu_x \left(\alpha_e \Wlij - \alpha_w W_{i-1,j}^l\right) - \nu_y \left(\beta_n \Wlij - \beta_s W_{i,j-1}^l\right)  \\
       &\qquad + \mu_x \left[W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
@@ -842,7 +855,7 @@ Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 
 \end{equation}
 Also assume a second time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
 \begin{equation}
-\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K(W_e + W_w)}{\Delta x^2} + \frac{K(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
+\mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{K_0(W_e + W_w)}{\Delta x^2} + \frac{K_0(W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
 \end{equation}
 Thus the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
 	$$E = 1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
