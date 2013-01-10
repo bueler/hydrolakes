@@ -2,8 +2,8 @@ function Kcompare;
 % Kcompare  Plot K(W).
 
 p = params();
-K0 = 0.01;
-K1 = 0.1;
+K0 = 0.001;
+K1 = 0.01;
 
 W = 0.0:0.01:5*p.Wr;
 
@@ -16,9 +16,9 @@ figure(1)
 plot(W,K,'k',W,K0*ones(size(W)),'k--',W,K1*ones(size(W)),'k:')
 grid on
 hold on
-text(3.0,0.018,'K(W)=K_0','FontSize',18.0)
-text(2.2,0.065,'K(W)','FontSize',18.0)
-text(0.7,0.104,'K_1','FontSize',18.0)
+text(3.0,0.0018,'K(W)=K_0','FontSize',18.0)
+text(2.2,0.0065,'K(W)','FontSize',18.0)
+text(0.7,0.0104,'K_1','FontSize',18.0)
 hold off
 axis([min(W) max(W) 0.0 1.2*K1])
 xlabel('W  (m)')
