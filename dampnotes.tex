@@ -864,4 +864,24 @@ It follows from \eqref{eq:lincomb} that if $\Wlij\ge 0$ and $\Phi_{ij}\ge 0$ for
 We see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative if the time step restrictions are satisfied.  Furthermore the coefficients add to one.  It follows \citep{MortonMayers} that scheme \eqref{eq:Wfd} with first-order upwinding is positivity-preserving when $\Phi\ge 0$.  It also follows that the scheme is stable under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}; these are the all-upwinding-cases generalizations of inequalities \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}, respectively.
 
 
+\section{Summary of the Bartholomaus et al.~(2011) ``lumped'' model with englacial and subglacial storage}  The model in \cite{Bartholomausetal2011}, which describes the evolution of the intriguing hydrology of the Kennicott glacier in Alaska, is significantly different from the distributed model of \cite{Schoofetal2012} which we focus on in the main text.  On the one hand both of these sources are interested in the relationship of sliding to the evolution of linked-cavity systems, and also both consider physical cavity opening and closing processes.  On the other hand the \cite{Schoofetal2012} theory is distributed and entirely subglacial while the \cite{Bartholomausetal2011} is ``lumped'' (i.e.~the entire glacier is represented by one cell) and there is both subglacial and englacial storage.  In this Appendix we report the equations of the \cite{Bartholomausetal2011} model and derive the pressure evolution equation for this model.  The form of this pressure equation is suggested by equation (12) in \cite{Bartholomausetal2011} but the full pressure equation is not stated.  This pressure equation suggests why we may think of the diffusive regularization \eqref{eq:dampeddstrong} in the main text as actually describing the efficient connection of the subglacial cavity system to englacial storage parameterized by a porosity $\phi$.
+
+The \cite{Bartholomausetal2011} model has the following variables and equations.
+
+The volume of liquid water stored in the glacier is $S(t)$ (m$^3$), and this is split into englacial $S_{en}(t)$ and subglacial $S_{sub}$ portions, thus $S=S_{en}+S_{sub}$.  The cavities have geometry partially-determined by bedrock bumps with cartesian spacing $\lambda_x,\lambda_y$ (m), height $h$ (m), and width $w_c$ (m).  These combine to give a dimensionless capacity parameter $f=(h w_c)/(\lambda_x \lambda_y)$; $f=0.05$ is used for the Kennicott glacier application.  Each cavity has cross-sectional area $A_c$ (m$^2$) so the volume of each cavity is $w_c A_c$ (m$^3$).  The glacier occupies a rectangle of dimensions $L\times W$ in the map-plane so that the number of cavities is $\nu = (LW)/(\lambda_x\lambda_y)$.  It follows that the subglacial storage volume is $S_{sub} = (w_c A_c) \nu = (f L W/h) A_c$.  Englacial water is assumed to fill crevasses and moulins up to a level $z_w$ (m) above the bedrock.  Because the glacier is assumed to have macroporosity $\phi$ (dimensionless), the englacial storage is $S_{en}=L W \phi z_w$.  Mass conservation in the model is the simple statement
+\begin{equation}
+\frac{dS}{dt} = Q_{in}(t) - Q_{out}(t), \label{eq:barth:massconserve}
+\end{equation}
+where, in the Kennicott glacier application, both fluxes $Q_{in}$ and $Q_{out}$ are given by measured time-series.
+
+As in the main paper, denote the overburden pressure $P_o=\rho_i g H$ and the water pressure $P$ so that $N=P_o-P$ is the effective pressure applied by the glacier to its bed.  The water pressure is fully determined by the amount of englacial storage because there is an assumed efficient connection of the macroporous glacier to it subglacial system.  Thus
+\begin{equation}
+P = \rho_w g z_w.  \label{eq:barth:englacialpressure}
+\end{equation}
+
+As in the main part of the current paper, the cavity cross-sectional area evolves by opening (cavitation) caused by sliding and closure by creep.  A wall melt term is also given, and we include it as parameterized by \cite{Bartholomausetal2011}.  To describe these terms we use the notation $u_b$ for the sliding speed, $C_R$ for a wall melt coefficient,\footnote{In detail see equation (4) in \cite{Bartholomausetal2011}: $C_R = (1-\gamma_R) (\rho_w g) / (3 \rho_i L_f)$.} $|\grad z_s|$ for the glacier surface slope, and $C_c = (2 A)/n^n$.  Then the cavity area evolution equation is
+\begin{equation}
+\frac{dA_c}{dt} = u_b h - C_c A_c (P_o-P)^n + C_R \frac{\lambda_x}{W} |\grad z_s| Q_{out}.  \label{eq:barth:cavityevolution}
+\end{equation}
+
 \end{document}
