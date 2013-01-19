@@ -894,11 +894,30 @@ Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate the d
 \frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:fullpressure}
 \end{equation}
 
-THE LAST EQUATION FOLLOWS FROM WHAT'S IN BARTH.  IT SUGGESTS HOW TO DISTRIBUTE, BY RECOGNIZING THAT $(Q_{in} - Q_{out})/L \sim \partial Q/\partial x$.  IT SUGGESTS THAT AT STEADY STATE THE THEORY IN BARTH ALSO HAS $P$ AS A FUNCTION OF $A_c$.  BUT MOST IMPORTANTLY \eqref{eq:barth:fullpressure} IS THE DIRECT ANALOG OF \eqref{eq:dampeddstrong}.  IN FACT, WRITE IT THIS WAY:
+We emphasize that, though it is not stated there, the last equation \eqref{eq:barth:fullpressure} follows from the model equations stated in \cite{Bartholomausetal2011}.  Thus equation \eqref{eq:barth:fullpressure} does suggest how to extent the \cite{Bartholomausetal2011} theory in a useful way, namely how to distribute that model, which is ``lumped'' into one cell as given.  Specifically, consider a one-dimensional glacier flowing in the positive $x$ direction and with transverse width $W$.  Replace $L$ in \eqref{eq:barth:fullpressure} by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream (smaller $x$) flux while ``$Q_{out}$'' is downstream.  Moving a constant factor over to the left for reasons which will be explained momentarily, we can then write
+\begin{equation*}
+\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \left(- \frac{Q_{out} - Q_{in}}{\Delta x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right).
+\end{equation*}
+The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$.  Thus, recognizing that now $P=P(t,x)$, a distributed form of the \cite{Bartholomausetal2011} theory is the partial differential equation
 \begin{equation}
-\frac{\phi}{\rho_w g}\frac{\partial P}{\partial t} = \frac{1}{W} \left(\frac{\partial Q}{\partial x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:pressureanalog}
+\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \left(- \frac{\partial Q}{\partial x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right).  \label{eq:barth:distpressure}
 \end{equation}
-THIS EXPLAINS WHY WE REPLACE $E_0/H$ BY $\phi$.
+
+Another implication of the model in \cite{Bartholomausetal2011}, again not stated there, is a fact about the pressure in steady state.  Steady state ($d/dt = 0$) applied to \eqref{eq:barth:cavityevolution} gives
+\begin{equation*}
+0 = u_b h + \dot m - C_c A_c (P_o-P)^n.
+\end{equation*}
+(This equation can also be derived from the steady cases of \eqref{eq:barth:massconserve} and \eqref{eq:barth:fullpressure}.)  Thus there is a relationship between pressure and cavity area, thus the amount of subglacial water, in steady state:
+\begin{equation}
+P = P_o - \left(\frac{u_b h + \dot m}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
+\end{equation}
+In steady state we can say that $P=P(A_c)$ or $P=P(S_{sub})$.  Thus we can observe that, analogous to the reasoning which led to equation \eqref{eq:PofWsteady} in the main text, in steady state it is reasonable to relate the pressure to the amount of water.  It is interesting to observe, however, that \eqref{eq:barth:steadypressure} shows that the water pressure depends not at all on the englacial macroporosity $\phi$.  That is, even though the pressure is parameterized $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its steady value is entirely determined by the balance between sliding, wall melt, and creep closure, and the englacial connection is passive in determining the steady water pressure.
+
+Returning to equation \eqref{eq:barth:distpressure} we want to a critical point as it affects the main stream of the theory in the paper.  Namely, under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit is analogous to the \cite{Schoofetal2012} equation \eqref{eq:ellipticpressure}.  On the one hand this suggests we are on the right track in the current work.  Most importantly, however, \eqref{eq:barth:distpressure} allows a physical interpretation of the ad hoc regularization we propose in Section \ref{sec:closures} to give equation \eqref{eq:diffusionpressure}, which is
+\begin{equation*}
+\frac{E_0}{\rho_i g H} \frac{\partial P}{\partial t} = - \Div \bq + \Phi - c_1 |\bv_b| (W_r - W)_+  + c_2 A (P_o - P)^3 (W+Y_0)
+\end{equation*}
+in the notation of the main text, and recalling $P_o = \rho_i g H$ and Darcy equation \eqref{eq:flux}.  It follows that we can replace the small dimensionless ratio $E_0/H$ by $\phi$.  We can understand our ad hoc regularization as actually reflecting an efficient connection to an englacial macroporous system.  The ``diffusive regularization'' has a physical mechanism behind it.  [FIXME: write these ideas into the main text]
 
 
 
