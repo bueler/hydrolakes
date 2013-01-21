@@ -83,6 +83,8 @@
 
 
 \begin{document}
+\graphicspath{{../figs/}}
+
 \scriptsize \hfill \today \normalsize
 \vspace{0.5in}
 
@@ -301,7 +303,7 @@ K(W) &= \begin{cases} K_0, & 0 \le W \le W_r \\ K_1 + (K_0-K_1) e^{(W-W_r)/W_r},
 Generally we choose $K_1$ to be much larger than $K_0$ and we note that $\lim_{W\to\infty}K(W)=K_1$.  On the other hand, setting $K_1=K_0$ in \eqref{eq:nontrivialK} recovers the constant formula $K(W)=K_0$.  Figure \ref{fig:Kcompare} shows this function.
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/Kcompare}
+\includegraphics[width=3.5in,keepaspectratio=true]{Kcompare}
 \medskip
 \caption{Function $K(W)$ defined by \eqref{eq:nontrivialK} (solid) has a bounded derivative but also has an abrupt change in behavior at $W=W_r$.  The constant case $K(W)=K_0$ is also shown (dashed).  Parameters $W_r=1,K_0=0.001,K_1=0.01$ are chosen for illustration.}
 \label{fig:Kcompare}
@@ -398,14 +400,14 @@ The rest of this section uses the specific values in Table \ref{tab:constants}.
 Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of uniform sliding speed $|\bv_b|$.  Figure \ref{fig:psteady-Po} shows $P(W)$ for several cases of uniform overburden pressure $P_o$.  Replacing $Y_0=0$ makes no apparent difference in these figures; not shown.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ if $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}, which describe steady state, do not include the interval $0\le W < W_c$ because such underpressure conditions are not achievable in steady state.
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/psteady-vb}
+\includegraphics[width=3.5in,keepaspectratio=true]{psteady-vb}
 \medskip
 \caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed.  Four cases are shown (in color) using a fixed uniform ice thickness of $H=1000$ m: $|\bv_b|=0$ m/a (blue), $10$ m/a (green), $100$ m/a (red), and $1000$ m/a (cyan).  The values of $W_c$ for these cases are indicated by black dots with $P(W_c)=0$.  Relations \eqref{eq:PofWFC} (dashed black) and \eqref{eq:PofWBB} (dash-dot black) are shown with $W_{\text{crit}}=W_r$ for comparison.}
 \label{fig:psteady-vb}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/psteady-Po}
+\includegraphics[width=3.5in,keepaspectratio=true]{psteady-Po}
 \medskip
 \caption{Function $P(W)$ defined by \eqref{eq:PofWsteady} also depends on overburden pressure $P_o=\rho_i g H$.  We fix $|\bv_b|=100$ m/a and consider four cases of uniform thickness $H=$ $2000$ m (blue), $1000$ m (green), $500$ m (red), and $200$ m (cyan).}
 \label{fig:psteady-Po}
@@ -506,7 +508,7 @@ It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \e
 \end{table}
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-W-plot-onu}
+\includegraphics[width=3.5in,keepaspectratio=true]{exact-W-plot-onu}
 \caption{Nearly-exact radial, steady solution for water thickness $W(r)$ (dashed).  In $r$-versus-$W$ space the overpressure (O), normal pressure (N), and underpressure (U) regions are determined by ice geometry and sliding velocity (solid curves; see text).}
 \label{fig:Wexact}
 \end{figure}
@@ -522,7 +524,7 @@ Equation \eqref{eq:WradialODEnoslide} is actually the steady radial form of the 
 In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \varphi_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W=\tilde W= 0.21764$ m because $\Phi_0$ is constant and $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers mentioned above confirm that $W(r)$ is asymptotic to this constant value $\tilde W$ as $r\to 0$, and that $W(r)\approx \tilde W$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/exact-P-plot}
+\includegraphics[width=3.5in,keepaspectratio=true]{exact-P-plot}
 \caption{Nearly-exact radial, steady solution pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
 % FIXME:  add second axis for velocity
 \label{fig:Pexact}
@@ -547,7 +549,7 @@ To understand these restrictions quantitatively, we consider typical values of t
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=2.9in,keepaspectratio=true]{figs/diffstencil}
+\includegraphics[width=2.9in,keepaspectratio=true]{diffstencil}
 \bigskip
 \caption{Numerical scheme \eqref{eq:Wfd} for Equation \eqref{eq:adeqn} uses a grid-centered cell (dashed line).  The velocities, diffusivities, and fluxes are evaluated at the staggered grid locations (triangles) which are denoted with compass direction ($e,w,n,s$).  Scheme \eqref{eq:Pfd} has the same stencil.  The state functions $W,P$ live at the regular grid points (diamonds).}
 \label{fig:stencil}
@@ -749,13 +751,13 @@ Any useful mass accounting scheme will keep track of the projections in steps \e
 We use the constants in Table \ref{tab:verifconstants}.  The exact solution is shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}.  We do a one month run on grids with spacing decreasing by factors of two from $6$ km to $375$ m.  The results, generated from Matlab codes, are shown in Figures \ref{fig:refineW} and \ref{fig:refineP}.
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineW}
+\includegraphics[width=3.5in,keepaspectratio=true]{refineW}
 \caption{Average water thickness error $|W-W_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at $O(\Delta x^{0.78})$ for the flux-limited higher resolution scheme (\Large$\circ$\normalsize) and at $O(\Delta x^{0.80})$ the first-order upwind scheme (\scriptsize\,$\square$\,\normalsize).  The maximum errors essentially coincide for the two schemes (\large$\ast$ \normalsize for higher-resolution and $\times$ for first-order).  The maximum error does not decay because of $O(1)$ errors localized at the ice margin.}
 \label{fig:refineW}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{figs/refineP}
+\includegraphics[width=3.5in,keepaspectratio=true]{refineP}
 \caption{Average and maximum pressure error $|P-P_{exact}|$ decays with decreasing $\Delta x = \Delta y$.  The average error decays at comparable rates, $O(\Delta x^{1.08})$ for the flux-limited higher resolution scheme (\Large$\circ$\normalsize) and $O(\Delta x^{1.00})$ for the first-order upwind scheme (\scriptsize\,$\square$\,\normalsize).  Again the maximum errors essentially coincide for the two schemes.}
 \label{fig:refineP}
 \end{figure}
@@ -769,7 +771,7 @@ Based on this verification evidence, it is reasonable to choose first-order upwi
 As a result of this analysis, only the first-order upwind scheme was implemented in the Parallel Ice Sheet Model (PISM).  Figures \ref{fig:refineWPpism} show results from one month PISM runs using 4 processors on grids with spacing decreasing by factors of two from $5$ km to $156$ m.  This convergence evidence suggests that the PISM implementation is also correct.
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{figs/refineWpism} \quad \includegraphics[width=3.0in,keepaspectratio=true]{figs/refinePpism}
+\includegraphics[width=3.0in,keepaspectratio=true]{refineWpism} \quad \includegraphics[width=3.0in,keepaspectratio=true]{refinePpism}
 \caption{Average water thickness error $|W-W_{exact}|$ decays as $O(\Delta x^{0.85})$ and average pressure error $|P-P_{exact}|$ decays as $O(\Delta x^{1.13})$ in the PISM implementation.}
 \label{fig:refineWPpism}
 \end{figure}
@@ -780,31 +782,31 @@ As a result of this analysis, only the first-order upwind scheme was implemented
 FIXME: results from nbreen
 
 \begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{figs/bed-surf-250m}
+\includegraphics[width=7.0in,keepaspectratio=true]{bed-surf-250m}
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{figs/icethk-icefree-float-250m}
+\includegraphics[width=7.0in,keepaspectratio=true]{icethk-icefree-float-250m}
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{figs/outline-input-250m}
+\includegraphics[width=7.0in,keepaspectratio=true]{outline-input-250m}
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{figs/W-Pmask-250m}
+\includegraphics[width=7.0in,keepaspectratio=true]{W-Pmask-250m}
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{figs/Po-P-250m}
+\includegraphics[width=7.0in,keepaspectratio=true]{Po-P-250m}
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
@@ -812,8 +814,8 @@ FIXME: results from nbreen
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{figs/isPofW-250m} \,
-\includegraphics[width=3.0in,keepaspectratio=true]{figs/isPofW-250m-month}
+\includegraphics[width=3.0in,keepaspectratio=true]{isPofW-250m} \,
+\includegraphics[width=3.0in,keepaspectratio=true]{isPofW-250m-month}
 \caption{Left: Scatter plot of $(W,P)$ pairs for all cells at end of 5 year steady-input simulation on a 250 m grid.  Red dashed is equation \eqref{eq:PofWFC} with $W_{\text{crit}} = W_r = 1$ m.  Right: Same except at the end of a one month simulation, and with equation \eqref{eq:PofWFC} using $W_{\text{crit}} = W_r / 3$.}
 \label{fig:isPofWnbreen}
 \end{figure}

@@ -1,18 +1,20 @@
 hydrolakes
 ==========
 
-This project is about testing subglacial hydrology models under ice sheets, writing a paper about that, and supporting actual modeling of a tidewater glacier in Svalbard, namely Nbreen.
+This project is about constructing good subglacial hydrology models under ice sheets and glaciers, implementing and testing them in PISM, supporting actual modeling of a tidewater glacier (Nordenskioldbreen in Svalbard, i.e. "Nbreen"), and  writing a paper about that.
 
-To build the PDF `dampnotes.pdf`, which requires LaTeX, do
+To build the PDF `subenhydro.pdf`, which requires LaTeX, do
 
     $ ln -s ~/pism/doc/ice_bib.bib   # see github.com/pism/pism
     $ make
 
-The current model is by no means the first!  It might be the fifth or sixth in fact.  There was an early attempt to mimic the elliptic variational inequality formulation from Schoof et al. 2012; see `phoenix/` in this repo.  (And there were even earlier models than that.)
+The current model evolved from a series of more or less flawed, but mostly serious, attempts to improve the hydrology in PISM.  An old version is in `phoenix/` in this repo.  A simpler model suitable for locating subglacial lakes is documented primarily in the `bueler-igs2012/` subdirectory in this repo; in PISM it is the `-hydrology lakes` option and the PISMLakesHydrology class.  A more recent and more complete, but now out-of-date version, is in `dampnotes/` in this repo.  For the history of our attempts to build a better model see `dampnotes/README.md`.
 
-Another model we tried is very minimal.  It works in a mode more suitable for subglacial lakes than for ice streams or surging.  It was the basis for Bueler's June 2012 talk at the Fairbanks IGS Symposium; see `bueler-igs2012/` in this repo, and the codes and data in its subdirectory `matlab/ant/`.  It has become class PISMLakesHydrology in PISM (github.com/pism/pism) and it works fine for what it is.  There is no physics for cavity or conduit evolution at all, and the water pressure is merely the overburden pressure.
+The current model (i.e. the one described in `subenhydro.pdf`) is implemented in PISM by the `-hydrology distributed` option; this is the PISMDistributedHydrology class.  It has a successful verification case.  Running it gives reasonable results for Nbreen.
 
-The next model we tried was based on Ward van Pelt's notes of August 2012, with title "An extended hydrology model for PISM".  This model has an opening-closure equation of the type described in Hewitt (2011).  It has a damped form of the full-aquifer equation.  The damping does not obviously recover the elliptic variational inequality (in Schoof et al (2012)) in any obvious parameter limit, however.
+The model has an understandable relationship to:
 
-Starting in October 2012 we changed the damping and this time we have a clear extension of the Schoof et al (2012) theory.  This model has a successful verification case and reasonable run results for Nbreen.  We understand the relationship of this model to the "lakes" model above, and to the Schoof elliptic variational inequality form, and to the Flowers & Clarke (2002) theory.  This is PISMDistributedHydrology in PISM.  The notes `dampnotes.pdf` primarily document this model.
+1.  The Schoof et al (2012) distributed model, and specifically the elliptic variational inequality form of its pressure equation.
+2.  The Bartholomaus et al (2011) lumped sub-/en- glacial model used for the Kennicott glacier.
+3.  The Flowers & Clarke (2002) theory which assumes a function P(W), which we see is not necessary as an assumption but instead emerges as a property of steady state.
 

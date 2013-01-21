@@ -1,12 +1,12 @@
-all: subenhydro.pdf
+all: dampnotes.pdf
 
 # link ice_bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
 
-subenhydro.pdf: subenhydro.tex ice_bib.bib
-	pdflatex subenhydro
-	bibtex subenhydro
-	pdflatex subenhydro
-	pdflatex subenhydro
+dampnotes.pdf: dampnotes.tex ice_bib.bib
+	pdflatex dampnotes
+	bibtex dampnotes
+	pdflatex dampnotes
+	pdflatex dampnotes
 
 .PHONY: clean
 
