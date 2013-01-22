@@ -93,27 +93,37 @@
 
 \section{Introduction}
 
-Any reasonable dynamical model of the subglacial water layer under a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential.  Water could be exchanged with a porous englacial system.  Physical processes also control the geometry of the cavities or conduits in which the water moves, including the opening of cavities by sliding of the overlying ice past bedrock bumps (i.e.~cavitation) and the closure of cavities and channels by creep.  These physical processes should combine to determine the local relationship between water amount and water pressure.  
+Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential \citep{Clarke05}.  Then there are many variations considered in the existing literature.  Physical processes also control the geometry of the linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves, including the opening of cavities by sliding of the overlying ice past bedrock bumps (i.e.~cavitation), melt on the walls of cavities and conduits, and the closure of cavities and conduits by creep \citep{Hewitt2011}.  Water could be exchanged with a porous englacial system \citep{Bartholomausetal2011}.  The evolving pressure and amount of water in conduits could evolve by physical processes, but the existing theory of conduits apparently requires their locations to be fixed a priori \cite{PimentelFlowers2011,Schoofmeltsupply}.
 
-This paper describes such a model for distributed systems of linked cavities with additional englacial storage.  The cavities open by sliding of the ice and they close by ice creep.  Channels are not, however, included in the model.  Wall melt is included as a contribution to the mass conservation equation but not in the cavity evolution equation.
+This paper describes a model for distributed systems of linked subglacial cavities, with connection to additional englacial storage.  The cavities open by sliding of the ice and wall melt and they close by ice creep.  These physical processes combine to determine the local relationship between water amount and water pressure \citep{Schoofetal2012}.  Channels are not, however, included in the model.
+%FIXME:?  Wall melt is included as a contribution to the mass conservation equation but not in the cavity evolution equation.
 
-We model water pressure using a damped approximation of a full-cavity formulation of a distributed system \cite{Schoofetal2012}.  In our model pressure is determined non-locally over each connected component of the hydrological system.  However, unlike the \cite{Schoofetal2012} model in which an elliptic variational inequality for pressure must be solved at each time step, we avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition.  Our model replaces the elliptic pressure description by a parabolic approximation.
+In our model pressure is determined non-locally over each connected component of the hydrological system, and no prior functional relation between subglacial water amount and pressure is assumed \citep[compare]{FlowersClarke2002_theory}.  The connection to a macroporous englacial system implies that the subglacial water pressure solves an equation which is a parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.  Unlike the \cite{Schoofetal2012} model in which an elliptic variational inequality for pressure must be solved at each time step, at the cost of some computational inefficiency we can avoid solving an instantaneous distributed balance by not exactly enforcing the full-cavity condition.  Avoiding the elliptic solve eases implementation and parallelization.
 
-
-\section{Elements of a subglacial hydrology continuum model}
-
-We consider a layer of water with thickness $W(t,x,y)$.  This thickness is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  As the hydrologic system has fine spatial variation which one is unable to model with cells of kilometer size, we only attempt to model such spatially-averaged versions of water amount and water pressure.
-
-We assume that water is incompressible and of constant density.  Thus the thickness of the water layer tells us its mass.  Choosing to model subglacial hydrology using a water thickness is not a significant restriction on the physics.  Specific aquifer physics comes from choosing a form for the water flux and a closure for pressure.
+After deriving a fundamental advection-diffusion form of the model from more fundamental physical principles we consider cavity evolution and some alternatives for closures which can determine the pressure.  Then we consider the equations which apply in steady state and we show that pressure is function of subglacial water amount in that case.  In the steady radial case we compute an exact solution for subglacial water amount and pressure, a useful tool for verification.  Then we present a (parallel) numerical scheme with particular attention to time step restrictions and the treatment of advection.  The first presented numerical results are for the verification case, wherein we can show convergence under grid refinement.  After that we show results for the Nordenskioldbreen tidewater glacier in Svalbard.
 
 
-\subsection*{Mass conservation}  Suppose $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).  In two spatial dimensions the mass conservation equation is \citep{Clarke05}
-\begin{equation} \label{eq:conserve}
-\frac{\partial W}{\partial t} + \Div \bq = \Phi
-\end{equation}
-We always assume the water thickness is nonnegative:
+\section{Elements of a sub- and en-glacial hydrology continuum model}
+
+\subsection*{Mass conservation}  We assume that liquid water in a glacier is incompressible and of constant density.  Thus the thickness of a water layer tells us its mass, and thus our fundamental statement of mass conservation (below) will describe the evolution of water thickness.  Choosing to model subglacial hydrology using a water thickness as the state variable is not a significant restriction on the physics because specific subglacial physics comes from choosing a form for the water flux and a closure for the pressure.
+
+Denote the thickness of the subglacial water layer by $W(t,x,y)$.  This thickness is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  Though the hydrologic system has fine spatial variation which one is unable to model with cells of kilometer size, we  attempt to model spatially-averaged versions of water amount and water pressure.
+
+Additionally we allow water to be stored englacially in a system of crevasses, cracks, veins, and/or moulins of unspecified morphology but with overall macro porosity $\phi$ \citep{Bartholomausetal2011}.  (Throughout this paper the case $\phi=0$ will be considered.  In this case there is no englacial storage.  This case may apply to cold glaciers and the interior of ice sheets.  The extension that $\phi$ varies in time and map-plane location ($\phi(t,x,y)$) can also be considered.)
+% FIXME:  maybe we should allow phi(x,y) right away
+The mass of this water can be tracked with an elevation above the bed $z_{en}(t,x,y)$ for the top of the (notional) ``water table'' in the porous glacier.  In a column of the glacier with cross-sectional area $\Delta x \times \Delta y = \Delta a$ the volume of water is then $\phi\, \Delta a \, z_{en}$ \citep{Bartholomausetal2011}.  But then we can just as easily track the water by an effective thickness for the englacial water, say
 \begin{equation}
-W \ge 0.
+W_{en}(t,x,y) = \frac{\phi\, \Delta a\, z_{en}}{\Delta a} = \phi\, z_{en}. \label{eq:definezen}
+\end{equation}
+Thus the total effective thickness of the water in a glacier at map-plane location $(x,y)$ and time $t$ is $W(t,x,y)+W_{en}(t,x,y)$.
+
+Suppose $\bq$ is the vector water flux (units $\text{m}^2\,\text{s}^{-1}$) and $\Phi$ is a source term ($\text{m}\,\text{s}^{-1}$).  In two spatial dimensions the mass conservation equation is \citep{Clarke05}
+\begin{equation} \label{eq:conserve}
+\frac{\partial W}{\partial t} + \frac{\partial W_{en}}{\partial t} + \Div \bq = \Phi
+\end{equation}
+We always assume the water thicknesses are nonnegative:
+\begin{equation}
+W \ge 0, \qquad W_{en} \ge 0.
 \end{equation}
 
 We might separate the water sources between the melt on the lower surface of the glacier versus englacial and/or supraglacial drainage:
@@ -192,7 +202,7 @@ As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the i
 Clearly the flux $\bq$ depends on the bedrock slope $\grad b$ because the velocity $\bV$ has such a term.  Because bedrock elevation is rough (irregular) data in practice, however, this part of the velocity $\bV$ may not be very smooth, and it may be large in magnitude.
 
 
-\subsection*{Capacity of the distributed system}  Suppose $\bv_b$ is the ice basal velocity (i.e.~the sliding velocity).  The evolution of the area-averaged thickness $Y$ (m) of the cavities in a distributed linked-cavity system \citep{Schoofetal2012} can be described as the sum of opening by cavitation and closure by creep \citep{Hewitt2011}:
+\subsection*{Capacity of the distributed system}  Suppose $\bv_b$ is the ice basal velocity (i.e.~the sliding velocity).  The evolution of the area-averaged thickness, also called the bed separation \citep{Bartholomausetal2011}, of the cavities in a distributed linked-cavity system \citep{Schoofetal2012} can be described as the sum of opening by cavitation and closure by creep \citep{Hewitt2011}.  Let $Y$ (m) denote that bed separation, so that
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y). \label{eq:hewittcapacity}
 \end{equation}
