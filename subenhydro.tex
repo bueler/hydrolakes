@@ -35,6 +35,9 @@
 \newcommand*\mybluebox[1]{%
 \colorbox{myblue}{\hspace{1em}#1\hspace{1em}}}
 
+\newcommand*\myredbox[1]{%
+\colorbox{red}{\hspace{1em}#1\hspace{1em}}}
+
 % math macros
 \newcommand\bv{\mathbf{v}}
 \newcommand\bV{\mathbf{V}}
@@ -119,11 +122,7 @@ We separate the water sources between the melt on the lower surface of the glaci
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \frac{\partial W_{en}}{\partial t} + \Div \bq = \frac{m+S}{\rho_w}.
 \end{equation}
-We always assume the water thicknesses are nonnegative:
-\begin{equation}
-W \ge 0, \qquad W_{en} \ge 0.
-\end{equation}
-Coupling between the subglacial and englacial systems is addressed in Section \ref{sec:closures}.
+We always assume the water thicknesses are nonnegative: $W \ge 0$, $W_{en} \ge 0$.  Coupling between the subglacial and englacial systems is addressed in Section \ref{sec:closures}.
 
 \subsection*{Hydraulic potential and Darcy flow}  The water flux $\bq$ in equation \eqref{eq:conserve} is related to the gradient of a hydraulic potential (head) $\psi(t,x,y)$ for the subglacial water.  Water moves only laterally in the subglacial layer, and there is no lateral transport in the englacial network, and indeed the flux $\bq$ is always horizontal; it is the vertically-integrated fluid flux in the subglacial layer.  The flux combines the actual subglacial water pressure $P(t,x,y)$ and the gravitational potential of the top of the water layer,
 \begin{equation} \label{eq:potential}
@@ -245,7 +244,7 @@ This model is sometimes used for routing subglacial water under ice sheets so as
   \text{where} \qquad \tilde\bV = - K_0 \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right]. \notag
 \end{gather}
 
-Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the diffusion term ``$\Div\left(K_0 \,W\, \grad W\right)$'' on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  Therefore equation \eqref{eq:PisoverConservation} possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves because they have a velocity which depends directly and indirectly on the gradient of the water amount $W$, the same quantity which is being advected.
+Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the diffusion term ``$\Div\left(K_0 \,W\, \grad W\right)$'' on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  Therefore equation \eqref{eq:PisoverConservation} possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves.  They have a velocity which depends directly and indirectly on the gradient of the water amount $W$, the quantity which is being advected.
 
 The closure \textbf{I} continuum model in the form stated here, equation \eqref{eq:PisoverConservation} \emph{with} the diffusion term, is well-posed for positive initial and boundary values on $W$.  Continuum solutions have finite water layer thickness at all times.  By contrast, equation \eqref{eq:PisoverConservation} without the diffusion term, which is the way it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  Such a model is not well-posed and its numerical implementation is badly-behaved under grid refinement.
 % COMMENT: \eqref{eq:PisoverConservation} is PISMLakesHydrology
@@ -256,11 +255,10 @@ The closure \textbf{I} continuum model in the form stated here, equation \eqref{
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ and they make the approximation that the water layer thickness is small so it can be ignored in the hydraulic potential.  Figure \ref{fig:psteady-vb} below illustrates this function.  One obvious problem with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$), but this model is not intended to apply when that physical situation actually occurs, such as in large subglacial lakes.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get
+For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ and they make the approximation that the water layer thickness is small so it can be ignored in the hydraulic potential.  Figure \ref{fig:psteady-vb} below illustrates this function.  One obvious problem with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$), but this model is not intended to apply when that physical situation actually occurs, such as in large subglacial lakes.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get this equation with $\hat\bV = - K_0 \grad b$:
 \begin{equation}
-  \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{K_0\,W}{\rho_w g} \grad P_{FC}(W)\right) + \Phi \label{eq:PofWFCConservation}
+  \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{K_0\,W}{\rho_w g} \grad P_{FC}(W)\right) + \frac{m+S}{\rho_w}. \label{eq:PofWFCConservation}
 \end{equation}
-where $\hat\bV = - K_0 \grad b$.
 
 In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012},  equation \eqref{eq:PofWFC} generalizes the porous-medium equation $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and thus in this closure \textbf{II} in the $\grad b=0$ case, is that the \emph{direction} of the flux is exactly $-\grad W$.  The contrast with closure \textbf{I} is then clear, because the velocity under that closure is ice-geometry determined for any water distribution.
 
@@ -314,30 +312,31 @@ Though we do not use the $\phi\to 0$ elliptic limit of \eqref{eq:pressureequatio
 
 \section{A new subglacial hydrology model}
 
-At this point we nearly have a complete new mathematical model, consisting of conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:diffusionpressure} for evolution of pressure $P$, and the bounds on $W$ and $P$.  The conductivity function $K(W)$ remains to be specified.  As noted, we will consider both the constant case $K(W)=K_0$ and a nontrivial case.  For the latter we choose this specific form based on the idea that when the water exceeds the roughness scale the conductivity rises abruptly, but also we desire $\partial K/\partial W$ to be finite.  Let $K_0 \le K_1$ be positive constants.  Then:
-\begin{align}
-K(W) &= \begin{cases} K_0, & 0 \le W \le W_r \\ K_1 + (K_0-K_1) e^{(W-W_r)/W_r}, & W > W_r \end{cases} \label{eq:nontrivialK} \\
-  &= K_1 + (K_0-K_1) \exp\left((W-W_r)_+/W_r\right). \notag
-\end{align}
-Generally we choose $K_1$ to be much larger than $K_0$ and we note that $\lim_{W\to\infty}K(W)=K_1$.  On the other hand, setting $K_1=K_0$ in \eqref{eq:nontrivialK} recovers the constant formula $K(W)=K_0$.  Figure \ref{fig:Kcompare} shows this function.
+At this point we have an essentially-complete new mathematical model, consisting of conservation equation \eqref{eq:conservewithPen} for evolution of $W$, equation \eqref{eq:pressureequation} for evolution of pressure $P$, and the bounds on $W$ and $P$.  The conductivity function $K(W)$ remains to be specified.
 
-\begin{figure}[ht]
-\includegraphics[width=3.5in,keepaspectratio=true]{Kcompare}
-\medskip
-\caption{Function $K(W)$ defined by \eqref{eq:nontrivialK} (solid) has a bounded derivative but also has an abrupt change in behavior at $W=W_r$.  The constant case $K(W)=K_0$ is also shown (dashed).  Parameters $W_r=1,K_0=0.001,K_1=0.01$ are chosen for illustration.}
-\label{fig:Kcompare}
-\end{figure}
+FIXME: text and image of $K(W)$ removed; plan to use \eqref{eq:fluxalt}
 
 The mathematical model is now fully-specified:
 \begin{empheq}[box=\mybluebox]{align}
-0 &\le W, \notag \\
+W &\ge 0, \notag \\
 0 &\le P \le P_o, \notag \\
 \psi &= P + \rho_w g (b + W), \notag \\
-K(W) &= K_1 + (K_0-K_1) \exp\left((W-W_r)_+/W_r\right), \notag \\
-\bV &= - \frac{K(W)\,W}{\rho_w g} \grad P - K(W) \grad b, \label{eq:bluebox} \\
-\frac{E_0}{P_o} \frac{\partial P}{\partial t} &= \Div \left(\frac{K(W)\,W}{\rho_w g}\, \grad \psi \right) + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+ + \Phi, \notag \\
-\frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(K(W)\, W \grad W\right) + \Phi. \notag
+\bV &= - \frac{K(W)}{\rho_w g} \grad\left(P + \rho_w g b\right), \label{eq:bluebox} \\
+\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(\frac{K(W)\,W}{\rho_w g}\, \grad \psi \right) + \frac{m+S}{\rho_w} \notag \\
+  &\qquad \qquad + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+, \notag \\
+\frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K(W)\, W \grad W\right) + \left[\frac{m+S}{\rho_w} - \frac{\phi}{\rho_w g}\frac{\partial P}{\partial t}\right]. \notag
 \end{empheq}
+
+This form of the mathematical model may surprise some readers, but we have written it in a way that allows three particular limits to be clear:
+\begin{itemize}
+\item The $\phi\to 0$ limit is the model described by \cite{Schoofetal2012}.
+\item The $P \to P_o$ and $W\ll H$ (and $\phi \to 0$) limit is a standard model for locating subglacial lakes \cite{Siegertetal2009} in which the pressure is no longer unknown and thus any model of cavity evolution is inactive:
+\begin{empheq}[box=\mybluebox]{align}
+W &\ge 0, \notag \\
+\bV &= - \frac{K(W)}{\rho_w g} \grad\left(P_o + \rho_w g b\right), \phantom{ldsfj} \label{eq:lakesmodel} \\
+\phantom{ldsfj} \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \left[\frac{m+S}{\rho_w}\right]. \notag
+\end{empheq}
+\end{itemize}
 
 Model equations \eqref{eq:bluebox} relate the three classes of symbols in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current context, though they could be allowed to vary spatially if desired.  Default values must be chosen for these parameters, but exploration of the parameter space is appropriate.  The data functions are, in practice, supplied by an ice sheet model.  
 
@@ -352,20 +351,6 @@ class & symbols \\ \hline
 \end{tabular}
 \label{tab:symbols}
 \end{table}
-
-
-\section{Steady states}  \label{sec:steadyverif}
-
-\subsection*{Processes become decoupled in steady state}  In this section we address only the $K(W)=K_0$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
-
-Recall that the flux has two expressions $\bq = - K_0 (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
-\begin{align}
-\bV &= - \frac{K_0}{\rho_w g} \grad P - K_0 \grad b, \label{eq:Vsteady} \\
-\bq &= \bV W - K_0 W \grad W, \label{eq:qsteady} \\
-0 &= - \Div \bq + \Phi, \label{eq:masscontsteady} \\
-0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
-\end{align}
-In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is zero.  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
 \begin{table}[ht]
   \centering
@@ -386,6 +371,20 @@ In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is ze
   \end{tabular}
  \label{tab:constants}
 \end{table}
+
+
+\section{Steady states}  \label{sec:steadyverif}
+
+\subsection*{Processes become decoupled in steady state}  In this section we address only the $K(W)=K_0$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
+
+Recall that the flux has two expressions $\bq = - K_0 (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+\begin{align}
+\bV &= - \frac{K_0}{\rho_w g} \grad P - K_0 \grad b, \label{eq:Vsteady} \\
+\bq &= \bV W - K_0 W \grad W, \label{eq:qsteady} \\
+0 &= - \Div \bq + \Phi, \label{eq:masscontsteady} \\
+0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
+\end{align}
+In the last equation we have eliminated ``$- \Div \bq + \Phi$'' because it is zero.  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
 Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are identical to those of the \cite{Schoofetal2012} model, where the same decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
 
