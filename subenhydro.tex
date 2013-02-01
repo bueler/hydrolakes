@@ -323,6 +323,7 @@ W &\ge 0, \notag \\
 \end{empheq}
 This mathematical model is written so as to allow three limits to be clear:
 \begin{itemize}
+
 \item The $\phi\to 0$ limit of \eqref{eq:bluebox} is the $\beta=2$ form of the model described by \cite{Schoofetal2012}.  The equations in this case are straightforward to write down.  We replace the term $(\phi/(\rho_w g)) \partial P / \partial t = \partial W_{en}/\partial t$ by zero, and we set $Y_0=0$ to get complete agreement:
 \begin{empheq}[box=\mybluebox]{align}
 W &\ge 0, \notag \\
@@ -333,12 +334,15 @@ W &\ge 0, \notag \\
 \phantom{dsaf} \frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w}\right]. \notag
 \end{empheq}
 Physically, the $\phi \to 0$ limit of \eqref{eq:bluebox} gives model \eqref{eq:schoofsmodel} by removing the englacial storage.  Said mathematically, our model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel}, the \cite{Schoofetal2012} model, based on efficient connection to porous englacial storage with a small porosity parameter $\phi \ll 1$.
-\item The $P \to P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure is simply taken to equal overburden $P_o$, is the standard model for locating subglacial lakes under cold (i.e.~also $\phi \to 0$) ice sheets \cite{Siegertetal2009}.  (See the discussion of equation \eqref{eq:PisoverConservation} in section \ref{sec:closures}.)  In this limit the pressure is not an unknown and the parameterization of cavity evolution is inactive:
+
+\item The $P \to P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to the overburden value $P_o$, is the standard model for locating subglacial lakes under cold (i.e.~also $\phi \to 0$) ice sheets \cite{Siegertetal2009}.  In this limit the pressure is not an unknown and the parameterization of cavity evolution is inactive:
 \begin{empheq}[box=\mybluebox]{align}
 W &\ge 0, \notag \\
-\bV &= - \frac{K(W)}{\rho_w g} \grad\left(P_o + \rho_w g b\right), \label{eq:lakesmodel} \\
-\phantom{ldsfj} \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(K(W)\, W \grad W\right) + \left[\frac{m+S}{\rho_w}\right]. \phantom{ldsfj} \notag
+\tilde\bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P_o + \rho_w g b\right), \label{eq:lakesmodel} \\
+\phantom{ldsfj} \frac{\partial W}{\partial t} + \Div\left(\tilde\bV\, W\right) &= \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w}\right]. \phantom{ldsfj} \notag
 \end{empheq}
+As noted in section \ref{sec:closures}, in the $\alpha=1$ case this simplified model routes water according to a velocity $\tilde\bV$ which is determined entirely by ice geometry.
+
 \item The non-distributed or lumped form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier, is essentially the porous glacier model of \cite{Bartholomausetal2011}.  The precise correspondence is explained in Appendix B.
 \end{itemize}
 
@@ -350,7 +354,7 @@ Model equations \eqref{eq:bluebox} relate four classes of symbols, as listed in 
 class & symbols \\ \hline
 \emph{state functions} & $W$, $P$ \\
 \emph{data functions} & $b$, $m$, $P_o$, $S$, $|\bv_b|$ \\
-\emph{scalar parameters} & $A$, $c_1$, $c_2$, $\phi$, $K_0$, $K_1$, $W_r$, $Y_0$ \\
+\emph{scalar parameters} & $A$, $\alpha$, $c_1$, $c_2$, $\phi$, $k$, $W_r$, $Y_0$ \\
 \emph{physical constants} & $g$, $\rho_i$, $\rho_w$ \\
 \hline
 \end{tabular}
@@ -364,10 +368,12 @@ class & symbols \\ \hline
     \textbf{Name} & \textbf{Default Value} & \textbf{Units} & \textbf{Description}\\
 \hline
     $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \phantom{$\Big|$} \\
+    $\alpha$ & 1 & & power on $W$ in flux formula \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient \\
     $c_2$ & $0.04$ & & creep closure coefficient \\
-    $\phi$ & $0.01$ & m & macroporosity of englacial system \\
+    $\phi$ & $0.01$ & & macroporosity of englacial system \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
+    $k$ & $0.01$ & $\text{m}^{2-\alpha} \text{s}^{-1}$ & constant hydraulic conductivity  \\
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $1$ & $\text{m}$ & roughness scale \\
@@ -380,12 +386,12 @@ class & symbols \\ \hline
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Processes become decoupled in steady state}  In this section we address only the $K(W)=K_0$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
+\subsection*{Processes become decoupled in steady state}  In this section we address only the $\alpha=1$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
 
-Recall that the flux has two expressions $\bq = - K_0 (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+Recall that the flux has two expressions $\bq = - k (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
-\bV &= - \frac{K_0}{\rho_w g} \grad \left(P + \rho_w g b\right), \label{eq:Vsteady} \\
-\bq &= \bV W - K_0 W \grad W, \label{eq:qsteady} \\
+\bV &= - \frac{k}{\rho_w g} \grad \left(P + \rho_w g b\right), \label{eq:Vsteady} \\
+\bq &= \bV W - k W \grad W, \label{eq:qsteady} \\
 0 &= - \Div \bq + \frac{m+S}{\rho_w}, \label{eq:masscontsteady} \\
 0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
@@ -448,23 +454,23 @@ Recall that \cite{FlowersClarke2002_theory} propose the functional relation \eqr
 \end{equation}
 Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} illustrate these cases.  Note that the condition $W_c < W < W_r$ is identical to the normal pressure condition $0 < P < P_o$ in steady state.  Formula \eqref{eq:dPdWsteady} and the Figures agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield this formula for the velocity in steady state which applies in the normal pressure cases:
 \begin{align}
-\bV &= - \frac{K_0}{\rho_w g} \grad P - K_0 \grad b = - \frac{K_0}{\rho_w g} \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - K_0 \grad b  \notag \\
-    &= - \frac{K_0}{\rho_w g} \left[\grad \left(P_o + \rho_w g b\right) - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
+\bV &= - \frac{k}{\rho_w g} \grad P - k \grad b = - \frac{k}{\rho_w g} \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - k \grad b  \notag \\
+    &= - \frac{k}{\rho_w g} \left[\grad \left(P_o + \rho_w g b\right) - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
 \end{align}
 
-Equation \eqref{eq:Vsteadyexpand} helps us understand the advective flux ``$\bV W$'' in $\bq=\bV W - K_0 W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \left(P_o + \rho_w g b\right)$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the \emph{a priori} diffusive flux $-K_0 W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.  To our knowledge, the identification of the diffusiveness of this steady velocity is new to this paper.
+Equation \eqref{eq:Vsteadyexpand} helps us understand the advective flux ``$\bV W$'' in $\bq=\bV W - k W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \left(P_o + \rho_w g b\right)$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the \emph{a priori} diffusive flux $-k W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.  To our knowledge, the identification of the diffusiveness of this steady velocity is new to this paper.
 
 Let $\psi_o = P_o + \rho_w g b$ and consider the $Y_0=0$ case for simplicity.  We see that in steady state we can write the flux as a linear combination of gradients,
 \begin{equation}
-\bq = \bV W - K_0 W \grad W = - \alpha(W) \grad \psi_o + \beta(W) \grad s_b - \gamma(W) \grad W,  \label{eq:qabstract}
+\bq = \bV W - k W \grad W = - \alpha(W) \grad \psi_o + \beta(W) \grad s_b - \gamma(W) \grad W,  \label{eq:qabstract}
 \end{equation}
 with coefficients
 \begin{align*}
-\alpha(W) &= \frac{K_0}{\rho_w g} W, \\
-\beta(W) &= \frac{K_0}{\rho_w g} \left(W_r - W\right)^{1/3} W^{2/3}, \\
-\gamma(W) &= \frac{K_0 s_b W_r}{3 \rho_w g (W_r - W)^{2/3}}\, W^{-1/3} + K_0 W.
+\alpha(W) &= \frac{k}{\rho_w g} W, \\
+\beta(W) &= \frac{k}{\rho_w g} \left(W_r - W\right)^{1/3} W^{2/3}, \\
+\gamma(W) &= \frac{k s_b W_r}{3 \rho_w g (W_r - W)^{2/3}}\, W^{-1/3} + k W.
 \end{align*}
-The first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  However $\gamma(W)$ remains large when $W\to 0$, even if $K_0$ is small, as long as sliding is sustained ($s_b \gg 0$).  Thus for low water amount and sustained sliding we should think of the water as diffusing in the layer; the apparently advective term ``$\bV W$'' is acting diffusively.  When the water thickness closely approximates the roughness scale ($W\approx W_r$) then $\beta(W)$ is also small, while in that circumstance $\gamma(W)$ is again strong as long as sliding is sustained.
+The first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  However $\gamma(W)$ remains large when $W\to 0$, even if $k$ is small, as long as sliding is sustained ($s_b \gg 0$).  Thus for low water amount and sustained sliding we should think of the water as diffusing in the layer; the apparently advective term ``$\bV W$'' is acting diffusively.  When the water thickness closely approximates the roughness scale ($W\approx W_r$) then $\beta(W)$ is also small, while in that circumstance $\gamma(W)$ is again strong as long as sliding is sustained.
 
 Thinking more generally, it is no surprise that when one of the ice thickness, bed elevation, sliding velocity, or water thickness fields is highly-variable in space then we can expect a larger amount of flow, and formula \eqref{eq:qabstract} reflects this intuition, at least in conditions near steady state.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation, large variations in these fields will generally reduce the time steps taken by a numerical model.
 
@@ -476,7 +482,7 @@ Thinking more generally, it is no surprise that when one of the ice thickness, b
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady}, and assume all quantities only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  Eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
-q &= - \frac{K_0}{\rho_w g} W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
+q &= - \frac{k}{\rho_w g} W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
 \frac{1}{r}\frac{d}{dr}\left(r\,q\right) &= \frac{m+S}{\rho_w}. \label{eq:rsconserve}
 \end{align}
 In the case of constant water input where $(m+S)/\rho_w=\Phi_0 > 0$, which we assume for the exact solution, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
