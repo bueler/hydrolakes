@@ -494,7 +494,7 @@ On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$
 \begin{equation}
 \omega_0\, r = - W\, \left(\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} + \left(\frac{s_b (W_r + Y_0)}{3 (W+Y_0)^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\right)  \label{eq:ODEfirst}
 \end{equation}
-in cases where $W_c < W < W_r$ and where $\omega_0 = \rho_w g \Phi_0 (2 K_0)^{-1}$. 
+in cases where $W_c < W < W_r$ and where $\omega_0 = \rho_w g \Phi_0 (2 k)^{-1}$. 
 
 Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, solve for $dW/dr$:
 \begin{equation}
@@ -529,7 +529,6 @@ It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \e
 \hline
     $\Phi_0$ & $20$ & $\text{cm}\,\text{a}^{-1}$ & $=(m+S)/\rho_w$; constant water input rate \\
     $h_0$ & $500$ & m & ice cap center thickness \\
-    $K_0$ & $0.01$ & $\text{m}\,\text{s}^{-1}$ & constant hydraulic conductivity \\
     $L$   & $22.5$& km & $=0.9 R_0$; actual ice cap margin \\
     $R_0$ & $25$  & km & ideal ice cap radius \\
     $R_1$ & $5$   & km & radial location $r=R_1$ of onset of sliding \\
@@ -565,19 +564,21 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection*{Discretization of the mass conservation equation}  [FIXME: this text only addresses the $\phi=0$ case]  The mass conservation equation \eqref{eq:conservewithPen}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the nonlinear diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
+\subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the nonlinear diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
 We first consider stable time steps.  The time step restriction for the advective part, namely the CFL condition for either of the schemes under consideration, is much more restrictive in this case than the time-step restriction for the diffusion.  Stability for these schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-Here $\bV=(\alpha,\beta)$ is the advection velocity.  The Appendix shows that this condition is sufficient for the first-order upwind scheme, but standard theory suggests the higher-order advection scheme has the same restriction \citep{HundsdorferVerwer2010}.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$ \citep{MortonMayers} where
+Here $\bV=(\alpha,\beta)$ is the advection velocity.
+%FIXME:  $\bV=(u,v)$ would avoid a notation clash
+The Appendix shows that this condition is sufficient for the first-order upwind scheme in the $\phi=0$ case.  Standard theory suggests the higher-order advection scheme has the same restriction \citep{HundsdorferVerwer2010}.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$ \citep{MortonMayers} where
 \begin{equation}
-\Delta t_W\, 2 \max(K(W) W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
+\Delta t_W\, 2 k \max(W^\alpha) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
 \end{equation}
 The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of the overall scheme for \eqref{eq:adeqn}.
 
-To understand these restrictions quantitatively, we consider typical values of the parameters.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $K(W)=K_0=10^{-2}$ m/s from Table \ref{tab:verifconstants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s from Table \ref{tab:verifconstants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
 
 \begin{figure}[ht]
 \centering
@@ -597,8 +598,8 @@ In this case we can compute the ``west'' and ``south'' values by shifting our ba
 
 Now we can get the velocity components needed at staggered locations:
 \begin{align}
-\alpha_e &= - \frac{K(W_e)}{\rho_w g} \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - K(W_e) \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \label{eq:velocitycomp} \\
-\beta_n  &= - \frac{K(W_n)}{\rho_w g} \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - K(W_n) \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \notag
+\alpha_e &= - \frac{k W_e^{\alpha-1}}{\rho_w g} \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - k W_e^{\alpha-1} \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \label{eq:velocitycomp} \\
+\beta_n  &= - \frac{k W_n^{\alpha-1}}{\rho_w g} \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - k W_n^{\alpha-1} \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \notag
 \end{align}
 Again $\alpha_w = \alpha_e\big|_{(i-1,j)}$ and $\beta_s = \beta_n\big|_{(i,j-1)}$; there are only two distinct staggered grid values (i.e.~$\alpha_e,\beta_n$) to compute per regular grid location $(x_i,y_j)$.
 
@@ -607,9 +608,12 @@ The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)
 Now we can state our scheme for equation \eqref{eq:adeqn}:
 \begin{align}
  &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{Q_e(\alpha_e) - Q_w(\alpha_w)}{\Delta x} + \frac{Q_n(\beta_n) - Q_s(\beta_s)}{\Delta y}  \label{eq:Wfd} \\
-      &\qquad = \frac{K(W_e) W_e \left(W_{i+1,j}^l - \Wlij\right) - K(W_w) W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
-      &\qquad\qquad\qquad + \frac{K(W_n) W_n \left(W_{i,j+1}^l - \Wlij\right) - K(W_s) W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2} + \Phi_{ij}. \notag
+      &\qquad = \frac{k W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - k W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{k W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2} \notag \\
+      &\qquad\qquad + \left[\frac{m_{ij}+S_{ij}}{\rho_w} - \left\{\frac{\partial W_{en}}{\partial t}\right\}_{ij}\right]. \notag
 \end{align}
+The values $m_{ij}$ and $S_{ij}$ are supplied by other components of an ice sheet model or by observations.  The englacial transfer term $\partial W_{en}/\partial t$ will be addressed below.
+
 Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
 
@@ -705,9 +709,9 @@ When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is inc
 For either the first-order or high-resolution flux schemes, and even if the combined advection-diffusion scheme is still structurally-positive as is proved in the Appendix for first-order upwind fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).  Generally we must project (reset) $W$ to be nonnegative at the end of each time step.
 
 
-\subsection*{A numerical scheme for the ``lakes'' model}  Recall equation \eqref{eq:PisoverConservation} which came from the mass conservation equation and the assumption that the subglacial water pressure was equal to the overburden pressure.  We call this the ``lakes'' model because its primary purpose in the literature has been in the identification of the locations of subglacial lakes in Antarctica.  It simply pushes water toward the minima of the hydraulic potential.  We now have a numerical scheme that suffices for this model, and the more complete model we seek only adds a new pressure equation to this ``lakes'' model.
+\subsection*{A numerical scheme for the ``lakes'' model}  Recall model \eqref{eq:lakesmodel} which combines the mass conservation equation and the assumption that the subglacial water pressure was equal to the overburden pressure.  We call this the ``lakes'' model because its primary purpose in the literature has been in the identification of the locations of subglacial lakes in Antarctica, but it could be called the ``routing'' model.  It simply pushes water toward the minima of a hydraulic potential which comes primarily from ice geometry, and which is insensitive to the effect of changing cavity geometry on the water pressure.
 
-To be a little more careful, consider the model consisting of advection-decomposition equations \eqref{eq:vexpression} and \eqref{eq:adeqn}.  Furthermore suppose $P=\lambda P_o$ with $0<\lambda\le 1$ so that the pressure is a fixed fraction of overburden.  Then this model has advection-diffusion form \eqref{eq:adeqn} and it is well-posed.  Taken literally, the model \eqref{eq:PisoverConservation} which appears in the literature generally predicts subglacial lakes of infinitesimal extent if the bed elevation is differentiable but not continuously-so (and infinite depth in steady state); it is not well-posed in that sense.  Here the addition of the term ``$\rho_w g W$'' to the hydraulic potential, as used in this paper, provides a diffusive term which implies finite lakes.
+We already have a numerical scheme that suffices for this model.  To be a little more general, consider the model consisting of advection-decomposition equations \eqref{eq:vexpression} and \eqref{eq:adeqn}, and suppose $P=\lambda P_o$ with $0<\lambda\le 1$ so that the pressure is a fixed fraction of overburden.  Then this model has advection-diffusion form \eqref{eq:adeqn} and it is well-posed.  (By contrast, taken literally, the model \eqref{eq:PisoverConservation} which appears in the literature generally predicts subglacial lakes of infinitesimal extent if the bed elevation is differentiable but not continuously-so (and infinite depth in steady state); it is not well-posed in that sense.  Here the addition of the term ``$\rho_w g W$'' to the hydraulic potential, as used in this paper, provides a diffusive term which implies finite lakes.)
 
 The numerical schemes above suffice for this continuum ``lakes'' model, and they are implemented in PISM.  The more complete model, whose numerical implementation is described next, is logically an extension of this ``lakes'' (sub)model in which the artificial closure $P=\lambda P_o$ is replaced by a physically-motivated closure based on cavity opening and closing processes.
 
