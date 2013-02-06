@@ -1,44 +1,44 @@
-ed@bueler-leopard ~/pism/test/test_hydrology[hydrology-englacial*]$ ./verifTestP.sh
+bueler@bueler-lemur ~/pism/test/test_hydrology[hydrology-englacial*]$ ./verifTestP.sh
 
-real	0m0.878s
-user	0m0.832s
-sys	0m0.960s
+real	0m1.469s
+user	0m1.528s
+sys	0m1.096s
 results for Mx=My=11:
-Drift in bwat: average = 0.006962, max = 0.017725 [m]
-Drift in bwp: average = 25241.708713, max = 140691.149554 [Pa]
+Drift in bwat: average = 0.008057, max = 0.034371 [m]
+Drift in bwp: average = 9384.380059, max = 70155.694695 [Pa]
 
-real	0m0.988s
-user	0m1.056s
-sys	0m0.948s
+real	0m1.620s
+user	0m1.916s
+sys	0m0.916s
 results for Mx=My=21:
-Drift in bwat: average = 0.003343, max = 0.011684 [m]
-Drift in bwp: average = 10175.927379, max = 70965.809872 [Pa]
+Drift in bwat: average = 0.004415, max = 0.033944 [m]
+Drift in bwp: average = 6291.268107, max = 103859.327693 [Pa]
 
-real	0m1.266s
-user	0m1.820s
-sys	0m0.836s
+real	0m1.607s
+user	0m1.880s
+sys	0m0.784s
 results for Mx=My=41:
-Drift in bwat: average = 0.001780, max = 0.010668 [m]
-Drift in bwp: average = 4945.419738, max = 33343.533783 [Pa]
+Drift in bwat: average = 0.002566, max = 0.036027 [m]
+Drift in bwp: average = 3284.888559, max = 35978.031152 [Pa]
 
-real	0m3.809s
-user	0m9.385s
-sys	0m1.052s
+real	0m3.329s
+user	0m4.884s
+sys	0m0.928s
 results for Mx=My=81:
-Drift in bwat: average = 0.000999, max = 0.013396 [m]
-Drift in bwp: average = 2373.429989, max = 16095.549417 [Pa]
+Drift in bwat: average = 0.001067, max = 0.019412 [m]
+Drift in bwp: average = 1263.902457, max = 21283.669688 [Pa]
 
-real	0m28.999s
-user	1m42.214s
-sys	0m2.164s
+real	0m13.641s
+user	0m29.526s
+sys	0m1.144s
 results for Mx=My=161:
-Drift in bwat: average = 0.000577, max = 0.025295 [m]
-Drift in bwp: average = 912.727804, max = 5985.194785 [Pa]
+Drift in bwat: average = 0.000606, max = 0.025844 [m]
+Drift in bwp: average = 386.499679, max = 5801.375153 [Pa]
 
-real	7m3.002s
-user	26m32.220s
-sys	0m7.884s
+real	1m46.523s
+user	5m12.272s
+sys	0m2.200s
 results for Mx=My=321:
-Drift in bwat: average = 0.000410, max = 0.146486 [m]
-Drift in bwp: average = 536.821196, max = 3806.402806 [Pa]
+Drift in bwat: average = 0.000451, max = 0.146943 [m]
+Drift in bwp: average = 289.863937, max = 3829.182458 [Pa]
 
