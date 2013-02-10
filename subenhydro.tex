@@ -595,17 +595,15 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 We first consider stable time steps.  The time step restriction for the advective part, namely the CFL condition for either of the schemes under consideration, is much more restrictive in this case than the time-step restriction for the diffusion.  Stability for these schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
-\Delta t_{\text{CFL}} \left(\frac{\max |\alpha|}{\Delta x} + \frac{\max |\beta|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
+\Delta t_{\text{CFL}} \left(\frac{\max |u|}{\Delta x} + \frac{\max |v|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-Here $\bV=(\alpha,\beta)$ is the advection velocity.
-%FIXME:  $\bV=(u,v)$ would avoid a notation clash
-The Appendix shows that this condition is sufficient for the first-order upwind scheme in the $\phi=0$ case.  Standard theory suggests the higher-order advection scheme has the same restriction \citep{HundsdorferVerwer2010}.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$ \citep{MortonMayers} where
+Here $\bV=(u,v)$ is the advection velocity.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$  where
 \begin{equation}
-\Delta t_W\, 2 k \max(W^\alpha) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
+\Delta t_W\, 2 k \max(W^\alpha) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFW}
 \end{equation}
-The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is a sufficient condition for stability and convergence of the overall scheme for \eqref{eq:adeqn}.
+\citep{MortonMayers}.  The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix A shows that this is sufficient for the first-order upwind scheme in the $\phi=0$ and $\alpha = 0$ case.  Standard theory suggests the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}, and the general $\phi,\alpha$ cases, should be stable under these same sufficient conditions because we have \eqref{eq:adeqn} in advection-diffusion form.
 
-To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |\alpha| = \max |\beta| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s from Table \ref{tab:verifconstants} and $\max W=1$ m as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $KW$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is a solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |u| = \max |v| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s and $\max W\approx W_r=1$ m  from Table \ref{tab:constants} as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.1$ year.  Thus, unless velocities are unusually slow, or unless deep subglacial lakes develop so that $k W^\alpha$ is large and $\Delta t_W$ is correspondingly small, we should not worry so much about this diffusive time scale.  There is significant uncertainty in these estimated values because the velocity field is part of the coupled solution to the model.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
 
 \begin{figure}[ht]
 \centering
@@ -615,20 +613,18 @@ To understand these restrictions quantitatively, we consider typical values of t
 \label{fig:stencil}
 \end{figure}
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W$ so that $\Div \bQ = (\alpha W)_x + (\beta W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of Equation \eqref{eq:vexpression}.
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W$ so that $\Div \bQ = (u W)_x + (v W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
 
-We use ``compass'' notation such as $\alpha_e = \alpha_{i+1/2,j}$ for the ``east'' staggered component.  Also when defining the velocity and the diffusive term (below) we will need staggered grid values of the water layer thickness, and again we use compass notation for these.  They are computed by averaging regular grid values:
+We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, and these are computed by averaging regular grid values:
 \begin{equation}
 W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
 \end{equation}
-In this case we can compute the ``west'' and ``south'' values by shifting our base point by one space: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.
-
-Now we can get the velocity components needed at staggered locations:
+In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (i.e.~east and north) to compute per regular grid location $(x_i,y_j)$.  We get the velocity components needed at staggered locations by differencing:
 \begin{align}
-\alpha_e &= - \frac{k W_e^{\alpha-1}}{\rho_w g} \frac{P_{i+1,j}-P_{i,j}}{\Delta x} - k W_e^{\alpha-1} \frac{b_{i+1,j}-b_{i,j}}{\Delta x}, \label{eq:velocitycomp} \\
-\beta_n  &= - \frac{k W_n^{\alpha-1}}{\rho_w g} \frac{P_{i,j+1}-P_{i,j}}{\Delta y} - k W_n^{\alpha-1} \frac{b_{i,j+1}-b_{i,j}}{\Delta y}. \notag
+u_e &= - k W_e^{\alpha-1} \left(\frac{P_{i+1,j}-P_{i,j}}{\rho_w g \Delta x} + \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \label{eq:velocitycomp} \\
+v_n  &= - k W_n^{\alpha-1} \left(\frac{P_{i,j+1}-P_{i,j}}{\rho_w g \Delta y} + \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right). \notag
 \end{align}
-Again $\alpha_w = \alpha_e\big|_{(i-1,j)}$ and $\beta_s = \beta_n\big|_{(i,j-1)}$; there are only two distinct staggered grid values (i.e.~$\alpha_e,\beta_n$) to compute per regular grid location $(x_i,y_j)$.
+Again $u_w = u_e\big|_{(i-1,j)}$ and $v_s = v_n\big|_{(i,j-1)}$.
 
 The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the co-located (staggered) velocity component but there is upwinding to determine which $W$ value(s) are used.
 
