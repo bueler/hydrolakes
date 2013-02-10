@@ -177,9 +177,8 @@ Equations \eqref{eq:potential}, \eqref{eq:flux}, and \eqref{eq:vexpression} comb
 \end{equation}
 From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
-  \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) = \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w} - \frac{\partial W_{en}}{\partial t}\right].
+  \frac{\partial (W+W_{en})}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(k W^\alpha \grad W\right) + \frac{m+S}{\rho_w}.
 \end{equation}
-(The left side is written as a material derivative $d(\cdot)/dt = \partial(\cdot)/\partial t + \Div\left(\bV\,\cdot\right)$.)
 
 The term in square brackets in \eqref{eq:adeqn} groups all the mass inputs into the subglacial layer.  Part of this input, that which is proportional to the rate at which the englacial water level falls (i.e.~$-\partial W_{en}/\partial t = - \phi \partial z_{en}/\partial t$), is from the efficient connection to the macroporous englacial storage.  This term can be of either sign in a dynamically-evolving manner.  The total input into the subglacial layer is a sum of contributions from wall melt $m$, supraglacial input $S$ (through an unmodeled mechanism), and this connection to englacial storage.
 
@@ -235,7 +234,7 @@ P = P_o.\label{eq:Pisoverburden}
 \end{equation}
 This model is sometimes used for routing subglacial water under ice sheets so as to identify subglacial lake locations \citep[for example]{Siegertetal2009}.  Straightforward calculations using equations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that the advection-diffusion form \eqref{eq:adeqn} has an ice-geometry-determined velocity.  Specifically,
 \begin{gather}
-  \frac{\partial W}{\partial t} + \Div\left(\tilde\bV\, W\right) = \Div\left(k \,W\, \grad W\right) + \frac{m+S}{\rho_w}   \label{eq:PisoverConservation} \\
+  \frac{\partial W}{\partial t} = - \Div\left(\tilde\bV\, W\right) + \Div\left(k \,W\, \grad W\right) + \frac{m+S}{\rho_w}   \label{eq:PisoverConservation} \\
   \phantom{sdklj ljsdf} \text{where} \qquad \tilde\bV = - k \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right]. \notag
 \end{gather}
 
@@ -252,7 +251,7 @@ P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
 For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ and they make the approximation that the water layer thickness is small so it can be ignored in the hydraulic potential.  Figure \ref{fig:psteady-vb} below illustrates this function.  One obvious problem with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$), but this model is not intended to apply when that physical situation actually occurs, such as in large subglacial lakes.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get this equation with $\hat\bV = - k \grad b$:
 \begin{equation}
-  \frac{\partial W}{\partial t} + \Div\left(\hat\bV\, W\right) = \Div \left(\frac{k\,W}{\rho_w g} \grad P_{FC}(W)\right) + \frac{m+S}{\rho_w}. \label{eq:PofWFCConservation}
+  \frac{\partial W}{\partial t} = - \Div\left(\hat\bV\, W\right) + \Div \left(\frac{k\,W}{\rho_w g} \grad P_{FC}(W)\right) + \frac{m+S}{\rho_w}. \label{eq:PofWFCConservation}
 \end{equation}
 
 In the flat bedrock case the model that follows from \eqref{eq:PofWFC} is a non-constant-coefficient nonlinear diffusion.  Indeed, as noted by \cite{Schoofetal2012},  equation \eqref{eq:PofWFC} generalizes the porous-medium equation $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and thus in this closure \textbf{II} in the $\grad b=0$ case, is that the \emph{direction} of the flux is exactly $-\grad W$.  The contrast with closure \textbf{I} is then clear, because the velocity under that closure is ice-geometry determined for any water distribution.
@@ -275,6 +274,17 @@ There is an obvious choice, which we adopt, for the relationship between the amo
 P = \rho_w g z_{en} = \frac{\rho_w g}{\phi} W_{en}. \label{eq:Penhydrostatic}
 \end{equation}
 Said another way, the englacial system is modeled as a frictionless (efficient) pressure gauge, a piezometer in the groundwater sense, on the subglacial system.  Of course, this ``gauge'' is distributed over the glacier area.  It carries $W_{en}\, dA$ volume of water over each element $dA$ of map-plane area.
+
+Equation \eqref{eq:Penhydrostatic} determines $W_{en}$ from the subglacial pressure $P$ in cases where the local total water amount (i.e.~$W+W_{en}$) is large; specifically $W_{en} = \phi P / (\rho_w g)$.  But we must be careful, for mass conservation, to only keep/put water in englacial storage when there is sufficient water.  In practice we will update the combined quantity $W+W_{en}$ over the duration of a time step using equation \eqref{eq:adeqn}.  Then we will decide at the ``new'' time how much of the water should be stored englacially.  In terms of the updated total amount $W_{tot}=W+W_{en}$ we choose this continuous parameterization $W_{en}=F(W_{tot})$ using the value $\tilde W_{en} = \phi P / (\rho_w g)$ from \eqref{eq:Penhydrostatic}:
+\begin{equation}
+W_{en} = \begin{cases}
+             0,                       & 0 \le W_{tot} \le \tilde W_{en}, \\
+             W_{tot} - \tilde W_{en}, & \tilde W_{en} < W_{tot} < 2 \tilde W_{en}, \\
+             \tilde W_{en},           & W \ge 2 \tilde W_{en}. \end{cases}
+    \label{eq:WenFunctionWtot}
+\end{equation}
+This is only addressing the small-water case; for large water amounts equation \eqref{eq:Penhydrostatic} straightforwardly determines $W_{en}$.  It follows from equation \eqref{eq:WenFunctionWtot} that there is only positive amounts of englacial water in columns of ice above locations where there is subglacial water:
+      $$\{W_{en}>0\} \subset \{W>0\}.$$
 
 
 \subsection*{Full-cavity closure}  Equations  \eqref{eq:adeqn}, \eqref{eq:hewittcapacity}, and \eqref{eq:Penhydrostatic} do not yet determine the evolution of the major distributed variables $W$, $W_{en}$, $Y$ and $P$.  However, \emph{requiring the subglacial layer to be full of water} is a closure for the subglacial pressure $P$.  We will adopt this ``full-cavity closure'' in our model:
@@ -314,57 +324,37 @@ Our theory has englacial storage following \cite{Bartholomausetal2011}.  Any $\p
 \end{equation}
 See section \ref{sec:num} below for a quantitative analysis of stiffness on the numerical implementation.  The model runs with $\phi_0=0$, but slower.
 
-\subsection*{FIXME}  However, the goal of the current work is the selection of an easily-implementable subglacial hydrology model which can be coupled to an existing three-dimensional ice dynamics model, and which can be parallelized.  The rest of the paper demonstrates that we have already succeeded in these goals for the model which combines \eqref{eq:adeqn}, \eqref{eq:ratePenWen}, and \eqref{eq:pressureequation}.  We have implemented an explicit time-stepping numerical scheme for these equations in the Parallel Ice Sheet Model.
 
+\section{New subglacial hydrology model} \label{sec:newmodel}
 
-\section{New subglacial hydrology which extends existing models}
+\subsection*{Statement of equations}  The goal of the current work is the selection and testing of an easily-implementable subglacial hydrology model which can be coupled to an existing three-dimensional ice dynamics model, and which can be parallelized.  The remainder of the paper will demonstrate that we have succeeded in these goals for the model which combines equations \eqref{eq:adeqn}, \eqref{eq:Penhydrostatic}, and \eqref{eq:regpressureequation}.
 
-At this point we have a complete new mathematical model, consisting of mass conservation equation \eqref{eq:adeqn} for evolution of $W$, equation \eqref{eq:pressureequation} for evolution of pressure $P$, equation \eqref{eq:ratePenWen} which allows $W_{en}$ to follow $P$, and the bounds on $W$ and $P$:
+The complete set of equations for this new mathematical model also includes the important bounds on $W$ and $P$:
 \begin{empheq}[box=\mybluebox]{align}
 W &\ge 0, \notag \\
 0 &\le P \le P_o, \notag \\
 \psi &= P + \rho_w g (b + W), \notag \\
 \bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P + \rho_w g b\right), \notag \\
-\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(\frac{k W^\alpha}{\rho_w g}\, \grad \psi \right) + \frac{m+S}{\rho_w} \label{eq:bluebox} \\
+\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(\frac{k W^\alpha}{\rho_w g}\, \grad \psi \right) + \frac{m+S}{\rho_w} \label{eq:bluebox} \\
   &\qquad \qquad + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+, \notag \\
-\frac{\partial W_{en}}{\partial t} &= \frac{\phi}{\rho_w g} \frac{\partial P}{\partial t}, \notag \\
- \frac{\partial W}{\partial t} + \Div\left(\bV\, W\right) &= \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w} - \frac{\partial W_{en}}{\partial t}\right]. \notag
+ \frac{\partial (W + W_{en})}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(k W^\alpha \grad W\right) + \frac{m+S}{\rho_w}, \notag \\
+ W_{en} &= \frac{\phi}{\rho_w g} P. \notag
 \end{empheq}
-This mathematical model is written so as to allow three limits to be clear:
-\begin{itemize}
+In fact formula \eqref{eq:WenFunctionWtot} replaces the last equation if the total water amount $W + W_{en}$ is small.
 
-\item The $\phi\to 0$ limit of \eqref{eq:bluebox} is the $\beta=2$ form of the model described by \cite{Schoofetal2012}.  The equations in this case are straightforward to write down.  We replace the term $(\phi/(\rho_w g)) \partial P / \partial t = \partial W_{en}/\partial t$ by zero, and we set $Y_0=0$ to get complete agreement:
-\begin{empheq}[box=\mybluebox]{align}
-W &\ge 0, \notag \\
-0 &\le P \le P_o, \notag \\
-\psi &= P + \rho_w g (b + W), \notag \\
-\bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P + \rho_w g b\right),  \label{eq:schoofsmodel} \\
-0 &= \Div \left(\frac{k W^\alpha}{\rho_w g}\, \grad \psi \right) + \frac{m+S}{\rho_w} + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \phantom{dsaf} \notag \\
-\phantom{dsaf} \frac{\partial W}{\partial t} + &\Div\left(\bV\, W\right) = \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w}\right]. \notag
-\end{empheq}
-Physically, the $\phi \to 0$ limit of \eqref{eq:bluebox} gives model \eqref{eq:schoofsmodel} by removing the englacial storage.  Said mathematically, our model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel}, the \cite{Schoofetal2012} model, based on efficient connection to porous englacial storage with a small porosity parameter $\phi \ll 1$.
+As will be described in section \ref{sec:num}, we have implemented an explicit, adaptive time-stepping numerical scheme for these equations in the Parallel Ice Sheet Model.
 
-\item The $P \to P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to the overburden value $P_o$, is the standard model for locating subglacial lakes under cold (i.e.~also $\phi \to 0$) ice sheets \cite{Siegertetal2009}.  In this limit the pressure is not an unknown and the parameterization of cavity evolution is inactive:
-\begin{empheq}[box=\mybluebox]{align}
-W &\ge 0, \notag \\
-\tilde\bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P_o + \rho_w g b\right), \label{eq:lakesmodel} \\
-\phantom{ldsfj} \frac{\partial W}{\partial t} + \Div\left(\tilde\bV\, W\right) &= \Div \left(k W^\alpha \grad W\right) + \left[\frac{m+S}{\rho_w}\right]. \phantom{ldsfj} \notag
-\end{empheq}
-As noted in section \ref{sec:closures}, in the $\alpha=1$ case this simplified model routes water according to a velocity $\tilde\bV$ which is determined entirely by ice geometry.
-
-\item The non-distributed or lumped form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier, is essentially the porous glacier model of \cite{Bartholomausetal2011}.  The precise correspondence is explained in Appendix B.
-\end{itemize}
-
-Model equations \eqref{eq:bluebox} relate four classes of symbols, as listed in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$ and $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The data functions are, in practice, supplied by an ice sheet model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Although default values must be chosen for these parameters, as in Table \ref{tab:constants}, exploration of the parameter space is essential in using the model.  
+Model equations \eqref{eq:bluebox} relate five classes of symbols, as listed in Table \ref{tab:symbols}.  (Additional symbols $\psi$ and $\bV$ are derived from these.)  The state functions $W$, $W_{en}$, $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The data functions are, in practice, supplied by an ice sheet model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Although default values must be chosen for the parameters, as is done in Table \ref{tab:constants}, exploration of the parameter space is essential in using the model.  Such exploration occurs in section \ref{sec:results}.
 
 \begin{table}[ht]
 \caption{Symbols used in subglacial hydrology model \eqref{eq:bluebox}.}
 \begin{tabular}{r|c}
 class & symbols \\ \hline
-\emph{state functions} & $W$, $P$ \\
+\emph{state functions} & $W$, $W_{en}$, $P$ \\
 \emph{data functions} & $b$, $m$, $P_o$, $S$, $|\bv_b|$ \\
-\emph{scalar parameters} & $A$, $\alpha$, $c_1$, $c_2$, $\phi$, $k$, $W_r$, $Y_0$ \\
+\emph{scalar parameters} & $A$, $\alpha$, $c_1$, $c_2$, $k$, $\phi$, $W_r$ \\
 \emph{physical constants} & $g$, $\rho_i$, $\rho_w$ \\
+\emph{regularization parameters} & $\phi_0$, $Y_0$ \\
 \hline
 \end{tabular}
 \label{tab:symbols}
@@ -372,7 +362,7 @@ class & symbols \\ \hline
 
 \begin{table}[ht]
   \centering
-  \caption{Physical constants and model parameters used throughout the paper.}
+  \caption{Physical constants and model parameters used throughout the paper.  The model runs, though slowly, with regularization parameters (bottom pair) set to zero.}
   \begin{tabular}{lllp{3.0in}} 
     \textbf{Name} & \textbf{Default Value} & \textbf{Units} & \textbf{Description}\\
 \hline
@@ -380,17 +370,45 @@ class & symbols \\ \hline
     $\alpha$ & 1 & & power on $W$ in flux formula \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient \\
     $c_2$ & $0.04$ & & creep closure coefficient \\
-    $\phi$ & $0.01$ & & macroporosity of englacial system \\
+    $\phi$ & $0.001$ & & physical macroporosity of englacial system \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
     $k$ & $0.01$ & $\text{m}^{2-\alpha} \text{s}^{-1}$ & constant hydraulic conductivity  \\
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $1$ & $\text{m}$ & roughness scale \\
+    \hline
+    $\phi_0$ & $0.01$ & & regularizing porosity in pressure equation \\
     $Y_0$ & $0.001$ & m & regularization for layer thickness \\
     \hline
   \end{tabular}
  \label{tab:constants}
 \end{table}
+
+
+\subsection*{Reduction to existing models}  Three limits of model \eqref{eq:bluebox} can now be stated clearly:
+\begin{itemize}
+
+\item The zero englacial storage ($\phi,\phi_0\to 0$) limit of \eqref{eq:bluebox} is the $\beta=2$ form of the model described by \cite{Schoofetal2012}.  The equations in this case are straightforward to write down; we set $Y_0=0$ to get complete agreement:
+\begin{empheq}[box=\mybluebox]{align}
+W &\ge 0, \notag \\
+0 &\le P \le P_o, \notag \\
+\psi &= P + \rho_w g (b + W), \notag \\
+\bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P + \rho_w g b\right),  \label{eq:schoofsmodel} \\
+0 &= \Div \left(\frac{k W^\alpha}{\rho_w g}\, \grad \psi \right) + \frac{m+S}{\rho_w} + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \phantom{dsaf} \notag \\
+\phantom{dsaf} \frac{\partial W}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(k W^\alpha \grad W\right) + \frac{m+S}{\rho_w}. \notag
+\end{empheq}
+Mathematically, model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on an efficient connection to porous englacial storage with a small porosity parameter.
+
+\item The $P \to P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for routing water to, and for locating, subglacial lakes under cold ice sheets \cite{Siegertetal2009}.  The englacial storage is removed here ($\phi\to 0$) and there is no stiffness issue (thus $\phi_0\to 0$ also).  In this limit the pressure is not an unknown and the parameterization of cavity evolution is inactive:
+\begin{empheq}[box=\mybluebox]{align}
+W &\ge 0, \notag \\
+\tilde\bV &= - \frac{k W^{\alpha-1}}{\rho_w g} \grad\left(P_o + \rho_w g b\right), \label{eq:lakesmodel} \\
+\phantom{ldsfj} \frac{\partial W}{\partial t} &= - \Div\left(\tilde\bV\, W\right) + \Div \left(k W^\alpha \grad W\right) + \frac{m+S}{\rho_w}. \phantom{ldsfj} \notag
+\end{empheq}
+As noted in section \ref{sec:closures}, in the $\alpha=1$ case this model routes water with a velocity $\tilde\bV$ which is determined entirely by ice and bedrock geometry.
+
+\item The non-distributed or lumped form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier, is essentially the porous glacier model of \cite{Bartholomausetal2011}.  The precise correspondence is explained in Appendix B.
+\end{itemize}
 
 
 \section{Steady states}  \label{sec:steadyverif}
