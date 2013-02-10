@@ -831,7 +831,11 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 \subsection*{Steady results for a tidewater glacier}
 
-FIXME: results from nbreen
+FIXME: decide on where this paper is going
+
+FIXME: redo results from nbreen to use PISM and make better figures
+
+\begin{comment}
 
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{icethk-icefree-float-250m}
@@ -857,6 +861,8 @@ FIXME: results from nbreen
 %\label{fig:X}
 \end{figure}
 
+\end{comment}
+
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
 \begin{figure}[ht]
@@ -880,36 +886,37 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
 \section{Positivity and stability of the mass conservation scheme}
 
-Explicit numerical scheme \eqref{eq:Wfd} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its properties.  For this scheme we now sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative, although only the case $m_{ij}=S_{ij}=\partial W_{en}/\partial t = 0$ is given here.  We assume $\alpha=0$ for simplicity.  We consider only the case where all of the discrete velocities at the centers of cell interfaces are nonnegative: $\alpha_e\ge 0$, $\alpha_w\ge 0$, $\beta_n\ge 0$, $\beta_s\ge 0$.  The other upwinding cases, wherein these velocity components have various signs, can be handled by similar special-case arguments like the present one.
+Explicit numerical scheme \eqref{eq:Wfd} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative, though only the case $m_{ij}=S_{ij} = 0$ is shown.  We assume no englacial storage ($W_{en}=0$ and $\phi=\phi_0=0$) and we use $\alpha=1$ for simplicity.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
-Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = k \Delta t / (\Delta x)^2$, and $\mu_y = k \Delta t / (\Delta y)^2$.  We rewrite \eqref{eq:Wfd} as a computation of the next value $W_{i,j}^{l+1}$, and collect terms:
+We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
 \begin{align*}
- W_{i,j}^{l+1} &= \Wlij - \nu_x \left(\alpha_e \Wlij - \alpha_w W_{i-1,j}^l\right) - \nu_y \left(\beta_n \Wlij - \beta_s W_{i,j-1}^l\right)  \\
+ W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
       &\qquad + \mu_x \left[W_e \left(W_{i+1,j}^l - \Wlij\right) - W_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
       &\qquad + \mu_y \left[W_n \left(W_{i,j+1}^l - \Wlij\right) - W_s \left(\Wlij - W_{i,j-1}^l\right)\right].
 \end{align*}
-Rearranging a bit further we get
+Rearranging terms we get
 \begin{align*}
- W_{i,j}^{l+1} &= (\nu_x \alpha_w + \mu_x W_w) W_{i-1,j}^l + (\mu_x W_e) W_{i+1,j}^l + (\nu_y \beta_s + \mu_y W_s) W_{i,j-1}^l + (\mu_y W_n) W_{i,j+1}^l \\
-      &\qquad + \Big[1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s)\Big] \Wlij
+ W_{i,j}^{l+1} &= (\nu_x u_w + \mu_x W_w) W_{i-1,j}^l + (\mu_x W_e) W_{i+1,j}^l + (\nu_y v_s + \mu_y W_s) W_{i,j-1}^l + (\mu_y W_n) W_{i,j+1}^l \\
+      &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s)\Big] \Wlij.
 \end{align*}
-so that the new value is a linear combination of the old values, plus a source term:
+Thus the new value is a linear combination of old values:
 \begin{equation}
 W_{i,j}^{l+1} = A W_{i-1,j}^l + B W_{i+1,j}^l + C W_{i,j-1}^l + D W_{i,j+1}^l + E \Wlij. \label{eq:lincomb}
 \end{equation}
-Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, we see that coefficients $A,B,C,D$ are all nonnegative, and that only $E$ could be negative.  Thus we can state a sufficient condition based on an equal split between advective and diffusive parts.  Assume a CFL restriction for the advection term in \eqref{eq:adeqn}; this condition generalizes \eqref{eq:CFL}:
+Because of our assumption about nonnegative velocities, and assuming $\Wlij \ge 0$ for all $i,j$, we see that coefficients $A,B,C,D$ are all nonnegative.  Only $E$ could be negative; requiring it to be nonnegative is a sufficient stability condition.
+
+We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms; compare \eqref{eq:dtCFL}:
 \begin{equation}
-\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{\alpha_e}{\Delta x} + \frac{\beta_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
+\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{u_e}{\Delta x} + \frac{u_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
 \end{equation}
-Also assume a second time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
+The second is a time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
 \begin{equation}
 \mu_x (W_e + W_w) + \mu_y (W_n + W_s) = \Delta t \left(\frac{k (W_e + W_w)}{\Delta x^2} + \frac{k (W_n + W_s)}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
 \end{equation}
-Thus the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
-	$$E = 1 - \nu_x \alpha_e - \nu_y \beta_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
-It follows from \eqref{eq:lincomb} that if $\Wlij\ge 0$ for all $i,j$ then $W_{ij}^{l+1}\ge 0$.
+If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $E$ in \eqref{eq:lincomb} is nonnegative:
+	$$E = 1 - \nu_x u_e - \nu_y v_n - \mu_x (W_e + W_w) - \mu_y (W_n + W_s) \ge 0.$$
 
-We see that all coefficients in linear combination \eqref{eq:lincomb} are nonnegative if the time step restrictions are satisfied.  Furthermore the coefficients add to one.  It follows that scheme \eqref{eq:Wfd} with first-order upwinding is positivity-preserving.  It also follows that the scheme is stable under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, thereby generalizing \eqref{eq:adstabcond} and \eqref{eq:diffstabcond}, respectively.
+It also follows from \eqref{eq:lincomb} that if $\Wlij\ge 0$ for all $i,j$ then $W_{ij}^{l+1}\ge 0$.  This is the positivity-preserving assertion.  Because the coefficients in linear combination \eqref{eq:lincomb} also add to one, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, the scheme is stable and positivity-preserving.
 
 
 \section{Relation to the Bartholomaus et al.~(2011) ``lumped'' model with englacial storage}  The model in \cite{Bartholomausetal2011} describes the evolution of the intriguing hydrology of the Kennicott glacier in Alaska.  It is a significantly different model from the distributed one of \cite{Schoofetal2012}, which we focus on in the main text, but similarities exist.  Both are interested in the relationship between sliding and the evolution of linked-cavity systems, and both consider physical cavity opening and closing processes.  On the other hand the \cite{Schoofetal2012} theory is distributed and entirely subglacial while the \cite{Bartholomausetal2011} is ``lumped'' (i.e.~the entire glacier is represented by one cell) and there is both subglacial and englacial storage.
