@@ -275,15 +275,15 @@ P = \rho_w g z_{en} = \frac{\rho_w g}{\phi} W_{en}. \label{eq:Penhydrostatic}
 \end{equation}
 Said another way, the englacial system is modeled as a frictionless (efficient) pressure gauge, a piezometer in the groundwater sense, on the subglacial system.  Of course, this ``gauge'' is distributed over the glacier area.  It carries $W_{en}\, dA$ volume of water over each element $dA$ of map-plane area.
 
-Equation \eqref{eq:Penhydrostatic} determines $W_{en}$ from the subglacial pressure $P$ in cases where the local total water amount (i.e.~$W+W_{en}$) is large; specifically $W_{en} = \phi P / (\rho_w g)$.  But we must be careful, for mass conservation, to only keep/put water in englacial storage when there is sufficient water.  In practice we will update the combined quantity $W+W_{en}$ over the duration of a time step using equation \eqref{eq:adeqn}.  Then we will decide at the ``new'' time how much of the water should be stored englacially.  In terms of the updated total amount $W_{tot}=W+W_{en}$ we choose this continuous parameterization $W_{en}=F(W_{tot})$ using the value $\tilde W_{en} = \phi P / (\rho_w g)$ from \eqref{eq:Penhydrostatic}:
+Equation \eqref{eq:Penhydrostatic} determines $W_{en}$ from the subglacial pressure $P$ in cases where the local total water amount (i.e.~$W+W_{en}$) is large; specifically $W_{en} = \phi P / (\rho_w g)$.  But we must be careful, for mass conservation, to only keep/put water in englacial storage when there is sufficient water.  In practice we will update the combined quantity $W+W_{en}$ over the duration of a time step using equation \eqref{eq:adeqn}.  Then we will decide at the ``new'' time how much of the water should be stored englacially.  In terms of the updated total amount $W_{tot}=W+W_{en}$ we choose this continuous parameterization using the value $\tilde W_{en} = \phi P / (\rho_w g)$ from \eqref{eq:Penhydrostatic}:
 \begin{equation}
-W_{en} = \begin{cases}
+W_{en} = F(W_{tot}) = \begin{cases}
              0,                       & 0 \le W_{tot} \le \tilde W_{en}, \\
              W_{tot} - \tilde W_{en}, & \tilde W_{en} < W_{tot} < 2 \tilde W_{en}, \\
-             \tilde W_{en},           & W \ge 2 \tilde W_{en}. \end{cases}
+             \tilde W_{en},           & W_{tot} \ge 2 \tilde W_{en}. \end{cases}
     \label{eq:WenFunctionWtot}
 \end{equation}
-This is only addressing the small-water case; for large water amounts equation \eqref{eq:Penhydrostatic} straightforwardly determines $W_{en}$.  It follows from equation \eqref{eq:WenFunctionWtot} that there is only positive amounts of englacial water in columns of ice above locations where there is subglacial water:
+This formula is only interesting in the small-water case.  For large water amounts equation \eqref{eq:Penhydrostatic} directly determines $W_{en}$.  It follows from equation \eqref{eq:WenFunctionWtot} that positive amounts of englacial water occur only in locations above positive subglacial water:
       $$\{W_{en}>0\} \subset \{W>0\}.$$
 
 
@@ -613,45 +613,49 @@ To understand these restrictions quantitatively, we consider typical values of t
 \label{fig:stencil}
 \end{figure}
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W$ so that $\Div \bQ = (u W)_x + (v W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W = \bq + k W^\alpha \grad W$ so that $\Div \bQ = (u W)_x + (v W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
 
 We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, and these are computed by averaging regular grid values:
 \begin{equation}
 W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
 \end{equation}
-In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (i.e.~east and north) to compute per regular grid location $(x_i,y_j)$.  We get the velocity components needed at staggered locations by differencing:
+In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (e.g.~east and north) to compute per regular grid location $(x_i,y_j)$.  We get the velocity components needed at staggered locations by differencing:
 \begin{align}
 u_e &= - k W_e^{\alpha-1} \left(\frac{P_{i+1,j}-P_{i,j}}{\rho_w g \Delta x} + \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \label{eq:velocitycomp} \\
 v_n  &= - k W_n^{\alpha-1} \left(\frac{P_{i,j+1}-P_{i,j}}{\rho_w g \Delta y} + \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right). \notag
 \end{align}
 Again $u_w = u_e\big|_{(i-1,j)}$ and $v_s = v_n\big|_{(i,j-1)}$.
 
-The face-centered (staggered-grid) normal fluxes $Q_e(\alpha_e)$, $Q_w(\alpha_w)$, $Q_n(\beta_n)$, and $Q_s(\beta_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the co-located (staggered) velocity component but there is upwinding to determine which $W$ value(s) are used.
-
-Now we can state our scheme for equation \eqref{eq:adeqn}:
+The face-centered (staggered-grid) normal fluxes $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value(s) are used.  Here is the scheme for equation \eqref{eq:adeqn}:
 \begin{align}
- &\frac{W_{i,j}^{l+1} - \Wlij}{\Delta t} + \frac{Q_e(\alpha_e) - Q_w(\alpha_w)}{\Delta x} + \frac{Q_n(\beta_n) - Q_s(\beta_s)}{\Delta y}  \label{eq:Wfd} \\
-      &\qquad = \frac{k W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - k W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
-      &\qquad\qquad\qquad + \frac{k W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2} \notag \\
-      &\qquad\qquad + \left[\frac{m_{ij}+S_{ij}}{\rho_w} - \left\{\frac{\partial W_{en}}{\partial t}\right\}_{ij}\right]. \notag
+ &\frac{(W+W_{en})_{i,j}^{l+1} - (W+W_{en})_{i,j}^l}{\Delta t} = - \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} - \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y} \label{eq:Wfd} \\
+      &\qquad\qquad + \frac{k W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - k W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{k W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}  + \frac{m_{ij}+S_{ij}}{\rho_w}. \notag
 \end{align}
-The values $m_{ij}$ and $S_{ij}$ are supplied by other components of an ice sheet model or by observations.  The englacial transfer term $\partial W_{en}/\partial t$ will be addressed below.
+The values $m_{ij}$ and $S_{ij}$ are supplied by other components of an ice sheet model or by observations.  Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
-Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
+It is useful to rewrite scheme \eqref{eq:Wfd} in ``update'' form, and we should address the englacial storage update.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = k\Delta t/\Delta x^2$, and $\mu_y = k\Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
+\begin{align}
+ (W+W_{en})_{i,j}^{l+1} &= (W_{en})_{i,j}^l + W_{i,j}^l - \nu_x \left(Q_e(u_e) - Q_w(u_w)\right) - \nu_y \left(Q_n(v_n) - Q_s(v_s)\right) \label{eq:Wupdate} \\
+  &\qquad + \mu_x \left(W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)\right) \notag \\
+  &\qquad + \mu_y \left(W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)\right) + \frac{\Delta t}{\rho_w}\left(m_{ij}+S_{ij}\right). \notag
+\end{align}
+In particular, at time $t_l$ we assume $W^l$ and $(W_{en})^l$ are known fields.  Then \eqref{eq:Wupdate} gives new values for the total water amount $(W+W_{en})^{l+1}$.  If this total water amount comes out negative then it is projected back to zero.  Then the total water amount is split by first computing $W_{en}$ by using the function in \eqref{eq:WenFunctionWtot} and then computing $W$:
+\begin{equation} (W_{en})_{i,j}^{l+1} = F\left((W+W_{en})_{i,j}^{l+1}\right), \qquad  W_{i,j}^{l+1} = (W+W_{en})_{i,j}^{l+1} - (W_{en})_{i,j}^{l+1}.  \label{eq:Wenupdate}
+\end{equation}
+This conserves mass in all cases and makes \eqref{eq:Penhydrostatic} true if there is sufficient water to ``charge'' the englacial system and still have water at the subglacier.
 
-
-\subsection*{Flux discretization}  Because \eqref{eq:adeqn} is an advection-dominated PDE, the well-known goals for discretizing the fluxes include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which a quantity $u(t,x)$ is transported by a velocity $v(x)$:
+\subsection*{Flux discretization methods in the literature}  Because \eqref{eq:adeqn} is an advection-dominated PDE, the well-known goals for discretizing the fluxes include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
 u_t + (v(x) u)_x = 0
 \end{equation}
 
-Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  Cell interfaces are at $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time and instead we denote $u_i=u_i(t)$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  Clearly such a property is desirable for any conservation scheme for the water thickness $W$ because thicknesses are intrinsically nonnegative.
-
-The basic discretization of \eqref{eq:modeladvect} uses the fluxes $Q=v(x) u$ at the cell interfaces $x_w$ and $x_e$, namely
+Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  Cell interfaces are at $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time and instead we denote $u_i=u_i(t)$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  (Such a property is desirable for any conservation scheme for the water thickness $W$ because thicknesses are intrinsically nonnegative.)  The basic discretization of \eqref{eq:modeladvect} uses the fluxes $Q=v(x) u$ at the cell interfaces $x_w$ and $x_e$, namely
 \begin{equation}
-\frac{du_i}{dt} + \frac{Q_e - Q_w}{\Delta x} = 0, \label{eq:basicmodelFD}
+\frac{du_i}{dt} + \frac{Q_e - Q_w}{\Delta x} = 0. \label{eq:basicmodelFD}
 \end{equation}
-but we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative form \citep[section I.4.3]{HundsdorferVerwer2010}.  We use the upwind value $u_i$ for the flux at $x_e$ because $v_e = v(x_e) \ge 0$:
+
+But we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative form \citep[section I.4.3]{HundsdorferVerwer2010}.  We use the upwind value $u_i$ for the flux at $x_e$ because $v_e = v(x_e) \ge 0$:
 \begin{equation}
 Q_e = v_e u_i \label{eq:upwindfluxfirst}
 \end{equation}
@@ -671,7 +675,7 @@ where
 \end{equation}
 Unfortunately, despite the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
 
-The approach of flux-limiting is to regard the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large in some situations, for instance near local extrema of $u$, to allow positivity \citep[section III.1.1]{HundsdorferVerwer2010}.  Unfortunately, Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  On the other hand there exist nonlinear ``flux-limited'' (correction-limited) formulas which restore these properties.  Because the schemes under consideration are explicit, the nonlinearity itself does not represent a significant computational cost.
+The ``flux-limiting'' approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear ``flux-limited'' (correction-limited) formulas which restore these properties, and, because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
 
 These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
 \begin{equation}
@@ -689,11 +693,11 @@ The difference ratio $\theta_i$ in \eqref{eq:thetadefine} can take any real valu
 \end{equation}
 The schemes in Table \ref{tab:fluxlimiters} which satisfy these conditions are marked with ``$\ast$''.
 
-For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that in every case in Table \ref{tab:fluxlimiters} where there is a correction ($\psi(\theta)\ne 0$) we have $\psi(1)=1/2$.  The Koren flux-limiter in Table \ref{tab:fluxlimiters}, which we will demonstrate in practice, has $\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  Therefore we can think of the Koren scheme as a positive form of the third-order upwind-biased scheme.
+For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that in every case in Table \ref{tab:fluxlimiters} where there is a correction ($\psi(\theta)\ne 0$) we have $\psi(1)=1/2$.  The Koren flux-limiter in Table \ref{tab:fluxlimiters} \citep{HundsdorferVerwer2010} has $\psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  We can think of the Koren scheme as a positive form of the third-order upwind-biased scheme.
 
 \begin{table}[ht]
   \centering
-  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}.  See \cite{HundsdorferVerwer2010} for discussion of these and other schemes.}
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}.}
   \begin{tabular}{ll}
     \textbf{scheme ($\ast=$ positive)} & \textbf{formula} \\
 \hline
@@ -707,29 +711,27 @@ For smooth functions and fine grids we have $\theta_i\approx 1$ except near extr
  \label{tab:fluxlimiters}
 \end{table}
 
-To summarize our understanding of flux discretizations for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from difficult areas (i.e.~near extrema and non-smooth areas where $\theta_j$ is not near one), but they revert to first-order in these difficult areas.
+To summarize these flux discretizations for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from difficult areas (i.e.~near extrema and non-smooth areas where $\theta_j$ is not near one), but they revert to first-order in these difficult areas.
 
-The above discussion was limited to the spatial discretization; we have applied ``method of lines'' only.  A time discretization is also required, and for this we simply choose forward Euler.  Using one of the positive spatial discretizations above, the resulting fully discrete system is positive if
+The above discussion was limited to the spatial discretization; we have applied ``method of lines'' only.  A time discretization is also required, and for this we simply choose forward Euler.  The resulting fully discrete system is positive if
 \begin{equation}
-\max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2}, \label{eq:CFL}
+\max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2} \label{eq:CFL}
 \end{equation}
-as proven in section III.1.1 of \cite{HundsdorferVerwer2010}.  Section III.1.3 of the same reference shows these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We will identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
+\citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
-At this point we can state the two alternatives which we will actually test as discrete flux schemes in equation \eqref{eq:Wfd}.  Recall that the velocity has components $\bV=(\alpha,\beta)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  Also recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(\alpha_e)$'' and that the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(\beta_n)$.''  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$''.  Thus we simply give formulas for $Q_e$ and $Q_n$:
+\subsection*{Fluxes in the mass conservation equation}  Now we state the two alternatives which we actually test as flux discretizations for scheme \eqref{eq:Wupdate}.  Recall that the velocity has components $\bV=(u,v)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  Also recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(u_e)$'' and that the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(v_n)$.''  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$'':
 \begin{align}
-Q_e(\alpha_e) &= \begin{cases} \alpha_e \left[W_{i,j} + \psi(\theta_{i}) (W_{i+1,j} - W_{i,j})\right], & \alpha_e \ge 0, \\ \alpha_e \left[W_{i+1,j} + \psi\left((\theta_{i+1})^{-1}\right) (W_{i,j} - W_{i+1,j})\right], & \alpha_e < 0, \end{cases} \label{eq:adfluxes} \\
-Q_n(\beta_n) &= \begin{cases} \beta_n \left[W_{i,j} + \psi(\theta_{j}) (W_{i,j+1} - W_{i,j})\right], & \beta_n \ge 0, \\ \beta_n \left[W_{i,j+1} + \psi\left((\theta_{j+1})^{-1}\right) (W_{i,j} - W_{i,j+1})\right], & \beta_n < 0. \end{cases} \notag
+Q_e(u_e) &= \begin{cases} u_e \left[W_{i,j} + \psi(\theta_{i}) (W_{i+1,j} - W_{i,j})\right], & u_e \ge 0, \\ u_e \left[W_{i+1,j} + \psi\left((\theta_{i+1})^{-1}\right) (W_{i,j} - W_{i+1,j})\right], & u_e < 0, \end{cases} \label{eq:adfluxes} \\
+Q_n(v_n) &= \begin{cases} v_n \left[W_{i,j} + \psi(\theta_{j}) (W_{i,j+1} - W_{i,j})\right], & v_n \ge 0, \\ v_n \left[W_{i,j+1} + \psi\left((\theta_{j+1})^{-1}\right) (W_{i,j} - W_{i,j+1})\right], & v_n < 0. \end{cases} \notag
 \end{align}
-The flux-limiters which we will consider are the first-order upwind ($\psi(\theta)=0$) and Koren ($\psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$) cases in Table \ref{tab:fluxlimiters}.  The subscripted $\theta$ quotients are as follows:
+The flux-limiters we try are the first-order upwind and the Koren cases in Table \ref{tab:fluxlimiters}.  The subscripted $\theta$ quotients are as follows:
 \begin{align*}
 \theta_i &= \frac{W_{i,j}-W_{i-1,j}}{W_{i+1,j} - W_{i,j}}, & (\theta_{i+1})^{-1} &= \frac{W_{i+2,j}-W_{i+1,j}}{W_{i+1,j} - W_{i,j}}, \\
 \theta_j &= \frac{W_{i,j}-W_{i,j-1}}{W_{i,j+1} - W_{i,j}}, & (\theta_{j+1})^{-1} &= \frac{W_{i,j+2}-W_{i,j+1}}{W_{i,j+1} - W_{i,j}}.
 \end{align*}
-Clearly one does not need to compute these ``$\theta$s'' when using first-order upwind.
+One does not even compute these ``$\theta$s'' when using first-order upwind.  On the other hand, when using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is extended because regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are potentially involved in updating $W_{i,j}$.
 
-When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is incomplete.  In particular the additional regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are each (potentially) involved in updating $W_{i,j}$.
-
-For either the first-order or high-resolution flux schemes, and even if the combined advection-diffusion scheme is still structurally-positive as is proved in the Appendix for first-order upwind fluxes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a highly-desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).  Generally we must project (reset) $W$ to be nonnegative at the end of each time step.
+For either the first-order or high-resolution flux schemes, if the water input $\Phi$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a desirable property but it does not ensure positivity of the solution if there is actual water removal ($\Phi < 0$).  Therefore we project (reset) $W$ to be nonnegative at the end of each time step, as further explained in \eqref{eq:Wenupdate}.
 
 
 \subsection*{A numerical scheme for the ``lakes'' model}  Recall model \eqref{eq:lakesmodel} which combines the mass conservation equation and the assumption that the subglacial water pressure was equal to the overburden pressure.  We call this the ``lakes'' model because its primary purpose in the literature has been in the identification of the locations of subglacial lakes in Antarctica, but it could be called the ``routing'' model.  It simply pushes water toward the minima of a hydraulic potential which comes primarily from ice geometry, and which is insensitive to the effect of changing cavity geometry on the water pressure.
