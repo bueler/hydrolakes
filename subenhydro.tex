@@ -432,50 +432,48 @@ As noted in section \ref{sec:closures}, in the $\alpha=1$ and $\beta=2$ case of 
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Processes become decoupled in steady state}  In this section we address only the $\alpha=1$ case.  The steady states of mathematical model \eqref{eq:bluebox} are worth considering both because the physical subglacial system is close to steady state much of the time, and because in the steady state case we can more easily find an exact solution.
+\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering because the physical subglacial system is close to steady state much of the time, because we can evaluate the nature of the water flux, and because we can more easily find an exact solution.  We will see that a function which relates the water pressure $P$ directly to the amount $W$ arises in steady state, although no such function exists generally.  In this section we address only the $\alpha=1$ and $\beta=2$ case but the major conclusions apply for general powers $\alpha,\beta$.
 
-Recall that the flux has two expressions $\bq = - k (\rho_w g)^{-1} W \grad \psi = \bV W - K W \grad W$.  Thus, here is a steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
+Recall that the flux has two expressions $\bq = - k (\rho_w g)^{-1} W \grad \psi = \bV W - k W \grad W$.  Here is the steady form of model \eqref{eq:bluebox} which is written in terms of $\bV,\bq,W,P$:
 \begin{align}
 \bV &= - \frac{k}{\rho_w g} \grad \left(P + \rho_w g b\right), \label{eq:Vsteady} \\
 \bq &= \bV W - k W \grad W, \label{eq:qsteady} \\
-0 &= - \Div \bq + \frac{m+S}{\rho_w}, \label{eq:masscontsteady} \\
+0 &= - \Div \bq + \frac{m}{\rho_w}, \label{eq:masscontsteady} \\
 0 &= c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
-In the last equation we have eliminated ``$- \Div \bq + (m+S)/\rho_w$'' because it is zero.  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
+(To derive the last equation one eliminates ``$- \Div \bq + m/\rho_w$'' because it is zero.)  Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
-Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are identical to those of the \cite{Schoofetal2012} model, where the same decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
+Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are also stated by \cite{Schoofetal2012} model, where the decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
 
 
-\subsection*{Functional relationship for pressure in steady state}  Equation \eqref{eq:openclosesteady} allow us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  This fact was already pointed out in considering the steady states of equation \eqref{eq:hewittcapacity}.  In particular, steady state is only possible if \eqref{eq:steadyOCbound} holds, but here with $W$ for $Y$:
+\subsection*{Functional relationship for pressure in steady state}  Equation \eqref{eq:openclosesteady} allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  (This fundamental fact was already pointed out in considering the steady states of equation \eqref{eq:hewittcapacity}.)  Steady state is only possible if condition \eqref{eq:steadyOCbound} holds, but here with $W$ for $Y$:
 \begin{equation}
 c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 (W+Y_0) \qquad \text{ in steady state}. \label{eq:steadyboundfirst}
 \end{equation}
-In this and later formulas define
+In this and later formulas define the following scaled basal sliding speed which has units of pressure:
 \begin{equation}
-s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3},  \label{eq:definesb}
+s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.  \label{eq:definesb}
 \end{equation}
-a scaled basal sliding speed which has units of pressure.  (One may think of $s_b$ as a scale for the pressure drop associated to cavitation in steady state.)  Then \eqref{eq:steadyboundfirst} is equivalent to
+(One may think of $s_b$ as a scale for the pressure drop associated to cavitation in steady state.)  Then \eqref{eq:steadyboundfirst} is equivalent to
 \begin{equation}
 W \ge W_c := \frac{s_b^3 W_r - P_o^3 Y_0}{s_b^3 + P_o^3} \qquad \text{ in steady state}. \label{eq:steadyboundsecond}
 \end{equation}
-This condition says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  Inequalities \eqref{eq:steadyboundfirst} and \eqref{eq:steadyboundsecond} are less restrictive in the regularized case $Y_0>0$ than in the unregularized case $Y_0=0$.
+This condition says that the water amount is above a critical level that depends on the sliding and the overburden pressure.  If the sliding is large ($s_b \gg P_o$) then $W_c\approx W_r$.
 
 If \eqref{eq:steadyboundfirst} or \eqref{eq:steadyboundsecond} holds then
 \begin{equation}
 P(W) = P_o - s_b \left(\frac{(W_r - W)_+}{W+Y_0}\right)^{1/3} \qquad \text{ in steady state}.  \label{eq:PofWsteady}
 \end{equation}
-Note that in \eqref{eq:PofWsteady} we have $P(W_c)=0$.  Underpressure ($P=0$) with subcritical water amount ($W<W_c$) does not occur in steady state though it can and does occur in nonsteady conditions.  
-
-Formula \eqref{eq:PofWsteady} may apply even if $W\ge W_r$, in which case the water pressure takes the overburden value $P = P_o$.  However, if $P_o=0$ then \eqref{eq:steadyboundfirst} implies that either $W\ge W_r$ or $|\bv_b|=0$.  This describes the values of $W$ and $|\bv_b|$ at ice margins where $H\to 0$ and therefore $P_o\to 0$.
+Note that in \eqref{eq:PofWsteady} we have $P(W_c)=0$.  Underpressure ($P=0$) with subcritical water amount ($W<W_c$) does not occur in steady state though it can occur in nonsteady conditions.  Formula \eqref{eq:PofWsteady} may apply even if $W\ge W_r$, in which case the water pressure takes the overburden value $P = P_o$.  However, if $P_o=0$ then \eqref{eq:steadyboundfirst} implies that either $W\ge W_r$ or $|\bv_b|=0$.  This describes the values of $W$ and $|\bv_b|$ at ice margins where $H\to 0$ and therefore $P_o\to 0$.
 
 \newcommand{\upto}{ \!\!\nearrow\! }
 \newcommand{\downto}{ \!\searrow\! }
-Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of uniform sliding speed $|\bv_b|$.  Figure \ref{fig:psteady-Po} shows $P(W)$ for several cases of uniform overburden pressure $P_o$.  Replacing $Y_0=0$ makes no apparent difference in these figures; not shown.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ if $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}, which describe steady state, do not include the interval $0\le W < W_c$ because such underpressure conditions are not achievable in steady state.
+Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of sliding speed $|\bv_b|$.  Figure \ref{fig:psteady-Po} shows $P(W)$ for several cases of overburden pressure $P_o$.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ if $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}, which describe steady state, do not include the interval $0\le W < W_c$ because such underpressure conditions are not achievable in steady state.
 
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{psteady-vb}
 \medskip
-\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed.  Four cases are shown (in color) using a fixed uniform ice thickness of $H=1000$ m: $|\bv_b|=0$ m/a (blue), $10$ m/a (green), $100$ m/a (red), and $1000$ m/a (cyan).  The values of $W_c$ for these cases are indicated by black dots with $P(W_c)=0$.  Relations \eqref{eq:PofWFC} (dashed black) and \eqref{eq:PofWBB} (dash-dot black) are shown with $W_{\text{crit}}=W_r$ for comparison.}
+\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed.  Four cases are shown (in color) using a fixed uniform ice thickness of $H=1000$ m: $|\bv_b|=0$ m/a (blue), $10$ m/a (green), $100$ m/a (red), and $1000$ m/a (cyan).  The values of $W_c$ for these cases are indicated by black dots at $P=0$.  Relations \eqref{eq:PofWFC} (dashed black) and \eqref{eq:PofWBB} (dash-dot black) are shown with $W_{\text{crit}}=W_r$ for comparison.}
 \label{fig:psteady-vb}
 \end{figure}
 
@@ -486,7 +484,7 @@ Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady}
 \label{fig:psteady-Po}
 \end{figure}
 
-Recall that \cite{FlowersClarke2002_theory} propose the functional relation \eqref{eq:PofWFC} for both steady and nonsteady circumstances.  On the one hand formula \eqref{eq:PofWFC} has features in common with equation \eqref{eq:PofWsteady}: both functions $P(W)$ and $P_{FC}(W)$ are increasing and both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity if cavitation is an influence on the water pressure.  For example, in the small sliding cases (e.g.~$|\bv_b| \ll 10$ m/a) creep will force $P(W) \approx P_o$ for a modest amount of water ($W\ll W_r$).  Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, a problematic condition already noted by \cite{Schoofetal2012}.  This condition $P>P_o$ does not arise in \eqref{eq:PofWsteady} nor in the \cite{Schoofetal2012} theory.  Perhaps the most important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we have no functional relationship $P=P(W)$ in nonsteady conditions.
+Recall that \cite{FlowersClarke2002_theory} propose function $P_{FC}(W)$ (equation \eqref{eq:PofWFC}) for both steady and nonsteady circumstances.  Both functions $P(W)$ in \eqref{eq:PofWsteady} and $P_{FC}(W)$ are increasing and both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity, as it does here, if cavitation is to influence the water pressure.  Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, a problematic condition already noted by \cite{Schoofetal2012}, but this condition does not arise in \eqref{eq:PofWsteady}.  The most important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we have not assumed a relationship $P=P(W)$ in nonsteady conditions.
 
 \subsection*{Water velocity in steady state}  We now consider how the steady state water velocity $\bV$ depends on other quantities.  Equation \eqref{eq:PofWsteady} defines $P=P(W,P_o,s_b)$ while $\bV$ depends on $\grad P$, and thus we need derivatives of $P$.  In particular, in steady state we have
 \begin{equation}
@@ -498,13 +496,13 @@ Recall that \cite{FlowersClarke2002_theory} propose the functional relation \eqr
       0, & W > W_r.
     \end{cases}  \label{eq:dPdWsteady}
 \end{equation}
-Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} illustrate these cases.  Note that the condition $W_c < W < W_r$ is identical to the normal pressure condition $0 < P < P_o$ in steady state.  Formula \eqref{eq:dPdWsteady} and the Figures agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield this formula for the velocity in steady state which applies in the normal pressure cases:
+(Note that the condition $W_c < W < W_r$ is identical to the normal pressure condition $0 < P < P_o$ in steady state.)  Formula \eqref{eq:dPdWsteady} and Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} agree that $\partial P / \partial W \to \infty$ as $W \upto W_r$.  Equations \eqref{eq:Vsteady}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} yield this formula for the velocity in steady state which applies in the normal pressure cases:
 \begin{align}
 \bV &= - \frac{k}{\rho_w g} \grad P - k \grad b = - \frac{k}{\rho_w g} \left[\frac{\partial P}{\partial P_o} \grad P_o + \frac{\partial P}{\partial s_b} \grad s_b + \frac{\partial P}{\partial W} \grad W\right] - k \grad b  \notag \\
     &= - \frac{k}{\rho_w g} \left[\grad \left(P_o + \rho_w g b\right) - \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} \grad s_b + \frac{s_b (W_r + Y_0)}{3  (W+Y_0)^{4/3} (W_r - W)^{2/3}} \grad W\right]. \label{eq:Vsteadyexpand}
 \end{align}
 
-Equation \eqref{eq:Vsteadyexpand} helps us understand the advective flux ``$\bV W$'' in $\bq=\bV W - k W \grad W$.  First, the direction of water transport $\bV$ is determined in steady state by a combination of a geometric direction ($\grad \left(P_o + \rho_w g b\right)$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the \emph{a priori} diffusive flux $-k W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.  To our knowledge, the identification of the diffusiveness of this steady velocity is new to this paper.
+Equation \eqref{eq:Vsteadyexpand} helps us understand the advective flux ``$\bV W$'' in $\bq=\bV W - k W \grad W$ in steady state.  First, the direction of water transport $\bV$ is determined by a combination of a geometric direction ($\grad \left(P_o + \rho_w g b\right)$), a direction derived from variations in the sliding speed ($\grad s_b$), and a diffusive direction.  The last category includes all terms proportional to $-\grad W$, thus both the \emph{a priori} diffusive flux $-k W \grad W$ and also the third term in \eqref{eq:Vsteadyexpand}.  A significant fraction of $\bV W$ is diffusive in steady state.  (To our knowledge, the identification of the diffusiveness of this steady velocity is new to this paper.)
 
 Let $\psi_o = P_o + \rho_w g b$ and consider the $Y_0=0$ case for simplicity.  We see that in steady state we can write the flux as a linear combination of gradients,
 \begin{equation}
@@ -518,7 +516,7 @@ with coefficients
 \end{align*}
 The first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  However $\gamma(W)$ remains large when $W\to 0$, even if $k$ is small, as long as sliding is sustained ($s_b \gg 0$).  Thus for low water amount and sustained sliding we should think of the water as diffusing in the layer; the apparently advective term ``$\bV W$'' is acting diffusively.  When the water thickness closely approximates the roughness scale ($W\approx W_r$) then $\beta(W)$ is also small, while in that circumstance $\gamma(W)$ is again strong as long as sliding is sustained.
 
-Thinking more generally, it is no surprise that when one of the ice thickness, bed elevation, sliding velocity, or water thickness fields is highly-variable in space then we can expect a larger amount of flow, and formula \eqref{eq:qabstract} reflects this intuition, at least in conditions near steady state.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation, large variations in these fields will generally reduce the time steps taken by a numerical model.
+Thinking more generally, it is no surprise that when one of the ice thickness, bed elevation, sliding velocity, or water thickness fields is highly-variable in space then we can expect larger flows in steady state.  Formula \eqref{eq:qabstract} reflects this intuition.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation, large variations in these spatial fields will generally reduce the time steps taken by a numerical model.
 
 
 
