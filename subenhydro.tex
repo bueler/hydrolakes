@@ -183,7 +183,7 @@ To simplify the model slightly a small water thickness approximation is made
 \end{equation}
 Thus $W\approx 0$ in the nonlinear scalar coefficients in \eqref{eq:firstfluxdecomp}.  This makes no change in the $\beta=2$ case.  Now define the nonlinear effective hydraulic conductivity
 \begin{equation}
-K = K(W,\grad P,\grad b) = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}.
+K = K(W,\grad P,\grad b) = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
 Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity we write the transporting velocity field
 \begin{equation} \label{eq:vexpression}
@@ -633,26 +633,35 @@ We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggere
 \begin{equation}
 W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
 \end{equation}
-In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (e.g.~east and north) to compute per regular grid location $(x_i,y_j)$.  We get the velocity components needed at staggered locations by differencing:
+In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (e.g.~east and north) to compute per regular grid location $(x_i,y_j)$.
+The nonlinear effective conductivity $K=K(W,\grad P,\grad b)$ from \eqref{eq:Kdefine} is also needed at staggered locations.  As a notational convenience define $R=P+\rho_w g b$ and define these staggered approximations of $|\grad(P+\rho_w g b)|^2$ \citep[compare][]{Mahaffy}:
+\begin{align*}
+R_e &= \left|\frac{R_{i+1,j}-R_{i,j}}{\Delta x}\right|^2 + \left|\frac{R_{i+1,j+1}+R_{i,j+1} - R_{i+1,j-1}-R_{i,j-1}}{4\Delta y}\right|^2, \\
+R_n &= \left|\frac{R_{i+1,j+1}+R_{i+1,j} - R_{i-1,j+1}-R_{i-1,j}}{4\Delta x}\right|^2 + \left|\frac{R_{i,j+1}-R_{i,j}}{\Delta y}\right|^2.
+\end{align*}
+Thereby define
+\begin{equation}
+K_e = k W_e^{\alpha-1} R_e^{(\beta-2)/2}, \qquad K_n = k W_n^{\alpha-1} R_n^{(\beta-2)/2}.  \label{eq:stagK}
+\end{equation}
+Now we can find the velocity components needed at staggered locations by differencing:
 \begin{align}
-u_e &= - k W_e^{\alpha-1} \left(\frac{P_{i+1,j}-P_{i,j}}{\rho_w g \Delta x} + \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \label{eq:velocitycomp} \\
-v_n  &= - k W_n^{\alpha-1} \left(\frac{P_{i,j+1}-P_{i,j}}{\rho_w g \Delta y} + \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right). \notag
+u_e &= - K_e \left(\frac{P_{i+1,j}-P_{i,j}}{\rho_w g \Delta x} + \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right), \quad v_n = - K_n \left(\frac{P_{i,j+1}-P_{i,j}}{\rho_w g \Delta y} + \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right). \label{eq:velocitycomp}
 \end{align}
-Again $u_w = u_e\big|_{(i-1,j)}$ and $v_s = v_n\big|_{(i,j-1)}$.
+Also $u_w = u_e\big|_{(i-1,j)}$, $v_s = v_n\big|_{(i,j-1)}$, $K_w = K_e\big|_{(i-1,j)}$, and $K_s = K_n\big|_{(i,j-1)}$.
 
-The face-centered (staggered-grid) normal fluxes $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ are components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value(s) are used.  Here is the scheme for equation \eqref{eq:adeqn}:
+Define $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ as the face-centered (staggered-grid) normal components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value(s) are used.  Here is the scheme for equation \eqref{eq:adeqn} using \eqref{eq:stagK} and \eqref{eq:velocitycomp} above:
 \begin{align}
  &\frac{(W+W_{en})_{i,j}^{l+1} - (W+W_{en})_{i,j}^l}{\Delta t} = - \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} - \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y} \label{eq:Wfd} \\
-      &\qquad\qquad + \frac{k W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - k W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
-      &\qquad\qquad\qquad + \frac{k W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}  + \frac{m_{ij}+S_{ij}}{\rho_w}. \notag
+      &\qquad\qquad + \frac{K_e W_e \left(W_{i+1,j}^l - \Wlij\right) - K_w W_w \left(\Wlij - W_{i-1,j}^l\right)}{\Delta x^2}  \notag \\
+      &\qquad\qquad\qquad + \frac{K_n W_n \left(W_{i,j+1}^l - \Wlij\right) - K_s W_s \left(\Wlij - W_{i,j-1}^l\right)}{\Delta y^2}  + \frac{m_{ij}}{\rho_w}. \notag
 \end{align}
-The values $m_{ij}$ and $S_{ij}$ are supplied by other components of an ice sheet model or by observations.  Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
+Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
 
-It is useful to rewrite scheme \eqref{eq:Wfd} in ``update'' form, and we should address the englacial storage update.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = k\Delta t/\Delta x^2$, and $\mu_y = k\Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
+It is useful to rewrite scheme \eqref{eq:Wfd} in ``update'' form, and we should address the englacial storage update.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
 \begin{align}
  (W+W_{en})_{i,j}^{l+1} &= (W_{en})_{i,j}^l + W_{i,j}^l - \nu_x \left(Q_e(u_e) - Q_w(u_w)\right) - \nu_y \left(Q_n(v_n) - Q_s(v_s)\right) \label{eq:Wupdate} \\
-  &\qquad + \mu_x \left(W_e^\alpha \left(W_{i+1,j}^l - \Wlij\right) - W_w^\alpha \left(\Wlij - W_{i-1,j}^l\right)\right) \notag \\
-  &\qquad + \mu_y \left(W_n^\alpha \left(W_{i,j+1}^l - \Wlij\right) - k W_s^\alpha \left(\Wlij - W_{i,j-1}^l\right)\right) + \frac{\Delta t}{\rho_w}\left(m_{ij}+S_{ij}\right). \notag
+  &\qquad + \mu_x \left(K_e W_e \left(W_{i+1,j}^l - \Wlij\right) - K_w W_w \left(\Wlij - W_{i-1,j}^l\right)\right) \notag \\
+  &\qquad + \mu_y \left(K_n W_n \left(W_{i,j+1}^l - \Wlij\right) - K_s W_s \left(\Wlij - W_{i,j-1}^l\right)\right) + \Delta t \frac{m_{ij}}{\rho_w}. \notag
 \end{align}
 In particular, at time $t_l$ we assume $W^l$ and $(W_{en})^l$ are known fields.  Then \eqref{eq:Wupdate} gives new values for the total water amount $(W+W_{en})^{l+1}$.  If this total water amount comes out negative then it is projected back to zero.  Then the total water amount is split by first computing $W_{en}$ by using the function in \eqref{eq:WenFunctionWtot} and then computing $W$:
 \begin{equation} (W_{en})_{i,j}^{l+1} = F\left((W+W_{en})_{i,j}^{l+1}\right), \qquad  W_{i,j}^{l+1} = (W+W_{en})_{i,j}^{l+1} - (W_{en})_{i,j}^{l+1}.  \label{eq:Wenupdate}
