@@ -519,35 +519,34 @@ The first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  H
 Thinking more generally, it is no surprise that when one of the ice thickness, bed elevation, sliding velocity, or water thickness fields is highly-variable in space then we can expect larger flows in steady state.  Formula \eqref{eq:qabstract} reflects this intuition.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation, large variations in these spatial fields will generally reduce the time steps taken by a numerical model.
 
 
-
 \section{A nearly-exact steady solution}
 
-\subsection*{The radial steady-state equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane.  This solution, which is useful for verifying the numerical schemes in the general non-steady case, will depend the high-precision numerical solution of a scalar first-order ODE initial value problem.  Though exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}, here, by contrast, we consider a two horizontal dimension ice sheet geometry on a flat bedrock.
+\subsection*{The radial steady-state equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane.  This solution, which is useful for verifying the numerical schemes even in the non-steady case, will depend on the high-precision numerical solution of a scalar first-order ODE initial value problem.  Exact solutions in one horizontal dimension (waves) also appear in \cite{Schoofetal2012}.
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady}, and assume all quantities only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  Eliminate $\bV$.  In the flat bed case the resulting pair of equations is
 \begin{align}
 q &= - \frac{k}{\rho_w g} W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
-\frac{1}{r}\frac{d}{dr}\left(r\,q\right) &= \frac{m+S}{\rho_w}. \label{eq:rsconserve}
+\frac{1}{r}\frac{d}{dr}\left(r\,q\right) &= \frac{m}{\rho_w}. \label{eq:rsconserve}
 \end{align}
-In the case of constant water input where $(m+S)/\rho_w=\Phi_0 > 0$, which we assume for the exact solution, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
+
+In the case of constant water input where $m/\rho_w=\Phi_0 > 0$, which we assume for the exact solution, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
 \begin{equation}
 q(r) = \frac{1}{2} \Phi_0\, r. \label{eq:qradial}
 \end{equation}
-
-On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$ in steady state.  Suppose $h(r)$ is given so that $P_o(r)$ is also determined.  Assume that the scaled sliding speed $s_b(r)$ has a bounded derivative and that the solution $W(r)$ satisfies the normal pressure conditions $W_c < W < W_r$; both of these properties must be verified later for the constructed solution.  Now, by combining \eqref{eq:rsflux}, \eqref{eq:qradial}, \eqref{eq:PofWsteady}, and \eqref{eq:dPdWsteady} we can eliminate $q$ and $P$ to find
+On the other hand, equation \eqref{eq:PofWsteady} gives $P$ as a function of $W$ in steady state.  Suppose $h(r)$ is given so that $P_o(r)$ is also determined.  Assume that the scaled sliding speed $s_b(r)$ has a bounded derivative and that the solution $W(r)$ satisfies the normal pressure conditions $W_c < W < W_r$; both of these properties must be verified later for the constructed solution.  Now, by combining \eqref{eq:PofWsteady}, \eqref{eq:dPdWsteady}, \eqref{eq:rsflux}, and \eqref{eq:qradial} we can eliminate $q$ and $P$ to find
 \begin{equation}
 \omega_0\, r = - W\, \left(\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W+Y_0}\right)^{1/3} + \left(\frac{s_b (W_r + Y_0)}{3 (W+Y_0)^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\right)  \label{eq:ODEfirst}
 \end{equation}
-in cases where $W_c < W < W_r$ and where $\omega_0 = \rho_w g \Phi_0 (2 k)^{-1}$. 
+where $\omega_0 = \rho_w g \Phi_0 (2 k)^{-1}$.  This equation applies to cases where $W_c < W < W_r$.
 
 Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver, solve for $dW/dr$:
 \begin{equation}
 \frac{dW}{dr} = \frac{\frac{ds_b}{dr} (W+Y_0) (W_r - W) - \Big[\omega_0\, r W^{-1} + \frac{dP_o}{dr}\Big] (W + Y_0)^{4/3} \left(W_r - W\right)^{2/3}}{\frac{1}{3} s_b (W_r + Y_0) + \rho_w g (W + Y_0)^{4/3} (W_r - W)^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
-Note that ODE \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.  To determine a nontrivial nearly-exact solution of this ODE we must choose an ice thickness $H(r)$ and a sliding speed $|\bv_b|(r)$ to determine $dP_o/dr$ and $ds_b/dr$, respectively.  The numerical solution of ODE \eqref{eq:WradialODE} will proceed from the ice margin at $r=L$ inward toward the center.
+Equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
 
-\subsection*{Chosen surface elevation and sliding velocity}  To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; Figure \ref{fig:Pexact} shows such a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and indeed we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
+\subsection*{Chosen surface elevation and sliding velocity}  To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; Figure \ref{fig:Pexact} shows such a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
@@ -555,7 +554,7 @@ h(r) = h_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
 where $h(0)=h_0$ is the height of the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $h(L)=0.19 h_0$ in \eqref{eq:choosebodvardssonh}.
 
-The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is too advanced for the current purpose of primary hydrology model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, and which increases in the radial direction:
+The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is too advanced for initial model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, and which increases in the radial direction:
 \begin{equation}
 |\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
                            v_0  \left(\frac{r-R_1}{L-R_1}\right)^5, & R_1 < r \le L.
@@ -563,7 +562,7 @@ The sliding speed could be determined by a model for stresses at the ice base an
 \end{equation}
 It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
 
-\subsection*{Numerical solution of radial ODE to give nearly-exact $W(r)$}  Now we can solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ and the specific values in Table \ref{tab:verifconstants} by using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} also imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}.  This relation allows us to also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure (solid curves).  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.  At $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.
+\subsection*{Numerical solution of radial ODE to give nearly-exact $W(r)$}  Now we solve ODE \eqref{eq:WradialODE} with initial condition $W(L)=W_c(L)$ and the specific values in Table \ref{tab:verifconstants} by using an adaptive numerical ODE solver.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.  Because equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}, we can show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure (solid curves).  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$.  At $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.  Figure \ref{fig:Pexact} shows the corresponding pressure solution $P(r)=P(W(r))$ from \eqref{eq:PofWsteady}.
 
 \begin{table}[ht]
   \centering
@@ -571,7 +570,7 @@ It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \e
   \begin{tabular}{lllp{3.0in}}
     \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
 \hline
-    $\Phi_0$ & $20$ & $\text{cm}\,\text{a}^{-1}$ & $=(m+S)/\rho_w$; constant water input rate \\
+    $\Phi_0$ & $0.2$ & $\text{m}\,\text{a}^{-1}$ & $=m/\rho_w$; constant water input rate \\
     $h_0$ & $500$ & m & ice cap center thickness \\
     $L$   & $22.5$& km & $=0.9 R_0$; actual ice cap margin \\
     $R_0$ & $25$  & km & ideal ice cap radius \\
@@ -588,13 +587,11 @@ It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \e
 \label{fig:Wexact}
 \end{figure}
 
-To generate $W(r)$ in Figure \ref{fig:Wexact} we used both the standard, non-stiff Runge-Kutta 4(5) Dormand-Prince method, which is \Matlab's \texttt{ode45}, and the stiff, variable-order solver \texttt{ode15s}, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with essentially identical results.
-% could cite Shampine,Gladwell,Thompson (2003) on Matlab ODE solvers
-Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed for $r\approx R_1$, however.  The reason is that as the sliding goes to zero, the cavitation also goes to zero ($|\bv_b|\to 0$).  Because creep closure balances cavitation in steady state, it also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are variation in overburden pressure and the rate of water input.  They must exactly balance according to the steady mass conservation equation \eqref{eq:masscontsteady}.  In this case with no sliding ($s_b=0$), ODE \eqref{eq:WradialODE} reduces to the much simpler form
+To generate $W(r)$ in Figure \ref{fig:Wexact} we used both a Runge-Kutta 4(5) Dormand-Prince method and a variable-order stiff solver, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$, and with essentially identical results.  Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed at $r\approx R_1$, however.  The reason is that as the sliding goes to zero, the cavitation also goes to zero ($|\bv_b|\to 0$).  Because creep closure balances cavitation in steady state, it also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are the variable overburden pressure and the rate of water input.  They must exactly balance.  In fact, in this case \eqref{eq:WradialODE} reduces to the much simpler form
 \begin{equation}
 \frac{dW}{dr} = - \frac{\varphi_o r W^{-1} + \frac{dP_o}{dr}}{\rho_w g}. \label{eq:WradialODEnoslide}
 \end{equation}
-Equation \eqref{eq:WradialODEnoslide} is actually the steady radial form of the mass conservation equation under the ``$P=P_o$'' closure, namely equation \eqref{eq:PisoverConservation}.
+Though we have not derived it this way, Equation \eqref{eq:WradialODEnoslide} is the steady radial form of the mass conservation equation under the ``$P=P_o$'' closure, namely equation \eqref{eq:PisoverConservation}.
 
 In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \varphi_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W=\tilde W= 0.21764$ m because $\Phi_0$ is constant and $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers mentioned above confirm that $W(r)$ is asymptotic to this constant value $\tilde W$ as $r\to 0$, and that $W(r)\approx \tilde W$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
 
@@ -608,7 +605,7 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the nonlinear diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
+\subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
 We first consider stable time steps.  The time step restriction for the advective part, namely the CFL condition for either of the schemes under consideration, is much more restrictive in this case than the time-step restriction for the diffusion.  Stability for these schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
@@ -616,11 +613,11 @@ We first consider stable time steps.  The time step restriction for the advectiv
 \end{equation}
 Here $\bV=(u,v)$ is the advection velocity.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$  where
 \begin{equation}
-\Delta t_W\, 2 k \max(W^\alpha) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFW}
+\Delta t_W\, 2 \max(K W) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFW}
 \end{equation}
-\citep{MortonMayers}.  The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix A shows that this is sufficient for the first-order upwind scheme in the $\phi=0$ and $\alpha = 0$ case.  Standard theory suggests the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}, and the general $\phi,\alpha$ cases, should be stable under these same sufficient conditions because we have \eqref{eq:adeqn} in advection-diffusion form.
+\citep{MortonMayers}.  The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix A shows that this is sufficient for the first-order upwind scheme in the $\phi=0$ and $\alpha = 0$ case.  Standard theory suggests the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}, and the general $\phi,\alpha$ cases, are stable under these same sufficient conditions because we have \eqref{eq:adeqn} in advection-diffusion form.
 
-To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |u| = \max |v| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s and $\max W\approx 10 W_r=10$ m  from Table \ref{tab:constants} as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.01$ year.  Thus, unless the global peak velocity is unusually slow, or unless deep subglacial lakes develop so that $k W^\alpha$ is large and $\Delta t_W$ is correspondingly small, this diffusive time scale is longer than the CFL time scale.  There is significant uncertainty in these estimated values because the velocity field is part of the coupled solution to the model.  Also the $\alpha > 1$ cases make the time step restrictions more volatile.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ and $\beta=2$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |u| = \max |v| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s and $\max W\approx 10 W_r=10$ m  from Table \ref{tab:constants} as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.01$ year.  Thus, unless the global peak velocity is unusually slow, or unless deep subglacial lakes develop so that $K W$ is large and $\Delta t_W$ is correspondingly small, this diffusive time scale is longer than the CFL time scale.  There is significant uncertainty in these estimated values because the velocity field is part of the coupled solution to the model.  Also the $\alpha > 1$ cases make the time step restrictions more volatile.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
 
 \begin{figure}[ht]
 \centering
@@ -630,7 +627,7 @@ To understand these restrictions quantitatively, we consider typical values of t
 \label{fig:stencil}
 \end{figure}
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the approximations of the continuum solution at the grid points.  Recall that $\bV$ is determined from pressure and bed elevation by a formula in \eqref{eq:bluebox}.  Let $\bQ=\bV W = \bq + k W^\alpha \grad W$ so that $\Div \bQ = (u W)_x + (v W)_y$.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the numerical approximations.  Recall that $\bV$ is determined from pressure and bed elevation; see \eqref{eq:bluebox}.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
 
 We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, and these are computed by averaging regular grid values:
 \begin{equation}
