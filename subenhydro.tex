@@ -598,7 +598,6 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 \begin{figure}[ht]
 \includegraphics[width=3.5in,keepaspectratio=true]{exact-P-plot}
 \caption{Nearly-exact radial, steady solution pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
-% FIXME:  add second axis for velocity
 \label{fig:Pexact}
 \end{figure}
 
@@ -688,35 +687,36 @@ For either the first-order or Koren schemes, if the water input $m$ is negative 
 
 The time step restriction we identify is comparable to \eqref{eq:dtDIFFW}, though the proof technique in Appendix \ref{app:positivestable} does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  The time step must satisfy $\Delta t \le \Delta t_P$ where
 \begin{equation}
-\Delta t_P\, \left(\frac{2 \rho_i\, k \max(W^\alpha)}{\rho_w (\phi+\phi_0)}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
+\Delta t_P\, \left(\frac{2 \rho_i\, \max(K W)}{\rho_w (\phi+\phi_0)}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2} \label{eq:dtDIFFP}
 \end{equation}
 The resulting time step $\Delta t_P$ is a fraction of $\Delta t_W$ from \eqref{eq:dtDIFFW}:
 \begin{equation}
 \Delta t_P = \frac{\rho_w (\phi+\phi_0)}{\rho_i}\, \Delta t_W.  \label{eq:dtDIFFPfromW}
 \end{equation}
-In fact, with the estimates $\rho_w/\rho_i \approx 1$ and $\phi+\phi_0 \approx 0.01$, we have $\Delta t_P$ which is about 100 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $k=10^{-2}$ m/s and $\max W=10$ m) we get
+In fact, with the estimates $\rho_w/\rho_i \approx 1$ and $\phi+\phi_0 \approx 0.01$, we have $\Delta t_P$ which is about 100 times smaller than $\Delta t_W$.  With these values and others used earlier (i.e.~$\alpha=1$, $\beta=2$, $\Delta x = \Delta y = 500$ m, $\max |\bV|=10^5$ m/a, $k=10^{-2}$ m/s and $\max W=10$ m) we get
 \begin{align*}
   \Delta t_{\text{CFL}} &\approx 0.001  \text{ year} &&\text{ from \eqref{eq:dtCFL}}, \\
   \Delta t_W            &\approx 0.01   \text{ year} &&\text{ from \eqref{eq:dtDIFFW}}, \\
   \Delta t_P            &\approx 0.0001 \text{ year} &&\text{ from \eqref{eq:dtDIFFPfromW}.}
 \end{align*}
 
-This analysis suggests that the numerical scheme for pressure diffusion, given next, has the shortest time step.  In actual computation it seems to be common for $\Delta t_p$ to be $10$--$300$ times shorter than the CFL restriction for the advection.  In any case, the size of the stable time step $\Delta t_P$ scales with the adjustable regularized porosity $\phi+\phi_0$.  By choosing $\phi_0$ larger or smaller we can make the time step restriction on $\Delta t_P$ less or more severe, respectively.
+This analysis suggests that the numerical scheme for pressure diffusion, given next, has the shortest time step.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation with $\alpha \ne 1$ and $\beta \ne 2$ it seems to be common for $\Delta t_p$ to be $10$--$300$ times shorter than the CFL restriction for the advection.  In any case, the size of the stable time step $\Delta t_P$ scales with the adjustable regularized porosity $\phi+\phi_0$.  By choosing $\phi_0$ larger or smaller we can make the time step restriction on $\Delta t_P$ less or more severe, respectively.
 
-The scheme we use for \eqref{eq:regpressureequation} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn} but without a need for approximating advection:
-\begin{align}
-\frac{\phi+\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{1}{\rho_w g} \bigg[\frac{k W_e^\alpha \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - k W_w^\alpha \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
-      &\qquad\qquad + \frac{k W_n^\alpha \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - k W_s^\alpha \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
-      &\qquad + c_2 A \left(\rho_i g H_{i,j}- \Plij\right)^3 \Wlij - c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+ + \frac{m_{ij} + S_{ij}}{\rho_w}. \notag
-\end{align}
-Again it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define $\omega_x = 1/(\rho_w g \Delta x^2)$, $\omega_y = 1/(\rho_w g \Delta y^2)$, and let
+The scheme we use for \eqref{eq:regpressureequation} is similar to \eqref{eq:Wfd} for \eqref{eq:adeqn} but without a need for approximating advection.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
-be the gridded values of the cavitation-opening and creep-closure rates.  Then scheme \eqref{eq:Pfd} is equivalent to this form:
+be the gridded values of the cavitation-opening and creep-closure rates.  The scheme is
 \begin{align}
-P_{i,j}^{l+1} = \Plij +  \frac{\rho_w g\,\Delta t}{\phi+\phi_0} &\bigg[\omega_x k W_e^\alpha \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x k W_w^\alpha \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
-      &\quad + \omega_y k W_n^\alpha \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y k W_s^\alpha \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right) \notag \\
-      &\quad + \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij} + S_{ij}}{\rho_w}\bigg]. \notag
+\frac{\phi+\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{1}{\rho_w g} \bigg[\frac{K_e W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - K_w W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
+      &\qquad\qquad + \frac{K_n W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - K_s W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2}\bigg] \notag \\
+      &\qquad + \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w}. \notag
 \end{align}
+Again it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define $\omega_x = 1/\Delta x^2$, $\omega_y = 1/\Delta y^2$, and   Then scheme \eqref{eq:Pfd} is equivalent to this form:
+\begin{align}
+P_{i,j}^{l+1} = \Plij +  \frac{\,\Delta t}{\phi+\phi_0} &\bigg[\omega_x K_e W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x K_w W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
+      &\quad + \omega_y K_n W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y K_s W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)\bigg] \notag \\
+      &+ \frac{\rho_w g\,\Delta t}{\phi+\phi_0} \left(\mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w}\right). \notag
+\end{align}
+
 There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we again set $P_{i,j}^{l+1}=(P_o)_{i,j}$. 
 
 \subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $W_{en}$, and $P$.  One time step of the fully-discretized evolution is described next as a ``recipe''.  We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.
@@ -734,7 +734,7 @@ One time step follows this algorithm:
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $\Wlij$, $(W_{en})_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$ and $0 \le P \le P_o$.
-\item Compute the current values of the hydraulic potential, $\psi_{i,j}^l = \Plij + \rho_w g(b_{i,j} + \Wlij)$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
+\item Compute the current values of the hydraulic potential $\psi_{i,j}^l$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
 \item Compute velocity components $u_e$, $v_n$ at staggered grid locations from \eqref{eq:velocitycomp}.
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
 %FIXME: however, Wea and Wno should not average from outside the ice domain?
@@ -749,7 +749,7 @@ One time step follows this algorithm:
 \end{enumerate}
 
 \medskip
-This recipe goes with a mass ``bookkeeping'' and reporting scheme.  Note that water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines), according to the hydraulic potential differences which cause transport.  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(xi)}, which represent a mass conservation error which goes to zero under grid refinement.
+This recipe goes with a bookkeeping and reporting scheme for mass.  Note that water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines), according to the hydraulic potential differences which cause transport.  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(xi)}, which represent a mass conservation error which goes to zero under grid refinement.
 
 \subsection*{Verification of the coupled model}  By using the coupled steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can verify the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined.
 
@@ -970,7 +970,7 @@ The above discussion was limited to the spatial discretization; we have applied 
 
 \section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
 
-Explicit numerical scheme \eqref{eq:Wfd} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative, though only the case $m_{ij}=S_{ij} = 0$ is shown.  We assume no englacial storage ($W_{en}=0$ and $\phi=\phi_0=0$) and we use $\alpha=1$ for simplicity.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
+Explicit numerical scheme \eqref{eq:Wfd} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative, though only the case $m_{ij} = 0$ is shown.  We assume no englacial storage ($W_{en}=0$ and $\phi=\phi_0=0$) and we use $\alpha=1$ for simplicity.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
 We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
 \begin{align*}
