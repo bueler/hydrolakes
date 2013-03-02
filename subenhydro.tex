@@ -142,15 +142,15 @@ We have added the term ``$\rho_w g W$'' to the standard hydraulic potential form
 
 Water flows from high to low hydraulic potential.  The simplest applicable expression of this property is a Darcy flux model for a water sheet following \cite{Clarke05}, namely
 \begin{equation}  \label{eq:fluxearly}
-\bq = - \frac{k}{\rho_w g}\,W \grad \psi
+\bq = - k \,W\, \grad \psi
 \end{equation}
-Here $k \ge 0$ is the effective hydraulic conductivity ($\text{m}\,\text{s}^{-1}$).  More generally \cite{Schoofetal2012} suggests
+Here $k$ is the effective hydraulic conductivity.  More generally \cite{Schoofetal2012} suggests
 \begin{equation}  \label{eq:flux}
-\bq = - \, \frac{k}{\rho_w g}\, W^\alpha\, |\grad \psi|^{\beta-2} \grad \psi
+\bq = - k\, W^\alpha\, |\grad \psi|^{\beta-2} \grad \psi
 \end{equation}
-for $\alpha \ge 1$, $\beta>1$, and some coefficient $k>0$ with units that depend on $\alpha$ and $\beta$.
+for $\alpha \ge 1$, $\beta>1$, and a coefficient $k>0$ with units that depend on $\alpha$ and $\beta$.
 
-Power-law form \eqref{eq:flux} is justified as an instance of a Manning or Darcy-Weisbach law \citep{Schoofetal2012}.  Among others, \cite{Clarke05} suggests $\alpha=1$ and $\beta=2$, to give \eqref{eq:fluxearly} above, \cite{Hewitt2011} suggests $\alpha=3$ and $\beta = 2$, and \cite{Hewittetal2012} suggest $\alpha=5/4$ and $\beta=3/2$.  The current paper will implement law \eqref{eq:flux} generally.
+Power-law form \eqref{eq:flux} is justified as an instance of a Manning or Darcy-Weisbach law \citep{Schoofetal2012}.  \cite{Clarke05} suggests $\alpha=1$ and $\beta=2$, to give \eqref{eq:fluxearly} above, \cite{Hewitt2011} suggests $\alpha=3$ and $\beta = 2$, and \cite{Hewittetal2012} suggest $\alpha=5/4$ and $\beta=3/2$.  The current paper will implement law \eqref{eq:flux} generally.
 
 \subsection*{Overburden pressure and pressure bounds}  The ice is a viscous fluid which has a stress field of its own.  The basal value of the downward normal stress is traditionally called the \emph{overburden pressure}, which we denote by $P_o$.  In this paper we make the shallow approximation that it is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
@@ -170,39 +170,38 @@ Though extreme cases can occur, such as where the ice is forced upward by a nega
 
 \subsection*{Advection-diffusion decomposition}  Combining \eqref{eq:potential} and \eqref{eq:flux}, and separating the term proportional to $\grad W$, we get the flux expression
 \begin{align}
-  \bq &= - \frac{k}{\rho_w g}  W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{b-2} \grad \left(P + \rho_w g b\right)  \label{eq:firstfluxdecomp} \\
-      &\qquad - k W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{b-2} \grad W. \notag
+  \bq &= - k  W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{\beta-2} \grad \left(P + \rho_w g b\right)  \label{eq:firstfluxdecomp} \\
+      &\qquad - \rho_w g k W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{\beta-2} \grad W. \notag
 \end{align}
 This separation identifies a part of the flux, the second term, which is proportional to the gradient of the water thickness $\grad W$.  It acts diffusively in the mass conservation equation.  Because the subglacial water pressure generally scales with the ice overburden pressure $\rho_i g H$, the first flux term in \eqref{eq:firstfluxdecomp} will, however, dominate under the condition $|\grad H| \gg |\grad W|$ (or when $|\grad b| \gg |\grad W|$).
 
 Decomposed flux \eqref{eq:firstfluxdecomp} describes a transport process which combines a velocity field which varies in space and time (defined carefully below) and a second term which acts diffusively.  We will construct our conservative numerical scheme based on this understanding of how the flux is decomposed.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also actually \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from from the direction $\grad W$.
 
-To simplify the model slightly a small water thickness approximation is made
+To simplify the model slightly a small water thickness approximation $W\approx 0$ is made, but only inside the absolute value signs in \eqref{eq:firstfluxdecomp}, namely
 \begin{equation}
 \left|\grad \left(P + \rho_w g (b+W) \right)\right| \approx \left|\grad \left(P + \rho_w g b \right)\right|.  \label{eq:Wsmall}
 \end{equation}
-Thus $W\approx 0$ in the nonlinear scalar coefficients in \eqref{eq:firstfluxdecomp}.  This makes no change in the $\beta=2$ case.  Now define the nonlinear effective hydraulic conductivity
+This makes no change in the $\beta=2$ case.  Now define the nonlinear effective hydraulic conductivity
 \begin{equation}
 K = K(W,\grad P,\grad b) = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
-Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity we write the transporting velocity field
+Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity we write the transporting velocity field and the nonlinear diffusivity as
 \begin{equation} \label{eq:vexpression}
-  \bV = - \frac{K}{\rho_w g}\, \grad \left(P + \rho_w g b\right).
+  \bV = - K\, \grad \left(P + \rho_w g b\right), \qquad D = \rho_w g K W.
 \end{equation}
-The nonlinear diffusivity is $D = K\,W$.  With this notation, equation \eqref{eq:firstfluxdecomp} is replaced by a cleaner decomposition of the flux,
+Then expression \eqref{eq:firstfluxdecomp} is replaced by a clear advection-diffusion decomposition of the flux,
 \begin{equation} \label{eq:qexpression}
-  \bq = \bV\, W - D \grad W = \bV\, W - K\,W \grad W.
+  \bq = - K W \grad \psi = \bV\, W - D \grad W.
 \end{equation}
+In the rest of this paper we use both of the equivalent forms in \eqref{eq:qexpression} for the flux $\bq$.  The former emphasizes the relation between flow and pressure while the latter is essential in numerical considerations for the mass continuity equation.
+
 From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we derive an advection-diffusion equation \citep{HundsdorferVerwer2010} for the evolution of the water layer thickness:
 \begin{equation} \label{eq:adeqn}
-  \frac{\partial (W+W_{en})}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(K\,W \grad W\right) + \frac{m}{\rho_w}.
+  \frac{\partial (W+W_{en})}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}.
 \end{equation}
+There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(D \grad W\right)$ in \eqref{eq:adeqn}.  These different schemes impose time step restrictions of different magnitudes.  We will see in practice that equation \eqref{eq:adeqn} is advection-dominated in the sense that $|\bV W| \gg |D \grad W|$.  However, in near-steady conditions the velocity $\bV$ can be almost proportional to $-\grad W$ so there is no longer a clean separation of advection versus diffusion.  Certainly the numerical schemes for advection and diffusion must be tested in combination, and we measure convergence behavior of the combined schemes in section \ref{sec:results}.
 
-There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(K\,W \grad W\right)$ in \eqref{eq:adeqn}.  These different schemes impose time step restrictions of different magnitudes.  We will see in practice that equation \eqref{eq:adeqn} is advection-dominated in the sense that $|\bV W| \gg |K\,W \grad W|$.  However, in near-steady conditions the velocity $\bV$ can be almost proportional to $-\grad W$ so there is no longer a clean separation of advection versus diffusion.  This implies that the numerical schemes for advection and diffusion must be tested in combination.  We measure the convergence behavior of the combined schemes in section \ref{sec:results}.
-
-As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model which we construct and use in this paper also generates pressure fields with this property in some circumstances.  This is not such an obvious property, however, in a model like ours which depends on physical mechanisms for the opening and closing of cavities.  Clearly the flux $\bq$ also depends on the bedrock slope $\grad b$.  Because bedrock elevation is rough (irregular) data in practice, this part of the velocity $\bV$ may not be very smooth, and it may be large in magnitude.
-
-In the rest of this paper we use both of the equivalent forms \eqref{eq:flux} and \eqref{eq:qexpression} for the flux $\bq$.  The former emphasizes the relation between flow and pressure while the latter is essential in numerical considerations for the mass continuity equation.
+As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model which we construct and use in this paper also generates pressure fields with this property in some circumstances.  This is not such an obvious property, however, in a model like ours which depends on physical mechanisms for the opening and closing of cavities.  Because bedrock elevation is rough (irregular) data in practice, the part of the velocity $\bV$ which is proportional to $\grad b$ may also be large in magnitude.
 
 %FIXME:  revive text on enthalpy and wall melt and dissipation heating
 
@@ -251,14 +250,17 @@ At this point we do not know how to compute the water pressure $P$ or the effect
 P = P_o.\label{eq:Pisoverburden}
 \end{equation}
 This model is sometimes used for routing subglacial water under ice sheets so as to identify subglacial lake locations \citep[for example]{Siegertetal2009}.  Straightforward calculations using equations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that the advection-diffusion form \eqref{eq:adeqn} has an ice-geometry-determined velocity.  Specifically,
-\begin{gather}
-  \frac{\partial W}{\partial t} = - \Div\left(\tilde\bV\, W\right) + \Div\left(k \,W\, \grad W\right) + \frac{m}{\rho_w}   \label{eq:PisoverConservation} \\
-  \phantom{sdklj ljsdf} \text{where} \qquad \tilde\bV = - k \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right]. \notag
-\end{gather}
+\begin{equation}
+  \frac{\partial W}{\partial t} = - \Div\left(\tilde\bV\, W\right) + \Div\left(\rho_w g k \,W\, \grad W\right) + \frac{m}{\rho_w}   \label{eq:PisoverConservation}
+\end{equation}
+where
+\begin{equation}
+\tilde\bV = - \rho_w g k \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right].
+\end{equation}
 
-Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the diffusion term ``$\Div\left(k \,W\, \grad W\right)$'' on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  Therefore equation \eqref{eq:PisoverConservation} possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves.  They have a flux which depends directly and indirectly on the gradient of the water amount $W$, the quantity which is being advected.
+Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the second diffusion term on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$, which is independent of $W$, and it possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves.  They have a flux which depends directly and indirectly on the gradient of the water amount $W$, the quantity which is being advected.
 
-The closure \textbf{I} continuum model in the form stated above, equation \eqref{eq:PisoverConservation} \emph{with} the diffusion term, is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times.  By contrast, equation \eqref{eq:PisoverConservation} without the diffusion term, which is the way it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  Such a model is not well-posed and its numerical implementation is badly-behaved under grid refinement.
+The closure \textbf{I} continuum model in the form stated above, equation \eqref{eq:PisoverConservation} \emph{with} the diffusion term, is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times.  By contrast, equation \eqref{eq:PisoverConservation} without the diffusion term, which is the way it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  Such a model is not well-posed.  Numerical implementations of such models are badly-behaved under grid refinement.
 
 \medskip
 
@@ -266,9 +268,9 @@ The closure \textbf{I} continuum model in the form stated above, equation \eqref
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$.  (Figure \ref{fig:psteady-vb} below illustrates this function.)  One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$), but \eqref{eq:PofWFC} is not intended to apply when $W$ is actually large, such as in subglacial lakes.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get this equation with $\hat\bV = - k \grad b$:
+For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$.  (Figure \ref{fig:psteady-vb} below illustrates this function.)  One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$), but \eqref{eq:PofWFC} is not intended to apply when $W$ is actually large, such as in subglacial lakes.  For general bedrock, from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get this equation with $\hat\bV = - \rho_w g k \grad b$:
 \begin{equation}
-  \frac{\partial W}{\partial t} = - \Div\left(\hat\bV\, W\right) + \Div \left(\frac{k\,W}{\rho_w g} \grad P_{FC}(W)\right) + \frac{m}{\rho_w}. \label{eq:PofWFCConservation}
+  \frac{\partial W}{\partial t} = - \Div\left(\hat\bV\, W\right) + \Div \left(k\,W \grad P_{FC}(W)\right) + \frac{m}{\rho_w}. \label{eq:PofWFCConservation}
 \end{equation}
 In the flat bedrock case we see that $\hat\bV=0$ so \eqref{eq:PofWFCConservation} is a nonlinear diffusion.  \cite{Schoofetal2012} observe that \eqref{eq:PofWFCConservation} generalizes the porous-medium equation $\partial W/\partial t = \Div \left(\grad (W^\gamma)\right)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and the main concern when using closure \eqref{eq:PofWFC}, is that the direction of the flux is $-\grad W$.
 
@@ -313,9 +315,9 @@ Equation \eqref{eq:strongclosure} allows us to eliminate $Y$ as a state variable
 \begin{equation}
 \mathcal{O}(|\bv_b|,W) - \mathcal{C}(N,W) + \frac{\phi}{\rho_w g}\frac{\partial P}{\partial t} + \Div \bq = \frac{m}{\rho_w}. \label{eq:initialformpressure}
 \end{equation}
-We can write this as an evolution equation for pressure $P$, with the flux $\bq$ written in terms of the hydraulic potential $\psi$ (see equation \eqref{eq:flux}):
+We can write this as an evolution equation for pressure $P$.  We write the flux $\bq$ in terms of the hydraulic potential $\psi$ and we use the nonlinear conductivity $K$ defined in equation \eqref{eq:Kdefine}:
 \begin{equation}
-\frac{\phi}{\rho_w g}\frac{\partial P}{\partial t} = \Div\left(\frac{k}{\rho_w g} W^\alpha |\grad \psi|^{\beta-2} \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:pressureequation}
+\frac{\phi}{\rho_w g}\frac{\partial P}{\partial t} = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:pressureequation}
 \end{equation}
 
 Because of the close relation between $P$ and $\psi$, we regard \eqref{eq:pressureequation} as a nonlinear parabolic equation for $P$.  Roughly-speaking, it is a diffusion for $P$ which is coupled to the advection-diffusion equation \eqref{eq:adeqn} for $W$.  In fact, now that $Y$ is eliminated, equations \eqref{eq:adeqn}, \eqref{eq:Penhydrostatic}, and \eqref{eq:pressureequation} can be identified as our major model equations for the model state variables $W$, $W_{en}$, and $P$.  (See the final model statement \eqref{eq:bluebox} below.)
@@ -324,11 +326,11 @@ Because the pressure solution $P$ is subject to bounds \eqref{eq:bounds}, pressu
 
 Consider the $\phi=0$ case of equation \eqref{eq:pressureequation},
 \begin{equation}
-0 = \Div\left(\frac{k}{\rho_w g} W^\alpha |\grad \psi|^{\beta-2} \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:ellipticpressure}
+0 = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:ellipticpressure}
 \end{equation}
-The connection to englacial storage has been removed in this \emph{elliptic} pressure equation.  It describes how pressures of different areas in the layer are related to each other, and to the layer geometry, at each instant by processes that act instantaneously.  Equation \eqref{eq:ellipticpressure} is the major pressure equation in \citep{Schoofetal2012}.  Specifically, the $\phi=0$ and $Y_0=0$ case of equation \eqref{eq:pressureequation} is the same as equation (2.12) or (4.17a) in \citep{Schoofetal2012}.
+The connection to englacial storage has been removed in this \emph{elliptic} pressure equation.  It describes how pressures of different areas in the layer are related to each other, and to the layer geometry, at each instant by processes that act instantaneously.  Equation \eqref{eq:ellipticpressure} is the major pressure equation in \citep{Schoofetal2012}; it is the same as equation (2.12) or (4.17a) in \citep{Schoofetal2012}.
 
-Though we do not use the $\phi\to 0$ limit of \eqref{eq:pressureequation}, namely \eqref{eq:ellipticpressure}, it does provide understanding of the structure of our mathematical model.  Specifically, \cite{Schoofetal2012} show that the time-independent mathematical problem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and appropriate pressure boundary conditions can be written as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This same kind of variational inequality problem would need to be solved at each step of an implicit time-stepping numerical implementation of the model we develop here, because we do require bounds \eqref{eq:bounds}.  The numerical analysis of such problems, which also appear in other glaciological free boundary contexts \citep{SchoofStream,JouvetBueler2012}, can be addressed with a finite element approach \citep{Ciarlet}.
+Though we do not use the $\phi\to 0$ limit of \eqref{eq:pressureequation}, it provides understanding of the structure of our mathematical model.  Specifically, \cite{Schoofetal2012} show that the time-independent mathematical problem encompassing \eqref{eq:ellipticpressure}, constraints \eqref{eq:bounds}, and appropriate pressure boundary conditions can be written as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This same kind of variational inequality problem would be solved at each step of an \emph{implicit} time-stepping numerical implementation of the model we develop here, because we require bounds \eqref{eq:bounds}.  The numerical analysis of such problems, which also appear in other glaciological free boundary contexts \citep{SchoofStream,JouvetBueler2012}, can be addressed with a finite element approach \citep{Ciarlet}.
 
 \subsection*{Regularization to reduce stiffness}  As has been noted by other authors \citep{Clarke2003,Schoofetal2012}, the differential equations for subglacial hydrology are \emph{stiff} \citep{AscherPetzold}.  Primarily  this means that the timescales for pressure evolution are short compared to the timescales of water movement.  This contrast can be stated in terms of the relative speeds of pressure waves and water transport \citep[Appendix A, for example]{Clarke2003}.
 
@@ -336,7 +338,7 @@ This stiffness is not mysterious---it follows from the incompressibility of wate
 
 \citeapos{Clarke2003} parameter $\beta$ appears in his equation exactly as the englacial porosity $\phi$ appears in equation \eqref{eq:pressureequation} here, multiplying the pressure time derivative.  The effective physical porosity $\phi$ may be small, however, say $\sim 10^{-3}$ for temperate glaciers but orders of magnitude smaller for cold ice sheets, so \eqref{eq:pressureequation} is still quite stiff.  For many modeling purposes the time-evolution of pressure can, however, be slowed below the rates given by $\phi$ without loss of usefulness of the model results.  Thus we propose that for computation a regularization $\phi \to \phi+\phi_0$ be allowed, even with $\phi_0$ larger than $\phi$, as desired by the model user and as appropriate to the model purpose.  (See numerical results in section \ref{sec:results}.)  Thus we write the finalized pressure equation in our model:
 \begin{equation}
-\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} = \Div \left( \frac{k}{\rho_w g} W^\alpha |\grad \psi|^{\beta-2} \grad \psi \right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:regpressureequation}
+\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} = \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} + \mathcal{C}(P_o-P,W) - \mathcal{O}(|\bv_b|,W). \label{eq:regpressureequation}
 \end{equation}
 The model runs, though more slowly, with $\phi_0=0$.  See section \ref{sec:num} for a quantitative analysis of stiffness on the numerical implementation.
 
@@ -349,10 +351,10 @@ W &\ge 0, \notag \\
 0 &\le P \le P_o, \notag \\
 \psi &= P + \rho_w g (b + W), \notag \\
 K &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \notag \\
-\bV &= - \frac{K}{\rho_w g} \grad\left(P + \rho_w g b\right), \notag \\
-\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(  \frac{k}{\rho_w g} W^\alpha |\grad \psi|^{\beta-2} \grad \psi \right) + \frac{m}{\rho_w} \label{eq:bluebox} \\
-  &\qquad \qquad + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+, \notag \\
- \frac{\partial (W + W_{en})}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(K\,W \grad W\right) + \frac{m}{\rho_w}, \notag \\
+\bV &= - K \grad\left(P + \rho_w g b\right), \notag \\
+D &= \rho_w g K W, \label{eq:bluebox} \\
+\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+,  \notag \\
+ \frac{\partial (W + W_{en})}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
  W_{en} &= \frac{\phi}{\rho_w g} P. \notag
 \end{empheq}
 Formula \eqref{eq:WenFunctionWtot} replaces the last equation if the total water amount $W + W_{en}$ is small.  The total water input $m$ is the sum given by \eqref{eq:totalinput}.
@@ -402,7 +404,7 @@ Formula \eqref{eq:WenFunctionWtot} replaces the last equation if the total water
  \label{tab:constants}
 \end{table}
 
-Model equations \eqref{eq:bluebox} relate five classes of symbols, namely the state functions and data functions listed in Table \ref{tab:symbols} and the scalar physical constants, model parameters, and regularization parameters listed in Table \ref{tab:constants}.  (Additional symbols $\psi$, $K$, and $\bV$ are derived from these.)  The state functions $W$, $W_{en}$, $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The data functions are, in practice, supplied by an ice sheet model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Although default values must be chosen for the parameters, as is done in Table \ref{tab:constants}, exploration of the parameter space is essential in using the model.  Such exploration occurs in section \ref{sec:results}.
+Model equations \eqref{eq:bluebox} relate five classes of symbols, namely the state functions and data functions listed in Table \ref{tab:symbols} and the scalar physical constants, model parameters, and regularization parameters listed in Table \ref{tab:constants}.  (Additional symbols $\psi$, $K$, $D$, and $\bV$ are derived from these.)  The state functions $W$, $W_{en}$, $P$ evolve according to model \eqref{eq:bluebox}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The data functions are, in practice, supplied by an ice sheet model.  The scalar parameters are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Although default values must be chosen for the parameters, as is done in Table \ref{tab:constants}, exploration of the parameter space is essential in using the model.  Such exploration occurs in section \ref{sec:results}.
 
 \subsection*{Reduction to existing models}  Three limits of model \eqref{eq:bluebox} can now be stated precisely:
 \begin{itemize}
@@ -518,9 +520,6 @@ The first two coefficients $\alpha(W)$ and $\beta(W)$ go to zero as $W\to 0$.  H
 
 Thinking more generally, it is no surprise that when one of the ice thickness, bed elevation, sliding velocity, or water thickness fields is highly-variable in space then we can expect larger flows in steady state.  Formula \eqref{eq:qabstract} reflects this intuition.  Because the magnitude of the velocity $|\bV|$ determines the CFL time step restriction \citep{MortonMayers} associated to numerically solving the mass conservation equation, large variations in these spatial fields will generally reduce the time steps taken by a numerical model.
 
-
-\section{A nearly-exact steady solution}
-
 \subsection*{The radial steady-state equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane.  This solution, which is useful for verifying the numerical schemes even in the non-steady case, will depend on the high-precision numerical solution of a scalar first-order ODE initial value problem.  Exact solutions in one horizontal dimension (waves) also appear in \cite{Schoofetal2012}.
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady}, and assume all quantities only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  Eliminate $\bV$.  In the flat bed case the resulting pair of equations is
@@ -546,7 +545,7 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 \end{equation}
 Equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
 
-\subsection*{Chosen surface elevation and sliding velocity}  To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; Figure \ref{fig:Pexact} shows such a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
+\subsection*{Specific surface elevation and sliding velocity for an exact solution}  To generate a nontrivial exact solution we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; Figure \ref{fig:Pexact} shows such a small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry $h(r)$ in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple.  The plug flow, flat bed surface elevation solution of \cite{Bodvardsson} has this property.  Extending to the radial case, equations (23) and (24) of \citep{Bodvardsson} give
 \begin{equation}
