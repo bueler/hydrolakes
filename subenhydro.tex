@@ -185,11 +185,11 @@ This makes no change in the $\beta=2$ case.  Now define the nonlinear effective 
 \begin{equation}
 K = K(W,\grad P,\grad b) = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
-Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity we write the transporting velocity field and the nonlinear diffusivity as
+Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity $K$ we write the transporting velocity field $\bV$ and the nonlinear diffusivity $D$ as
 \begin{equation} \label{eq:vexpression}
   \bV = - K\, \grad \left(P + \rho_w g b\right), \qquad D = \rho_w g K W.
 \end{equation}
-Then expression \eqref{eq:firstfluxdecomp} is replaced by a clear advection-diffusion decomposition of the flux,
+Now expression \eqref{eq:firstfluxdecomp} is replaced by a clear advection-diffusion decomposition of the flux,
 \begin{equation} \label{eq:qexpression}
   \bq = - K W \grad \psi = \bV\, W - D \grad W.
 \end{equation}
@@ -258,7 +258,7 @@ where
 \tilde\bV = - \rho_w g k \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right].
 \end{equation}
 
-Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the second diffusion term on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$, which is independent of $W$, and it possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves.  They have a flux which depends directly and indirectly on the gradient of the water amount $W$, the quantity which is being advected.
+Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is defined in a way that is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, in fact the diffusion term on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$, which is independent of $W$, and it possesses characteristic curves \citep{Evans} which are \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves.  They have a flux which depends directly and indirectly on the gradient of the water amount $W$, the quantity which is being advected.
 
 The closure \textbf{I} continuum model in the form stated above, equation \eqref{eq:PisoverConservation} \emph{with} the diffusion term, is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times.  By contrast, equation \eqref{eq:PisoverConservation} without the diffusion term, which is the way it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  Such a model is not well-posed.  Numerical implementations of such models are badly-behaved under grid refinement.
 
@@ -293,7 +293,7 @@ P = \rho_w g z_{en} = \frac{\rho_w g}{\phi} W_{en}. \label{eq:Penhydrostatic}
 \end{equation}
 Thus the englacial system is modeled as a frictionless pressure gauge, a piezometer in the groundwater sense, on the subglacial system.  Of course, this ``gauge'' is distributed over the glacier area: the englacial system stores $W_{en}\, dA$ volume of water over each element $dA$ of map-plane area.
 
-Equation \eqref{eq:Penhydrostatic} determines $W_{en}$ from the subglacial pressure $P$ in cases where the local total water amount (i.e.~$W+W_{en}$) is large; specifically $W_{en} = \phi P / (\rho_w g)$.  But we must be careful, for mass conservation, to only keep/put water in englacial storage when there is sufficient available water at the subglacial connection.  In practice we will update the combined quantity $W+W_{en}$ at time step using equation \eqref{eq:adeqn}.  Then we will decide at the new time how much of the water should be stored englacially.  In terms of the updated total amount $W_{tot}=W+W_{en}$ we choose the following continuous parameterization using the value $\tilde W_{en} = \phi P / (\rho_w g)$ from \eqref{eq:Penhydrostatic}:
+Equation \eqref{eq:Penhydrostatic} determines $W_{en}$ from the subglacial pressure $P$ in cases where the local total water amount $W+W_{en}$ is large enough; $W_{en} = \phi P / (\rho_w g)$ in such cases.  But we must be careful, for mass conservation, to only put water in englacial storage when there is sufficient available water at the subglacial connection.  In practice we will update the combined quantity $W+W_{en}$ at time step using equation \eqref{eq:adeqn}.  Then we will decide at the new time how much of the water should be stored englacially.  In terms of the updated total amount $W_{tot}=W+W_{en}$ we choose the following continuous parameterization using the value $\tilde W_{en} = \phi P / (\rho_w g)$ from \eqref{eq:Penhydrostatic}:
 \begin{equation}
 W_{en} = F(W_{tot}) = \begin{cases}
              0,                       & 0 \le W_{tot} \le \tilde W_{en}, \\
