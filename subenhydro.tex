@@ -385,13 +385,13 @@ Formula \eqref{eq:WenFunctionWtot} replaces the last equation if the total water
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     \hline
     $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \phantom{$\Big|$} \\
-    $\alpha$ & $5/4$ & & power in Darcy-Weisbach flux formula \eqref{eq:flux} \\
-    $\beta$ & $3/2$ & & power in flux formula \eqref{eq:flux} \\
+    $\alpha$ & $5/4$ & & power in flux formula  \citep{Hewittetal2012} \\
+    $\beta$ & $3/2$ & & power in flux formula  \citep{Hewittetal2012} \\
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient \\
     $c_2$ & $0.04$ & & creep closure coefficient \\
     $\phi$ & $0.001$ & & physical macroporosity of englacial system \\
-    $k$ & $0.01$ & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & hydraulic conductivity coefficient \\
-    $W_r$ & $1$ & $\text{m}$ & roughness scale \\
+    $k$ & $0.01$ & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & conductivity coefficient  \citep{Hewittetal2012} \\
+    $W_r$ & $0.1$ & $\text{m}$ & roughness scale \citep{Hewittetal2012} \\
     \hline
     $\phi_0$ & $0.01$ & & regularizing porosity in pressure equation \\
     $Y_0$ & $0.001$ & m & regularization for layer thickness \\
@@ -603,17 +603,19 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 \subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
-We first consider stable time steps.  The time step restriction for the advective part, namely the CFL condition for either of the schemes under consideration, is much more restrictive in this case than the time-step restriction for the diffusion.  Stability for these schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
+We first consider stable time steps.  Stability for either advection scheme occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
 \Delta t_{\text{CFL}} \left(\frac{\max |u|}{\Delta x} + \frac{\max |v|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
 \end{equation}
-Here $\bV=(u,v)$ is the advection velocity.  Because of the additional diffusion process, the time step should also satisfy $\Delta t \le \Delta t_{W}$  where \citep{MortonMayers}
+Here $\bV=(u,v)$ is the water velocity, as in previous sections.  Because of the additional diffusion process, for stability the time step should also satisfy $\Delta t \le \Delta t_{W}$  where \citep{MortonMayers}
 \begin{equation}
 \Delta t_W\, 2 \max(D) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
 \end{equation}
-The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix \ref{app:positivestable} shows that this is sufficient for the first-order upwind scheme in the $\phi=0$ and $\alpha = 0$ case.  Standard theory suggests the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}, and the general $\phi,\alpha$ cases, are stable under these same sufficient conditions because we have \eqref{eq:adeqn} in advection-diffusion form.
+The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix \ref{app:positivestable} shows that this is sufficient for the first-order upwind scheme, while standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
 
-To understand these restrictions quantitatively, we consider typical values of the parameters in the $\alpha=1$ and $\beta=2$ case.  The maximum water speed $|\bV|$ is about $10^5$ m/a in trial runs of the model, so $\max |u| = \max |v| \approx 0.002$ m/s.  We take $k=10^{-2}$ m/s and $\max W\approx 10 W_r=10$ m  from Table \ref{tab:constants} as representative values.  Then, for a $\Delta x = \Delta y = 500$ m grid, the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 0.001$ year while the diffusive restriction from \eqref{eq:dtDIFFW} is $\Delta t_W \approx 0.01$ year.  Thus, unless the global peak velocity is unusually slow, or unless deep subglacial lakes develop so that $K W$ is large and $\Delta t_W$ is correspondingly small, this diffusive time scale is longer than the CFL time scale.  There is significant uncertainty in these estimated values because the velocity field is part of the coupled solution to the model.  Also the $\alpha > 1$ cases make the time step restrictions more volatile.  The time step restrictions are applied adaptively, however, so stability is assured even though the total computational time is uncertain.
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}, especially $\alpha=5/4$, $\beta=3/2$, $k=0.01$, and $W_r=0.1$.  We ran the model on a $\Delta x = \Delta y = 250$ m grid with initial condition $W=0$ to approximate steady state for Nordenskioldbreen ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum (over space) water speed $|\bV| = \max |u| = \max |v|$ is about $0.2$ m $\text{s}^{-1}$, with temporal variation in this value, and that the diffusivity $D$ has maximum value (over space) that varies in time: $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Thus the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  The diffusive restriction \eqref{eq:dtDIFFW} is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.   That is, $\Delta t_W \approx 25 \Delta t_{CFL}$.
+
+This example suggest that, unless the global peak velocity is unusually slow, or unless deep subglacial lakes develop so that $D = \rho_w g K W$ is large and $\Delta t_W$ is correspondingly small, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  However, the scaling $\Delta t_W \sim \Delta x^2$ versus $\Delta t_{CFL} \sim \Delta x^1$ makes it clear that refining or coarsening the grid will change the controlling time step.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically even shorter.  By contrast, if implicit time-stepping is used for the pressure equation \cite{Hewittetal2012,Schoofetal2012} then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.
 
 \begin{figure}[ht]
 \centering
