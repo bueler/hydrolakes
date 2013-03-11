@@ -7,10 +7,10 @@ msize=16;
 basic(1) % stencil for non-constant diffusivity
 hold on
 plot([-0.5 0.5 0 0], [0 0 -0.5 0.5], '^k', 'Markersize',msize)
-plot([-1 0 1 0 0], [0 0 0 -1 1], 'dk', 'Markersize',msize)
+plot([-1 0 1 -1 0 1 -1 0 1], [-1 -1 -1 0 0 0 1 1 1], 'dk', 'Markersize',msize)
 hold off
-% to create .eps in Octave:
-%print -depsc2 ../pdffigs/diffstencil.eps
+% to create .eps and .pdf:
+%print -depsc2 diffstencil.eps
 %print -dpdf diffstencil.pdf
 
    function basic(i)
