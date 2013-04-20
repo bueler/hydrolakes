@@ -236,6 +236,25 @@ c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 (Y+Y_0). \label{eq:steadyOCbound}
 \end{equation}
 Condition \eqref{eq:steadyOCbound} must hold for the steady values of $Y$ over the entire domain.  If inequality \eqref{eq:steadyOCbound} applies then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N(Y)$ satisfying $0\le N(Y) \le P_o$ and thus a water pressure $P(Y)$ satisfying bounds \eqref{eq:bounds}.
 
+\subsection*{Dynamics of local till storage}
+
+\newcommand{\Wtl}{W_{\text{tl}}}
+\newcommand{\Wtlmax}{W_{\text{tl}}^{\text{max}}}
+\newcommand{\Wen}{W_{\text{en}}}
+
+FIXME: add text
+\begin{equation}
+\frac{\partial \Wtl}{\partial t} = \mu \left(\min\left\{W,\Wtlmax\right\} - \Wtl\right) \label{eq:tilldynamics}
+\end{equation}
+FIXME: add text
+
+\begin{figure}[ht]
+\includegraphics[width=5.0in,keepaspectratio=true]{tillschema}
+\medskip
+\caption{The till-stored water amount $\Wtl$ evolves by \eqref{eq:tilldynamics}.  If $W < \Wtlmax$ then $\Wtl$ approaches $W$, while if $W > \Wtlmax$ then $\Wtl$ approaches $\Wtlmax$.}
+\label{fig:tillschema}
+\end{figure}
+
 \subsection*{Relation of subglacial pressure to amount of englacial water}  Recall that the englacial water amount is parameterized by an effective thickness $W_{en}=\phi z_{en}$ where $\phi$ is the macroporosity and $z_{en}$ is the height above the bed of the top of the englacial water table.
 
 There is an obvious choice, which we adopt, for a relationship between the amount of englacial water (i.e.~$W_{en}$ or $z_{en}$) and the subglacial pressure $P$.  Namely, we assume that the englacial water pressure is hydrostatic \citep{Bartholomausetal2011}.  Furthermore we suppose that at the bottom of the glacier the englacial system is efficiently connected to the subglacial system, so that there is no pressure jump.  It follows that the subglacial pressure $P$ is equal to the hydrostatic pressure of the lowest englacial water:
