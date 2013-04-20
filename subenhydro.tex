@@ -1008,4 +1008,25 @@ If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $
 
 Because the coefficients in linear combination \eqref{eq:lincomb} also add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:lincomb} and this sufficient stability condition that if $\Wlij\ge 0$ for all $i,j$ then $W_{ij}^{l+1}\ge 0$, which is the positivity-preserving assertion.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
+
+\section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
+
+The problem considered in the main paper (FIXME: sections?) includes mass conservation equation \eqref{eq:conserve} and (FIXME: equation for till storage).  An abstract view of this problem is the following pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le M$:
+\begin{align}
+\frac{\partial}{\partial t} \left(u+v\right) &= \Div \left(\mathbf{q}(x,u,\grad u)\right) + g(x), \label{eq:abs:transport} \\
+   \frac{\partial v}{\partial t} &= f(u) + b v.  \label{eq:abs:storage}
+\end{align}
+Here the conserved quantity is the sum $u+v$.  The flux only depends on the transported portion $u$, but where there is also local evolution of the local-storage quantity $v$.  The flux $\mathbf{q}$ and the source term $g$ are quite general, as is the transfer term $f(u)$, and the details generally don't concern us.  The sign of the constant $b$ is not important in this appendix, but $b<0$ in the application of interest.
+
+The basic idea explained in this appendix is that the storage quantity $v$ \emph{could} be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result, however, is a transport equation with an additional term which is an integral over previous states of the transported quantity $u(t,x,y)$.  Implementing this form would require storage of prior states.  In the main text we instead maintain the essential structure in \eqref{eq:abs:transport} and \eqref{eq:abs:storage}, and we apply a well-behaved implicit time-discretization of equation \eqref{eq:abs:storage}.   
+
+Equation \eqref{eq:abs:storage} can be multiplied by an integrating factor $e^{-bt}$ and simplified:
+    $$\frac{\partial v}{\partial t} - b v = f(u) \qquad \iff \qquad \frac{\partial}{\partial t} \left(e^{-bt} v\right) = e^{-bt} f(u).$$
+If the quantity is known at the initial time (i.e.~$v=v_0(x,y)$ at $t=0$) then we can integrate from $0$ to $t$ and multiply both sides by $e^{bt}$ to get
+    $$v(t,x,y) = e^{bt} \left(v_0(x,y) + \int_0^t e^{-bs} f(u(s,x,y))\,ds\right).$$
+This allows us to eliminate $v$ from \eqref{eq:abs:transport} by computing $\partial v/\partial t$:
+\begin{equation}
+\frac{\partial u}{\partial t} = \Div \left(\mathbf{q}(x,u,\grad u)\right) + g(x) - FIXME \label{eq:abs:transportagain} 
+\end{equation}
+
 \end{document}
