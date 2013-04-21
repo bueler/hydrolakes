@@ -69,6 +69,10 @@
 \newcommand\RR{\mathbb{R}}
 \newcommand\vf{\varphi}
 
+\newcommand{\Wtil}{W_{\text{til}}}
+\newcommand{\Wtilmax}{W_{\text{til}}^{\text{max}}}
+\newcommand{\Wen}{W_{\text{en}}}
+
 \newcommand{\Wlij}{W^l_{i,j}}
 \newcommand{\Wij}{W_{i,j}}
 \newcommand{\Plij}{P^l_{i,j}}
@@ -101,17 +105,20 @@
 
 \section{Introduction}
 
-Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential \citep{Clarke05}.  Beyond that there are many variations considered in the existing literature.  Physical processes may control the geometry of the linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (i.e.~cavitation), melt on the walls of cavities and conduits, and the closure of cavities and conduits by creep \citep{Hewitt2011}.  Water could be exchanged with a porous englacial system \citep{Bartholomausetal2011} or it could be stored in a porous till \citep{Tulaczyketal2000b}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{PimentelFlowers2011,Schoofmeltsupply}.
+Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential \citep{Clarke05}.  Beyond that there are many variations considered in the existing literature.  Physical processes may control the geometry of the linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (i.e.~cavitation), melt on the walls of cavities and conduits, and the closure of cavities and conduits by creep \citep{Hewitt2011}.  Water could be exchanged with a porous englacial system \citep{Bartholomausetal2011} or it could be stored in a porous till \citep{Tulaczyketal2000b}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply}.
 
-This paper describes a model for distributed systems of linked subglacial cavities, with connection to additional englacial storage.  The cavities open by sliding of the ice and wall melt.  They close by ice creep.  These physical processes combine to determine the relationship between water amount and water pressure \citep{Schoofetal2012}.  Conduits are not, however, included in the model.
-%FIXME:?  Wall melt is included as a contribution to the mass conservation equation but not in the cavity evolution equation.
+This paper describes a class of models for distributed systems of linked subglacial cavities, with connection to additional englacial storage.  Water is also stored locally in the pore spaces of subglacial till.  The cavities open by sliding of the ice and they close by ice creep.  These physical processes combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, but, within the broad class considered here, we observe conduit-like behavior in large-scale cases where the pressure gradient approximates the overburden gradient.
 
-Pressure is determined non-locally over each connected component of the hydrological system, and no prior functional relation between subglacial water amount and pressure is assumed in our model \citep[compare][]{FlowersClarke2002_theory}.  The connection to a macroporous englacial system implies that the subglacial water pressure solves an equation which is a parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.  Unlike that model, in which a variational inequality for pressure must be solved at each time step, in this paper the connection to englacial storage allows us to avoid solving an instantaneous distributed balance, thus easing implementation and parallelization.
+Pressure is determined non-locally over each connected component of the hydrological system.  In particular, no functional relation between subglacial water amount and pressure is assumed in our model \citep[compare][]{FlowersClarke2002_theory}.  The connection to a macroporous englacial system implies that the subglacial water pressure solves an equation which is a parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.  Unlike that model, in which a variational inequality for pressure must be solved at each time step, in this paper the connection to englacial storage allows us to avoid solving an instantaneous distributed balance, thus easing implementation and parallelization.  Both englacial and till storage are carefully implemented in a mass-conserving manner.
 
-We start by considering basic physical principles.  We derive a fundamental advection-diffusion form of the mass conservation equation.  Then we consider cavity evolution and alternative closures which can determine the pressure.  The equations which apply in steady state are stated, and we see that pressure is function of subglacial water amount in steady state.  In the steady radial case we compute an exact solution for subglacial water amount and pressure, a useful tool for verification.  Then we present a parallel numerical implementation within the Parallel Ice Sheet Model \citep{pism-user-manual}, with particular attention to time step restrictions and the treatment of advection.  The first numerical results are for the verification case; we show convergence under grid refinement.  After that we show results for the Nordenskioldbreen tidewater glacier in Svalbard.
+FIXME:  Wall melt is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, the addition of wall melt generates an unstable distributed system as is well-known.  We do not adopt a mesh based, non-continuum model to address this quandary \citep[compare][]{Hewittetal2012}.  We can adopt a dual system, but this is not yet implemented.
+
+Section \ref{sec:elements} considers basic physical principles, including a fundamental advection-diffusion form of the mass conservation equation.  In section \ref{sec:capacity} we consider cavity evolution and the englacial and till storage mechanisms.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and we identify its major parameters.  In section \ref{sec:steadyverif} the simplified equations which apply in steady state are given.  In steady state the pressure is a function of subglacial water amount.  In a steady case we compute an exact solution for subglacial water amount and pressure, a useful tool for verification.
+
+In section \ref{sec:num} we present numerical schemes for the general model.  These schemes are implemented in parallel in the Parallel Ice Sheet Model \citep{pism-user-manual}, with particular attention to time step restrictions and the treatment of advection.  The first numerical results are for the verification case; we show convergence under grid refinement.  After that we show results for the Nordenskioldbreen tidewater glacier in Svalbard in section \ref{sec:results}.
 
 
-\section{Elements of a continuum hydrology model}
+\section{Elements of a continuum hydrology model} \label{sec:elements}
 
 \subsection*{Mass conservation}  We assume that liquid water is incompressible and of constant density.  Thus the thickness of a water layer, denoted by $W(t,x,y)$, tells us its mass.  Our statement of mass conservation (below) will describe the evolution of $W$.  Choosing to model subglacial hydrology using a water thickness as the state variable is not a significant restriction on the physics because specific subglacial physics comes from choosing a form for the water flux and a closure for the pressure.  This thickness is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.
 
@@ -206,7 +213,9 @@ As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the i
 %FIXME:  revive text on enthalpy and wall melt and dissipation heating
 
 
-\subsection*{Capacity of the distributed system}  Suppose $\bv_b$ is the ice basal velocity (i.e.~the sliding velocity).  The evolution of the area-averaged thickness, also called the bed separation \citep{Bartholomausetal2011}, of the cavities in a distributed linked-cavity system \citep{Schoofetal2012} can be described as the sum of opening by cavitation and closure by creep \citep{Hewitt2011}.  Let $Y$ (m) denote that bed separation, so that
+\section{Capacity and geometry of the hydrologic system} \label{sec:capacity}
+
+\subsection*{Capacity of the linked-cavity (distributed) system}  Suppose $\bv_b$ is the ice basal velocity (i.e.~the sliding velocity).  The evolution of the area-averaged thickness, also called the bed separation \citep{Bartholomausetal2011}, of the cavities in a distributed linked-cavity system \citep{Schoofetal2012} can be described as the sum of opening by cavitation and closure by creep \citep{Hewitt2011}.  Let $Y$ (m) denote that bed separation, so that
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y). \label{eq:hewittcapacity}
 \end{equation}
@@ -236,24 +245,22 @@ c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 (Y+Y_0). \label{eq:steadyOCbound}
 \end{equation}
 Condition \eqref{eq:steadyOCbound} must hold for the steady values of $Y$ over the entire domain.  If inequality \eqref{eq:steadyOCbound} applies then equation \eqref{eq:hewittsteady} determines a valid steady state effective pressure $N(Y)$ satisfying $0\le N(Y) \le P_o$ and thus a water pressure $P(Y)$ satisfying bounds \eqref{eq:bounds}.
 
-\subsection*{Dynamics of local till storage}
 
-\newcommand{\Wtl}{W_{\text{tl}}}
-\newcommand{\Wtlmax}{W_{\text{tl}}^{\text{max}}}
-\newcommand{\Wen}{W_{\text{en}}}
+\subsection*{Dynamics of local till storage}
 
 FIXME: add text
 \begin{equation}
-\frac{\partial \Wtl}{\partial t} = \mu \left(\min\left\{W,\Wtlmax\right\} - \Wtl\right) \label{eq:tilldynamics}
+\frac{\partial \Wtil}{\partial t} = \mu \left(\min\left\{W,\Wtilmax\right\} - \Wtil\right) \label{eq:tilldynamics}
 \end{equation}
 FIXME: add text
 
 \begin{figure}[ht]
 \includegraphics[width=5.0in,keepaspectratio=true]{tillschema}
 \medskip
-\caption{The till-stored water amount $\Wtl$ evolves by \eqref{eq:tilldynamics}.  If $W < \Wtlmax$ then $\Wtl$ approaches $W$, while if $W > \Wtlmax$ then $\Wtl$ approaches $\Wtlmax$.}
+\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  If $W < \Wtilmax$ then $\Wtil$ approaches $W$, while if $W > \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$.}
 \label{fig:tillschema}
 \end{figure}
+
 
 \subsection*{Relation of subglacial pressure to amount of englacial water}  Recall that the englacial water amount is parameterized by an effective thickness $W_{en}=\phi z_{en}$ where $\phi$ is the macroporosity and $z_{en}$ is the height above the bed of the top of the englacial water table.
 
