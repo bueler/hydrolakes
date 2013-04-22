@@ -383,16 +383,17 @@ For many modeling purposes the time-evolution of pressure can, however, be slowe
 Our implemented model is functional, though much slower, if $\phi_0=0$ is chosen.  See section \ref{sec:num} for a quantitative analysis of stiffness on the numerical implementation, and see numerical results in section \ref{sec:results}.
 
 
-\section{A new subglacial hydrology model} \label{sec:newmodel}
+\section{A combined subglacial hydrology model} \label{sec:newmodel}
 
-\subsection*{Summary of equations and symbols}  The goal of the current work is the selection and testing of an easily-implementable subglacial hydrology model which can be coupled to an existing three-dimensional ice dynamics model, and which can be parallelized.  The remainder of the paper will demonstrate that we have succeeded in these goals for a model which combines equations \eqref{eq:adeqn}, \eqref{eq:Penhydrostatic}, and \eqref{eq:regpressureequation}.  As will be described in section \ref{sec:num}, we have implemented an explicit, adaptive time-stepping numerical scheme for these equations in the Parallel Ice Sheet Model.  The complete set of equations for this new mathematical model also includes the important bounds on $W$ and $P$:
+\subsection*{Summary of equations and symbols}  The goal of the current work is the selection and testing of a subglacial hydrology model which can be coupled to an existing three-dimensional ice dynamics model, and which can be parallelized.  The remainder of the paper will demonstrate that we have succeeded in this goal by constructing a model which combines equations \eqref{eq:adeqn}, \eqref{eq:Penhydrostatic}, and \eqref{eq:regpressureequation}.  As will be described in section \ref{sec:num}, we have implemented an explicit, adaptive time-stepping numerical scheme for these equations in the Parallel Ice Sheet Model.  The complete set of equations for this new mathematical model also includes the important bounds on $W$ and $P$:
 \begin{empheq}[box=\mybluebox]{align}
 W &\ge 0, \qquad\qquad\qquad 0 \le P \le P_o, \notag \\
 \psi &= P + \rho_w g (b + W), \qquad K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \notag \\
-\bV &= - K \grad\left(P + \rho_w g b\right), \qquad D = \rho_w g K W, \label{eq:bluebox} \\
-\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+,  \notag \\
- \frac{\partial (W + \Wen)}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
-\Wen &= \frac{\phi}{\rho_w g} P. \notag
+\bV &= - K \grad\left(P + \rho_w g b\right), \qquad D = \rho_w g K W, \notag \\
+\frac{\phi+\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 (W+Y_0) - c_1 |\bv_b| (W_r - W)_+,  \label{eq:bluebox} \\
+\Wen &\stackrel{\ast}{=} \frac{\phi}{\rho_w g} P, \notag \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{W,\Wtilmax\right\} - \Wtil\right), \notag \\
+ \frac{\partial (W + \Wen)}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \notag
 \end{empheq}
 Formula \eqref{eq:WenFunctionWtot} replaces the last equation if the total water amount $W + \Wen$ is small.  The total water input $m$ is the sum given by \eqref{eq:totalinput}.
 
