@@ -488,7 +488,7 @@ As noted in section \ref{sec:closures}, the $\alpha=1$ and $\beta=2$ case of thi
 
 \section{Steady states}  \label{sec:steadyverif}
 
-\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering because the physical subglacial system is close to steady state much of the time, because we can evaluate the nature of the water flux, and because we can more easily find an exact solution.  We will see that a function which relates the water pressure $P$ directly to the amount $W$ arises in steady state, although no such function exists generally.  In this section we address only the $\alpha=1$ and $\beta=2$ case but the major conclusions apply for general powers $\alpha,\beta$.
+\subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering for at least three reasons: (\emph{i}) the physical subglacial system is close to steady state much of the time, (\emph{ii}) we can more clearly identify vaious contributions to the water flux in steady state (equation \eqref{eq:qabstract} below), and (\emph{iii}) we can find an exact solution in two spatial variables.  We will also see that in steady state there is a function which relates the water pressure $P$ directly (locally) to the water amount $W$, though no such function exists in the time-dependent theory.  In this section we address only the $\alpha=1$ and $\beta=2$ case but the major conclusions apply for general powers $\alpha,\beta$.
 
 Recall that the flux has two expressions $\bq = - k W \grad \psi = \bV W - D \grad W$.  Here is the steady form of model \eqref{eq:bluebox} written in terms of $\bV,\bq,W,P$:
 \begin{align}
@@ -837,7 +837,7 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 
 
-\section{Numerical results}  \label{sec:results}
+\section{Results}  \label{sec:results}
 
 \subsection*{Steady results for a tidewater glacier}
 
@@ -845,8 +845,8 @@ FIXME: decide on where this paper is going
 
 FIXME: redo results from nbreen to use PISM and make better figures
 
-\begin{comment}
 
+\begin{comment}
 \begin{figure}[ht]
 \includegraphics[width=7.0in,keepaspectratio=true]{icethk-icefree-float-250m}
 \caption{FIXME}
@@ -870,7 +870,6 @@ FIXME: redo results from nbreen to use PISM and make better figures
 \caption{FIXME}
 %\label{fig:X}
 \end{figure}
-
 \end{comment}
 
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
@@ -883,8 +882,12 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 \end{figure}
 
 
-%\clearpage\newpage
+\section{Conclusion}  \label{sec:conclusion}
 
+MOST IMPORTANT:  IMPLEMENTED COMMON (I.E.~SIMULTANEOUS) EXTENSION OF 4 MAJOR MODELS
+
+
+%\clearpage\newpage
 \small
 \bibliography{ice_bib}  % generally requires link to pism/doc/ice_bib.bib
 \bibliographystyle{agu}
