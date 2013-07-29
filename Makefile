@@ -1,12 +1,16 @@
-all: subenhydro.pdf
+# Generic make file for LaTeX: requires GNU make
+
+TEXFILE	= subhydro.tex
+
+all: $(TEXFILE:.tex=.pdf)
 
 # link ice_bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
 
-subenhydro.pdf: subenhydro.tex ice_bib.bib
-	pdflatex subenhydro
-	bibtex subenhydro
-	pdflatex subenhydro
-	pdflatex subenhydro
+%.pdf: %.tex ice_bib.bib
+	pdflatex $<
+	bibtex $(<:.tex=.aux)
+	pdflatex $<
+	pdflatex $<
 
 .PHONY: clean
 
