@@ -249,7 +249,9 @@ Condition \eqref{eq:steadyOCbound} must hold for the steady values of $Y$ over t
 
 When water is transported laterally by the distributed system and it reaches unsaturated till then it also occupies the pore spaces of the till over/through/beside which it passes, and, when water is added to till that is already saturated, then this excess water becomes transportable.  These considerations imply that $\Wtil$ should evolve in a manner that allows transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, here given by $\Wtilmax$, of the till storage.
 
-The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties is this equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\tau\ge 0$:
+The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties\footnote{FIXME: In the \texttt{-hydrology routing} model a different evolution is needed because the input water $m$ must go directly into till storage, as there is no ``$W$'' variable.  \cite{BBssasliding} includes a specific parameterization already, namely
+$$\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C$$
+where $C>0$ is a decay factor that means that the base will drain without ongoing (small) input.  Actually the right-hand-side is only used to compute $\partial \Wtil/\partial t$ if $\Wtil < \Wtilmax$ or the right-hand-side is negative.  If $\Wtil = \Wtilmax$ and the right-hand-side is positive then we set $\partial \Wtil/\partial t=0$.} is this equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\tau\ge 0$:
 \begin{equation}
 \frac{\partial \Wtil}{\partial t} = \mu \left(\min\left\{\tau W,\Wtilmax\right\} - \Wtil\right) \label{eq:tilldynamics}
 \end{equation}
@@ -259,11 +261,11 @@ As illustrated schematically in Figure \ref{fig:tillschema}, if $\tau W \ge \Wti
 \bigskip
 \includegraphics[width=4.5in,keepaspectratio=true]{tillschema}
 \bigskip
-\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  If $W < \Wtilmax$ then $\Wtil$ approaches $W$, while if $W > \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$ from below.  The bounds $0\le \Wtil \le \Wtilmax$ are maintained if they apply to the initial value of $\Wtil$.}
+\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  The bounds $0\le \Wtil \le \Wtilmax$ are maintained in all situations.  If $\tau W < \Wtilmax$ then $\Wtil$ approaches $\tau W$, from either side.  If $\tau W \ge \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$ from below.}
 \label{fig:tillschema}
 \end{figure}
 
-In section \ref{sec:num} we propose a numerical scheme for \eqref{eq:tilldynamics} which ensures bounds $0\le \Wtil \le \Wtilmax$ for the discretized values of $\Wtil$.  Appendix \ref{app:transportstorage} describes an abstract view of the kind of transport-plus-storage model we consider in this paper, and it demonstrates that a simple discretization preserves the bounds as claimed.
+In section \ref{sec:num} we propose a stable numerical scheme for the combination of \eqref{eq:conserve} and \eqref{eq:tilldynamics} which ensures both discrete conservation of $\Wtot$ and bounds $0\le \Wtil \le \Wtilmax$ for the discretized values of $\Wtil$.  Appendix \ref{app:transportstorage} describes an abstract view of the transport-plus-storage model we consider here.
 
 
 
