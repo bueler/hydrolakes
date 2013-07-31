@@ -945,21 +945,23 @@ Returning to equation \eqref{eq:barth:distpressure} we can now connect the theor
 
 \section{Flux-limiter methods} \label{app:fluxlimiters}
 
-Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals, which are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
+Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
-u_t + (v(x) u)_x = 0
+\ddt{u} + \ddx{}\left(v(x) u\right) = 0
 \end{equation}
 
-Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  Cell interfaces are at $x_{i-1/2}=x_w$ and $x_{i+1/2}=x_e$.  Suppose we do not discretize time and instead we denote $u_i=u_i(t)$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u(0,x)\ge 0$ for all $x$ implies $u(t,x)\ge 0$ for all $t\ge 0$ and all $x$.  (Such a property is desirable for any conservation scheme for the water thickness $W$ because thicknesses are intrinsically nonnegative.)  The basic discretization of \eqref{eq:modeladvect} uses the fluxes $Q=v(x) u$ at the cell interfaces $x_w$ and $x_e$, namely
+Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  Cell interfaces are at $x_{i-1/2}=x_w$ (``\emph{w}'' for ``west'') and $x_{i+1/2}=x_e$ (``east'').  Suppose we do not discretize time and instead we denote $u(t,x_i)$ by $u_i(t)$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u_i(0) \ge 0$ for all $i$ implies $u_i(t)\ge 0$ for all $t\ge 0$ and all $i$.  In particular, such a property is desirable for any conservation scheme for the water thickness because thicknesses are intrinsically nonnegative.
+
+The discretizations of \eqref{eq:modeladvect} we consider here all use the fluxes $Q=v(x) u$ at the cell interfaces $x_w$ and $x_e$, namely
 \begin{equation}
 \frac{du_i}{dt} + \frac{Q_e - Q_w}{\Delta x} = 0. \label{eq:basicmodelFD}
 \end{equation}
-
-But we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative form \citep[section I.4.3]{HundsdorferVerwer2010}.  We use the upwind value $u_i$ for the flux at $x_e$ because $v_e = v(x_e) \ge 0$:
+But we must choose a flux parameterization.  The simplest positive scheme for the fluxes is first-order upwinding in conservative form \citep[section I.4.3]{HundsdorferVerwer2010}.  We use the upwind value $u_i$ in $Q_e$ if $v_e = v(x_e) \ge 0$:
 \begin{equation}
 Q_e = v_e u_i \label{eq:upwindfluxfirst}
 \end{equation}
-Also $Q_w = v_w x_{i-1}$ because $v_w = v(x_w) \ge 0$.  Scheme \eqref{eq:upwindfluxfirst} is also called the ``donor cell'' upwind method \citep{LeVeque}.
+If $v_e < 0$ then \eqref{eq:upwindfluxfirst} is replaced by $Q_e = v_e u_{i+1}$. 
+Also $Q_w = v_w x_{i-1}$ if $v_w \ge 0$, and $Q_w = v_w x_{i}$ if $v_w < 0$.  Scheme \eqref{eq:upwindfluxfirst} is also called the ``donor cell'' upwind method \citep{LeVeque} because there is a decision, based on the sign of the cell-interface velocity, on which cell contributes the value of $u$.
 
 A second-order truncation error scheme which is \emph{not} positive uses a centered average in computing the flux.  We can regard this as a correction to the first-order upwind form:
 \begin{equation}
@@ -975,7 +977,7 @@ where
 \end{equation}
 Unfortunately, despite the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
 
-The ``flux-limiting'' approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear ``flux-limited'' (correction-limited) formulas which restore these properties, and, because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
+The ``flux-limiting'' (i.e.~flux-correction-limited) approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear flux-limited formulas which restore these properties, and we list and try them here.  Because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
 
 These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
 \begin{equation}
@@ -1011,9 +1013,9 @@ For smooth functions and fine grids we have $\theta_i\approx 1$ except near extr
  \label{tab:fluxlimiters}
 \end{table}
 
-To summarize these flux discretizations for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from difficult areas (i.e.~near extrema and non-smooth areas where $\theta_j$ is not near one), but they revert to first-order in these difficult areas.
+To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas''.  Such areas, which are where $\theta_i$ in \eqref{eq:thetadefine} is $\gg 1$ or $\ll 1$, tend to be near extrema and non-smooth areas.  Thus these schemes are high-order but they revert to first-order when they get in trouble.
 
-The above discussion was limited to the spatial discretization; we have applied ``method of lines'' only.  A time discretization is also required, and for this we simply choose forward Euler.  The resulting fully discrete system is positive if
+The above discussion was limited to the spatial (semi-)discretization.  A time discretization is also required, and for this we simply choose forward Euler.  The resulting fully discrete system is positive if
 \begin{equation}
 \max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2} \label{eq:CFL}
 \end{equation}
@@ -1022,7 +1024,7 @@ The above discussion was limited to the spatial discretization; we have applied 
 
 \section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
 
-Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative, though only the case $m_{ij} = 0$ is shown.  We assume no englacial storage ($\Wen=0$) for simplicity.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
+Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
 We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
 \begin{align*}
@@ -1036,7 +1038,7 @@ Collecting terms to write the new value as a linear combination of the old value
       &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s)\Big] \Wlij \notag \\
   &= \tilde A\, W_{i-1,j}^l + \tilde B\, W_{i+1,j}^l + \tilde C\, W_{i,j-1}^l + \tilde D\, W_{i,j+1}^l + \tilde E\, \Wlij. \label{eq:lincomb}
 \end{align}
-Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative; requiring it to be nonnegative is a sufficient stability condition \citep{MortonMayers}.
+Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative, depending on values of $\nu_x, \nu_y, \mu_x$, and $\mu_y$.  Requiring it to be nonnegative will generate a sufficient stability condition \citep{MortonMayers}.
 
 We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms; compare \eqref{eq:dtCFL}:
 \begin{equation}
@@ -1049,7 +1051,7 @@ The second is a time-step restriction on the diffusion; compare \eqref{eq:dtDIFF
 If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $\tilde E$ in \eqref{eq:lincomb} is nonnegative:
 	$$\tilde E = 1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s) \ge 0.$$
 
-Because the coefficients in linear combination \eqref{eq:lincomb} also add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:lincomb} and this sufficient stability condition that if $\Wlij\ge 0$ for all $i,j$ then $W_{ij}^{l+1}\ge 0$, which is the positivity-preserving assertion.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
+Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
 
 \section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
@@ -1071,9 +1073,9 @@ This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partia
 \begin{equation}
 \frac{\partial u}{\partial t} = \Div \left(\mathbf{q}(x,u,\grad u)\right) + g(x) + b e^{-bt} v_0(x,y) - b f(u) + b^2 \int_0^t e^{-b(t-s)} f(u(s,x,y))\,ds. \label{eq:abs:transportagain} 
 \end{equation}
-Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$.  While equation \eqref{eq:abs:transportagain} may be conceptually advantageous, it is not effectively-implementable.
+Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$.  While equation \eqref{eq:abs:transportagain} may or may not be conceptually advantageous, it is not effectively-implementable.
 
-Next we will consider discretizations of \eqref{eq:abs:storage}.  In the till-porewater application it is important that the storage capacity of the till not be exceeded, thus in this abstract description we require bounds $0 \le v \le v_{\text{max}}$.  But the same requirement allows us to require $\partial v/\partial t \to 0$ as $v \upto v_{\text{max}}$, that is, we assume $0 \le f(u) \le v_{\text{max}}$ also.
+Next we will consider discretizations of \eqref{eq:abs:storage}.  In the till-porewater application it is important that the storage capacity of the till not be exceeded, and so in this abstract description we add bounds $0 \le v \le v_{\text{max}}$.  The same requirement also implies $\partial v/\partial t \to 0$ as $v \upto v_{\text{max}}$, so we assume $0 \le f(u) \le v_{\text{max}}$ also.
 
 Equation \eqref{eq:abs:storage} is linear in $v$ which allows an implicit scheme to be used without solving nontrivial equations.  In particular, if $t^l$ is the time-step and $t^{l+1}-t^l = \Delta t$ and if $U^l,V^l \approx u,v$ then the stable (specifically ``A-stable'' \citep{AscherPetzold}) backwards Euler approximation of \eqref{eq:abs:storage} using explicit coupling is
     $$\frac{V^{l+1} - V^l}{\Delta t} = b \left(f(U^l) - V^{l+1}\right).$$
