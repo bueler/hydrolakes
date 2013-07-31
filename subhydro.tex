@@ -900,13 +900,13 @@ Let $P_o=\rho_i g H$ denote the overburden pressure, $P(t)$ the water pressure, 
 P = \rho_w g z_w.  \label{eq:barth:englacialpressure}
 \end{equation}
 
-In the \cite{Bartholomausetal2011} model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  A wall melt parameterization is also given but, in keeping with the cavity evolution in the rest of the current paper, we simply denote it as a melt term $\dot m$.  Denote the sliding speed by $u_b$ and let $C_c = (2 A)/n^n$.  Then the cavity area evolution equation (4) in \cite{Bartholomausetal2011} is
+In the \cite{Bartholomausetal2011} model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  A wall melt parameterization is also given but, in keeping with the cavity evolution in the rest of the current paper, we simply denote it as a melt term $\dot m$.  Denote the sliding speed by $u_b$ and let $C_c = (2 A)/n^n$, where $A$ and $n$ are parameters in the (Glen) ice flow law \citep{Paterson}.  Then the cavity area evolution equation (4) in \cite{Bartholomausetal2011} is
 \begin{equation}
 \frac{dA_c}{dt} = u_b h + \dot m - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
 \end{equation}
 The three terms on the right are opening by cavitation, melt, and closure by creep, respectively.
 
-Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure.  From \eqref{eq:barth:kinematics} and \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
+Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure, though this may not have been recognized by \cite{Bartholomausetal2011}.  From \eqref{eq:barth:kinematics} and \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
 	$$\frac{dP}{dt} = \rho_w g \frac{dz_w}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}.$$
 But \eqref{eq:barth:kinematics} and \eqref{eq:barth:massconserve}  allow us to rewrite in terms of fluxes and cavity area:
     $$\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{d S_{sub}}{dt}\right).$$
@@ -916,7 +916,7 @@ Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c
 \begin{equation}
 \frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:fullpressure}
 \end{equation}
-We emphasize that, though it is not stated there, the equation \eqref{eq:barth:fullpressure} follows from the model equations as stated in \cite{Bartholomausetal2011}.
+We emphasize that, though it is not stated there, equation \eqref{eq:barth:fullpressure} follows from the model equations in \cite{Bartholomausetal2011}.
 
 Equation \eqref{eq:barth:fullpressure} suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
 \begin{equation*}
@@ -926,20 +926,21 @@ The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partia
 \begin{equation}
 \frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \left(- \frac{\partial Q}{\partial x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right).  \label{eq:barth:distpressure}
 \end{equation}
+Equation \eqref{eq:barth:distpressure} is, for all practical purposes, the same as equation \eqref{eq:regpressureequation} in the main text.
 
-A distributed extension of the \cite{Bartholomausetal2011} theory is not, however, viable without a Darcy or other flux expression for $Q$.  Of course one must also use a distributed mass conservation equation like \eqref{eq:conserve}.  A flux expression, Darcy or otherwise, was not needed in the Kennicott glacier case because the lumped input and output from the hydrological system were available as data.
+A distributed extension of the \cite{Bartholomausetal2011} theory is not, however, viable without a Darcy or other flux expression for $Q$.  One must also use a distributed mass conservation equation like \eqref{eq:conserve}.  By contrast, a flux expression, Darcy or otherwise, was not needed in the Kennicott glacier case because the lumped input and output from the hydrological system were available as data.
 
-An implication of the model in \cite{Bartholomausetal2011}, again not stated there, regards the pressure in steady state.  Steady state ($d/dt = 0$) applied to \eqref{eq:barth:cavityevolution} gives
+An implication of the \cite{Bartholomausetal2011} model, again not stated there, regards the pressure in steady state.  Steady state in equation \eqref{eq:barth:cavityevolution} gives
 \begin{equation*}
 0 = u_b h + \dot m - C_c A_c (P_o-P)^n.
 \end{equation*}
-Thus there is a relationship between pressure $P$ and cavity area $A_c$ in steady state:
+This is a relationship between pressure $P$ and cavity area $A_c$ in steady state:
 \begin{equation}
-P = P_o - \left(\frac{u_b h + \dot m}{C_c A_c}\right)^{1/n} = P(A_c). \label{eq:barth:steadypressure}
+P = P_o - \left(\frac{u_b h + \dot m}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
 \end{equation}
-This equation is just like equation \eqref{eq:PofWsteady} in the main text; again, in steady state the pressure is a function of the amount of water.  It is interesting to also observe, however, that \eqref{eq:barth:steadypressure} shows that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the pressure is parameterized englacially by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining steady state.
+This equation, which is just like equation \eqref{eq:PofWsteady} in the main text, says that in steady state the pressure is a function of the amount of water.  It is interesting to observe, however, that \eqref{eq:barth:steadypressure} shows that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining steady state.
 
-Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we essentially get \eqref{eq:pressureequation}.  Note that under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  In fact, the $\phi\to 0$ and distributed version of the subglacial-plus-englacial theory of \cite{Bartholomausetal2011} is the theory in \cite{Schoofetal2012}.  Therefore the main text simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} theory and an englacial storage extension of the \cite{Schoofetal2012} theory.
+Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we get \eqref{eq:regpressureequation}.  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the \cite{Bartholomausetal2011} model is the model in \cite{Schoofetal2012}.  The main text of the current paper simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} model and an englacial-storage-regularized extension of the \cite{Schoofetal2012} model.
 
 
 \section{Flux-limiter methods} \label{app:fluxlimiters}
