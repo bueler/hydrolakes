@@ -1054,18 +1054,18 @@ Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as
 
 \section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
 
-The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and also it has an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat this kind of problem abstractly.  We point out some properties of such a mathematical structure, and we address numerical schemes which preserve important inequalities for the portions of the conserved quantity.
+The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat this pair of coupled equations abstractly.  We point out some properties of such a mathematical structure, and we address numerical schemes which preserve important properties, especially from the point of view of stability and conservation.
 
-An abstract view of this problem is the following pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
+Our abstract view is to state a pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
 \begin{align}
 \frac{\partial}{\partial t} \left(u+v\right) &= \Div \bq + g, \label{eq:abs:transport} \\
    \frac{\partial v}{\partial t} &= b \left(f(u) - v\right).  \label{eq:abs:storage}
 \end{align}
-Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ only depends on the transported portion $u$, and its gradient, and not on the locally-stored portion $v$.  The second equation describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, as is the transfer ``target'' term $f(u)$ in \eqref{eq:abs:storage}, and the details generally don't concern us here.  The constant $b\ge 0$ is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f(u)=0$.
+Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ depends on the transported portion $u$, and its gradient, but not on the locally-stored portion $v$.  The second equation describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, as is the transfer ``target'' term $f(u)$ in \eqref{eq:abs:storage}, and the details generally don't concern us here.  The constant $b\ge 0$ is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f(u)=0$.
 
 To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}.  The second equation \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
 
-The first idea explained in this appendix is that the storage quantity $v$ \emph{could} be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ with an additional term which is an integral over previous states of $u$.  Therefore implementing this form would require storage of prior states.  In the main text we instead maintain the two-equation structure  \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The second idea in this appendix shows that an implicit time-discretization of equation \eqref{eq:abs:storage} will guarantee that the bounds $0 \le v \le v_{\text{max}}$ are maintained (compare section \ref{sec:num}).   
+The first idea explained in this appendix is that the storage quantity $v$ \emph{could} be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ which has a term which is an integral over previous states of $u$.  Implementing this equation is impractical; it would require storage of prior states.  Instead, after showing how to eliminate $v$ and get the integral-over-previous-times equation, so as to understand the system of equations better, we will in fact maintain the two-equation structure  \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  
 
 To show how to eliminate equation \eqref{eq:abs:storage} we multiply it by an integrating factor $e^{-bt}$ and simplify:
     $$\frac{\partial v}{\partial t} + b v = b f(u) \qquad \iff \qquad \frac{\partial}{\partial t} \left(e^{bt} v\right) = b e^{bt} f(u).$$
@@ -1077,18 +1077,33 @@ This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partia
 \end{equation}
 Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$.  While equation \eqref{eq:abs:transportagain} may or may not be conceptually advantageous, it is not effectively-implementable.
 
-Next we will consider discretizations of \eqref{eq:abs:storage}.  In the till-porewater application it is important that the storage capacity of the till not be exceeded, and so in this abstract description we add bounds $0 \le v \le v_{\text{max}}$.  The same requirement also implies $\partial v/\partial t \to 0$ as $v \upto v_{\text{max}}$, so we assume $0 \le f(u) \le v_{\text{max}}$ also.
+Next we consider time-discretizations of \eqref{eq:abs:storage}.  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives.  These facts allow us to easily implement an implicit scheme which has no stability restrictions on time steps, and for which we can prove desireable inequalities.
 
-Equation \eqref{eq:abs:storage} is linear in $v$ which allows an implicit scheme to be used without solving nontrivial equations.  In particular, if $t^l$ is the time-step and $t^{l+1}-t^l = \Delta t$ and if $U^l,V^l \approx u,v$ then the stable (specifically ``A-stable'' \citep{AscherPetzold}) backwards Euler approximation of \eqref{eq:abs:storage} using explicit coupling is
-    $$\frac{V^{l+1} - V^l}{\Delta t} = b \left(f(U^l) - V^{l+1}\right).$$
+Let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  The following backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}):
+\begin{equation}
+\frac{V^{l+1} - V^l}{\Delta t} = b \left(f(U^l) - V^{l+1}\right).  \label{eq:abs:Veqn}
+\end{equation}
 Solving for $V^{l+1}$ gives
 \begin{equation}
-V^{l+1} = \frac{V^l + b \Delta t f(U^l)}{1 + b \Delta t}
+V^{l+1} = \frac{V^l + b \Delta t f(U^l)}{1 + b \Delta t},  \label{eq:abs:Vupdate}
 \end{equation}
-Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ is an average of $V^l$ and $f(U^l)$.  Therefore
-    $$0 \le V^l, f(U^l) \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}},$$
-so that the discrete evolution of the locally-stored quantity $v$ maintains the desired constraints.
+which is easily implemented; we use this result as equation \eqref{eq:tillupdatefd}.
 
+In the till-porewater application it is important that the storage capacity of the till not be exceeded; in this abstract description we have bounds $0 \le v \le v_{\text{max}}$.  The same requirement also implies $\partial v/\partial t \to 0$ as $v \upto v_{\text{max}}$, so we assume that the transfer target satisfies the same bounds, $0 \le f(u) \le v_{\text{max}}$.  Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ in \eqref{eq:abs:Vupdate} is an \emph{average} of $V^l$ and $f(U^l)$.  Therefore
+\begin{equation}
+0 \le V^l, f(U^l) \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}}, . \label{eq:abs:Vbounds}
+\end{equation}
+In particular, the discrete evolution of the locally-stored quantity $v$ maintains the desired storage capacity constraint $v \le v_{\text{max}}$.
+
+It is also easy to prove that if the transfer target term $f(u)$ is briefly constant in time, e.g.~if $f(U^{l-1})=f(U^1)=f_0$ in \eqref{eq:abs:Veqn}, then the local storage quantity $V^l$ strictly approaches the transfer target on consecutive time steps, that is,
+\begin{equation}
+\left|V^{l+1} - f_0\right| < \left|V^l - f_0\right|, \label{eq:abs:Vapproach}
+\end{equation}
+assuming $b\Delta t > 0$.
+
+At this abstract level we can fully-discretize equation \eqref{eq:abs:transport}, using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux components:
+
+FIXME
 
 
 
