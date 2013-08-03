@@ -749,23 +749,24 @@ This analysis suggests that the numerical scheme for pressure diffusion, given n
 
 The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}, but it requires no advection approximation.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
-be the gridded values of the cavitation-opening and creep-closure rates.  The scheme is
+be the gridded values of the cavitation-opening and creep-closure rates.  Also define the sum of all zero order (i.e.~without spatial derivatives) terms
+    $$Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.$$
+The scheme is
 \begin{align}
 \frac{\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{K_e W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - K_w W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
-      &\quad + \frac{K_n W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - K_s W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2} + \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - T_{ij}^l. \notag
+      &\quad + \frac{K_n W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - K_s W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2} + Z_{ij}. \notag
 \end{align}
 Again it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define $\omega_x = 1/\Delta x^2$, $\omega_y = 1/\Delta y^2$.   Then scheme \eqref{eq:Pfd} is equivalent to this form written in terms of $D=\rho_w g K W$:
 \begin{align}
 P_{i,j}^{l+1} = \Plij &+  \frac{\,\Delta t}{\phi_0} \bigg[\omega_x D_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x D_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
-      &\qquad\qquad\qquad + \omega_y D_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y D_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)\bigg] \notag \\
-      &\quad + \frac{\rho_w g\,\Delta t}{\phi_0} \left[\mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - T_{ij}^l\right]. \notag
+      &\qquad\qquad + \omega_y D_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y D_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)\bigg] + \frac{\rho_w g\,\Delta t}{\phi_0} Z_{ij}. \notag
 \end{align}
 
 There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we again set $P_{i,j}^{l+1}=(P_o)_{i,j}$. 
 
-\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  One time step of the fully-discretized evolution is described next as a ``recipe''.  We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.
+\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we are going to describe one time step of the fully-discretized evolution in a ``recipe'' which will be useful to implementers.
 
-The ice geometry may be quite general, with ice-free land and floating ice allowed.  In fact, the ice geometry determines boolean masks for grid cell state based on a sea level of elevation zero:
+We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.  The ice geometry may be quite general, however, with ice-free land and floating ice allowed at each location $(x_i,y_j)$.  Thus the ice geometry determines boolean ``masks'' for grid cell state based on a sea level of elevation zero:
 \begin{align*}
 \text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
 \text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
@@ -779,21 +780,20 @@ One time step follows this algorithm:
 \begin{enumerate}
 \item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
 \item Compute the current values of the hydraulic potential $\psi_{i,j}^l$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
-\item Compute velocity components $u_e$, $v_n$ at staggered grid locations from \eqref{eq:velocitycomp}.
-\item FIXME: get $(\Wtil)_{i,j}^{l+1}$ by implicit step.  this determines $T_{i,j}^l$
-\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.
+\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.  Get staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}.  Compute velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}.  Get staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
 %FIXME: however, Wea and Wno should not average from outside the ice domain?
-\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, but based on the actual gridded values of $\bV$ and $W$.
+\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
 \item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations, but do not compute the $x$-($y$-)direction divided-difference contribution to the flux divergence in \eqref{eq:Pfdupdate} when either $x$-($y$-)neighbor is \texttt{icefree} or \texttt{float}.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.  
+\item Get $(\Wtil)_{i,j}^{l+1}$ by implicit step \eqref{eq:tillupdatefd}.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$ and $(\Wtil)_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wupdate} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$.
 \item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
 \end{enumerate}
 
 \medskip
-This recipe goes with a reporting scheme for mass conservation.  Note that water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines), according to the hydraulic potential differences which cause transport.  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(xi)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
+This recipe goes with a reporting scheme for mass conservation.  Note that water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines), according to the hydraulic potential differences which cause transport.  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
 
 \subsection*{Verification of the coupled model}  By using the coupled steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined.
 
