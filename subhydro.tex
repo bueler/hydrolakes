@@ -900,7 +900,7 @@ P = \rho_w g z_w.  \label{eq:barth:englacialpressure}
 
 In the \cite{Bartholomausetal2011} model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  A wall melt parameterization is also given but, in keeping with the cavity evolution in the rest of the current paper, we simply denote it as a melt term $\dot m$.  Denote the sliding speed by $u_b$ and let $C_c = (2 A)/n^n$, where $A$ and $n$ are parameters in the (Glen) ice flow law \citep{Paterson}.  Then the cavity area evolution equation (4) in \cite{Bartholomausetal2011} is
 \begin{equation}
-\frac{dA_c}{dt} = u_b h + \dot m - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
+\frac{dA_c}{dt} = \dot m + u_b h - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
 \end{equation}
 The three terms on the right are opening by cavitation, melt, and closure by creep, respectively.
 
@@ -912,17 +912,17 @@ Now use \eqref{eq:barth:kinematics} to write the evolution in terms of the rate 
     $$\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \frac{d A_c}{dt}\right).$$
 Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c/dt$:
 \begin{equation}
-\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:fullpressure}
+\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:fullpressure}
 \end{equation}
 We emphasize that, though it is not stated there, equation \eqref{eq:barth:fullpressure} follows from the model equations in \cite{Bartholomausetal2011}.
 
 Equation \eqref{eq:barth:fullpressure} suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
 \begin{equation*}
-\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \left(- \frac{Q_{out} - Q_{in}}{\Delta x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right).
+\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \left(- \frac{Q_{out} - Q_{in}}{\Delta x} - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right).
 \end{equation*}
 The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$.  Thus a distributed flowline form of the \cite{Bartholomausetal2011} theory is the partial differential equation
 \begin{equation}
-\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \left(- \frac{\partial Q}{\partial x} - \frac{f}{h} \left[u_b h + \dot m - C_c A_c (P_o-P)^n\right]\right).  \label{eq:barth:distpressure}
+\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \left(- \frac{\partial Q}{\partial x} - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right).  \label{eq:barth:distpressure}
 \end{equation}
 Equation \eqref{eq:barth:distpressure} is, for all practical purposes, the same as equation \eqref{eq:regpressureequation} in the main text.
 
@@ -930,11 +930,11 @@ A distributed extension of the \cite{Bartholomausetal2011} theory is not, howeve
 
 An implication of the \cite{Bartholomausetal2011} model, again not stated there, regards the pressure in steady state.  Steady state in equation \eqref{eq:barth:cavityevolution} gives
 \begin{equation*}
-0 = u_b h + \dot m - C_c A_c (P_o-P)^n.
+0 = \dot m + u_b h - C_c A_c (P_o-P)^n.
 \end{equation*}
 This is a relationship between pressure $P$ and cavity area $A_c$ in steady state:
 \begin{equation}
-P = P_o - \left(\frac{u_b h + \dot m}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
+P = P_o - \left(\frac{\dot m + u_b h}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
 \end{equation}
 This equation, which is just like equation \eqref{eq:PofWsteady} in the main text, says that in steady state the pressure is a function of the amount of water.  It is interesting to observe, however, that \eqref{eq:barth:steadypressure} shows that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining steady state.
 
@@ -1054,12 +1054,16 @@ Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as
 
 \section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
 
-The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes mass conservation equation \eqref{eq:conserve} for the total water amount and also equation \eqref{eq:tilldynamics} for the evolution of the water stored locally in till pore spaces.  An abstract view of this problem is the following pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
+The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and also it has an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat this kind of problem abstractly.  We point out some properties of such a mathematical structure, and we address numerical schemes which preserve important inequalities for the portions of the conserved quantity.
+
+An abstract view of this problem is the following pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
 \begin{align}
-\frac{\partial}{\partial t} \left(u+v\right) &= \Div \left(\mathbf{q}(x,u,\grad u)\right) + g(x), \label{eq:abs:transport} \\
+\frac{\partial}{\partial t} \left(u+v\right) &= \Div \bq + g, \label{eq:abs:transport} \\
    \frac{\partial v}{\partial t} &= b \left(f(u) - v\right).  \label{eq:abs:storage}
 \end{align}
-Here the conserved quantity is the sum $u+v \sim \Wtot$.  The flux $\mathbf{q}$ only depends on the transported portion $u \sim W$ and its gradient, while the second equation describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v \sim \Wtil$.  The flux $\mathbf{q}$ and the source term $g$ are quite general, as is the transfer term $b f(u)$, and the details generally don't concern us.  Note that the constant $b\ge 0$ is the exponential rate at which the locally-stored quantity ``drains'' in the absence of transfer of $u$ (i.e.~if $f(u)=0$).
+Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ only depends on the transported portion $u$, and its gradient, and not on the locally-stored portion $v$.  The second equation describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, as is the transfer ``target'' term $f(u)$ in \eqref{eq:abs:storage}, and the details generally don't concern us here.  The constant $b\ge 0$ is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f(u)=0$.
+
+To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}.  The second equation \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
 
 The first idea explained in this appendix is that the storage quantity $v$ \emph{could} be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ with an additional term which is an integral over previous states of $u$.  Therefore implementing this form would require storage of prior states.  In the main text we instead maintain the two-equation structure  \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The second idea in this appendix shows that an implicit time-discretization of equation \eqref{eq:abs:storage} will guarantee that the bounds $0 \le v \le v_{\text{max}}$ are maintained (compare section \ref{sec:num}).   
 
