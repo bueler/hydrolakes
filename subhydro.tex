@@ -334,19 +334,19 @@ Equation \eqref{eq:strongclosure} obviously allows us to eliminate either $W$ or
 \begin{equation}
 \mathcal{O}(|\bv_b|,W) - \mathcal{C}(N,W) + \ddt{\Wtil} + \Div\bq = \frac{m}{\rho_w}. \label{eq:ellipticone}
 \end{equation}
-Adding equations \eqref{eq:qexpression} and \eqref{eq:tilldynamics}, we have from \eqref{eq:ellipticone} a new relation between $W$, $\Wtil$, and $P$, namely
+Adding equation \eqref{eq:qexpression}, we have from \eqref{eq:ellipticone} a new relation between $W$, $\Wtil$, and $P$, namely
 \begin{equation}
-0 = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(N,W) - \mathcal{O}(|\bv_b|,W) - \mu \left(\min\left\{\tau W,\Wtilmax\right\} - \Wtil\right). \label{eq:elliptictwo}
+0 = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(N,W) - \mathcal{O}(|\bv_b|,W) - \ddt{\Wtil}. \label{eq:elliptictwo}
 \end{equation}
 Recalling that $\psi = P + \rho_w g (b+W)$ and $N=P_0-P$ are both linear functions of $P$, equation \eqref{eq:elliptictwo} relates variables $W$, $\Wtil$, and $P$ and it is thus useful in the theory because we also have evolution equations for $W$ and $\Wtil$.
 
 It turns out that \eqref{eq:elliptictwo} is not really new.  In the zero till storage case, e.g.~setting $\Wtilmax=0$, equation \eqref{eq:elliptictwo} is exactly the elliptic pressure equation (2.12) of \cite{Schoofetal2012}.  As in that theory, we could imagine solving \eqref{eq:elliptictwo}, plus pressure boundary conditions at the lateral edges of the subglacial hydrologic system, for the pressure $P$ given values for the water amount $W$.  In fact, exactly this is proposed in the \cite{Schoofetal2012} theory.  They argue, however, that \eqref{eq:elliptictwo} is not an adequate model of subglacial cavities because it fails to include the possibilities of overpressure, where $W=Y>W_r$ and $P>P_o$, and underpressure, where cavities are partially empty $W<Y$ and at zero pressure $P=0$.
 
-We agree that \eqref{eq:elliptictwo} is an inadequate model but we see a soluiton which has a different physical basis.  Partially-filled cavities have not been observed except at the margins of glaciers, though of course subglacial hydrology is generally poorly-observed.  The overpressure condition \emph{has} been observed in ice sheets \citep{Dasetal08}, but only over short durations.  Over much larger time spans, however, \cite{Bartholomausetal2008,Bartholomausetal2011} have observed subglacial hydrology connected to englacial systems of cracks, crevasses, and moulins, in an Alaskan glacier.  [FIXME: observed elsewhere]  The englacial system is parameterized as having macroporosity $0\le \phi < 1$.  The amount of englacial water is determined by (is equivalent to) the subglacial pressure.  Conversely, in this hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table'' in the englacial system.  The condition $P\le P_o$ is ``enforced'' by the property that water pressure exceeding overburden would cause water to emerge onto the surface of the glacier and stop further increases in pressure.
+We agree that \eqref{eq:elliptictwo} is an inadequate model but we see a soluiton which has a different physical basis.  Partially-filled cavities have not been observed except at the margins of glaciers, though of course subglacial hydrology is generally poorly-observed.  The overpressure condition \emph{has} been observed in ice sheets \citep{Dasetal08}, but only over short durations.  Over much larger time spans, however, \cite{Bartholomausetal2008,Bartholomausetal2011} have observed subglacial hydrology connected to englacial systems of cracks, crevasses, and moulins, in an Alaskan glacier.  [FIXME: observed elsewhere?]  The englacial system is parameterized as having macroporosity $0\le \phi < 1$.  The amount of englacial water is determined by (is equivalent to) the subglacial pressure.  Conversely, in this hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table'' in the englacial system.  The condition $P\le P_o$ is ``enforced'' by the property that water pressure exceeding overburden would cause water to emerge onto the surface of the glacier and stop further increases in pressure.
 
 In fact, extension of the model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptictwo}---see Appendix A---but with the crucial difference that the equation is \emph{parabolic} not \emph{elliptic}.  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, [FIXME: and based on Hewitt (2013)?] we use this parabolic revision of \eqref{eq:elliptictwo} in our model:
 \begin{equation}
-\frac{\phi}{\rho_w g} \ddt{P} = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(N,W) - \mathcal{O}(|\bv_b|,W) - \mu \left(\min\left\{\tau W,\Wtilmax\right\} - \Wtil\right). \label{eq:regpressureequation}
+\frac{\phi}{\rho_w g} \ddt{P} = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(N,W) - \mathcal{O}(|\bv_b|,W) - \ddt{\Wtil}. \label{eq:regpressureequation}
 \end{equation}
 If the englacial porosity $\phi$ is small, as it would be under a thick ice sheet, then equation \eqref{eq:regpressureequation} is very stiff and indeed similar, in terms of numerical solution, to the elliptic equation \eqref{eq:elliptictwo}.  Such a case corresponds to an impermeable ``cap'' on the subglacial system.  However, if $\phi$ is relatively large then equation \eqref{eq:regpressureequation} causes local changes in subglacial pressure $P$ to be ``damped'' in the speed and range of their influence on other parts of the connected subglacial hydrologic system.
 
@@ -364,23 +364,22 @@ Equation \eqref{eq:regpressureequation} is a kind of stress balance, a form of c
 
 \section{A new subglacial hydrology model} \label{sec:newmodel}
 
-\subsection*{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model, and which is effectively parallelized.  The remainder of the paper will demonstrate that we have succeeded in the stated goals.
+\subsection*{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model, and which is effectively parallelized.  The remainder of the paper will demonstrate that we have succeeded in these goals.
 
 The complete set of evolution equations for the model is the following:
 \begin{empheq}[box=\mybluebox]{align}
-\frac{\partial W}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} - T, \label{eq:bluebox} \\
-\frac{\partial \Wtil}{\partial t} &= T, \notag \\
-\frac{\phi_0}{\rho_w g} \frac{\partial P}{\partial t} &= \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} - T + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\tau W,\Wtilmax\right\} - \Wtil\right), \notag \\
+\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= \Div \left(K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
 \end{empheq}
 The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We have already defined several derived functions:
 \begin{align*}
 K &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
 \bV   &= - K \grad\left(P + \rho_w g b\right), \\
 D     &= \rho_w g K W, \\
-\psi &= P + \rho_w g (b + W), \\
-T    &= \mu \left(\min\left\{W,\Wtilmax\right\} - \Wtil\right).
+\psi &= P + \rho_w g (b + W).
 \end{align*}
-In the last of these definitions we have named the right side of \eqref{eq:tilldynamics} as ``$T$'' for the ``transfer'' model between cavities and till.  As will be described in section \ref{sec:num}, we have implemented an explicit, adaptive time-stepping numerical scheme for equations \eqref{eq:bluebox} in the Parallel Ice Sheet Model.
+As will be described in section \ref{sec:num}, we have implemented an explicit/implicit adaptive time-stepping numerical scheme for equations \eqref{eq:bluebox} in the Parallel Ice Sheet Model.
 
 \begin{table}[ht]
 \caption{Functions used in hydrology model \eqref{eq:bluebox}, including symbol, units, and meaning.}
@@ -434,12 +433,12 @@ Model equations \eqref{eq:bluebox} relate four kinds of symbols, namely the stat
 \subsection*{Reduction to existing models}  Four reductions of model \eqref{eq:bluebox} can now be stated precisely:
 \begin{itemize}
 
-\item The zero till storage ($\Wtilmax=0$) and zero regularizing porosity ($\phi_0=0$) case of \eqref{eq:bluebox} is the model described by \cite{Schoofetal2012}.  The equations in this case are straightforward to write down:
+\item The zero till storage ($\Wtilmax=0$) and zero regularizing porosity ($\phi_0=0$) case of \eqref{eq:bluebox} is the model described by \cite{Schoofetal2012}:
 \begin{empheq}[box=\mybluebox]{align}
 \phantom{dsaf} \frac{\partial W}{\partial t} &= - \Div\left( K W \grad \psi \right) + \frac{m}{\rho_w}, \label{eq:schoofsmodel} \\
 0 &= \Div \left( K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+.\phantom{dsaf}  \notag
 \end{empheq}
-The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, with a small porosity parameter $\phi_0$, and with additional till storage.
+The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, with a small porosity parameter $\phi_0$, and with an additional till storage variable $\Wtil$.
 
 \item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Livingstoneetal2013TCD,Siegertetal2009}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.  The pressure is not an unknown, the parameterization of cavity evolution is inactive, and the pressure evolution equation is not needed.  There is now less stiffness because the model is an advection using a mostly-geometrically-determined velocity.    The single evolution equation is
 \begin{empheq}[box=\mybluebox]{align}
@@ -692,23 +691,25 @@ D_w &= D_e\big|_{(i-1,j)}, \qquad D_s = D_n\big|_{(i,j-1)}.
 
 Now we define $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ as the face-centered (staggered-grid) normal components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value(s) are used.  Here is the scheme for equation \eqref{eq:adeqn} using \eqref{eq:stagK} and \eqref{eq:velocitycomp} above:
 \begin{align}
- &\frac{W_{i,j}^{l+1} - W_{i,j}^l}{\Delta t} = - \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} - \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y} \label{eq:Wfd} \\
-      &\hspace{-0.5in} + \frac{D_e (W_{i+1,j}^l - \Wlij) - D_w (\Wlij - W_{i-1,j}^l)}{\Delta x^2} + \frac{D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)}{\Delta y^2}  + \frac{m_{ij}}{\rho_w} - T_{ij}^l \notag
+&\frac{W_{i,j}^{l+1} - W_{i,j}^l}{\Delta t} + \frac{(\Wtil)_{i,j}^{l+1} - (\Wtil)_{i,j}^l}{\Delta t} = - \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} - \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y}  \label{eq:Wfd} \\
+   &\hspace{-0.5in} + \frac{D_e (W_{i+1,j}^l - \Wlij) - D_w (\Wlij - W_{i-1,j}^l)}{\Delta x^2} + \frac{D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)}{\Delta y^2}  + \frac{m_{ij}}{\rho_w}.  \notag
 \end{align}
-where $T_{ij}^l=T(W_{i,j}^l,{\Wtil}_{i,j}^{l+1})$ is the right side of \eqref{eq:tilldynamics}.
 
-BBB FIXME START
+As explained in Appendix \ref{app:transportstorage}, the updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, can be computed implicitly by the formula
+\begin{equation}
+(\Wtil)_{i,j}^{l+1} = \frac{(\Wtil)_{i,j}^l + \mu \Delta t \min\{\tau W_{i,j}^l, \Wtilmax\}}{1 + \mu \Delta t}.  \label{eq:tillupdatefd}
+\end{equation}
 
-Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the discrete fluxes, which we address next.
-
-It is useful to rewrite scheme \eqref{eq:Wfd} in ``update'' form, and we should address the englacial storage update.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
+After applying scheme \eqref{eq:tillupdatefd}, the value of $W_{i,j}^{l+1}$ can be updated.  For convenience we rewrite scheme \eqref{eq:Wfd} in ``update'' form.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
 \begin{align}
- (W+\Wen)_{i,j}^{l+1} &= (\Wen)_{i,j}^l + W_{i,j}^l - \nu_x \left(Q_e(u_e) - Q_w(u_w)\right) - \nu_y \left(Q_n(v_n) - Q_s(v_s)\right) \label{eq:Wupdate} \\
+ W_{i,j}^{l+1} &= W_{i,j}^l - (\Wtil)_{i,j}^{l+1} + (\Wtil)_{i,j}^l \label{eq:Wupdate} \\
+  &\qquad - \nu_x \Big(Q_e(u_e) - Q_w(u_w)\Big) - \nu_y \Big(Q_n(v_n) - Q_s(v_s)\Big) \notag \\
   &\qquad + \mu_x \left(D_e (W_{i+1,j}^l - \Wlij) - D_w (\Wlij - W_{i-1,j}^l)\right) \notag \\
   &\qquad + \mu_y \left(D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)\right) + \Delta t \frac{m_{ij}}{\rho_w}. \notag
 \end{align}
 
-BBB FIXME END
+Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} or its equivalent \eqref{eq:Wupdate} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes, which we address next.
+
 
 
 \subsection*{Fluxes in the mass conservation equation}  Appendix \ref{app:fluxlimiters} reviews some of the now-standard theory of flux-limiters for transport schemes.  Here we state the two flux-discretization alternatives which we actually test as flux discretizations for scheme \eqref{eq:Wupdate}.  These choices are choices of functions $\Psi$ from Table \ref{tab:fluxlimiters} in Appendix \ref{app:fluxlimiters}.  The methods we try are first-order upwind and the Koren flux-limiter \citep{HundsdorferVerwer2010}.
