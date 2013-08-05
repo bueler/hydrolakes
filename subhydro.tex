@@ -41,6 +41,7 @@
 % math macros
 \newcommand\bv{\mathbf{v}}
 \newcommand\bV{\mathbf{V}}
+\newcommand\bn{\mathbf{n}}
 \newcommand\bq{\mathbf{q}}
 \newcommand\bQ{\mathbf{Q}}
 
@@ -711,7 +712,6 @@ After applying scheme \eqref{eq:tillupdatefd}, the value of $W_{i,j}^{l+1}$ can 
 Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} or its equivalent \eqref{eq:Wupdate} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes, which we address next.
 
 
-
 \subsection*{Fluxes in the mass conservation equation}  Appendix \ref{app:fluxlimiters} reviews some of the now-standard theory of flux-limiters for transport schemes.  Here we state the two flux-discretization alternatives which we actually test as flux discretizations for scheme \eqref{eq:Wupdate}.  These choices are choices of functions $\Psi$ from Table \ref{tab:fluxlimiters} in Appendix \ref{app:fluxlimiters}.  The methods we try are first-order upwind and the Koren flux-limiter \citep{HundsdorferVerwer2010}.
 
 Recall that the velocity has components $\bV=(u,v)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  Also recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(u_e)$'' and that the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(v_n)$.''  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$'':
@@ -1101,9 +1101,25 @@ It is also easy to prove that if the transfer target term $f(u)$ is briefly cons
 \end{equation}
 assuming $b\Delta t > 0$.
 
-At this abstract level we can fully-discretize equation \eqref{eq:abs:transport}, using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux components:
+At this abstract level we can fully-discretize equation \eqref{eq:abs:transport}, using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux components.  If the flux components are $\bq = (q^x,q^y)$ we can write the scheme as
+\begin{align}
+\frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
+\end{align}
+This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available, and that \eqref{eq:abs:Vupdate} has been applied to compute $V_{ij}^{l+1}$.  Staggered-grid flux components in \eqref{eq:abs:conservefd} needed to be computed in some manner from the various known values but the details are unimportant here.  In any case, the right side of \eqref{eq:abs:Vupdate} can be determined, so that the updated value $U_{ij}^{l+1}$ can be comptuted.
 
-FIXME
+We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete sum of values of $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, on a region $R$ of the $x,y$ plane, is
+\begin{equation}
+\frac{d}{dt} \left(\int_R u + v\,dx dy\right) = \int_{\partial R} \bq \cdot \bn\,ds + \int_R g \,dx dy.  \label{eq:abs:continuumconserve}
+\end{equation}
+The exact discrete conservation \emph{approximates} \eqref{eq:abs:continuumconserve}.  That is, in the following statement, our numerical scheme does indeed make the two sides exactly equal, but the two sides only approximate the continuum quantities on the sides of \eqref{eq:abs:continuumconserve}.  The key idea is, perhaps, to think of the regular grid quantities as being midpoints of the cells, and then apply the midpoint integration rule.  Our discrete conservation statement follows from \eqref{eq:abs:conservefd} at step $\ast$ below:
+\begin{align}
+&\frac{\sum_{i,j=1,1}^{I,J} \left(U_{ij}^{l+1} + V_{ij}^{l+1}\right)\,\Delta x \Delta y - \sum_{i,j=1,1}^{I,J} \left(U_{ij}^{l} + V_{ij}^{l}\right)\,\Delta x \Delta y}{\Delta t} \\
+  &\qquad = \sum_{i,j=1,1}^{I,J} \frac{U_{ij}^{l+1} - U_{ij}^l}{\Delta t} \,\Delta x \Delta y   + \sum_{i,j=1,1}^{I,J} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
+  &\qquad \stackrel{\ast}{=} \sum_{i,j=1,1}^{I,J} \left(\frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}\right) \,\Delta x \Delta y  \notag \\
+  &\qquad\qquad\qquad + \sum_{i,j=1,1}^{I,J} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
+  &\qquad = \sum_{j=1}^{J} \left(\sum_{i=1}^{I}  q^x_{i+1/2,j} - q^x_{i-1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(\sum_{j=1}^{J} q^y_{i,j+1/2} - q^y_{i,j-1/2}\right) \Delta x +  \sum_{i,j=1,1}^{I,J} g_{ij}\,\Delta x \Delta y  \notag \\
+  FIXME
+\end{align}
 
 
 
