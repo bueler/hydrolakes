@@ -345,7 +345,7 @@ It turns out that \eqref{eq:elliptictwo} is not really new.  In the zero till st
 
 We agree that \eqref{eq:elliptictwo} is an inadequate model but we see a soluiton which has a different physical basis.  Partially-filled cavities have not been observed except at the margins of glaciers, though of course subglacial hydrology is generally poorly-observed.  The overpressure condition \emph{has} been observed in ice sheets \citep{Dasetal08}, but only over short durations.  Over much larger time spans, however, \cite{Bartholomausetal2008,Bartholomausetal2011} have observed subglacial hydrology connected to englacial systems of cracks, crevasses, and moulins, in an Alaskan glacier.  [FIXME: observed elsewhere?]  The englacial system is parameterized as having macroporosity $0\le \phi < 1$.  The amount of englacial water is determined by (is equivalent to) the subglacial pressure.  Conversely, in this hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table'' in the englacial system.  The condition $P\le P_o$ is ``enforced'' by the property that water pressure exceeding overburden would cause water to emerge onto the surface of the glacier and stop further increases in pressure.
 
-In fact, extension of the model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptictwo}---see Appendix A---but with the crucial difference that the equation is \emph{parabolic} not \emph{elliptic}.  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, [FIXME: and based on Hewitt (2013)?] we use this parabolic revision of \eqref{eq:elliptictwo} in our model:
+In fact, extension of the model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptictwo}---see Appendix \ref{app:barth}---but with the crucial difference that the equation is \emph{parabolic} not \emph{elliptic}.  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, [FIXME: and based on Hewitt (2013)?] we use this parabolic revision of \eqref{eq:elliptictwo} in our model:
 \begin{equation}
 \frac{\phi}{\rho_w g} \ddt{P} = \Div\left(K W \grad \psi\right) + \frac{m}{\rho_w} + \mathcal{C}(N,W) - \mathcal{O}(|\bv_b|,W) - \ddt{\Wtil}. \label{eq:regpressureequation}
 \end{equation}
@@ -941,6 +941,124 @@ This equation, which is just like equation \eqref{eq:PofWsteady} in the main tex
 Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we get \eqref{eq:regpressureequation}.  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the \cite{Bartholomausetal2011} model is the model in \cite{Schoofetal2012}.  The main text of the current paper simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} model and an englacial-storage-regularized extension of the \cite{Schoofetal2012} model.
 
 
+\section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
+
+The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
+
+The abstract view in this Appendix starts by stating a pair of abstract equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
+\begin{align}
+\frac{\partial}{\partial t} \left(u+v\right) &= \Div \bq + g, \label{eq:abs:transport} \\
+   \frac{\partial v}{\partial t} &= b \left(f - v\right).  \label{eq:abs:storage}
+\end{align}
+Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ depends on the transported portion $u$, and its gradient, but not on the locally-stored portion $v$.  The source term can depend on location: $g(x,y)$.  The term $f(x,y,u)$ could be called the ``transfer target''; like $v$ it satisfies bounds $0 \le f \le v_{\text{max}}$.
+
+To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}, while \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
+
+Equation \eqref{eq:abs:transport} says that the sum $u+v$ is conserved as it evolves by transport and creation/removal.  Equation \eqref{eq:abs:storage} describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, and the details generally don't concern us here.  Also, the details of the transfer target $f$ are unimportant.  The constant $b\ge 0$ in \eqref{eq:abs:storage} is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f=0$.
+
+We now demonstrate properties of this abstract structure:
+
+\renewcommand{\labelenumi}{\arabic{enumi}.\quad}
+
+\begin{enumerate}
+\item  \emph{Alternative integration-over-history interpretation.}  The storage quantity $v$ could be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ which has a term which is an integral over previous states of $u$.  Implementing this equation is impractical; it would require storage of prior states.  However, we go ahead and show how to eliminate $v$ so as to understand the equations better.  
+
+Multiply \eqref{eq:abs:storage} by an integrating factor $e^{-bt}$ and simplify to get the form $\partial_t (e^{bt} v) = b e^{bt} f$.  If $v$ is known at the initial time, say $v=v_0(x,y)$ at $t=0$, then we can integrate from $0$ to $t$ and multiply both sides by $e^{-bt}$ to get
+\begin{equation}
+v(t,x,y) = e^{-bt} \left(v_0(x,y) + b \int_0^t e^{bs} f(x,y,u(s,x,y))\,ds\right). \label{eq:abs:vexpression}
+\end{equation}
+This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partial v/\partial t$ to the right side:
+\begin{equation}
+\frac{\partial u}{\partial t} = \Div \left(\mathbf{q}\right) + g + b e^{-bt} v_0 - b f + b^2 \int_0^t e^{-b(t-s)} f\,ds. \label{eq:abs:historyintegration} 
+\end{equation}
+Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$, so as to be able to compute the integral on the right in \eqref{eq:abs:historyintegration}.  While equation \eqref{eq:abs:historyintegration} may be conceptually advantageous, because it has only one conserved scalar $u$, it is not effectively-implementable.
+\medskip
+
+\item \emph{Discretization of \eqref{eq:abs:transport}}.  We can fully-discretize equation \eqref{eq:abs:transport} using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux.  In fact, let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  If we denote $\bq = (q^x,q^y)$ then we can write the scheme as
+\begin{align}
+\frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
+\end{align}
+
+This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available and that the goal is to update $U$ to time $t^{l+1}$.  So we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} below.  (Scheme \eqref{eq:abs:Vupdate} updates $V_{ij}^{l+1}$ using only $t^l$ information.)  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Then, because the right side of \eqref{eq:abs:conservefd} is determined, the updated value $U_{ij}^{l+1}$ can be computed.
+
+Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
+\medskip
+
+\item \emph{An implicit scheme for \eqref{eq:abs:storage}, and its properties.}  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives, so we can easily implement an implicit numerical scheme which has no stability restrictions on time steps, and for which we can prove desirable inequalities.  The backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}); we state two equivalent forms:
+\begin{equation}
+\frac{V^{l+1} - V^l}{\Delta t} = b \left(f^l - V^{l+1}\right) \qquad \iff \qquad
+V^{l+1} = \frac{V^l + b \Delta t f^l}{1 + b \Delta t}.  \label{eq:abs:Vupdate}
+\end{equation}
+(Compare equation \eqref{eq:tillupdatefd}.)
+
+Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ in \eqref{eq:abs:Vupdate} is an \emph{average} of $V^l$ and $f^l$.  Therefore
+\begin{equation}
+0 \le V^l, f^l \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}}. \label{eq:abs:Vbounds}
+\end{equation}
+Thus the discrete evolution of the locally-stored quantity $v$ maintains the needed bounds.  It is also easy to prove that if the transfer target term $f$ is constant in time, e.g.~if $f^{l-1}=f^1=\tilde f$ in \eqref{eq:abs:Vupdate}, then the local storage quantity $V^l$ strictly approaches the transfer target on consecutive time steps, that is,
+\begin{equation}
+\left|V^{l+1} - \tilde f\right| < \left|V^l - \tilde f\right|, \label{eq:abs:Vapproach}
+\end{equation}
+assuming $b\Delta t > 0$.  Properties \eqref{eq:abs:Vbounds} and \eqref{eq:abs:Vupdate} would have to be separately enforced in an explicit scheme.
+\medskip
+
+\item \emph{Discrete conservation}.  We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete version of the sum $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, is, on a region $R$ of the $x,y$ plane,
+\begin{equation}
+\frac{d}{dt} \left(\int_R u + v\,dx dy\right) = \int_{\partial R} \bq \cdot \bn\,ds + \int_R g \,dx dy.  \label{eq:abs:continuumconserve}
+\end{equation}
+
+One may think, in finite volume terms, of the regular grid quantities $U_{ij}^l,V_{ij}^l$ as being the midpoints of cells.  The integrals over $R$ in \eqref{eq:abs:continuumconserve} are approximated by the midpoint integration rule.  Specifically, the discrete analogue, of the integral over $R$ of $u+v$, is this discrete total volume sum in the case where $R$ is a rectangle:
+\begin{equation}
+\Theta^l = \sum_{i,j=1,1}^{I,J} \left(U_{ij}^l + V_{ij}^l\right)\,\Delta x \Delta y \approx 
+\int_R u(t^l,x,y) + v(t^l,x,y) \,dx dy\end{equation}
+
+Discrete conservation of $\Theta^l$ is exact even though $\Theta^l$ only approximates the continuum value of the total volume:
+\begin{align}
+\frac{\Theta^{l+1} - \Theta^l}{\Delta t} &= \sum_{i,j} \frac{U_{ij}^{l+1} - U_{ij}^l}{\Delta t} \,\Delta x \Delta y   + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \label{eq:abs:discreteconserve} \\
+  &\stackrel{\ast}{=} \sum_{i,j} \left(\frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}\right) \,\Delta x \Delta y  \notag \\
+  &\qquad\qquad + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
+  &= \sum_{j=1}^{J} \left(\sum_{i=1}^{I}  q^x_{i+1/2,j} - q^x_{i-1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(\sum_{j=1}^{J} q^y_{i,j+1/2} - q^y_{i,j-1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y  \notag \\
+  &\stackrel{\dagger}{=} \sum_{j=1}^{J} \left(q^x_{I+1/2,j} - q^x_{1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(q^y_{i,J+1/2} - q^y_{i,1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y \notag \\
+  &= \left[- \sum_{i=1}^{I}  q^y_{i,1/2} \Delta x + \sum_{j=1}^{J} q^x_{I+1/2,j} \Delta y + \sum_{i=1}^{I} q^y_{i,J+1/2} \Delta x - \sum_{j=1}^{J} q^x_{1/2,j} \Delta y \right]  +  \sum_{i,j} g_{ij}\,\Delta x \Delta y. \notag
+\end{align}
+Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from noticing that the inside sums collapse though cancellation.  The four sums in the last line, together inside square brackets, are sums over the sides of the rectangle $R$, here starting in the lower-left and traversing counterclockwise.
+
+Compare \eqref{eq:abs:discreteconserve} to the continuum statement \eqref{eq:abs:continuumconserve}.
+\end{enumerate}
+
+
+\section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
+
+Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
+
+We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
+\begin{align*}
+ W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
+      &\qquad + \mu_x \left[D_e \left(W_{i+1,j}^l - \Wlij\right) - D_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
+      &\qquad + \mu_y \left[D_n \left(W_{i,j+1}^l - \Wlij\right) - D_s \left(\Wlij - W_{i,j-1}^l\right)\right].
+\end{align*}
+Collecting terms to write the new value as a linear combination of the old values, we get
+\begin{align}
+ W_{i,j}^{l+1} &= (\nu_x u_w + \mu_x D_w) W_{i-1,j}^l + (\mu_x D_e) W_{i+1,j}^l + (\nu_y v_s + \mu_y D_s) W_{i,j-1}^l + (\mu_y D_n) W_{i,j+1}^l  \notag \\
+      &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s)\Big] \Wlij \notag \\
+  &= \tilde A\, W_{i-1,j}^l + \tilde B\, W_{i+1,j}^l + \tilde C\, W_{i,j-1}^l + \tilde D\, W_{i,j+1}^l + \tilde E\, \Wlij. \label{eq:lincomb}
+\end{align}
+Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative, depending on values of $\nu_x, \nu_y, \mu_x$, and $\mu_y$.  Requiring it to be nonnegative will generate a sufficient stability condition \citep{MortonMayers}.
+
+We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms; compare \eqref{eq:dtCFL}:
+\begin{equation}
+\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{u_e}{\Delta x} + \frac{u_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
+\end{equation}
+The second is a time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
+\begin{equation}
+\mu_x (D_e + D_w) + \mu_y (D_n + D_s) = \Delta t \left(\frac{D_e + D_w}{\Delta x^2} + \frac{D_n + D_s}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
+\end{equation}
+If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $\tilde E$ in \eqref{eq:lincomb} is nonnegative:
+	$$\tilde E = 1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s) \ge 0.$$
+
+Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
+
+
 \section{Flux-limiter methods} \label{app:fluxlimiters}
 
 Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
@@ -1018,123 +1136,6 @@ The above discussion was limited to the spatial (semi-)discretization.  A time d
 \max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2} \label{eq:CFL}
 \end{equation}
 \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
-
-
-\section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
-
-Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
-
-We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
-\begin{align*}
- W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
-      &\qquad + \mu_x \left[D_e \left(W_{i+1,j}^l - \Wlij\right) - D_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
-      &\qquad + \mu_y \left[D_n \left(W_{i,j+1}^l - \Wlij\right) - D_s \left(\Wlij - W_{i,j-1}^l\right)\right].
-\end{align*}
-Collecting terms to write the new value as a linear combination of the old values, we get
-\begin{align}
- W_{i,j}^{l+1} &= (\nu_x u_w + \mu_x D_w) W_{i-1,j}^l + (\mu_x D_e) W_{i+1,j}^l + (\nu_y v_s + \mu_y D_s) W_{i,j-1}^l + (\mu_y D_n) W_{i,j+1}^l  \notag \\
-      &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s)\Big] \Wlij \notag \\
-  &= \tilde A\, W_{i-1,j}^l + \tilde B\, W_{i+1,j}^l + \tilde C\, W_{i,j-1}^l + \tilde D\, W_{i,j+1}^l + \tilde E\, \Wlij. \label{eq:lincomb}
-\end{align}
-Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative, depending on values of $\nu_x, \nu_y, \mu_x$, and $\mu_y$.  Requiring it to be nonnegative will generate a sufficient stability condition \citep{MortonMayers}.
-
-We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms; compare \eqref{eq:dtCFL}:
-\begin{equation}
-\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{u_e}{\Delta x} + \frac{u_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
-\end{equation}
-The second is a time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
-\begin{equation}
-\mu_x (D_e + D_w) + \mu_y (D_n + D_s) = \Delta t \left(\frac{D_e + D_w}{\Delta x^2} + \frac{D_n + D_s}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
-\end{equation}
-If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $\tilde E$ in \eqref{eq:lincomb} is nonnegative:
-	$$\tilde E = 1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s) \ge 0.$$
-
-Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
-
-
-\section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
-
-The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
-
-The abstract view in this appendix starts by stating a pair of abstract equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
-\begin{align}
-\frac{\partial}{\partial t} \left(u+v\right) &= \Div \bq + g, \label{eq:abs:transport} \\
-   \frac{\partial v}{\partial t} &= b \left(f - v\right).  \label{eq:abs:storage}
-\end{align}
-Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ depends on the transported portion $u$, and its gradient, but not on the locally-stored portion $v$.  The source term can depend on location: $g(x,y)$.  The term $f(x,y,u)$ could be called the ``transfer target''; like $v$ it satisfies bounds $0 \le f \le v_{\text{max}}$.
-
-To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}, while \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
-
-Equation \eqref{eq:abs:transport} says that the sum $u+v$ is conserved as it evolves by transport and creation/removal.  Equation \eqref{eq:abs:storage} describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, and the details generally don't concern us here.  Also, the details of the transfer target $f$ are unimportant.  The constant $b\ge 0$ in \eqref{eq:abs:storage} is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f=0$.
-
-We now demonstrate properties of this abstract structure:
-
-\renewcommand{\labelenumi}{\arabic{enumi}.\quad}
-
-\begin{enumerate}
-\item  \emph{Alternative integration-over-history interpretation.}  The storage quantity $v$ could be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ which has a term which is an integral over previous states of $u$.  Implementing this equation is impractical; it would require storage of prior states.  However, we go ahead and show how to eliminate $v$ so as to understand the equations better.  
-
-Multiply \eqref{eq:abs:storage} by an integrating factor $e^{-bt}$ and simplify to get the form $\partial_t (e^{bt} v) = b e^{bt} f$.  If $v$ is known at the initial time, say $v=v_0(x,y)$ at $t=0$, then we can integrate from $0$ to $t$ and multiply both sides by $e^{-bt}$ to get
-\begin{equation}
-v(t,x,y) = e^{-bt} \left(v_0(x,y) + b \int_0^t e^{bs} f(x,y,u(s,x,y))\,ds\right). \label{eq:abs:vexpression}
-\end{equation}
-This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partial v/\partial t$ to the right side:
-\begin{equation}
-\frac{\partial u}{\partial t} = \Div \left(\mathbf{q}\right) + g + b e^{-bt} v_0 - b f + b^2 \int_0^t e^{-b(t-s)} f\,ds. \label{eq:abs:historyintegration} 
-\end{equation}
-Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$, so as to be able to compute the integral on the right in \eqref{eq:abs:historyintegration}.  While equation \eqref{eq:abs:historyintegration} may be conceptually advantageous, because it has only one conserved scalar $u$, it is not effectively-implementable.
-\medskip
-
-\item \emph{Discretization of \eqref{eq:abs:transport}}.  We can fully-discretize equation \eqref{eq:abs:transport} using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux.  In fact, let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  If we denote $\bq = (q^x,q^y)$ then we can write the scheme as
-\begin{align}
-\frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
-\end{align}
-
-This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available and that the goal is to update $U$ to time $t^{l+1}$.  So we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} below.  (Scheme \eqref{eq:abs:Vupdate} updates $V_{ij}^{l+1}$ using only $t^l$ information.)  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Then, because the right side of \eqref{eq:abs:conservefd} is determined, the updated value $U_{ij}^{l+1}$ can be computed.
-
-Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
-\medskip
-
-\item \emph{An implicit scheme for \eqref{eq:abs:storage}, and its properties.}  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives, so we can easily implement an implicit numerical scheme which has no stability restrictions on time steps, and for which we can prove desirable inequalities.  The backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}); we state two equivalent forms:
-\begin{equation}
-\frac{V^{l+1} - V^l}{\Delta t} = b \left(f^l - V^{l+1}\right) \qquad \iff \qquad
-V^{l+1} = \frac{V^l + b \Delta t f^l}{1 + b \Delta t}.  \label{eq:abs:Vupdate}
-\end{equation}
-(Compare equation \eqref{eq:tillupdatefd}.)
-
-Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ in \eqref{eq:abs:Vupdate} is an \emph{average} of $V^l$ and $f^l$.  Therefore
-\begin{equation}
-0 \le V^l, f^l \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}}. \label{eq:abs:Vbounds}
-\end{equation}
-Thus the discrete evolution of the locally-stored quantity $v$ maintains the needed bounds.  It is also easy to prove that if the transfer target term $f$ is constant in time, e.g.~if $f^{l-1}=f^1=\tilde f$ in \eqref{eq:abs:Vupdate}, then the local storage quantity $V^l$ strictly approaches the transfer target on consecutive time steps, that is,
-\begin{equation}
-\left|V^{l+1} - \tilde f\right| < \left|V^l - \tilde f\right|, \label{eq:abs:Vapproach}
-\end{equation}
-assuming $b\Delta t > 0$.  Properties \eqref{eq:abs:Vbounds} and \eqref{eq:abs:Vupdate} would have to be separately enforced in an explicit scheme.
-\medskip
-
-\item \emph{Discrete conservation}.  We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete version of the sum $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, is, on a region $R$ of the $x,y$ plane,
-\begin{equation}
-\frac{d}{dt} \left(\int_R u + v\,dx dy\right) = \int_{\partial R} \bq \cdot \bn\,ds + \int_R g \,dx dy.  \label{eq:abs:continuumconserve}
-\end{equation}
-
-One may think, in finite volume terms, of the regular grid quantities $U_{ij}^l,V_{ij}^l$ as being the midpoints of cells.  The integrals over $R$ in \eqref{eq:abs:continuumconserve} are approximated by the midpoint integration rule.  Specifically, the discrete analogue, of the integral over $R$ of $u+v$, is this discrete total volume sum in the case where $R$ is a rectangle:
-\begin{equation}
-\Theta^l = \sum_{i,j=1,1}^{I,J} \left(U_{ij}^l + V_{ij}^l\right)\,\Delta x \Delta y \approx 
-\int_R u(t^l,x,y) + v(t^l,x,y) \,dx dy\end{equation}
-
-Discrete conservation of $\Theta^l$ is exact even though $\Theta^l$ only approximates the continuum value of the total volume:
-\begin{align}
-\frac{\Theta^{l+1} - \Theta^l}{\Delta t} &= \sum_{i,j} \frac{U_{ij}^{l+1} - U_{ij}^l}{\Delta t} \,\Delta x \Delta y   + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \label{eq:abs:discreteconserve} \\
-  &\stackrel{\ast}{=} \sum_{i,j} \left(\frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}\right) \,\Delta x \Delta y  \notag \\
-  &\qquad\qquad + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
-  &= \sum_{j=1}^{J} \left(\sum_{i=1}^{I}  q^x_{i+1/2,j} - q^x_{i-1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(\sum_{j=1}^{J} q^y_{i,j+1/2} - q^y_{i,j-1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y  \notag \\
-  &\stackrel{\dagger}{=} \sum_{j=1}^{J} \left(q^x_{I+1/2,j} - q^x_{1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(q^y_{i,J+1/2} - q^y_{i,1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y \notag \\
-  &= \left[- \sum_{i=1}^{I}  q^y_{i,1/2} \Delta x + \sum_{j=1}^{J} q^x_{I+1/2,j} \Delta y + \sum_{i=1}^{I} q^y_{i,J+1/2} \Delta x - \sum_{j=1}^{J} q^x_{1/2,j} \Delta y \right]  +  \sum_{i,j} g_{ij}\,\Delta x \Delta y. \notag
-\end{align}
-Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from noticing that the sums collapse though cancellation.  The four sums in the last line, in square brackets, are sums over the sides of the rectangle $R$, here starting in the lower-left and traversing counterclockwise.  One should compare \eqref{eq:abs:discreteconserve} to the continuum statement \eqref{eq:abs:continuumconserve}.
-
-\end{enumerate}
 
 
 \end{document}
