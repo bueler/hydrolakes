@@ -1054,73 +1054,87 @@ Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as
 
 \section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
 
-The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat this pair of coupled equations abstractly.  We point out some properties of such a mathematical structure, and we address numerical schemes which preserve important properties, especially from the point of view of stability and conservation.
+The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
 
-Our abstract view is to state a pair of equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
+The abstract view in this appendix starts by stating a pair of abstract equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
 \begin{align}
 \frac{\partial}{\partial t} \left(u+v\right) &= \Div \bq + g, \label{eq:abs:transport} \\
-   \frac{\partial v}{\partial t} &= b \left(f(u) - v\right).  \label{eq:abs:storage}
+   \frac{\partial v}{\partial t} &= b \left(f - v\right).  \label{eq:abs:storage}
 \end{align}
-Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ depends on the transported portion $u$, and its gradient, but not on the locally-stored portion $v$.  The second equation describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, as is the transfer ``target'' term $f(u)$ in \eqref{eq:abs:storage}, and the details generally don't concern us here.  The constant $b\ge 0$ is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f(u)=0$.
+Here the conserved quantity is the sum $u+v$.  The flux $\bq(x,y,u,\grad u)$ depends on the transported portion $u$, and its gradient, but not on the locally-stored portion $v$.  The source term can depend on location: $g(x,y)$.  The term $f(x,y,u)$ could be called the ``transfer target''; like $v$ it satisfies bounds $0 \le f \le v_{\text{max}}$.
 
-To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}.  The second equation \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
+To relate this to the main text, $u$ is analogous to the transportable water $W$ and $v$ to the till-stored water $\Wtil$.  Equation \eqref{eq:abs:transport} is an abstract form of the original mass-conservation equation \eqref{eq:conserve}, while \eqref{eq:abs:storage} is the abstract form of \eqref{eq:tilldynamics}.
 
-The first idea explained in this appendix is that the storage quantity $v$ \emph{could} be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ which has a term which is an integral over previous states of $u$.  Implementing this equation is impractical; it would require storage of prior states.  Instead, after showing how to eliminate $v$ and get the integral-over-previous-times equation, so as to understand the system of equations better, we will in fact maintain the two-equation structure  \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  
+Equation \eqref{eq:abs:transport} says that the sum $u+v$ is conserved as it evolves by transport and creation/removal.  Equation \eqref{eq:abs:storage} describes local (i.e.~with no spatial derivatives) evolution of the locally-stored quantity $v$.  The flux $\bq$ and the source term $g$ in \eqref{eq:abs:transport} are quite general, and the details generally don't concern us here.  Also, the details of the transfer target $f$ are unimportant.  The constant $b\ge 0$ in \eqref{eq:abs:storage} is the exponential rate at which the locally-stored quantity would ``drain'' in the absence of transfer of $u$, in the sense that $v(t) = v_0 e^{-bt}$ is the solution of \eqref{eq:abs:storage} if $f=0$.
 
-To show how to eliminate equation \eqref{eq:abs:storage} we multiply it by an integrating factor $e^{-bt}$ and simplify:
-    $$\frac{\partial v}{\partial t} + b v = b f(u) \qquad \iff \qquad \frac{\partial}{\partial t} \left(e^{bt} v\right) = b e^{bt} f(u).$$
-If $v$ is known at the initial time, say $v=v_0(x,y)$ at $t=0$, then we can integrate from $0$ to $t$ and multiply both sides by $e^{-bt}$ to get
-    $$v(t,x,y) = e^{-bt} \left(v_0(x,y) + b \int_0^t e^{bs} f(u(s,x,y))\,ds\right).$$
+We now demonstrate properties of this abstract structure:
+
+\renewcommand{\labelenumi}{\arabic{enumi}.\quad}
+
+\begin{enumerate}
+\item  \emph{Alternative integration-over-history interpretation.}  The storage quantity $v$ could be eliminated from the system of equations \eqref{eq:abs:transport} and \eqref{eq:abs:storage}.  The result is a single transport equation for $u$ which has a term which is an integral over previous states of $u$.  Implementing this equation is impractical; it would require storage of prior states.  However, we go ahead and show how to eliminate $v$ so as to understand the equations better.  
+
+Multiply \eqref{eq:abs:storage} by an integrating factor $e^{-bt}$ and simplify to get the form $\partial_t (e^{bt} v) = b e^{bt} f$.  If $v$ is known at the initial time, say $v=v_0(x,y)$ at $t=0$, then we can integrate from $0$ to $t$ and multiply both sides by $e^{-bt}$ to get
+\begin{equation}
+v(t,x,y) = e^{-bt} \left(v_0(x,y) + b \int_0^t e^{bs} f(x,y,u(s,x,y))\,ds\right). \label{eq:abs:vexpression}
+\end{equation}
 This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partial v/\partial t$ to the right side:
 \begin{equation}
-\frac{\partial u}{\partial t} = \Div \left(\mathbf{q}(x,u,\grad u)\right) + g(x) + b e^{-bt} v_0(x,y) - b f(u) + b^2 \int_0^t e^{-b(t-s)} f(u(s,x,y))\,ds. \label{eq:abs:transportagain} 
+\frac{\partial u}{\partial t} = \Div \left(\mathbf{q}\right) + g + b e^{-bt} v_0 - b f + b^2 \int_0^t e^{-b(t-s)} f\,ds. \label{eq:abs:historyintegration} 
 \end{equation}
-Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$.  While equation \eqref{eq:abs:transportagain} may or may not be conceptually advantageous, it is not effectively-implementable.
+Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$, so as to be able to compute the integral on the right in \eqref{eq:abs:historyintegration}.  While equation \eqref{eq:abs:historyintegration} may be conceptually advantageous, because it has only one conserved scalar $u$, it is not effectively-implementable.
+\medskip
 
-Next we consider time-discretizations of \eqref{eq:abs:storage}.  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives.  These facts allow us to easily implement an implicit scheme which has no stability restrictions on time steps, and for which we can prove desireable inequalities.
-
-Let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  The following backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}):
-\begin{equation}
-\frac{V^{l+1} - V^l}{\Delta t} = b \left(f(U^l) - V^{l+1}\right).  \label{eq:abs:Veqn}
-\end{equation}
-Solving for $V^{l+1}$ gives
-\begin{equation}
-V^{l+1} = \frac{V^l + b \Delta t f(U^l)}{1 + b \Delta t},  \label{eq:abs:Vupdate}
-\end{equation}
-which is easily implemented; we use this result as equation \eqref{eq:tillupdatefd}.
-
-In the till-porewater application it is important that the storage capacity of the till not be exceeded; in this abstract description we have bounds $0 \le v \le v_{\text{max}}$.  The same requirement also implies $\partial v/\partial t \to 0$ as $v \upto v_{\text{max}}$, so we assume that the transfer target satisfies the same bounds, $0 \le f(u) \le v_{\text{max}}$.  Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ in \eqref{eq:abs:Vupdate} is an \emph{average} of $V^l$ and $f(U^l)$.  Therefore
-\begin{equation}
-0 \le V^l, f(U^l) \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}}, . \label{eq:abs:Vbounds}
-\end{equation}
-In particular, the discrete evolution of the locally-stored quantity $v$ maintains the desired storage capacity constraint $v \le v_{\text{max}}$.
-
-It is also easy to prove that if the transfer target term $f(u)$ is briefly constant in time, e.g.~if $f(U^{l-1})=f(U^1)=f_0$ in \eqref{eq:abs:Veqn}, then the local storage quantity $V^l$ strictly approaches the transfer target on consecutive time steps, that is,
-\begin{equation}
-\left|V^{l+1} - f_0\right| < \left|V^l - f_0\right|, \label{eq:abs:Vapproach}
-\end{equation}
-assuming $b\Delta t > 0$.
-
-At this abstract level we can fully-discretize equation \eqref{eq:abs:transport}, using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux components.  If the flux components are $\bq = (q^x,q^y)$ we can write the scheme as
+\item \emph{Discretization of \eqref{eq:abs:transport}}.  We can fully-discretize equation \eqref{eq:abs:transport} using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux.  In fact, let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  If we denote $\bq = (q^x,q^y)$ then we can write the scheme as
 \begin{align}
 \frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
 \end{align}
-This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available, and that \eqref{eq:abs:Vupdate} has been applied to compute $V_{ij}^{l+1}$.  Staggered-grid flux components in \eqref{eq:abs:conservefd} needed to be computed in some manner from the various known values but the details are unimportant here.  In any case, the right side of \eqref{eq:abs:Vupdate} can be determined, so that the updated value $U_{ij}^{l+1}$ can be comptuted.
 
-We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete sum of values of $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, on a region $R$ of the $x,y$ plane, is
+This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available and that the goal is to update $U$ to time $t^{l+1}$.  So we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} below.  (Scheme \eqref{eq:abs:Vupdate} updates $V_{ij}^{l+1}$ using only $t^l$ information.)  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Then, because the right side of \eqref{eq:abs:conservefd} is determined, the updated value $U_{ij}^{l+1}$ can be computed.
+
+Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
+\medskip
+
+\item \emph{An implicit scheme for \eqref{eq:abs:storage}, and its properties.}  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives, so we can easily implement an implicit numerical scheme which has no stability restrictions on time steps, and for which we can prove desirable inequalities.  The backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}); we state two equivalent forms:
+\begin{equation}
+\frac{V^{l+1} - V^l}{\Delta t} = b \left(f^l - V^{l+1}\right) \qquad \iff \qquad
+V^{l+1} = \frac{V^l + b \Delta t f^l}{1 + b \Delta t}.  \label{eq:abs:Vupdate}
+\end{equation}
+(Compare equation \eqref{eq:tillupdatefd}.)
+
+Noting $b \Delta t \ge 0$ we see that $V^{l+1}$ in \eqref{eq:abs:Vupdate} is an \emph{average} of $V^l$ and $f^l$.  Therefore
+\begin{equation}
+0 \le V^l, f^l \le v_{\text{max}} \quad \implies \quad 0 \le V^{l+1} \le v_{\text{max}}. \label{eq:abs:Vbounds}
+\end{equation}
+Thus the discrete evolution of the locally-stored quantity $v$ maintains the needed bounds.  It is also easy to prove that if the transfer target term $f$ is constant in time, e.g.~if $f^{l-1}=f^1=\tilde f$ in \eqref{eq:abs:Vupdate}, then the local storage quantity $V^l$ strictly approaches the transfer target on consecutive time steps, that is,
+\begin{equation}
+\left|V^{l+1} - \tilde f\right| < \left|V^l - \tilde f\right|, \label{eq:abs:Vapproach}
+\end{equation}
+assuming $b\Delta t > 0$.  Properties \eqref{eq:abs:Vbounds} and \eqref{eq:abs:Vupdate} would have to be separately enforced in an explicit scheme.
+\medskip
+
+\item \emph{Discrete conservation}.  We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete version of the sum $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, is, on a region $R$ of the $x,y$ plane,
 \begin{equation}
 \frac{d}{dt} \left(\int_R u + v\,dx dy\right) = \int_{\partial R} \bq \cdot \bn\,ds + \int_R g \,dx dy.  \label{eq:abs:continuumconserve}
 \end{equation}
-The exact discrete conservation \emph{approximates} \eqref{eq:abs:continuumconserve}.  That is, in the following statement, our numerical scheme does indeed make the two sides exactly equal, but the two sides only approximate the continuum quantities on the sides of \eqref{eq:abs:continuumconserve}.  The key idea is, perhaps, to think of the regular grid quantities as being midpoints of the cells, and then apply the midpoint integration rule.  Our discrete conservation statement follows from \eqref{eq:abs:conservefd} at step $\ast$ below:
-\begin{align}
-&\frac{\sum_{i,j=1,1}^{I,J} \left(U_{ij}^{l+1} + V_{ij}^{l+1}\right)\,\Delta x \Delta y - \sum_{i,j=1,1}^{I,J} \left(U_{ij}^{l} + V_{ij}^{l}\right)\,\Delta x \Delta y}{\Delta t} \\
-  &\qquad = \sum_{i,j=1,1}^{I,J} \frac{U_{ij}^{l+1} - U_{ij}^l}{\Delta t} \,\Delta x \Delta y   + \sum_{i,j=1,1}^{I,J} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
-  &\qquad \stackrel{\ast}{=} \sum_{i,j=1,1}^{I,J} \left(\frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}\right) \,\Delta x \Delta y  \notag \\
-  &\qquad\qquad\qquad + \sum_{i,j=1,1}^{I,J} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
-  &\qquad = \sum_{j=1}^{J} \left(\sum_{i=1}^{I}  q^x_{i+1/2,j} - q^x_{i-1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(\sum_{j=1}^{J} q^y_{i,j+1/2} - q^y_{i,j-1/2}\right) \Delta x +  \sum_{i,j=1,1}^{I,J} g_{ij}\,\Delta x \Delta y  \notag \\
-  FIXME
-\end{align}
 
+One may think, in finite volume terms, of the regular grid quantities $U_{ij}^l,V_{ij}^l$ as being the midpoints of cells.  The integrals over $R$ in \eqref{eq:abs:continuumconserve} are approximated by the midpoint integration rule.  Specifically, the discrete analogue, of the integral over $R$ of $u+v$, is this discrete total volume sum in the case where $R$ is a rectangle:
+\begin{equation}
+\Theta^l = \sum_{i,j=1,1}^{I,J} \left(U_{ij}^l + V_{ij}^l\right)\,\Delta x \Delta y \approx 
+\int_R u(t^l,x,y) + v(t^l,x,y) \,dx dy\end{equation}
+
+Discrete conservation of $\Theta^l$ is exact even though $\Theta^l$ only approximates the continuum value of the total volume:
+\begin{align}
+\frac{\Theta^{l+1} - \Theta^l}{\Delta t} &= \sum_{i,j} \frac{U_{ij}^{l+1} - U_{ij}^l}{\Delta t} \,\Delta x \Delta y   + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \label{eq:abs:discreteconserve} \\
+  &\stackrel{\ast}{=} \sum_{i,j} \left(\frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}\right) \,\Delta x \Delta y  \notag \\
+  &\qquad\qquad + \sum_{i,j} \frac{V_{ij}^{l+1} - V_{ij}^l}{\Delta t} \,\Delta x \Delta y   \notag \\
+  &= \sum_{j=1}^{J} \left(\sum_{i=1}^{I}  q^x_{i+1/2,j} - q^x_{i-1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(\sum_{j=1}^{J} q^y_{i,j+1/2} - q^y_{i,j-1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y  \notag \\
+  &\stackrel{\dagger}{=} \sum_{j=1}^{J} \left(q^x_{I+1/2,j} - q^x_{1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(q^y_{i,J+1/2} - q^y_{i,1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y \notag \\
+  &= \left[- \sum_{i=1}^{I}  q^y_{i,1/2} \Delta x + \sum_{j=1}^{J} q^x_{I+1/2,j} \Delta y + \sum_{i=1}^{I} q^y_{i,J+1/2} \Delta x - \sum_{j=1}^{J} q^x_{1/2,j} \Delta y \right]  +  \sum_{i,j} g_{ij}\,\Delta x \Delta y. \notag
+\end{align}
+Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from noticing that the sums collapse though cancellation.  The four sums in the last line, in square brackets, are sums over the sides of the rectangle $R$, here starting in the lower-left and traversing counterclockwise.  One should compare \eqref{eq:abs:discreteconserve} to the continuum statement \eqref{eq:abs:continuumconserve}.
+
+\end{enumerate}
 
 
 \end{document}
