@@ -1,7 +1,7 @@
 function plotpsteady;
 % PLOTPSTEADY  Plot P = P(W) in steady state with various assumptions
 % about the overburden pressure Po and the sliding speed |v_b|.
-% Generates figures for dampnotes.pdf.
+% Generates figures for subhydro.pdf.
 
 p = params();
 CC = p.c1 / (p.c2 * p.A);
@@ -15,14 +15,12 @@ W = 0.0:0.0005:1.2*p.Wr;
 Pno  = psteady(p,Po,0.0,W) / 1e5;
 % compare Flowers and Clarke (2002) function with W_crit = W_r
 PFC  = Po * (W / p.Wr).^(7/2) / 1e5;
-% compare Bueler and Brown (2009) function with W_0 = W_r
-PBB  = 0.95 * Po * min(1.0,(W / p.Wr)) / 1e5;
 
 set(0,'defaultlinelinewidth',3.0)
 set(0,'defaultaxesfontsize',16.0)
 
 figure(1)
-plot(W,Pno,'b',W,PFC,'k--',W,PBB,'k-.')
+plot(W,Pno,'b',W,PFC,'k--')
 hold on
 sty = ['b'; 'g'; 'r'; 'c'];
 aa = [0.1 1.0 10.0];
