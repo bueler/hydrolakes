@@ -797,7 +797,7 @@ We can again by quantitative in a particular computed example.  Considering the 
   \Delta t_{\text{CFL}} &\approx 300  \text{ s} &&\text{ from \eqref{eq:dtCFL}}, \\
   \Delta t_P            &\approx 80   \text{ s} &&\text{ from \eqref{eq:dtDIFFPfromW}.}
 \end{align*}
-This analysis suggests that the numerical scheme for pressure diffusion, given next, will usually have the shortest time step.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation it seems to be common that $\Delta t_P$ is $1$ to $50$ times shorter than $\Delta t_{\text{CFL}}$.  The CFL time step restriction $\Delta t_{\text{CFL}}$ essentially cannot be avoided by switching to implicit methods, while the time step restriction associated to $\Delta t_P$ can be \citep{Schoofetal2012,Hewittetal2012}.  However, as the size of the stable time step $\Delta t_P$ scales with the adjustable regularizing porosity $\phi$, by choosing $\phi$ smaller or larger we can make the time step restriction on $\Delta t_P$ more or less severe, respectively \citep[compare][]{Clarke2003}.
+This analysis suggests that the numerical scheme for pressure diffusion, given next, will usually have the shortest time step.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation it seems to be common that $\Delta t_P$ is $1$ to $50$ times shorter than $\Delta t_{\text{CFL}}$.  The CFL time step restriction $\Delta t_{\text{CFL}}$ essentially cannot be avoided by switching to implicit methods, while the time step restriction associated to $\Delta t_P$ can be \citep{Schoofetal2012,Hewittetal2012}.  However, because the stable time step $\Delta t_P$ scales with the adjustable regularizing porosity $\phi$, we can make it more or less severe by adjusting $\phi$.
 
 The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}, but it requires no advection approximation.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
@@ -816,14 +816,12 @@ P_{i,j}^{l+1} = \Plij &+  \frac{\,\Delta t}{\phi} \bigg[\omega_x D_e \left(\psi_
 
 There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we again set $P_{i,j}^{l+1}=(P_o)_{i,j}$. 
 
-\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we are going to describe one time step of the fully-discretized evolution in a ``recipe'' which will be useful to implementers.
-
-We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.  The ice geometry may be quite general, however, with ice-free land and floating ice allowed at each location $(x_i,y_j)$.  Thus the ice geometry determines boolean ``masks'' for grid cell state based on a sea level of elevation zero:
+\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution in a ``recipe'' which will be useful to implementers.  We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.  The ice geometry may be quite general, however, with ice-free land and floating ice allowed at each location $(x_i,y_j)$.  Thus the ice geometry determines boolean ``masks'' for grid cell state based on a sea level of elevation zero:
 \begin{align*}
 \text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
 \text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
 \end{align*}
-Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean.  The subglacial layer we are attempting to model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} masks are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
+Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean, where we take $P=P_o$.  The subglacial layer we are attempting to model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} masks are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
 
 One time step follows this algorithm:
 
@@ -832,10 +830,10 @@ One time step follows this algorithm:
 \begin{enumerate}
 \item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
 \item Compute the current values of the hydraulic potential $\psi_{i,j}^l$, but with $\psi_{i,j}^l=(P_o)_{i,j}$ where $\text{\texttt{float}}_{i,j}$.
-\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}.  Get staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}.  Compute velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}.  Get staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
+\item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}, staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}, velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}, and staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
 %FIXME: however, Wea and Wno should not average from outside the ice domain?
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
-\item If $\text{\texttt{icefree}}_{i,j}$ set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$; this is the pressure of sea water at the base of the ice.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations, but do not compute the $x$-($y$-)direction divided-difference contribution to the flux divergence in \eqref{eq:Pfdupdate} when either $x$-($y$-)neighbor is \texttt{icefree} or \texttt{float}.
+\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations, but do not compute the $x$-($y$-)direction divided-difference contribution to the flux divergence in \eqref{eq:Pfdupdate} when either $x$-($y$-)neighbor is \texttt{icefree} or \texttt{float}.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.  
 \item Get $(\Wtil)_{i,j}^{l+1}$ by implicit step \eqref{eq:tillupdatefd}.
@@ -845,11 +843,11 @@ One time step follows this algorithm:
 \end{enumerate}
 
 \medskip
-This recipe goes with a reporting scheme for mass conservation.  Note that water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines), according to the hydraulic potential differences which cause transport.  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
+This recipe goes with a reporting scheme for mass conservation.  Note that in step \emph{(ix)} water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
 
-\subsection*{Verification of the coupled model}  By using the coupled steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined.
+\subsection*{Verification of the coupled model}  By using the coupled steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep[for example]{Wesseling}.
 
-Our exact solution is for the steady-state.  Therefore we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift but we can measure the drift away from the exact steady solution generated by the numerical approximation to \eqref{eq:bluebox}, that is, by the scheme which is the ``recipe'' above.  The magnitude of the drift depends on the spatial grid size.  The rate of convergence under grid refinement is determined by our spatial discretizations.
+Our exact solution is for the steady-state.  Therefore we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The true continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, but we can measure the drift (error evolving over time) of the numerical approximation to \eqref{eq:bluebox}, that is, by the scheme which is the ``recipe'' above.  The magnitude of the error depends on the spatial grid size and the rate of convergence under grid refinement is determined by our spatial discretizations.
 
 For the verification runs we use the values in Table \ref{tab:verifconstants}.  The exact solution is shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}.  We do a one model-month run on grids with spacing decreasing by factors of two from $5$ km to $156$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
 
@@ -861,7 +859,7 @@ For the verification runs we use the values in Table \ref{tab:verifconstants}.  
 
 Because they give evidence for numerical convergence, these results suggest that our numerical solution method for these coupled advection-diffusion (for $W$) and diffusion-reaction (for $P$) equations are being solved correctly.  The rate of convergence is not very good, however.  The location of the large errors is entirely in the neighborhood of the ice margin $r=L$ (not shown).  The method for handling boundary conditions is critical to determining the magnitude of the error and its rate of decay.  Further research is needed to decide how to handle this boundary in a more-nearly optimal manner.
 
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Our problem is a combined advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, and thus it is difficult to separate the errors arising from the numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be compatible with the continuum model (i.e.~desirable) diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement and it requires fewer floating point operations.  It also uses a smaller stencil for less communication in a parallel implementation.
+The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Our problem is a combined advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, and thus it is difficult to separate the errors arising from the numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be compatible with the continuum model (i.e.~desirable) diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement, it requires fewer floating point operations, and it requires less communication in a parallel implementation.
 
 
 
@@ -912,7 +910,7 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
 \section{Conclusion}  \label{sec:conclusion}
 
-MOST IMPORTANT:  IMPLEMENTED COMMON (I.E.~SIMULTANEOUS) EXTENSION OF 4 MAJOR MODELS
+FIXME:  MOST IMPORTANT?:  IMPLEMENTED COMMON EXTENSION OF MAJOR MODELS
 
 
 %\clearpage\newpage
@@ -1167,23 +1165,23 @@ For smooth functions and fine grids we have $\theta_i\approx 1$ except near extr
 
 \begin{table}[ht]
   \centering
-  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}.}
-  \begin{tabular}{ll}
-    \textbf{scheme ($\ast=$ positive)} & \textbf{formula} \\
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
+  \begin{tabular}{lccl}
+    \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
 \hline
-    $\ast$ first-order upwinding               & $\phantom{\Big|}\Psi(\theta) = 0$ \\
-    \phantom{$\ast$} second-order centered     & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
-    \phantom{$\ast$} third-order upwind-biased & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
-    $\ast$ van Leer 1974                       & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
-    $\ast$ Koren 1993                          & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
+    simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
+    centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
+    upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
+    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
     \hline
   \end{tabular}
  \label{tab:fluxlimiters}
 \end{table}
 
-To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas''.  Such areas, which are where $\theta_i$ in \eqref{eq:thetadefine} is $\gg 1$ or $\ll 1$, tend to be near extrema and non-smooth areas.  Thus these schemes are high-order but they revert to first-order when they get in trouble.
+To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas''.  Such areas, which are where $\theta_i$ in \eqref{eq:thetadefine} is $\gg 1$ or $\ll 1$, tend to be near extrema and non-smooth areas.  Thus these schemes are high-order but they (nonlinearly) revert to first-order when they get in trouble.
 
-The above discussion was limited to the spatial (semi-)discretization.  A time discretization is also required, and for this we simply choose forward Euler.  The resulting fully discrete system is positive if
+The above discussion was limited to the spatial (semi-)discretization.  A time discretization is also required, and for this we simply choose forward Euler.  The fully discrete system is positive if
 \begin{equation}
 \max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2} \label{eq:CFL}
 \end{equation}
