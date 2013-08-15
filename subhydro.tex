@@ -170,29 +170,6 @@ N = P_o - P  \label{eq:effective}
 \end{equation}
 which measures how much of the ice load is carried by the mineral (till or bedrock) base, as opposed to how much is carried by pressurized subglacial water.  Bounds \eqref{eq:bounds} imply $0 \le N \le P_o$.
 
-
-
-\subsection*{Till mechanics}  When examined by drilling boreholes to the bed, both ice sheets \citep{Tulaczyketal2000} and glaciers \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000} commonly [FIXME: always?] reveal a subglacial layer of till.  We include storage of subglacial water in till in our model both because of its role in storing water (i.e.~the thickness $\Wtil$) and its role in determining basal shear stress.  The pressurized till can be expected to support much of the ice overburden load and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.  Furthermore there is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,SchoofTill,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000}.  The current model combines a plastic till, which is modeled as having zero hydraulic conductivity because observed values are so low as to allow no significant horizontal transport \citep{LingleBrown1987,Tulaczyketal2000}, with a water transport system characterized by the capacity and pressure evolution equations in the next two sections.  In this sense, like the one-dimensional till/conduit model of \cite{vanderWeletal2013}, our two-dimensional model is a ``drained plastic bed'' extension of the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
-
-The yield stress $\tau_c$ of a plastic till satisfies the Mohr-Coulomb relation
-\newcommand{\Ntil}{N_{\text{til}}}
-\begin{equation}
-\tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
-\end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure in the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference physically justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress and not, by constrast with $N$, in models for the horizontal tranport of water or the evolution of subglacial cavities.
-
-Let $e = V_w / V_s$ be the void ratio FIXME
-
-
-
-
-
-FIXME C:  The limited storage capacity of the till gives an inequality $\Wtil \le \Wtilmax$.  Though the unknown parameter $\Wtilmax$ could vary in time and space according to a sediment evolution model, in the current paper it is a fixed nonnegative constant of order one to ten meters \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.  Our theory allows setting $\Wtilmax=0$ to turn off the till storage mechanism.
-
-
-
-
-
 \subsection*{Darcy flow}  The transportable water described by $W$ and $P$ flows from high to low hydraulic potential.  The simplest expression of this fact is a Darcy flux model for a water sheet following \cite{Clarke05}, namely
 \begin{equation}  \label{eq:fluxearly}
 \bq = - K \,W\, \grad \psi
@@ -201,29 +178,29 @@ where $K$, the hydraulic conductivity, is constant.  More generally \cite{Schoof
 \begin{equation}  \label{eq:flux}
 \bq = - k\, W^\alpha\, |\grad \psi|^{\beta-2} \grad \psi
 \end{equation}
-for $\alpha \ge 1$, $\beta>1$, and a coefficient $k>0$ with units that depend on $\alpha$ and $\beta$.  Power-law form \eqref{eq:flux} is justified as an instance of a Manning or Darcy-Weisbach law \citep{Schoofetal2012}.  \cite{Clarke05} suggests $\alpha=1$ and $\beta=2$, to give \eqref{eq:fluxearly} above, \cite{CreytsSchoof2009} use $\alpha=3/2$ and $\beta=3/2$, \cite{Hewitt2011,Hewitt2011} uses $\alpha=3$ and $\beta = 2$, and \cite{Hewittetal2012} suggest $\alpha=5/4$ and $\beta=3/2$.  The current paper implements law \eqref{eq:flux} generally but uses the \cite{Clarke05} or \cite{Hewittetal2012} exponents in exact solutions and numerical experiments.  When we use \eqref{eq:flux} we call $K = k\, W^{\alpha-1}\, |\grad \psi|^{\beta-2}$ the \emph{effective} hydraulic conductivity, and so that ``$\bq = - K \,W\, \grad \psi$, namely \eqref{eq:fluxearly} applies formally throughout.
-
+for $\alpha \ge 1$, $\beta>1$, and a coefficient $k>0$ with units that depend on $\alpha$ and $\beta$.  Power-law form \eqref{eq:flux} is justified as an instance of a Manning or Darcy-Weisbach law \citep{Schoofetal2012}.  \cite{Clarke05} suggests $\alpha=1$ and $\beta=2$, to give \eqref{eq:fluxearly} above, \cite{CreytsSchoof2009} use $\alpha=3/2$ and $\beta=3/2$, \cite{Hewitt2011,Hewitt2013} uses $\alpha=3$ and $\beta = 2$, and \cite{Hewittetal2012} suggest $\alpha=5/4$ and $\beta=3/2$.  The current paper implements law \eqref{eq:flux} generally but uses the \cite{Clarke05} or \cite{Hewittetal2012} exponents in exact solutions and numerical experiments.  When we use \eqref{eq:flux} we call $K = k\, W^{\alpha-1}\, |\grad \psi|^{\beta-2}$ the \emph{effective} hydraulic conductivity, and so that equation \eqref{eq:fluxearly} applies formally throughout.
 
 \subsection*{Advection-diffusion decomposition}  Combining \eqref{eq:potential} and \eqref{eq:flux}, and separating the term proportional to $\grad W$, we get the flux expression
-\begin{align}
-  \bq &= - k  W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{\beta-2} \grad \left(P + \rho_w g b\right)  \label{eq:firstfluxdecomp} \\
-      &\qquad - \rho_w g k W^\alpha \left|\grad \left(P + \rho_w g (b+W) \right)\right|^{\beta-2} \grad W. \notag
-\end{align}
-The second term is proportional to the gradient of the water thickness $\grad W$.  This part of the flux acts diffusively in the mass conservation equation \eqref{eq:conserve}.  Because the subglacial water pressure generally scales with the ice overburden pressure $\rho_i g H$, the first flux term in \eqref{eq:firstfluxdecomp} will dominate in the common situation $|\grad H| \gg |\grad W|$.  In any case, decomposed flux \eqref{eq:firstfluxdecomp} describes a transport process in equation \eqref{eq:conserve} which has both a velocity field which varies in space and time and a second term which acts diffusively.  We will construct our conservative numerical scheme based on this understanding of how the flux is decomposed.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also actually \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$, and the separation of velocity from diffusion is more clear.
+\begin{equation}
+  \bq = - k  W^\alpha \left|\grad \psi\right|^{\beta-2} \grad \left(P + \rho_w g b\right)   - \rho_w g k W^\alpha \left|\grad \psi\right|^{\beta-2} \grad W. \label{eq:firstfluxdecomp}
+\end{equation}
+The second term with $\grad W$ acts diffusively in the mass conservation equation \eqref{eq:conserve}.  Because the $P$ generally scales with the overburden pressure $P_o$, the first flux term in \eqref{eq:firstfluxdecomp} will dominate in the common situation $|\grad H| \gg |\grad W|$.
+
+Decomposed flux \eqref{eq:firstfluxdecomp} implies a transport process in equation \eqref{eq:conserve} with a velocity field which varies in space and time(first term) and portion that acts diffusively (second term).  We will construct our conservative numerical scheme based on this decomposition.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also actually \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$, and the separation of hydraulic velocity from diffusion is more clear.
 
 To simplify the model slightly, the small thickness approximation $W\approx 0$ is made inside the absolute value signs in \eqref{eq:firstfluxdecomp}, namely
 \begin{equation}
-\left|\grad \left(P + \rho_w g (b+W) \right)\right| \approx \left|\grad \left(P + \rho_w g b \right)\right|.  \label{eq:Wsmall}
+\left|\grad \psi\right| \approx \left|\grad \left(P + \rho_w g b \right)\right|.  \label{eq:Wsmall}
 \end{equation}
-This makes no change in the $\beta=2$ case.  Define the nonlinear effective hydraulic conductivity
+This simplifiation, which makes no change in the $\beta=2$ case, lets us precisely define the effective hydraulic conductivity as
 \begin{equation}
 K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
-Note $K = k$ in the $\alpha=1$ and $\beta=2$ case covered by \eqref{eq:fluxearly}.  In terms of this nonlinear conductivity $K$ we write the velocity field and nonlinear diffusivity:
+In terms of this nonlinear conductivity $K$ we write the velocity field and the diffusivity:
 \begin{equation} \label{eq:vexpression}
   \bV = - K\, \grad \left(P + \rho_w g b\right), \qquad D = \rho_w g K W.
 \end{equation}
-Now expression \eqref{eq:firstfluxdecomp} is a cleaner advection-diffusion decomposition,
+Now \eqref{eq:firstfluxdecomp} is a cleaner advection-diffusion decomposition,
 \begin{equation} \label{eq:qexpression}
   \bq = - K W \grad \psi = \bV\, W - D \grad W.
 \end{equation}
@@ -239,6 +216,56 @@ There are distinct numerical schemes (section \ref{sec:num}) for the advection t
 As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure \citep{Shreve1972}.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model in this paper also generates pressure fields with this property in some circumstances.  However, in a model like ours which depends on physical mechanisms for the opening and closing of cavities, the connection between $\bq$ and the surface slope is much less direct.
 
 %FIXME:  revive text on enthalpy and wall melt and dissipation heating?  see phoenix.tex
+
+
+\section{Till mechanics} \label{sec:tillmechanics}
+
+When examined by drilling boreholes to the bed, both ice sheets \citep{Tulaczyketal2000} and glaciers \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000} commonly [FIXME: always?] reveal a subglacial layer of till.  We include storage of subglacial water in till in our model both because of its role in storing water (i.e.~the thickness $\Wtil$) and its role in determining basal shear stress.  The pressurized till can be expected to support much of the ice overburden load and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.  Furthermore there is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,SchoofTill,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000}.  The current model combines a plastic till, which is modeled as having zero hydraulic conductivity because observed values are so low as to allow no significant horizontal transport \citep{LingleBrown1987,Tulaczyketal2000}, with a water transport system characterized by the capacity and pressure evolution equations in the next two sections.  In this sense, like the one-dimensional till/conduit model of \cite{vanderWeletal2013}, our two-dimensional model is a ``drained plastic bed'' extension of the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
+
+The yield stress $\tau_c$ of a plastic till satisfies the Mohr-Coulomb relation
+\newcommand{\Ntil}{N_{\text{til}}}
+\begin{equation}
+\tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
+\end{equation}
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure in the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference physically justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress and not, by constrast with $N$, in models for the horizontal tranport of water or the evolution of subglacial cavities.
+
+Let $e = V_w / V_s$ be the void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
+\begin{equation}
+e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
+\end{equation}
+Here $e_0$ is the void ratio at the reference effective pressure $N_0 = 1$ kPa and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper come straight form a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
+
+We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no partially-empty spaces.  Thus the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing for the modeled saturated till.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value $N_0=1$ kPa, namely $\Ntil \ge N_0$, it follows from \eqref{eq:voidpressure} that this constraint is equivalent to $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms we now see equivalent expressions
+\begin{equation}
+e = \frac{V_w}{V_s} = \frac{\Wtil}{\eta_0} = e_0 \left(\frac{\Wtil}{\Wtilmax}\right)  \label{eq:voidexpressions}
+\end{equation}
+subject to the constraint
+\begin{equation}
+\Wtil \le \Wtilmax \label{eq:Wtilupperbound}
+\end{equation}
+which is equivalent to $e\le e_0$ and to $\Ntil \ge N_0$.  Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.  Note that setting $\Wtilmax=0$ ``turns off'' the till storage mechanism.
+
+Of course $\Wtil$, and not $e$ or $\Ntil$, is a model state variable appearing in mass conservation equation \eqref{eq:conserve}.  From \eqref{eq:voidexpressions} we see that equation \eqref{eq:voidpressure} can be written
+\begin{equation}
+\Ntil = N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:Wtilpressure}
+\end{equation}
+Compare equation (15) in \cite{vanderWeletal2013}.  Note that only the ratio $e_0/C_c$ appears in \eqref{eq:Wtilpressure}, and not $e_0$ or $C_c$ separately.
+
+It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that $\Ntil$ can be eliminated when determining the till yield stress $\tau_c$ from the water amount $\Wtil$:
+\begin{equation}
+\tau_c = c_0 + (\tan \varphi)\, N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:taucfromWtil}
+\end{equation}
+This is our model for till strength.  The four free till parameters in this function $\tau_c(\Wtil)$, namely the cohesion $c_0$, the friction angle $\varphi$, the till material ratio $e_0/C_c$, and the maximum water storage $\Wtilmax$, need to be determined from laboratory data or experiment.\footnote{The parameter $N_0=1$ kPa sets the pressure scale; it is not free.}  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the marine history of low-elevation sediments.  Our default value for the ratio $e_0/C_c$has already been addressed, so the default value is $e_0/C_c=0.69/0.12=5.75$.\footnote{That $e_0/C_c=5.75$ implies, from \eqref{eq:Wtilpressure}, a more than five orders of magnitude decrease in effective pressure between the no-water state $\Wtil=0$ with $\Ntil = 562000$ kPa and the full state $\Wtil=\Wtilmax$ with $\Ntil = 1$ kPa.}  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.
+
+Of course, actual ice sliding must be determined by solving a stress balance in which the vector basal shear stress $\mathbold{\tau}_b$ appears as a boundary condition or term \citep[for example]{SchoofHewitt2013}.  For the plastic till case the yield stress $\tau_c$ determines the basal shear stress by
+\begin{equation}
+\mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|} \label{eq:plasticbasalstress}
+\end{equation}
+where $\mathbold{u}$ is the sliding velocity of the base of the ice.  But $\tau_c$ could appear in a pseudo-plastic power law sliding relation \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} which extends \eqref{eq:plasticbasalstress}:
+\begin{equation}
+\mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|^{1-q} u_0^q}. \label{eq:pseudobasalstress}
+\end{equation}
+Here $u_0$ is a threshold sliding velocity above which, at least in the small $q$ case, the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbold{u}|$.  Equation \eqref{eq:pseudobasalstress} could be written in generic power-law form ``$\mathbold{\tau}_b = - \beta |\mathbold{u}|^{q-1} \mathbold{u}$'', with coefficient $\beta = \tau_c / u_0^q$, if no connection to the plastic case is intended.
 
 
 \section{Capacity and geometry of the hydrologic system} \label{sec:capacity}
