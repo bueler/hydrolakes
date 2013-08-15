@@ -515,9 +515,7 @@ Most significantly, those models that include conduits \citep[among others]{Hewi
 
 \subsection*{Processes become decoupled in steady state}  The steady states of mathematical model \eqref{eq:bluebox} are worth considering for at least three reasons: (\emph{i}) the physical subglacial system is close to steady state much of the time, (\emph{ii}) we can more clearly identify vaious contributions to the water flux in steady state (equation \eqref{eq:qabstract} below), and (\emph{iii}) we can find an exact solution in two spatial variables.  We will also see that in steady state there is a function which relates the water pressure $P$ directly (locally) to the water amount $W$, though no such function exists in the time-dependent theory.
 
-In this section we address only the $\alpha=1$ and $\beta=2$ case but the major conclusions apply for general powers $\alpha,\beta$.  Furthermore we remove till storage from the model by setting $\Wtilmax=0$.
-
-Recall that the flux has two expressions $\bq = - k W \grad \psi = \bV W - D \grad W$.  Here is the steady form of model \eqref{eq:bluebox} written in terms of $\bV,\bq,W,P$:
+In this section we address only the $\alpha=1$ and $\beta=2$ case but the major conclusions apply for general powers $\alpha,\beta$.  Furthermore we remove till storage from the model by setting $\Wtilmax=0$.  Recall that the flux has two expressions $\bq = - k W \grad \psi = \bV W - D \grad W$.  Here is the steady form of model \eqref{eq:bluebox}, with these simplifications, written in terms of $\bV,\bq,W,P$:
 \begin{align}
 \bV &= - k \grad \left(P + \rho_w g b\right), \label{eq:Vsteady} \\
 \bq &= \bV W - \rho_w g k W \grad W, \label{eq:qsteady} \\
@@ -526,7 +524,7 @@ Recall that the flux has two expressions $\bq = - k W \grad \psi = \bV W - D \gr
 \end{align}
 Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
-Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (i.e.~equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (i.e.~equation \eqref{eq:openclosesteady}).  Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are also stated by \cite{Schoofetal2012} model, where the decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
+Relative to the time-dependent form \eqref{eq:bluebox}, processes have become decoupled in the steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  There are separate balances between the divergence of the flux and the water input on the one hand (equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (equation \eqref{eq:openclosesteady}).  Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are also stated by \cite{Schoofetal2012} model, where the decoupling is also noted.  Specifically, in the one-dimensional case the above equations reduce to (5.8) and (5.10) from \cite{Schoofetal2012}.
 
 
 \subsection*{Functional relationship for pressure in steady state}  Equation \eqref{eq:openclosesteady} allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  (This fundamental fact was already pointed out in considering the steady states of equation \eqref{eq:hewittcapacity}.)  Steady state is only possible if condition \eqref{eq:steadyOCbound} holds, but here with $W$ for $Y$:
@@ -690,7 +688,7 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
+\subsection*{Discretization of the mass conservation equation}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by a mostly-explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
 We first consider stable time steps.  Stability for either advection scheme occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
@@ -702,9 +700,9 @@ Here $\bV=(u,v)$ is the water velocity, as in previous sections.  Because of the
 \end{equation}
 The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Indeed, Appendix \ref{app:positivestable} shows that this is sufficient for the first-order upwind scheme, while standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
 
-We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}, especially $\alpha=5/4$, $\beta=3/2$, $k=0.01$, and $W_r=0.1$.  We ran the model on a $\Delta x = \Delta y = 250$ m grid with initial condition $W=0$ to approximate steady state for \Nbreen ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum (over space) water speed $|\bV| = \max |u| = \max |v|$ is about $0.2$ m $\text{s}^{-1}$, with temporal variation in this value, and that the diffusivity $D$ has maximum value (over space) that varies in time: $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Thus the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  The diffusive restriction \eqref{eq:dtDIFFW} with $\max D=1\,\text{m}^2\,\text{s}^{-1}$ as a typical value is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.   That is, $\Delta t_W \approx 25 \Delta t_{CFL}$.
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}, especially $\alpha=5/4$, $\beta=3/2$, $k=0.01$, and $W_r=0.1$.  We ran the model on a $\Delta x = \Delta y = 250$ m grid with initial condition $W=0$ to approximate steady state for \Nbreen ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum (over space) water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$, with temporal variation in this value, and that the diffusivity $D$ has maximum value (over space) that varies in time: $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Thus the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  The diffusive restriction \eqref{eq:dtDIFFW} with a medium value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ gives $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.   That is, $\Delta t_W \approx 25 \Delta t_{CFL}$.
 
-This example suggest that, unless the global peak velocity is unusually slow, or unless deep subglacial lakes develop so that $D = \rho_w g K W$ is large and $\Delta t_W$ is correspondingly small, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  However, the scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that refining or coarsening the grid may change the controlling time step.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically even shorter.  By contrast, if implicit time-stepping is used for the pressure equation \cite{Hewittetal2012,Schoofetal2012} then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.
+This example suggest that, unless both the global peak velocity is unusually slow and deep subglacial lakes develop so that $D = \rho_w g K W$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  However, the scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient grid refinement $\Delta t_W$ is the controlling restriction.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$.  By contrast, if implicit time-stepping is used for the pressure equation \citep{Hewittetal2012,Schoofetal2012} then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could be removed by implicit steps for the mass-conservation equation, though this requires another variational inequality formulation because of the lower bound $W\ge 0$ \citep[compare][]{JouvetBueler2012}.
 
 \begin{figure}[ht]
 \centering
@@ -714,14 +712,14 @@ This example suggest that, unless the global peak velocity is unusually slow, or
 \label{fig:stencil}
 \end{figure}
 
-To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ and $\Plij \approx P(t_l,x_i,y_j)$ be the numerical approximations.  Recall that $\bV$ is determined from pressure and bed elevation; see \eqref{eq:bluebox}.  We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}.  We compute these values based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.
+To set notation, suppose our rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$ $(\Wtil)_{ij}^l \approx \Wtil(t_l,x_i,y_j)$, and $\Plij \approx P(t_l,x_i,y_j)$ be the numerical approximations
 
-We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, and these are computed by averaging regular grid values:
+We will compute velocity components and flux components, at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil}, based on centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.  We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, and these are computed by averaging regular grid values:
 \begin{equation}
 W_e = (W_{i,j}^l + W_{i+1,j}^l)/2, \qquad W_n = (W_{i,j}^l + W_{i,j+1}^l)/2. \label{eq:stagW}
 \end{equation}
 In this case we can compute the ``west'' and ``south'' values by shifting indices: $W_w = W_e\big|_{(i-1,j)}$ and $W_s = W_n\big|_{(i,j-1)}$.  Thus there are only two distinct staggered grid values (e.g.~east and north) to compute per regular grid location $(x_i,y_j)$.
-The nonlinear effective conductivity $K=K(W,\grad P,\grad b)$ from \eqref{eq:Kdefine} is also needed at staggered locations.  As a notational convenience define $R=P+\rho_w g b$ and define these staggered approximations of $|\grad(P+\rho_w g b)|^2$ \citep[compare][]{Mahaffy}:
+The nonlinear effective conductivity $K$ from \eqref{eq:Kdefine} is also needed at staggered locations.  As a notational convenience define $R=P+\rho_w g b$ and define these staggered-grid values \citep[compare][]{Mahaffy}:
 \begin{align*}
 \Pi_e &= \left|\frac{R_{i+1,j}-R_{i,j}}{\Delta x}\right|^2 + \left|\frac{R_{i+1,j+1}+R_{i,j+1} - R_{i+1,j-1}-R_{i,j-1}}{4\Delta y}\right|^2, \\
 \Pi_n &= \left|\frac{R_{i+1,j+1}+R_{i+1,j} - R_{i-1,j+1}-R_{i-1,j}}{4\Delta x}\right|^2 + \left|\frac{R_{i,j+1}-R_{i,j}}{\Delta y}\right|^2.
@@ -730,9 +728,7 @@ Thereby define
 \begin{equation}
 K_e = k W_e^{\alpha-1} \Pi_e^{(\beta-2)/2}, \qquad K_n = k W_n^{\alpha-1} \Pi_n^{(\beta-2)/2}.  \label{eq:stagK}
 \end{equation}
-When the power $\beta-2$ is negative we avoid division by zero and cap the conductivities: $K_e = 1000 k$ if $\Pi_e = 0$ and similarly for $K_n$.
-
-We can find the velocity components needed at staggered locations by differencing:
+When the power $\beta-2$ is negative we avoid division by zero and cap the conductivities, e.g.~$K_e = 1000 k$ if $\Pi_e = 0$.  The velocity components are found by differencing:
 \begin{align}
 u_e &= - K_e \left(\frac{P_{i+1,j}-P_{i,j}}{\Delta x} + \rho_w g \frac{b_{i+1,j}-b_{i,j}}{\Delta x}\right),  \label{eq:velocitycomp} \\
 v_n &= - K_n \left(\frac{P_{i,j+1}-P_{i,j}}{\Delta y} + \rho_w g \frac{b_{i,j+1}-b_{i,j}}{\Delta y}\right). \notag
@@ -743,23 +739,20 @@ D_e = \rho_w g K_e W_e, \qquad D_n = \rho_w g K_n W_n.  \label{eq:diffusivitycom
 \end{equation}
 We get the remaining staggered-grid quantities by shift:
 \begin{align*}
-u_w &= u_e\big|_{(i-1,j)}, \qquad v_s = v_n\big|_{(i,j-1)}, \\
-K_w &= K_e\big|_{(i-1,j)}, \qquad K_s = K_n\big|_{(i,j-1)}, \\
-D_w &= D_e\big|_{(i-1,j)}, \qquad D_s = D_n\big|_{(i,j-1)}.
+u_w &= u_e\big|_{(i-1,j)}, \quad K_w = K_e\big|_{(i-1,j)}, \quad D_w = D_e\big|_{(i-1,j)}, \\
+v_s &= v_n\big|_{(i,j-1)}, \quad K_s = K_n\big|_{(i,j-1)}, \quad D_s = D_n\big|_{(i,j-1)}.
 \end{align*}
 
-Now we define $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ as the face-centered (staggered-grid) normal components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value(s) are used.  Here is the scheme for equation \eqref{eq:adeqn} using \eqref{eq:stagK} and \eqref{eq:velocitycomp} above:
+Now we define $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ as the face-centered (staggered-grid) normal components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value, or combination of $W$ values, is used.  Here is the scheme for equation \eqref{eq:adeqn} using \eqref{eq:stagK} and \eqref{eq:velocitycomp} above:
 \begin{align}
 &\frac{W_{i,j}^{l+1} - W_{i,j}^l}{\Delta t} + \frac{(\Wtil)_{i,j}^{l+1} - (\Wtil)_{i,j}^l}{\Delta t} = - \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} - \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y}  \label{eq:Wfd} \\
    &\hspace{-0.5in} + \frac{D_e (W_{i+1,j}^l - \Wlij) - D_w (\Wlij - W_{i-1,j}^l)}{\Delta x^2} + \frac{D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)}{\Delta y^2}  + \frac{m_{ij}}{\rho_w}.  \notag
 \end{align}
-
-As explained in Appendix \ref{app:transportstorage}, the updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, can be computed implicitly by the formula
+As explained in Appendix \ref{app:transportstorage}, the updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, can be computed from the backward Euler formula:
 \begin{equation}
 (\Wtil)_{i,j}^{l+1} = \frac{(\Wtil)_{i,j}^l + \mu \Delta t \min\{\omega W_{i,j}^l, \Wtilmax\}}{1 + \mu \Delta t}.  \label{eq:tillupdatefd}
 \end{equation}
-
-After applying scheme \eqref{eq:tillupdatefd}, the value of $W_{i,j}^{l+1}$ can be updated.  For convenience we rewrite scheme \eqref{eq:Wfd} in ``update'' form.  Let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
+After applying scheme \eqref{eq:tillupdatefd}, the value of $W_{i,j}^{l+1}$ can be updated.  To make this clear let $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  The following is equivalent to \eqref{eq:Wfd}:
 \begin{align}
  W_{i,j}^{l+1} &= W_{i,j}^l - (\Wtil)_{i,j}^{l+1} + (\Wtil)_{i,j}^l \label{eq:Wupdate} \\
   &\qquad - \nu_x \Big(Q_e(u_e) - Q_w(u_w)\Big) - \nu_y \Big(Q_n(v_n) - Q_s(v_s)\Big) \notag \\
@@ -767,12 +760,12 @@ After applying scheme \eqref{eq:tillupdatefd}, the value of $W_{i,j}^{l+1}$ can 
   &\qquad + \mu_y \left(D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)\right) + \Delta t \frac{m_{ij}}{\rho_w}. \notag
 \end{align}
 
-Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} or its equivalent \eqref{eq:Wupdate} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes, which we address next.
+Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} or \eqref{eq:Wupdate} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes, which we address next.
 
 
-\subsection*{Fluxes in the mass conservation equation}  Appendix \ref{app:fluxlimiters} reviews some of the now-standard theory of flux-limiters for transport schemes.  Here we state the two flux-discretization alternatives which we actually test as flux discretizations for scheme \eqref{eq:Wupdate}.  These choices are choices of functions $\Psi$ from Table \ref{tab:fluxlimiters} in Appendix \ref{app:fluxlimiters}.  The methods we try are first-order upwind and the Koren flux-limiter \citep{HundsdorferVerwer2010}.
+\subsection*{Fluxes in the mass conservation equation}  Appendix \ref{app:fluxlimiters} reviews some of the standard theory of flux-limiters for transport schemes.  Here we state the two flux-discretization alternatives which we actually test as flux discretizations for scheme \eqref{eq:Wupdate}.  These choices, first-order upwind and the Koren flux-limiter \citep{HundsdorferVerwer2010}, use functions $\Psi$ from Table \ref{tab:fluxlimiters} in Appendix \ref{app:fluxlimiters}.
 
-Recall that the velocity has components $\bV=(u,v)$ which are evaluated at these staggered locations following \eqref{eq:velocitycomp}.  Also recall that the flux at the staggered grid location $(x_{i+1/2},y_j)$ is denoted ``$Q_e(u_e)$'' and that the flux at $(x_i,y_{j+1/2})$ is denoted ``$Q_n(v_n)$.''  To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$'':
+To ensure conservation we must have a single formula for $Q_{i+1/2,j}$ whether this flux is ``$Q_e$'' for $(x_i,y_j)$ or ``$Q_w$'' for $(x_{i+1},y_j)$; similar comments apply to ``$Q_n$'' versus ``$Q_s$'':
 \begin{align}
 Q_e(u_e) &= \begin{cases} u_e \left[W_{i,j} + \Psi(\theta_{i}) (W_{i+1,j} - W_{i,j})\right], & u_e \ge 0, \\ u_e \left[W_{i+1,j} + \Psi\left((\theta_{i+1})^{-1}\right) (W_{i,j} - W_{i+1,j})\right], & u_e < 0, \end{cases} \label{eq:adfluxes} \\
 Q_n(v_n) &= \begin{cases} v_n \left[W_{i,j} + \Psi(\theta_{j}) (W_{i,j+1} - W_{i,j})\right], & v_n \ge 0, \\ v_n \left[W_{i,j+1} + \Psi\left((\theta_{j+1})^{-1}\right) (W_{i,j} - W_{i,j+1})\right], & v_n < 0. \end{cases} \notag
@@ -782,28 +775,29 @@ The subscripted $\theta$ quotients are as follows:
 \theta_i &= \frac{W_{i,j}-W_{i-1,j}}{W_{i+1,j} - W_{i,j}}, & (\theta_{i+1})^{-1} &= \frac{W_{i+2,j}-W_{i+1,j}}{W_{i+1,j} - W_{i,j}}, \\
 \theta_j &= \frac{W_{i,j}-W_{i,j-1}}{W_{i,j+1} - W_{i,j}}, & (\theta_{j+1})^{-1} &= \frac{W_{i,j+2}-W_{i,j+1}}{W_{i,j+1} - W_{i,j}}.
 \end{align*}
-One does not even compute these ``$\theta$s'' when using first-order upwind.  On the other hand, when using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is extended because regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are potentially involved in updating $W_{i,j}$.
 
-For either the first-order or Koren schemes, if the water input $m$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a desirable property but it does not ensure positivity of the solution if there is actual water removal ($(m/\rho_w) + T < 0$).  Therefore we project (reset) $W$ to be nonnegative at the end of each time step.
+One does not compute $\theta$ quotients when using first-order upwind.  On the other hand, when using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is extended because regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are potentially involved in updating $W_{i,j}$.
+
+For either the first-order or Koren schemes, if the water input $m$ is negative then we must actively enforce the positivity of the water thickness $W$.  That is, positivity of the advection-diffusion scheme is a desirable property but it does not ensure positivity of the solution if there is actual water removal (i.e.~if $(m/\rho_w) - \partial \Wtil/\partial t < 0$).  Therefore we project (reset) $W$ to be nonnegative at the end of each time step.
 
 \subsection*{Discretization of the pressure evolution equation}  The pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  Unlike solving \eqref{eq:adeqn} for $W$, when solving \eqref{eq:regpressureequation} for $P$ there is no dominating advection term.  Therefore we discretize it using a centered second-order scheme.  Because this is also an explicit scheme, we consider stable time steps immediately.
 
 The time step restriction we identify is comparable to \eqref{eq:dtDIFFW}, though the proof technique in Appendix \ref{app:positivestable} does not suffice to \emph{prove} stability under this condition because of the additional reaction terms.  If the time step satisfies $\Delta t \le \Delta t_P$, where
 \begin{equation}
-\Delta t_P\, \left(\frac{2 \max D}{\phi_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1 \label{eq:dtDIFFP}
+\Delta t_P\, \left(\frac{2 \max D}{\phi}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1 \label{eq:dtDIFFP}
 \end{equation}
 then the scheme is stable.  The resulting time step $\Delta t_P$ is a fraction of $\Delta t_W$ from \eqref{eq:dtDIFFW}:
 \begin{equation}
-\Delta t_P = 2 \phi_0\, \Delta t_W.  \label{eq:dtDIFFPfromW}
+\Delta t_P = 2 \phi\, \Delta t_W.  \label{eq:dtDIFFPfromW}
 \end{equation}
 
-We can again by quantitative in a particular computed example.  Considering the same 250 m simulation of the hydrology of \Nbreen as earlier, and with $\phi_0 = 0.005$, we have $\Delta t_P$ which is 100 times smaller than $\Delta t_W$.  With these values, and the others used earlier, we get
+We can again by quantitative in a particular computed example.  Considering the same 250 m simulation of the hydrology of \Nbreen as earlier, and with $\phi = 0.005$, we have $\Delta t_P$ which is 100 times smaller than $\Delta t_W$.  With these values, and the others used earlier, we get
 \begin{align*}
   \Delta t_W            &\approx 8000 \text{ s} &&\text{ from \eqref{eq:dtDIFFW}}, \\
   \Delta t_{\text{CFL}} &\approx 300  \text{ s} &&\text{ from \eqref{eq:dtCFL}}, \\
   \Delta t_P            &\approx 80   \text{ s} &&\text{ from \eqref{eq:dtDIFFPfromW}.}
 \end{align*}
-This analysis suggests that the numerical scheme for pressure diffusion, given next, will usually have the shortest time step.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation it seems to be common that $\Delta t_P$ is $1$ to $50$ times shorter than $\Delta t_{\text{CFL}}$.  The CFL time step restriction $\Delta t_{\text{CFL}}$ essentially cannot be avoided by switching to implicit methods, while the time step restriction associated to $\Delta t_P$ certainly can be \citep{Schoofetal2012,Hewittetal2012}.  However, as the size of the stable time step $\Delta t_P$ scales with the adjustable regularizing porosity $\phi_0$, by choosing $\phi_0$ smaller or larger we can make the time step restriction on $\Delta t_P$ more or less severe, respectively \citep[compare][]{Clarke2003}.
+This analysis suggests that the numerical scheme for pressure diffusion, given next, will usually have the shortest time step.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation it seems to be common that $\Delta t_P$ is $1$ to $50$ times shorter than $\Delta t_{\text{CFL}}$.  The CFL time step restriction $\Delta t_{\text{CFL}}$ essentially cannot be avoided by switching to implicit methods, while the time step restriction associated to $\Delta t_P$ can be \citep{Schoofetal2012,Hewittetal2012}.  However, as the size of the stable time step $\Delta t_P$ scales with the adjustable regularizing porosity $\phi$, by choosing $\phi$ smaller or larger we can make the time step restriction on $\Delta t_P$ more or less severe, respectively \citep[compare][]{Clarke2003}.
 
 The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}, but it requires no advection approximation.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
@@ -811,13 +805,13 @@ be the gridded values of the cavitation-opening and creep-closure rates.  Also d
     $$Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.$$
 The scheme is
 \begin{align}
-\frac{\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{K_e W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - K_w W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
+\frac{\phi}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} &= \frac{K_e W_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - K_w W_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right)}{\Delta x^2}  \label{eq:Pfd} \\
       &\quad + \frac{K_n W_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - K_s W_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)}{\Delta y^2} + Z_{ij}. \notag
 \end{align}
 Again it is useful to restate \eqref{eq:Pfd} in explicit update form.  First define $\omega_x = 1/\Delta x^2$, $\omega_y = 1/\Delta y^2$.   Then scheme \eqref{eq:Pfd} is equivalent to this form written in terms of $D=\rho_w g K W$:
 \begin{align}
-P_{i,j}^{l+1} = \Plij &+  \frac{\,\Delta t}{\phi_0} \bigg[\omega_x D_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x D_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
-      &\qquad\qquad + \omega_y D_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y D_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)\bigg] + \frac{\rho_w g\,\Delta t}{\phi_0} Z_{ij}. \notag
+P_{i,j}^{l+1} = \Plij &+  \frac{\,\Delta t}{\phi} \bigg[\omega_x D_e \left(\psi_{i+1,j}^l - \psi_{i,j}^l\right) - \omega_x D_w \left(\psi_{i,j}^l - \psi_{i-1,j}^l\right) \label{eq:Pfdupdate} \\
+      &\qquad\qquad + \omega_y D_n \left(\psi_{i,j+1}^l - \psi_{i,j}^l\right) - \omega_y D_s \left(\psi_{i,j}^l - \psi_{i,j-1}^l\right)\bigg] + \frac{\rho_w g\,\Delta t}{\phi} Z_{ij}. \notag
 \end{align}
 
 There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we again set $P_{i,j}^{l+1}=(P_o)_{i,j}$. 
