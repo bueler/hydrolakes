@@ -109,11 +109,11 @@
 
 Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential \citep{Clarke05}.  Beyond that there are many variations considered in the literature.  Physical processes may control the geometry of linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (cavitation), melt on the walls of cavities and conduits, or the closure of cavities and conduits by creep \citep{Hewitt2011}.  Water could be exchanged with a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
 
-This paper describes a class of models for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The cavities open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, but, within the broad class considered here, we observe conduit-like behavior in large-scale cases where the pressure gradient approximates the overburden gradient.
+This paper describes a class of models for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The cavities open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model.
 
-Pressure is determined non-locally over each connected component of the hydrological system.  In particular, no functional relation between subglacial water amount and pressure is assumed in our model \citep[compare][]{FlowersClarke2002_theory}.  The presence of a macro-porous englacial system implies that the subglacial water pressure solves an equation which is a parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}, and also the mass conservation equation has additional terms because water is actually stored englacially \citep{Hewitt2013}.  We adopt the hypothesis of a connection of the subglacial system to an englacial system as a regularization of the pressure equation so that, unlike the \cite{Schoofetal2012} model in which a variational inequality for pressure must be solved at each time step, in this paper we solve a parabolic evolution equation for the pressure, thus easing implementation.
+Pressure is determined non-locally over each connected component of the hydrological system.  In particular, no functional relation between subglacial water amount and pressure is assumed in our model \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.  Also, compared to other distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.
 
-FIXME:  Truffer et al \citep{TrufferHarrisonEchelmeyer2000,TrufferEchelmeyerHarrison2001,TrufferHarrison2006} observe a large amount of till under a large surge-type Alaska glacier.  The depth at which this till experiences deformation, which is presumably the depth of least effective pressure in the till, apparently changes from year to year in the same location.  But all of \cite{Hookeetal1997}, \cite{TrufferEchelmeyerHarrison2001}, and \cite{Tulaczyketal2000} observe that the deformation of the till is well-approximated by a Mohr-Coulomb relation.
+In cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that the deformation of the till is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.
 
 All water movement, whether stored in cavities or till, is carefully implemented in a mass-conserving manner.  FIXME: this is nontrivial because of transfer to/from till and because of free-boundaries
 
@@ -124,45 +124,43 @@ The next section considers basic physical principles.  We generate a fundamental
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
 
-\subsection*{Mass conservation}  We assume that liquid water is incompressible and of constant density.  Thus the thickness of the layer of transportable water, denoted by $W(t,x,y)$, determines its mass.  Our statement of mass conservation (below) will describe the evolution of this thickness $W$.  Choosing to model subglacial hydrology using a water thickness as the state variable is not, by itself, a significant restriction on the physics.  Such a thickness, however, is only meaningful compared to observations if it is regarded as an average over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  In addition there is water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  
+\subsection*{Mass conservation}  We assume that liquid water is incompressible and of constant density.  Thus the thickness of the layer of laterally-transportable water, denoted by $W(t,x,y)$, determines its mass.  Our statement of mass conservation (below) will describe the evolution of $W$.  In addition there is water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  We always assume the water thicknesses are nonnegative: $W \ge 0$ and $\Wtil \ge 0$.  Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  While the thickness $W$ describes the amount of water in subglacial cavities and the connections between cavities, a system through which it can travel, the water in till pore spaces is much less mobile, in the horizontal dimension especially, because of the very low hydraulic conductivity of till \citep{TrufferEchelmeyerHarrison2001,Tulaczyketal2000}.  Our model necessarily includes, however, a model for the strength of the saturated till (Section \ref{sec:tillmechanics}) and a parameterization for transfer $W \leftrightarrow \Wtil$ (Section \ref{sec:capacity}).
 
-While the thickness $W$ describes the amount of water in subglacial cavities and the connections between cavities, the system through which it can travel, the water in till pore spaces is much less mobile, in the horizontal dimension especially, because of the very low hydraulic conductivity of till \citep{TrufferEchelmeyerHarrison2001,Tulaczyketal2000}.  Our model will necessarily include, however, a parameterization for transfer $W \leftrightarrow \Wtil$, which is given in Section \ref{sec:capacity}.
-
-The total effective thickness of the water at map-plane location $(x,y)$ and time $t$ is $W + \Wtil$.  We always assume the water thicknesses are nonnegative: $W \ge 0$ and $\Wtil \ge 0$.  The total thickness is conserved in our model.  In two map-plane dimensions the mass conservation equation is \citep{Clarke05}
+The total effective thickness of the water at map-plane location $(x,y)$ and time $t$ is $W + \Wtil$; it is the conserved quantity in our model.  In two map-plane dimensions the mass conservation equation is \citep[compare][]{Clarke05}
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \frac{\partial \Wtil}{\partial t} + \Div \bq = \frac{m}{\rho_w}
 \end{equation}
 where $\Div = (\partial/\partial x) + (\partial/\partial y)$, $\bq$ is the (vector) water flux (units $\text{m}^2\,\text{s}^{-1}$), $m$ is the total input to the subglacial layer (units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$) and $\rho_w$ is the density of fresh liquid water (units $\text{kg}\,\text{m}^{-3}$).  In our theory the water flux $\bq$ is concentrated within the subglacial layer, and we do not consider the possibility of lateral englacial transport.
 
-We separate the water sources between melt on the lower surface of the glacier and supraglacial drainage.  Let $m_{\text{wall}}$ be the rate at which the cavity walls melt or refreeze.  Let $m_{\text{drain}}$ be the rate at which surface runoff drains to the subglacier layer.  The total input to the subglacial layer is
+We separate the water sources for equation \eqref{eq:conserve} between melt on the lower surface of the glacier and supraglacial drainage.  Let $m_{\text{wall}}$ be the rate at which the cavity walls melt or refreeze.  Let $m_{\text{drain}}$ be the rate at which surface runoff drains to the subglacier layer.  The total input to the subglacial layer is
 \newcommand{\mwall}{m_{\text{wall}}}
 \newcommand{\mdrain}{m_{\text{drain}}}
 \begin{equation}
 m = \mwall + \mdrain. \label{eq:totalinput}
 \end{equation}
-The wall melt term $\mwall$, which is distinct from $\mdrain$ because only the former contributes to the opening of cavities and conduits, is further parameterized in section FIXME below.
+The wall melt term $\mwall$ differs from $\mdrain$ because only the former contributes to the opening of cavities and conduits (Section \ref{sec:capacity}).
 
-\subsection*{Hydraulic potential and effective pressure}  The  hydraulic potential $\psi(t,x,y)$ combines the pressure $P(t,x,y)$ of the transportable subglacial water with the gravitational potential of the top of the water layer \citep{Goelleretal2013,Hewittetal2012}
+\subsection*{Hydraulic potential and effective pressure}  The  hydraulic potential $\psi(t,x,y)$ combines the pressure $P(t,x,y)$ of the transportable subglacial water (i.e.~$W$) with the gravitational potential of the top of the water layer \citep{Goelleretal2013,Hewittetal2012}
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
 Here $\rho_w$ is the water density ($\text{kg}\,\text{m}^{-3}$), $g$ is the acceleration of gravity ($\text{m}\,\text{s}^{-2}$), and $z=b(x,y)$ ($\text{m}$) is the bedrock elevation, which for simplicity is time-independent.
 
-We have added the term ``$\rho_w g W$'' to the standard hydraulic potential formula $\psi_0 = P + \rho_w g b$ \citep{Clarke05,Shreve1972} because differences in the potential at the \emph{top} of the subglacial water layer determine the driving potential gradient for a fluid layer.  Of course such differences may be small, in which case ignoring them may do no harm.  However, the  ``$\rho_w g W$'' term is most important when considering local minima of the hydraulic potential, where subglacial lakes of finite (not infinitesimal) extent and finite (not infinite) depth should form.  As we will see, this term makes the mass conservation equation diffusive.  When the water depth becomes substantial ($W\gg 1$), as it would be in a subglacial lake, this term keeps the modeled lakes from being singularities of the water thickness field.  Note that only the transportable water $W$, and not the total water $W+\Wtil$, is used to determine the potential.
+We have added the term ``$\rho_w g W$'' to the standard hydraulic potential formula $\psi_0 = P + \rho_w g b$ \citep{Clarke05,Shreve1972} because differences in the potential at the \emph{top} of the subglacial water layer determine the driving potential gradient for a fluid layer.  Of course when $W$ is small ignoring this term may do no harm.  It is most important, however, when considering local minima of the hydraulic potential, where subglacial lakes of finite (not infinitesimal) extent and finite (not infinite) depth should form \citep[compare][]{Siegertetal2009}.  As we will see, this term makes the mass conservation equation diffusive, regardless of the action of other diffusive mechanisms (like that examined in Section \ref{sec:steadyverif}).  When the water depth becomes substantial ($W\gg 1$), as it would be in a subglacial lake, this term keeps the modeled lakes from being singularities of the water thickness field.  Note that only the transportable water $W$, and not the total water $W+\Wtil$, is used to determine the potential, again because of the low hydraulic conductivity of till.
 
-Ice in a glacier is a viscous fluid which has a stress field of its own.  The basal value of the downward normal stress is traditionally called the \emph{overburden pressure}, which we denote by $P_o$.  We make the shallow approximation that it is hydrostatic \citep{GreveBlatter2009}:
+Ice in a glacier is a viscous fluid which has a stress field of its own.  The basal value of the downward normal stress is traditionally called the \emph{overburden pressure}, which we denote by $P_o$.  We accept the shallow approximation that it is hydrostatic \citep{GreveBlatter2009}:
 \begin{equation} \label{eq:hydrostatic}
   P_o = \rho_i g H.
 \end{equation}
-Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$) and $H$ is the ice thickness (m).  Because $P$ is nonnegative, and because the condition $P>P_o$ is presumed to cause the ice to lift and thus quickly lower the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, it follows that the pressure solution is subject to inequalities
+Here $\rho_i$ is the density of ice ($\text{kg}\,\text{m}^{-3}$) and $H$ is the ice thickness (m).  Because the condition $P>P_o$ is presumed to cause the ice to lift and thus quickly lower the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, it follows that the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
-Though extreme cases can occur, such as where the ice is forced upward by a negative effective pressure \citep{Schoofetal2012}, our theory does not model any cases which  violate bounds \eqref{eq:bounds}.  We also define the \emph{effective pressure}
+Though extreme cases can occur, such as where the ice is forced upward by a negative effective pressure \citep{Schoofetal2012}, our theory does not model any cases which  violate bounds \eqref{eq:bounds}; see Section \ref{sec:capacity}.  We also define the \emph{effective pressure}
 \begin{equation}
 N = P_o - P  \label{eq:effective}
 \end{equation}
-which measures how much of the ice load is carried by the mineral (till or bedrock) base, as opposed to how much is carried by pressurized subglacial water.  Bounds \eqref{eq:bounds} imply $0 \le N \le P_o$.
+which measures how much of the ice load is carried by the mineral (till or bedrock) base, as opposed to how much is carried by pressurized subglacial water.  Bounds \eqref{eq:bounds} of course imply $0 \le N \le P_o$.
 
 \subsection*{Darcy flow}  The transportable water described by $W$ and $P$ flows from high to low hydraulic potential.  The simplest expression of this fact is a Darcy flux model for a water sheet following \cite{Clarke05}, namely
 \begin{equation}  \label{eq:fluxearly}
@@ -178,15 +176,15 @@ for $\alpha \ge 1$, $\beta>1$, and a coefficient $k>0$ with units that depend on
 \begin{equation}
   \bq = - k  W^\alpha \left|\grad \psi\right|^{\beta-2} \grad \left(P + \rho_w g b\right)   - \rho_w g k W^\alpha \left|\grad \psi\right|^{\beta-2} \grad W. \label{eq:firstfluxdecomp}
 \end{equation}
-The second term with $\grad W$ acts diffusively in the mass conservation equation \eqref{eq:conserve}.  Because the $P$ generally scales with the overburden pressure $P_o$, the first flux term in \eqref{eq:firstfluxdecomp} will dominate in the common situation $|\grad H| \gg |\grad W|$.
+The second term with $\grad W$ acts diffusively in the mass conservation equation \eqref{eq:conserve}.  Because $P$ generally scales with the overburden pressure $P_o$, the first flux term in \eqref{eq:firstfluxdecomp} will dominate in the common situation $|\grad H| \gg |\grad W|$.
 
-Decomposed flux \eqref{eq:firstfluxdecomp} implies a transport process in equation \eqref{eq:conserve} with a velocity field which varies in space and time(first term) and portion that acts diffusively (second term).  We will construct our conservative numerical scheme based on this decomposition.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also actually \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$, and the separation of hydraulic velocity from diffusion is more clear.
+Decomposed flux \eqref{eq:firstfluxdecomp} implies a transport process in equation \eqref{eq:conserve} with a velocity field which varies in space and time (the first term) and portion that acts diffusively (the second term).  We will construct our conservative numerical scheme based on this decomposition.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also significantly \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$, and the separation of hydraulic velocity from diffusion is more clear.
 
 To simplify the model slightly, the small thickness approximation $W\approx 0$ is made inside the absolute value signs in \eqref{eq:firstfluxdecomp}, namely
 \begin{equation}
 \left|\grad \psi\right| \approx \left|\grad \left(P + \rho_w g b \right)\right|.  \label{eq:Wsmall}
 \end{equation}
-This simplifiation, which makes no change in the $\beta=2$ case, lets us precisely define the effective hydraulic conductivity as
+This simplification, which makes no change in the $\beta=2$ case (see equation \eqref{eq:flux}), lets us specifically define the effective hydraulic conductivity as
 \begin{equation}
 K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
@@ -194,85 +192,85 @@ In terms of this nonlinear conductivity $K$ we write the velocity field and the 
 \begin{equation} \label{eq:vexpression}
   \bV = - K\, \grad \left(P + \rho_w g b\right), \qquad D = \rho_w g K W.
 \end{equation}
-Now \eqref{eq:firstfluxdecomp} is a cleaner advection-diffusion decomposition,
+Now \eqref{eq:firstfluxdecomp} is a clean advection-diffusion decomposition,
 \begin{equation} \label{eq:qexpression}
-  \bq = - K W \grad \psi = \bV\, W - D \grad W.
+  \bq = \bV\, W - D \grad W.
 \end{equation}
 
-In the rest of this paper we use either of the equivalent forms in \eqref{eq:qexpression} for the flux $\bq$.  The former with $\grad \psi$ emphasizes the relation between flow and pressure, while the latter with $\bV$ and $D$ is natural in numerical considerations for the mass conservation equation.
-
-From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we can now derive an advection-diffusion equation \citep{HundsdorferVerwer2010} for the evolution of the water amount:
+From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we have an advection-diffusion equation \citep{HundsdorferVerwer2010} for the evolution of the water amount:
 \begin{equation} \label{eq:adeqn}
   \frac{\partial W}{\partial t} + \frac{\partial \Wtil}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}.
 \end{equation}
-There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(D \grad W\right)$.  These different schemes impose time step restrictions of different magnitudes.  We will see in practice that equation \eqref{eq:adeqn} is advection-dominated in the sense that $|\bV W| \gg |D \grad W|$.  However, in near-steady conditions where the velocity $\bV$ can be almost proportional to $-\grad W$ there may be no clean separation of advection and diffusion.  Certainly the numerical schemes for advection and diffusion must be tested in combination.  This explains why we measure convergence behavior of the \emph{combined} numerical schemes in section \ref{sec:results}.
+There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(D \grad W\right)$.  These different schemes impose time step restrictions of different magnitudes.  We will see that equation \eqref{eq:adeqn} is often advection-dominated in the sense that $|\bV W| \gg |D \grad W|$.  However, in near-steady conditions where the velocity $\bV$ can be almost proportional to $-\grad W$ there may be no clean separation of advection and diffusion.  Certainly the numerical schemes for advection and diffusion must be tested in combination, so we measure convergence of the combined numerical schemes in section \ref{sec:results}.
 
-As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure \citep{Shreve1972}.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model in this paper also generates pressure fields with this property in some circumstances.  However, in a model like ours which depends on physical mechanisms for the opening and closing of cavities, the connection between $\bq$ and the surface slope is much less direct.
+As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure \citep{Shreve1972}.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model in this paper also generates pressure fields with this property in some circumstances.  However, in a model like ours which depends on physical mechanisms for the opening and closing of cavities, the connection between $\bq$ and the surface slope is not direct or imposed.
 
 %FIXME:  revive text on enthalpy and wall melt and dissipation heating?  see phoenix.tex
 
 
 \section{Till mechanics} \label{sec:tillmechanics}
 
-When examined by drilling boreholes to the bed, both ice sheets \citep{Tulaczyketal2000} and glaciers \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000} commonly [FIXME: always?] reveal a subglacial layer of till.  We include storage of subglacial water in till in our model both because of its role in storing water (i.e.~the thickness $\Wtil$) and its role in determining basal shear stress.  The pressurized till can be expected to support much of the ice overburden load and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.  Furthermore there is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,SchoofTill,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000}.  The current model combines a plastic till, which is modeled as having zero hydraulic conductivity because observed values are so low as to allow no significant horizontal transport \citep{LingleBrown1987,Tulaczyketal2000}, with a water transport system characterized by the capacity and pressure evolution equations in the next two sections.  In this sense, like the one-dimensional till/conduit model of \cite{vanderWeletal2013}, our two-dimensional model is a ``drained plastic bed'' extension of the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
+Our model includes storage of subglacial water in till both because of its role in conserving mass and because of its role in determining basal shear stress.  The pressurized till can be expected to support much of the ice overburden load and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.  We treat till as having essentially zero hydraulic conductivity because observed values are so low as to allow no significant horizontal transport \citep{LingleBrown1987,Tulaczyketal2000}.  Thus our model combines a till which lacks horizontal transport with a water transport system characterized by the capacity and pressure evolution equations in the next two sections.  In this sense, like the one-dimensional till/conduit model of \cite{vanderWeletal2013}, our two-dimensional model is a ``drained plastic bed'' extension of the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
 
-The yield stress $\tau_c$ of a plastic till satisfies the Mohr-Coulomb relation
+There is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,SchoofTill,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000}.  The yield stress $\tau_c$ of the saturated till satisfies the Mohr-Coulomb relation
 \newcommand{\Ntil}{N_{\text{til}}}
 \begin{equation}
 \tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
 \end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure in the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference physically justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress and not, by constrast with $N$, in models for the horizontal tranport of water or the evolution of subglacial cavities.
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress and not in models for the horizontal transport of water or the evolution of subglacial cavities.
 
-Let $e = V_w / V_s$ be the void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
+Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
 \begin{equation}
 e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
 \end{equation}
-Here $e_0$ is the void ratio at the reference effective pressure $N_0 = 1$ kPa and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper come straight form a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
+Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper come straight form a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
 
-We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no partially-empty spaces.  Thus the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing for the modeled saturated till.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value $N_0=1$ kPa, namely $\Ntil \ge N_0$, it follows from \eqref{eq:voidpressure} that this constraint is equivalent to $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms we now see equivalent expressions
+We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  Evidence for such spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.  It follows that the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value ($\Ntil \ge N_0$) then \eqref{eq:voidpressure} implies $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms we now see equivalent expressions
 \begin{equation}
 e = \frac{V_w}{V_s} = \frac{\Wtil}{\eta_0} = e_0 \left(\frac{\Wtil}{\Wtilmax}\right)  \label{eq:voidexpressions}
 \end{equation}
-subject to the constraint
+subject to the equivalent constraints
 \begin{equation}
-\Wtil \le \Wtilmax \label{eq:Wtilupperbound}
+\Ntil \ge N_0 \quad \text{or} \quad e\le e_0 \quad \text{or} \quad \Wtil \le \Wtilmax. \label{eq:Wtilupperbound}
 \end{equation}
-which is equivalent to $e\le e_0$ and to $\Ntil \ge N_0$.  Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.  Note that setting $\Wtilmax=0$ ``turns off'' the till storage mechanism.
+Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.\footnote{Setting $\Wtilmax=0$ ``turns off'' the till storage mechanism.}
 
-Of course $\Wtil$, and not $e$ or $\Ntil$, is a model state variable appearing in mass conservation equation \eqref{eq:conserve}.  From \eqref{eq:voidexpressions} we see that equation \eqref{eq:voidpressure} can be written
+The thickness $\Wtil$ is a model state variable already appearing in mass conservation equation \eqref{eq:conserve}, but from \eqref{eq:voidexpressions} we see that equation \eqref{eq:voidpressure} can be written in terms of $\Wtil$ instead of $e$:
+%FIXME: explain why N_0 = \delta P_o
 \begin{equation}
-\Ntil = N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:Wtilpressure}
+\Ntil = \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:Wtilpressure}
 \end{equation}
-Compare equation (15) in \cite{vanderWeletal2013}.  Note that only the ratio $e_0/C_c$ appears in \eqref{eq:Wtilpressure}, and not $e_0$ or $C_c$ separately.
+Compare equation (15) in \cite{vanderWeletal2013}.  Only the ratio $e_0/C_c$ appears in \eqref{eq:Wtilpressure}, and not $e_0$ or $C_c$ separately.
 
-It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that $\Ntil$ can be eliminated when determining the till yield stress $\tau_c$ from the water amount $\Wtil$:
+It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the till yield stress $\tau_c$ can be determined from the water amount $\Wtil$:
 \begin{equation}
-\tau_c = c_0 + (\tan \varphi)\, N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:taucfromWtil}
+\tau_c = c_0 + (\tan \varphi)\, \delta P_o\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:taucfromWtil}
 \end{equation}
-This is our model for till strength.  The four free till parameters in this function $\tau_c(\Wtil)$, namely the cohesion $c_0$, the friction angle $\varphi$, the till material ratio $e_0/C_c$, and the maximum water storage $\Wtilmax$, need to be determined from laboratory data or experiment.\footnote{The parameter $N_0=1$ kPa sets the pressure scale; it is not free.}  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the marine history of low-elevation sediments.  Our default value for the ratio $e_0/C_c$has already been addressed, so the default value is $e_0/C_c=0.69/0.12=5.75$.\footnote{That $e_0/C_c=5.75$ implies, from \eqref{eq:Wtilpressure}, a more than five orders of magnitude decrease in effective pressure between the no-water state $\Wtil=0$ with $\Ntil = 562000$ kPa and the full state $\Wtil=\Wtilmax$ with $\Ntil = 1$ kPa.}  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.
+This is our model for till strength.  Three of the parameters in this function, namely the cohesion $c_0$, the friction angle $\varphi$, and the till material ratio $e_0/C_c$, can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have, however, been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.  Our default value for the ratio $e_0/C_c$ has already been addressed:\footnote{The value $5.75$ for $e_0/C_c$ implies, from \eqref{eq:Wtilpressure}, an almost six orders of magnitude decrease in effective pressure $\Ntil$ between the no-water state $\Wtil=0$ and the full state $\Wtil=\Wtilmax$.  There is a corresponding decrease in the yield stress $\tau_c$ from \eqref{eq:taucfromWtil}.} $e_0/C_c=0.69/0.12=5.75$.  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.
 
-Of course, actual ice sliding must be determined by solving a stress balance in which the vector basal shear stress $\mathbold{\tau}_b$ appears as a boundary condition or term \citep[for example]{SchoofHewitt2013}.  For the plastic till case the yield stress $\tau_c$ determines the basal shear stress by
+Of course, actual ice sliding must be determined by solving a stress balance in which the vector basal shear stress $\mathbold{\tau}_b$ appears as a boundary condition \citep{SchoofCoulombBlatter} or term \citep{BBssasliding}.  For the plastic (Coulomb) case the yield stress $\tau_c$ of the till determines the basal shear stress by
 \begin{equation}
 \mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|} \label{eq:plasticbasalstress}
 \end{equation}
 where $\mathbold{u}$ is the sliding velocity of the base of the ice.  But $\tau_c$ could appear in a pseudo-plastic power law sliding relation \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} which extends \eqref{eq:plasticbasalstress}:
 \begin{equation}
-\mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|^{1-q} u_0^q}. \label{eq:pseudobasalstress}
+\mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
 \end{equation}
-Here $u_0$ is a threshold sliding velocity above which, at least in the small $q$ case, the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbold{u}|$.  Equation \eqref{eq:pseudobasalstress} could be written in generic power-law form ``$\mathbold{\tau}_b = - \beta |\mathbold{u}|^{q-1} \mathbold{u}$'', with coefficient $\beta = \tau_c / u_0^q$, if no connection to the plastic case is intended.
+where $0\le q \le 1$.  Here $u_0$ is a threshold sliding velocity above which, at least in the $q\approx 0$ cases, the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbold{u}|$ \citep{BBssasliding}.  If no connection to the plastic case is intended then equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form ``$\mathbold{\tau}_b = - \beta |\mathbold{u}|^{q-1} \mathbold{u}$'' with coefficient $\beta = \tau_c / u_0^q$, including in the linear case $q=1$ in which we have $\beta = \tau_c/u_0$.
 
 
-\section{Capacity and geometry of the hydrologic system} \label{sec:capacity}
+\section{Capacity and geometry of the subglacial hydraulic system} \label{sec:capacity}
 
-\subsection*{Capacity of the linked-cavity (distributed) system}  The evolution of the area-averaged thickness, also called the bed separation \citep{Bartholomausetal2011}, of the cavities in a distributed linked-cavity system can be described as the sum of opening and closing processes \citep{Hewitt2011}.  Let $Y$ denote that bed separation, so that
+\subsection*{Capacity of the linked-cavity distributed system}  The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
 \end{equation}
-where $\bv_b$ is the ice base (sliding) velocity.  Exactly as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
+where $\bv_b$ is the ice base (sliding) velocity.  Denoting $X_+= \max\{0,X\}$, as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
 \begin{equation}
  \mathcal{O}(|\bv_b|,Y) = c_1 |\bv_b| (W_r - Y)_+. \label{eq:openingform}
 \end{equation}
-Here $W_r$ is a maximum roughness scale of the basal topography and $c_1$ is a constant; both of these constants must be indirectly constrained by observations in practice (see Section \ref{sec:results}).  Also, we denote $X_+= \max\{0,X\}$ for a real number $X$.  We choose a form for the closing term based on creep \citep{Hewitt2011,Schoofetal2012}:
+%FIXME:  can we again try to add a bounded amount of wall-melt-by-dissipation?
+Here $W_r$ is a maximum roughness scale of the basal topography and $c_1$ is a constant; both of these constants must be indirectly constrained by observations (see Section \ref{sec:results}).  The closing term models ice creep only \citep{Hewitt2011,Schoofetal2012}:
 \begin{equation}
 \mathcal{C}(N,Y) = c_2 A N^3 Y. \label{eq:closingform}
 \end{equation}
@@ -280,31 +278,31 @@ Here $A$ is the ice softness and $c_2$ is a constant which must be constrained b
 
 Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  The opening term $\mathcal{O}$ is nonnegative if by \eqref{eq:openingform}, and it is nonnegative where $Y<W_r$.  The closing term $\mathcal{C}$ is nonnegative because our modeled effective pressure $N$ satisfies bounds $0\le N \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
 
-The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with a Darcy flux relation like \eqref{eq:flux} and mass conservation \eqref{eq:conserve} is as follows.  If the cavity is larger than connected water sources can fill then the pressure should drop.  This encourages inflow and, by \eqref{eq:closingform}, it speeds cavity closure.  Conversely, if local water sources exceed capacity then the increased pressure should push water out of the area and creep closure should be reduced.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
+The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with a Darcy flux relation like \eqref{eq:flux} and mass conservation \eqref{eq:conserve} is as follows.  If the cavity is larger than connected water sources can fill then the pressure should drop.  Lower pressure encourages inflow and by \eqref{eq:closingform} it speeds cavity closure.  Conversely, if local water sources exceed capacity then the increased pressure should push water out of the area and creep closure should be reduced.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
 
-The steady states of models using \eqref{eq:hewittcapacity} have a functional relationship between thickness $Y$ and effective pressure $N$, by solving
+The steady states of models using \eqref{eq:hewittcapacity} have a functional relationship between thickness $Y$ and effective pressure $N$ found by solving
 \begin{equation}
 \phantom{foo} \qquad \qquad \mathcal{O}(|\bv_b|,Y) = \mathcal{C}(N,Y) \qquad \qquad \text{(steady state)} \label{eq:hewittsteady}
 \end{equation}
-for $N$.  The implicit function theorem says that if $\partial\mathcal{C}/\partial N$ is nonzero then the effective pressure is determined from $Y$; if $0<Y<W_r$ then a unique value $N(Y)>0$ is determined by \eqref{eq:hewittsteady}.  This value may not, however, satisfy the bound $N(Y) \le P_o$ implied by \eqref{eq:bounds}.  That is, the sliding speed $|\bv_b|$ may be sufficiently large, and the bed separation $Y$ may be sufficiently below $W_r$, so that the cavitation opening rate exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  In fact, for given values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can hold for a given $Y$ only if
+for $N$.  The implicit function theorem says that if $\partial\mathcal{C}/\partial N$ is nonzero then the effective pressure is determined from $Y$.  In our case if $0<Y<W_r$ then a unique value $N>0$ is determined by \eqref{eq:hewittsteady}.  This value may not, however, satisfy the bound $N \le P_o$ implied by \eqref{eq:bounds}.  That is, the sliding speed $|\bv_b|$ may be sufficiently large, and the bed separation $Y$ may be sufficiently below $W_r$, so that the cavitation opening rate exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  In fact, for given values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can hold for a given $Y$ only if
 \begin{equation}
 c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \label{eq:steadyOCbound}
 \end{equation}
 
 
-\subsection*{Exchange between the distributed system and the till}  When water is transported laterally by the distributed system it may occupy the pore spaces of the till over/through/beside which it passes.  When water is added to till that cannot increase its pore spaces above the bound (section \ref{sec:tillmechanics}), this excess water becomes transportable.  These considerations imply that $\Wtil$ should evolve in a manner that allows transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, given by bound $\Wtilmax$, of the pore spaces in the till storage.
+\subsection*{Exchange between the distributed system and the till}  Mass conservation equation \eqref{eq:conserve} already allows water to be added or removed from till.  When water is added to till which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable.  Also, when water moves laterally in the distributed system it should be able to occupy the pore spaces of the till over/through/beside which it passes.  These considerations imply that $\Wtil$ should transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, given by bound $\Wtilmax$, of the pore spaces in the till storage.
 
-The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties is this equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\omega\ge 0$:
+The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties is the following equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\omega\ge 0$:
 \begin{equation}
 \frac{\partial \Wtil}{\partial t} = \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right) \label{eq:tilldynamics}
 \end{equation}
-As illustrated schematically in Figure \ref{fig:tillschema}, if $\omega W \ge \Wtilmax$ then \eqref{eq:tilldynamics} says that $\Wtil$ simply increases to $\Wtilmax$ over time, while if transport takes away water so that $\omega W < \Wtilmax$ then the till drains and $\Wtil$ decreases.  If $\omega=0$ then the model reduces to pure decay $\partial \Wtil/\partial t = - \mu \Wtil$.  Thus $0\le \Wtil \le \Wtilmax$ at all times for the solution of \eqref{eq:tilldynamics}.  Also the conservation statement \eqref{eq:conserve} or \eqref{eq:adeqn} for the total water amount $W+\Wtil$ implies that water drained from till is transportable in the distributed system.
+As illustrated schematically in Figure \ref{fig:tillschema}, if $\omega W \ge \Wtilmax$ then \eqref{eq:tilldynamics} says that $\Wtil$ simply increases to $\Wtilmax$ over time, while if transport takes away water so that $\omega W < \Wtilmax$ then \eqref{eq:tilldynamics} says that the till drains and $\Wtil$ decreases.  If $\omega=0$ then the model reduces to pure decay $\partial \Wtil/\partial t = - \mu \Wtil$.  Thus $0\le \Wtil \le \Wtilmax$ at all times for the solution of \eqref{eq:tilldynamics}.  Of course, the conservation statement \eqref{eq:conserve} for the total water amount $W+\Wtil$ implies that water drained from till is transportable in the distributed system.
 
 \begin{figure}[ht]
 \bigskip
 \includegraphics[width=4.5in,keepaspectratio=true]{tillschema}
 \bigskip
-\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  The bounds $0\le \Wtil \le \Wtilmax$ are maintained in all situations.  If $\omega W < \Wtilmax$ then $\Wtil$ approaches $\omega W$, from either side.  If $\omega W \ge \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$ from below.}
+\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  The bounds $0\le \Wtil \le \Wtilmax$ are maintained.  If $\omega W < \Wtilmax$ then $\Wtil$ approaches $\omega W$, from either side.  If $\omega W \ge \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$ from below.}
 \label{fig:tillschema}
 \end{figure}
 
