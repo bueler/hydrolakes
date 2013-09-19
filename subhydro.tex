@@ -1014,16 +1014,6 @@ This allows us to eliminate $v$ from \eqref{eq:abs:transport} by moving $\partia
 Thus we can eliminate the locally-stored quantity $v$ at the cost of maintaining a complete history of the past values of the transported quantity $u$, so as to be able to compute the integral on the right in \eqref{eq:abs:historyintegration}.  While equation \eqref{eq:abs:historyintegration} may be conceptually advantageous, because it has only one conserved scalar $u$, it is not effectively-implementable.
 \medskip
 
-\item \emph{Discretization of \eqref{eq:abs:transport}}.  We can fully-discretize equation \eqref{eq:abs:transport} using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux.  In fact, let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  If we denote $\bq = (q^x,q^y)$ then we can write the scheme as
-\begin{align}
-\frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
-\end{align}
-
-This scheme supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available and that the goal is to update $U$ to time $t^{l+1}$.  So we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} below.  (Scheme \eqref{eq:abs:Vupdate} updates $V_{ij}^{l+1}$ using only $t^l$ information.)  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Then, because the right side of \eqref{eq:abs:conservefd} is determined, the updated value $U_{ij}^{l+1}$ can be computed.
-
-Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
-\medskip
-
 \item \emph{An implicit scheme for \eqref{eq:abs:storage}, and its properties.}  Equation \eqref{eq:abs:storage} is linear in $v$ and it has no spatial derivatives, so we can easily implement an implicit numerical scheme which has no stability restrictions on time steps, and for which we can prove desirable inequalities.  The backwards Euler approximation of \eqref{eq:abs:storage} is stable (``A-stable'' \citep{AscherPetzold}); we state two equivalent forms:
 \begin{equation}
 \frac{V^{l+1} - V^l}{\Delta t} = b \left(f^l - V^{l+1}\right) \qquad \iff \qquad
@@ -1042,12 +1032,20 @@ Thus the discrete evolution of the locally-stored quantity $v$ maintains the nee
 assuming $b\Delta t > 0$.  Properties \eqref{eq:abs:Vbounds} and \eqref{eq:abs:Vupdate} would have to be separately enforced in an explicit scheme.
 \medskip
 
+\item \emph{Discretization of \eqref{eq:abs:transport}}.  We can fully-discretize equation \eqref{eq:abs:transport} using an mostly-explicit scheme with centered-difference approximation of the divergence of the flux, and using staggered-grid values of the flux.  In fact, let $t^{l+1}-t^l = \Delta t$ be the time step and suppose $U^l,V^l$ approximate $u,v$ at time $t^l$.  If we denote $\bq = (q^x,q^y)$ then we can write the scheme as
+\begin{align}
+\frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
+\end{align}
+
+The goal is to update $U$ to time $t^{l+1}$.  Scheme \eqref{eq:abs:conservefd} supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available.  But we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} because \eqref{eq:abs:conservefd} also requires $ V_{i,j}^{l+1}$.  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
+\medskip
+
 \item \emph{Discrete conservation}.  We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete version of the sum $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, is, on a region $R$ of the $x,y$ plane,
 \begin{equation}
 \frac{d}{dt} \left(\int_R u + v\,dx dy\right) = \int_{\partial R} \bq \cdot \bn\,ds + \int_R g \,dx dy.  \label{eq:abs:continuumconserve}
 \end{equation}
 
-One may think, in finite volume terms, of the regular grid quantities $U_{ij}^l,V_{ij}^l$ as being the midpoints of cells.  The integrals over $R$ in \eqref{eq:abs:continuumconserve} are approximated by the midpoint integration rule.  Specifically, the discrete analogue, of the integral over $R$ of $u+v$, is this discrete total volume sum in the case where $R$ is a rectangle:
+One may think in finite volume terms of the regular grid quantities $U_{ij}^l,V_{ij}^l$ as being the average values over cells.  The integrals over $R$ in \eqref{eq:abs:continuumconserve} are then approximated by the midpoint integration rule.  Specifically, the discrete analogue of the integral over $R$ of $u+v$ is this discrete total volume sum in the case where $R$ is a rectangle:
 \begin{equation}
 \Theta^l = \sum_{i,j=1,1}^{I,J} \left(U_{ij}^l + V_{ij}^l\right)\,\Delta x \Delta y \approx 
 \int_R u(t^l,x,y) + v(t^l,x,y) \,dx dy\end{equation}
@@ -1061,9 +1059,9 @@ Discrete conservation of $\Theta^l$ is exact even though $\Theta^l$ only approxi
   &\stackrel{\dagger}{=} \sum_{j=1}^{J} \left(q^x_{I+1/2,j} - q^x_{1/2,j}\right) \Delta y +  \sum_{i=1}^{I} \left(q^y_{i,J+1/2} - q^y_{i,1/2}\right) \Delta x +  \sum_{i,j} g_{ij}\,\Delta x \Delta y \notag \\
   &= \left[- \sum_{i=1}^{I}  q^y_{i,1/2} \Delta x + \sum_{j=1}^{J} q^x_{I+1/2,j} \Delta y + \sum_{i=1}^{I} q^y_{i,J+1/2} \Delta x - \sum_{j=1}^{J} q^x_{1/2,j} \Delta y \right]  +  \sum_{i,j} g_{ij}\,\Delta x \Delta y. \notag
 \end{align}
-Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from noticing that the inside sums collapse though cancellation.  The four sums in the last line, together inside square brackets, are sums over the sides of the rectangle $R$, here starting in the lower-left and traversing counterclockwise.
+Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from noticing that the inside sums collapse though cancellation.  The four sums inside square brackets in the last line are sums over consecutive sides of the rectangle $R$, starting in the lower-left and traversing counterclockwise.
 
-Compare \eqref{eq:abs:discreteconserve} to the continuum statement \eqref{eq:abs:continuumconserve}.
+Our statement \eqref{eq:abs:discreteconserve} of discrete conservation should now be compared  to the continuum statement \eqref{eq:abs:continuumconserve}.
 \end{enumerate}
 
 
@@ -1071,7 +1069,7 @@ Compare \eqref{eq:abs:discreteconserve} to the continuum statement \eqref{eq:abs
 
 Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
-We start by restating equation \eqref{eq:Wupdate} with the above simplifications:
+We start by restating equation \eqref{eq:Wupdate} with the above simplifications, also defining $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$:
 \begin{align*}
  W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
       &\qquad + \mu_x \left[D_e \left(W_{i+1,j}^l - \Wlij\right) - D_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
