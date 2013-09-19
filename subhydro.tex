@@ -217,38 +217,35 @@ There is extensive evidence that deformation of saturated till is well-modeled b
 \begin{equation}
 \tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
 \end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress and not in models for the horizontal transport of water or the evolution of subglacial cavities.
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{BBssasliding,Paterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress.  It does not affect the model for the horizontal transport of water or the evolution of subglacial cavities.
 
 Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
 \begin{equation}
 e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
 \end{equation}
-Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper come straight form a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
+Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper are from a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
 
-We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  Evidence for such spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.  It follows that the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value ($\Ntil \ge N_0$) then \eqref{eq:voidpressure} implies $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms we now see equivalent expressions
+We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  (Evidence for such spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.)  It follows that the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value ($\Ntil \ge N_0$) then \eqref{eq:voidpressure} implies $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms, the following are equivalent expressions:
 \begin{equation}
-e = \frac{V_w}{V_s} = \frac{\Wtil}{\eta_0} = e_0 \left(\frac{\Wtil}{\Wtilmax}\right)  \label{eq:voidexpressions}
+e = \frac{V_w}{V_s} = \frac{\Wtil}{\eta_0} = e_0 \left(\frac{\Wtil}{\Wtilmax}\right). \label{eq:voidexpressions}
 \end{equation}
-subject to the equivalent constraints
+The different quantities are subject to the equivalent constraints
 \begin{equation}
 \Ntil \ge N_0 \quad \text{or} \quad e\le e_0 \quad \text{or} \quad \Wtil \le \Wtilmax. \label{eq:Wtilupperbound}
 \end{equation}
 Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.\footnote{Setting $\Wtilmax=0$ ``turns off'' the till storage mechanism.}
 
-The thickness $\Wtil$ is a model state variable already appearing in mass conservation equation \eqref{eq:conserve}, but from \eqref{eq:voidexpressions} we see that equation \eqref{eq:voidpressure} can be written in terms of $\Wtil$ instead of $e$:
-%FIXME: explain why N_0 = \delta P_o
+The thickness $\Wtil$ is a model state variable already appearing in mass conservation equation \eqref{eq:conserve}.  We propose that the reference pressure scale as a proportion $\delta$ of the overburden pressure: $N_0 = \delta P_o$.  From \eqref{eq:voidexpressions} we see that equation \eqref{eq:voidpressure} can be written in terms of $\Wtil$ instead of $e$.  We require, however, that $\Ntil$ be at most equal to the overburden pressure:
 \begin{equation}
-\Ntil = \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:Wtilpressure}
+\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \label{eq:Wtilpressure}
 \end{equation}
-Compare equation (15) in \cite{vanderWeletal2013}.  Only the ratio $e_0/C_c$ appears in \eqref{eq:Wtilpressure}, and not $e_0$ or $C_c$ separately.
+Compare equation (15) in \cite{vanderWeletal2013}.
 
-It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the till yield stress $\tau_c$ can be determined from the water amount $\Wtil$:
-\begin{equation}
-\tau_c = c_0 + (\tan \varphi)\, \delta P_o\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \label{eq:taucfromWtil}
-\end{equation}
-This is our model for till strength.  Three of the parameters in this function, namely the cohesion $c_0$, the friction angle $\varphi$, and the till material ratio $e_0/C_c$, can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have, however, been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.  Our default value for the ratio $e_0/C_c$ has already been addressed:\footnote{The value $5.75$ for $e_0/C_c$ implies, from \eqref{eq:Wtilpressure}, an almost six orders of magnitude decrease in effective pressure $\Ntil$ between the no-water state $\Wtil=0$ and the full state $\Wtil=\Wtilmax$.  There is a corresponding decrease in the yield stress $\tau_c$ from \eqref{eq:taucfromWtil}.} $e_0/C_c=0.69/0.12=5.75$.  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.
+It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the till yield stress $\tau_c$ can be determined from the water amount $\Wtil$.  The Mohr-Coulomb relation \eqref{eq:mohrcoulomb} is, therefore, a function $\tau_c(\Wtil)$.  Two of the parameters in this function, namely the cohesion $c_0$ and the till material ratio $e_0/C_c$, can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.   Our default value for the ratio $e_0/C_c$ has already been addressed: $e_0/C_c=0.69/0.12=5.75$.  This value for $e_0/C_c$ would imply, if there were no upper bound $\Ntil \le P_o$ in equation \eqref{eq:Wtilpressure}, an almost six orders of magnitude decrease in effective pressure $\Ntil$ between the no-water state $\Wtil=0$ and the full state $\Wtil=\Wtilmax$, and a corresponding decrease in the yield stress $\tau_c$ for that range of $\Wtil$ values.
 
-Of course, actual ice sliding must be determined by solving a stress balance in which the vector basal shear stress $\mathbold{\tau}_b$ appears as a boundary condition \citep{SchoofCoulombBlatter} or term \citep{BBssasliding}.  For the plastic (Coulomb) case the yield stress $\tau_c$ of the till determines the basal shear stress by
+Regarding the friction angle $\varphi$, simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have, however, been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.
+
+Actual ice sliding velocity must be determined by solving a stress balance in which the vector basal shear stress $\mathbold{\tau}_b$ appears as a boundary condition \citep{SchoofCoulombBlatter} or term \citep{BBssasliding}.  For the plastic (Coulomb) case the yield stress $\tau_c$ of the till determines the basal shear stress by
 \begin{equation}
 \mathbold{\tau}_b = - \tau_c \frac{\mathbold{u}}{|\mathbold{u}|} \label{eq:plasticbasalstress}
 \end{equation}
@@ -392,15 +389,15 @@ Pressure equation \eqref{eq:regpressureequation} is also a kind of stress balanc
 
 \subsection*{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a two-dimensional subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model.  The new hydrology model must be parallelizable and it must exhibit convergence of solutions under grid refinement.  The remainder of the paper will demonstrate that we have succeeded in these goals.
 
-The major equations for the model are \eqref{eq:adeqn}, \eqref{eq:taucfromWtil}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}, collected here:
+The major equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}, collected and re-ordered here, with till effective pressure $\Ntil$ eliminated using equation \eqref{eq:Wtilpressure}:
 \begin{empheq}[box=\mybluebox]{align}
 \ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
 \frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
        & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}. \notag
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
 \end{empheq}
-The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these derived functions, already defined but collected here:
+The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
 \begin{align*}
 K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
 \bV  &= - K \grad\left(P + \rho_w g b\right), \\
