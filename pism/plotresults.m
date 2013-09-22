@@ -24,6 +24,6 @@ legend('average P error','maximum P error','Location','SouthEast')
 print -dpdf refinePpism.pdf
 
 format short g
-pW = polyfit(log(dx(2:end)),log(averrW(2:end)),1)
-pP = polyfit(log(dx(2:end)),log(averrP(2:end)),1)
+pW = polyfit(log(dx(2:end-1)),log(averrW(2:end-1)),1)
+pP = polyfit(log(dx(2:end-1)),log(averrP(2:end-1)),1)
 
