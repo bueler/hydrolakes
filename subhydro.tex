@@ -788,11 +788,13 @@ We can again be quantitative in a particular example.  Consider the same 250 m s
 \end{align*}
 This analysis suggests that the numerical scheme for pressure diffusion, given next, will usually have the shortest time step, but that its stable time step can be comparable to CFL.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  In actual computation it seems to be common that $\Delta t_P$ is $1$ to $50$ times shorter than $\Delta t_{\text{CFL}}$.  The CFL time step restriction $\Delta t_{\text{CFL}}$ essentially cannot be avoided by switching to implicit methods, while the time step restriction associated to $\Delta t_P$ can be avoided, though at the cost of solving variational inequalities at each time step \citep{Schoofetal2012,Hewitt2013}.  However, the time step restriction $\Delta t_P$ scales with the adjustable regularizing porosity $\phi_0$ so we can make it more or less severe.
 
-The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}, but it requires no advection approximation.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
+The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let
 	$$\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+, \qquad \mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$$
 be the gridded values of the cavitation-opening and creep-closure rates.  Also define the sum of all zero order (i.e.~without spatial derivatives) terms
-    $$Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.$$
-Using \eqref{eq:fluxdivgrid} for the flux divergence, the scheme for pressure equation \eqref{eq:regpressureequation} is
+\begin{equation}
+Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.  \label{eq:defnZ}
+\end{equation}
+Using \eqref{eq:fluxdivgrid} for the flux divergence, the scheme for pressure equation \eqref{eq:regpressureequation} is now
 \begin{equation}
 \frac{\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} = - \mathcal{D}_{i,j} + Z_{ij}.  \label{eq:Pfd}
 \end{equation}
@@ -800,15 +802,18 @@ Again it might be useful to restate \eqref{eq:Pfd} in explicit update form:
 \begin{equation}
 P_{i,j}^{l+1} = \Plij + \frac{\rho_w g\,\Delta t}{\phi_0} \left(- \mathcal{D}_{i,j} + Z_{ij}\right). \label{eq:Pfdupdate}
 \end{equation}
+Because equation \eqref{eq:defnZ} uses the updated value $(\Wtil)_{ij}^{l+1}$, equation \eqref{eq:tillupdatefd} must be applied before \eqref{eq:Pfdupdate} can be used to update $P$ to the new time $t_{l+1}$.
 
-There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we again set $P_{i,j}^{l+1}=(P_o)_{i,j}$. 
+There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we set $P_{i,j}^{l+1}=(P_o)_{i,j}$ if there is no basal sliding and $P_{i,j}^{l+1}=0$ if there is sliding.\footnote{For the last case (grounded ice and no water), the steady state balance of cavitation and creep determines $P=0$ if there is \emph{any} sliding; see equation \eqref{eq:PofWsteady}.}
 
-\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution in a ``recipe'' which will be useful to implementers.  We treat the ice and bedrock geometry, and the ice sliding speed, as fixed so that $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are denoted as time-independent.  The ice geometry may be quite general, however, with ice-free land and floating ice allowed at each location $(x_i,y_j)$.  Thus the ice geometry determines boolean ``masks'' for grid cell state based on a sea level of elevation zero:
+\subsection*{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution in a ``recipe.''  We treat the ice and bedrock geometry, and the ice sliding speed, as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
+
+The ice geometry may be quite general, however, with ice-free land or floating ice allowed at any location $(x_i,y_j)$.  The ice geometry determines boolean ``masks'' for grid cell state based on a sea level of elevation zero:
 \begin{align*}
 \text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
 \text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
 \end{align*}
-Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean, where we take $P=P_o$.  The subglacial layer we are attempting to model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} masks are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
+Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean.  The subglacial layer we are attempting to model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} masks are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
 
 One time step follows this algorithm:
 
@@ -816,14 +821,14 @@ One time step follows this algorithm:
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
+\item Get $(\Wtil)_{i,j}^{l+1}$ by implicit step \eqref{eq:tillupdatefd}.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}, staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}, velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}, and staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
 \item Get approximations $\mathcal{D}_{i,j}$ of the flux divergence from \eqref{eq:fluxdivgrid}.  For each direction (i.e.~$x$- and $y$-directions), do not compute the divided-difference contribution to the flux divergence in \eqref{eq:fluxdivgrid} if either neighbor is \texttt{icefree} or \texttt{float}.
 \item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
-\item Get $(\Wtil)_{i,j}^{l+1}$ by implicit step \eqref{eq:tillupdatefd}.
-\item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$ and $(\Wtil)_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wupdate} to compute values for $W_{i,j}^{l+1}$.
+\item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wupdate} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$.
 \item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
 \end{enumerate}
@@ -831,7 +836,7 @@ One time step follows this algorithm:
 \medskip
 This recipe goes with a reporting scheme for mass conservation.  Note that in step \emph{(ix)} water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
 
-\subsection*{Verification of the coupled model}  By using the coupled steady-state nearly-exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep[for example]{Wesseling}.
+\subsection*{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep[for example]{Wesseling}.
 
 Our exact solution is for the steady-state.  Therefore we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The true continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, but we can measure the drift (error evolving over time) of the numerical approximation to \eqref{eq:bluebox}, that is, by the scheme which is the ``recipe'' above.  The magnitude of the error depends on the spatial grid size and the rate of convergence under grid refinement is determined by our spatial discretizations.
 
@@ -843,9 +848,9 @@ For the verification runs we use the values in Table \ref{tab:verifconstants}.  
 \label{fig:refineWPpism}
 \end{figure}
 
-Because they give evidence for numerical convergence, these results suggest that our numerical solution method for these coupled advection-diffusion (for $W$) and diffusion-reaction (for $P$) equations are being solved correctly.  The rate of convergence is not very good, however.  The location of the large errors is entirely in the neighborhood of the ice margin $r=L$ (not shown).  The method for handling boundary conditions is critical to determining the magnitude of the error and its rate of decay.  Further research is needed to decide how to handle this boundary in a more-nearly optimal manner.
+Because they give evidence for numerical convergence, these results suggest that our numerical solution method for these coupled advection-diffusion (for $W$) and diffusion-reaction (for $P$) equations are being solved correctly.  The rate of convergence is not very good, however.  The location of the large errors is entirely in the neighborhood of the ice margin $r=L$ (not shown).  The method for handling boundary conditions is therefore critical to reducing the magnitude of the error and increasing its rate of decay.  Further research is needed to decide how to handle this boundary in a more-nearly optimal manner.
 
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Our problem is a combined advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, and thus it is difficult to separate the errors arising from the numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be compatible with the continuum model (i.e.~desirable) diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement, it requires fewer floating point operations, and it requires less communication in a parallel implementation.
+The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from the numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be masked by the continuum model (i.e.~desirable) diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement, requires fewer floating point operations, and requires less communication in a parallel implementation.
 
 
 
