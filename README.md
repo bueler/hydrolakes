@@ -5,7 +5,7 @@ This project is about constructing good subglacial hydrology models under ice sh
 
 To build the PDF `subhydro.pdf`, which requires LaTeX, do
 
-    $ ln -s ~/pism/doc/ice_bib.bib   # see github.com/pism/pism
+    $ ln -s ~/pism/doc/ice-bib.bib   # see github.com/pism/pism
     $ make
 
 The current model evolved from a series of more or less flawed, but mostly serious, attempts to improve the hydrology in PISM.  An old version is in `phoenix/` in this repo.  A simpler model suitable for locating subglacial lakes is documented primarily in the `bueler-igs2012/` subdirectory in this repo; in PISM it is the `-hydrology routing` option and the `PISMRoutingHydrology` class.  A more recent and more complete, but now out-of-date version, is in `dampnotes/` in this repo.  For the history of our attempts to build a better model see `dampnotes/README.md`.  Until July 2013 the latest version was `subenhydro.tex` but then the englacial part was removed.
