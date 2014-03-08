@@ -4,9 +4,9 @@ TEXFILE	= subhydro.tex
 
 all: $(TEXFILE:.tex=.pdf)
 
-# link ice_bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
+# link ice-bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
 
-%.pdf: %.tex ice_bib.bib
+%.pdf: %.tex ice-bib.bib
 	pdflatex $<
 	bibtex $(<:.tex=.aux)
 	pdflatex $<
