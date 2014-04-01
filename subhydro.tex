@@ -10,6 +10,7 @@
 \usepackage[sc]{mathpazo}
 \usepackage[T1]{fontenc}
 
+
 % check if we are compiling under latex or pdflatex
 \ifx\pdftexversion\undefined
   \usepackage[final,dvips]{graphicx}
@@ -1191,13 +1192,8 @@ This appendix documents PISM code, configuration parameters, and runtime options
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
 \end{align}
 Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, as defined in the main text:
-\begin{align*}
-K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
-\bV  &= - K \grad\left(P + \rho_w g b\right), \\
-D    &= \rho_w g K W, \\
-\psi &= P + \rho_w g (b + W), \\
-P_o  &= \rho_i g H.
-\end{align*}
+   $$K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
+The implementation of this model is in a derived class of \verb|PISMRoutingHydrology| which is called \verb|PISMDistributedHydrology|.  An exception is that the $\tau_c$ equation is computed by the method.cc \verb|PISMMohrCoulombYieldStress::update()|.
 
 \subsection*{Model ``\texttt{routing}''}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
 \begin{align}
@@ -1206,26 +1202,52 @@ P_o  &= \rho_i g H.
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
 \end{align}
 along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definitions:
-\begin{align*}
-K    &= k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \\
-\bV  &= - K \grad\left(P_o + \rho_w g b\right), \\
-D    &= \rho_w g K W, \\
-\psi &= P_o + \rho_w g (b + W), \\
-P_o  &= \rho_i g H.
-\end{align*}
+   $$K = k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P_o + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
+The implementation of this model is in \verb|PISMRoutingHydrology|, except for the $\tau_c$ equation (as above).
 
-
-\subsection*{Model ``\texttt{null}''}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value.  Only the determination of basal yield stress is unchanged.  We get
+\subsection*{Model ``\texttt{null}''}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
 \begin{align}
 \ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
 \end{align}
-along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition:
-\begin{align*}
-P_o  &= \rho_i g H.
-\end{align*}
+along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition of overburden pressure:
+  $$P_o = \rho_i g H.$$
+The implementation of this model is in \verb|PISMNullTransportHydrology|, except for the $\tau_c$ equation (as above).
 
-\subsection*{Correspondence with PISM configuration variables}  FIXME:  I will put a table here
+\subsection*{Correspondence with PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
 
+\begin{table}[ht]
+  \centering
+ \begin{tabular}{llcc}
+    \\
+    \textbf{PISM configuration name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}}
+    \\ \hline
+    \verb|fresh_water_density| & $\rho_w$ & $\times$ & $\times$ \\
+    \verb|hydrology_cavitation_opening_coefficient| & $c_1$ \\
+    \verb|hydrology_creep_closure_coefficient| & $c_2$ \\
+    \verb|hydrology_gradient_power_in_flux| &  $\beta$ & $\times$ & \\
+    \verb|hydrology_hydraulic_conductivity| & $k$ & $\times$ & \\
+    \verb|hydrology_regularizing_porosity| & $\phi_0$ \\
+    \verb|hydrology_roughness_scale| & $W_r$ \\
+    \verb|hydrology_thickness_power_in_flux| &  $\alpha$ & $\times$ & \\
+    \verb|hydrology_tillwat_max| & $\Wtilmax$ & $\times$ & $\times$ \\
+    \verb|hydrology_tillwat_rate| & $\mu$ & $\times$ & \\
+    \verb|hydrology_tillwat_transfer_proportion| & $\omega$ & $\times$ & \\
+    \verb|ice_density| & $\rho_i$ & $\times$ & $\times$ \\
+    \verb|ice_softness| & $A$ \\
+    \verb|standard_gravity| & $g$ & $\times$ & $\times$ \\
+    \verb|till_c_0| & $c_0$ & $\times$ & $\times$ \\
+    \verb|till_compressibility_coefficient| & $C_c$ & $\times$ & $\times$ \\
+    \verb|till_effective_fraction_overburden| & $\delta$ & $\times$ & $\times$ \\
+    \verb|till_reference_void_ratio| & $e_0$ & $\times$ & $\times$ \\
+    \hline
+  \end{tabular}
+
+\medskip
+\caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by configuration parameter name.  All of these are used in \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models (last columns).}
+\label{tab:correspondence}
+\end{table}
+
+These parameters can be changed at runtime by using the parameter name as an option,\footnote{At least, in most cases.  Please report when this gives an ``unused options'' error.} or by modifying \verb|src/pism_config.cdl| and recompiling PISM, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The units of these parameters are listed in \verb|_doc| strings in \verb|src/pism_config.cdl|.
 
 \end{document}
