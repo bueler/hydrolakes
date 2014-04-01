@@ -1177,17 +1177,20 @@ The above discussion was limited to the spatial (semi-)discretization.  A time d
 \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
 
-\section{Distributed vs routing}
+\newpage
+\section{Distributed versus routing} \label{app:pismdoc}
 
-PISM's ``distributed'' model is governed by the following equations:
-\begin{empheq}[box=\mybluebox]{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
+This appendix documents PISM code, configuration parameters, and runtime options.  It is not necessary to include this appendix in submitted papers, and it should probably be integrated into regular PISM documentation at some point.  Thus this may be its temporary location.
+
+\subsection*{Model ``\texttt{distributed}''}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
+\begin{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
 \frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
        & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
-\end{empheq}
-The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
+\end{align}
+Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, as defined in the main text:
 \begin{align*}
 K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
 \bV  &= - K \grad\left(P + \rho_w g b\right), \\
@@ -1196,23 +1199,33 @@ D    &= \rho_w g K W, \\
 P_o  &= \rho_i g H.
 \end{align*}
 
-while for ``routing'', Eq~{\sf{FIXME}} have been dropped, leading to:
-
-\begin{empheq}[box=\mybluebox]{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
+\subsection*{Model ``\texttt{routing}''}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
+\begin{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
-       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
-\end{empheq}
-The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+\end{align}
+along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definitions:
 \begin{align*}
-K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
-\bV  &= - K \grad\left(P + \rho_w g b\right), \\
+K    &= k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \\
+\bV  &= - K \grad\left(P_o + \rho_w g b\right), \\
 D    &= \rho_w g K W, \\
-\psi &= P + \rho_w g (b + W), \\
+\psi &= P_o + \rho_w g (b + W), \\
 P_o  &= \rho_i g H.
 \end{align*}
+
+
+\subsection*{Model ``\texttt{null}''}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value.  Only the determination of basal yield stress is unchanged.  We get
+\begin{align}
+\ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+\end{align}
+along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition:
+\begin{align*}
+P_o  &= \rho_i g H.
+\end{align*}
+
+\subsection*{Correspondence with PISM configuration variables}  FIXME:  I will put a table here
 
 
 \end{document}
