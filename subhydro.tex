@@ -1177,4 +1177,42 @@ The above discussion was limited to the spatial (semi-)discretization.  A time d
 \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
 
+\section{Distributed vs routing}
+
+PISM's ``distributed'' model is governed by the following equations:
+\begin{empheq}[box=\mybluebox]{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
+\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
+       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+\end{empheq}
+The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
+\begin{align*}
+K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
+\bV  &= - K \grad\left(P + \rho_w g b\right), \\
+D    &= \rho_w g K W, \\
+\psi &= P + \rho_w g (b + W), \\
+P_o  &= \rho_i g H.
+\end{align*}
+
+while for ``routing'', Eq~{\sf{FIXME}} have been dropped, leading to:
+
+\begin{empheq}[box=\mybluebox]{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
+\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
+       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+\end{empheq}
+The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
+\begin{align*}
+K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
+\bV  &= - K \grad\left(P + \rho_w g b\right), \\
+D    &= \rho_w g K W, \\
+\psi &= P + \rho_w g (b + W), \\
+P_o  &= \rho_i g H.
+\end{align*}
+
+
 \end{document}
