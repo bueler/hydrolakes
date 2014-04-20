@@ -6,7 +6,7 @@
 % two-column layout
 \documentclass[gmd]{copernicus}
 
-\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color,empheq}
+\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color}
 \usepackage[T1]{fontenc}
 
 
@@ -428,37 +428,36 @@ Pressure equation \eqref{eq:regpressureequation} is also a kind of stress balanc
 \subsection{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a two-dimensional subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model.  The new hydrology model must be parallelizable and it must exhibit convergence of solutions under grid refinement.  The remainder of the paper will demonstrate that we have succeeded in these goals.
 
 The major equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}, collected and re-ordered here, with till effective pressure $\Ntil$ eliminated using equation \eqref{eq:Wtilpressure}:
-\begin{empheq}[box=\mybluebox]{align}
+\begin{align}
 \ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
 \frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
        & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
-\end{empheq}
+\end{align}
 The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
 \begin{align*}
-K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \\
-\bV  &= - K \grad\left(P + \rho_w g b\right), \\
-D    &= \rho_w g K W, \\
-\psi &= P + \rho_w g (b + W), \\
-P_o  &= \rho_i g H.
+K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2} && \text{effective conductivity} \\
+\bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of water $W$} \\
+D    &= \rho_w g K W && \text{diffusivity of water $W$} \\
+\psi &= P + \rho_w g (b + W) && \text{hydraulic potential} \\
+P_o  &= \rho_i g H && \text{overburden pressure}.
 \end{align*}
-As will be described in section \ref{sec:num}, we have implemented an explicit/implicit adaptive time-stepping numerical scheme for equations \eqref{eq:bluebox} in the Parallel Ice Sheet Model.
-
+As will be described in section \ref{sec:num}, we have implemented an explicit/implicit adaptive time-stepping numerical scheme for equations \eqref{eq:bluebox} in PISM.
 
 \begin{table*}[ht]
-\caption{Functions used in hydrology model \eqref{eq:bluebox}, including symbol, units, and meaning.}
+\caption{Functions used in subglacial hydrology model \eqref{eq:bluebox}, including symbol, units, and meaning.}
 \begin{tabular}{l|l}
 \hline
 \emph{state functions} & \begin{tabular}{lll}
-        $W$ & m \phantom{llllllllllll\,} & transportable subglacial water layer thickness \\
+        $W$ & m \phantom{llllllllllll\,} & effective thickness of transportable water \\
         $\Wtil$ & m & effective thickness of water stored in till \\
         $P$ & Pa & pressure of transportable water \\
         \end{tabular} \\ \hline
 \emph{data functions} &  \begin{tabular}{lll}
         $b$ & m & bedrock elevation \\
         $H$ & m & ice thickness \\
-        $m$ & $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ & total melt water input; $=m_{\text{wall}}+m_{\text{drain}}$ \\
+        $m$ & $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ & total melt water input into subglacier \\
         $|\bv_b|$ & $\text{m}\,\text{s}^{-1}$ & ice sliding speed \\
         \end{tabular} \\ \hline
 \emph{output} &  \begin{tabular}{lll}
@@ -481,7 +480,7 @@ As will be described in section \ref{sec:num}, we have implemented an explicit/i
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient \citep{Schoofetal2012} \\
     $c_2$ & $0.04$ & & creep closure coefficient \\
     $C_c$ & 0.12 &  & till compressibility \citep{Tulaczyketal2000} \\
-    $\delta$ & 0.01 &  & fraction of overburden pressure \\
+    $\delta$ & 0.02 &  & fraction of overburden pressure \\
     $e_0$ & 0.69 &  & void ratio at $N=N_0$ \citep{Tulaczyketal2000} \\
     $\phi_0$ & $0.01$ & & regularizing englacial porosity \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
@@ -507,25 +506,25 @@ The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- a
 \renewcommand{\labelenumi}{\textbf{(\roman{enumi})}}
 \begin{enumerate}
 \item The zero till storage ($\Wtilmax=0$) and zero englacial porosity ($\phi=0$) case of \eqref{eq:bluebox} is the model described by \cite{Schoofetal2012}, recalling that $\bq = - K W \grad \psi$,
-\begin{empheq}[box=\mybluebox]{align}
+\begin{align}
 \phantom{dsaf} \frac{\partial W}{\partial t} &= - \Div\left( K W \grad \psi \right) + \frac{m}{\rho_w}, \label{eq:schoofsmodel} \\
 0 &= \Div \left( K W \grad \psi \right) + \frac{m}{\rho_w} + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+.\phantom{dsaf}  \notag
-\end{empheq}
+\end{align}
 The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, with a small porosity parameter $\phi_0$, and with coupling to additional till storage.
 
 \item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Livingstoneetal2013TCD,Siegertetal2009}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.  The pressure is not an unknown, the parameterization of cavity evolution is inactive, and the pressure evolution equation is not needed.  There is now less stiffness because the model is an advection using a mostly-geometrically-determined velocity.    The single evolution equation is
-\begin{empheq}[box=\mybluebox]{align}
+\begin{align}
 \phantom{ldsfj} \frac{\partial W}{\partial t} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \phantom{ldsfj} \label{eq:lakesmodel}
-\end{empheq}
+\end{align}
 along with the bound $W \ge 0$ and additional definitions $\psi = P_o + \rho_w g (b + W)$, $K = k W^{\alpha-1} \left|\grad \psi\right|^{\beta-2}$, $\bV = - K \grad \left(P_o + \rho_w g b\right)$, and $D = \rho_w g K W$.  As noted in section \ref{sec:closures}, the $\alpha=1$ and $\beta=2$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Because of the way we have including $W$ into the hydraulic potential, so that large $W$ implies some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions and it therefore represents a modest improvement to these ``routing'' models.
 
 \item Again setting till storage to zero ($\Wtilmax=0$), the non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the porous glacier model of \cite{Bartholomausetal2011}.  The correspondence is further explained in Appendix \ref{app:barth}, with an emphasis on the pressure equation which applies in that lumped model.
 
 \item If the lateral transport model is absent then exchange equation \eqref{eq:tilldynamics} is not needed.  Now water input $m$ goes directly into till storage.  The undrained plastic bed (UPB) of \cite{Tulaczyketal2000b} is such a model; it arises as the $W=0,\bq=0,\phi=0,c_1=0,c_2=0$ reduction of \eqref{eq:bluebox} in which a constant reference effective pressure $N_0$ is used (instead of one that scales with overburden, e.g.~as ``$N_0=\delta P_o$'' in this paper):
-\begin{empheq}[box=\mybluebox]{align}
+\begin{align}
 \phantom{foo} \ddt{\Wtil} &= \frac{m}{\rho_w}, \label{eq:upbbox} \\
 \tau_c &= c_0 + (\tan \varphi)\, N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}, \phantom{mm} \notag
-\end{empheq}
+\end{align}
 UPB depends on friction-heating feedback to keep $\Wtil$ bounded, which does not work in a membrane-stress-including theory, in which friction heating is a non-local effect of local changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water that would raise $\Wtil$ above the bound; this is a minimal ``drained'' version of the UPB model.  The model implemented in PISM has additional diffusion and a linearization of the second of the above equations (so that $\tau_c$ is a linear function of $\Wtil$) \citep{BBssasliding}.  The current paper seeks to improve PISM by implemention of a model which has transport and is mass-conservative.
 \end{enumerate}
 
