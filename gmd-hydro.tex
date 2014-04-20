@@ -937,12 +937,18 @@ FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 FIXME:  MOST IMPORTANT?:  IMPLEMENTED COMMON EXTENSION OF MAJOR MODELS
 
 
+\begin{acknowledgements}
+TEXT
+\end{acknowledgements}
 
+
+\bibliography{ice-bib}  % generally requires link to pism/doc/ice_bib.bib
+\bibliographystyle{copernicus}
 
 
 \appendix
 
-\section{\\ \\ \hspace*{-7mm} Relation to the Bartholomaus et al.~(2011) model}  \label{app:barth}
+\section{Relation to the Bartholomaus et al.~(2011) model}  \label{app:barth}
 
 The model in \cite{Bartholomausetal2011} describes the evolution of the hydrology of the Kennicott glacier in Alaska.  It is a significantly different model from the distributed one of \cite{Schoofetal2012}, which we compare to in the main text, but similarities exist.  Both models describe the evolution of linked-cavity systems, and both include physical cavity opening and closing processes.  On the other hand the \cite{Schoofetal2012} theory is distributed and entirely subglacial while the \cite{Bartholomausetal2011} is ``lumped'' (i.e.~the entire glacier is represented by one cell) and is both subglacial and englacial.
 
@@ -1009,7 +1015,7 @@ This equation, which is just like equation \eqref{eq:PofWsteady} in the main tex
 Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we get \eqref{eq:regpressureequation}.  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the \cite{Bartholomausetal2011} model is the model in \cite{Schoofetal2012}.  The main text of the current paper simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} model and an englacial-storage-regularized extension of the \cite{Schoofetal2012} model.
 
 
-\section{\\ \\ \hspace*{-7mm} An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
+\section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
 
 The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
 
@@ -1093,7 +1099,7 @@ Our statement \eqref{eq:abs:discreteconserve} of discrete conservation should no
 \end{enumerate}
 
 
-\section{\\ \\ \hspace*{-7mm} Positivity and stability of the mass conservation scheme} \label{app:positivestable}
+\section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
 
 Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
@@ -1125,7 +1131,7 @@ If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $
 Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
 
-\section{\\ \\ \hspace*{-7mm} Flux-limiter methods} \label{app:fluxlimiters}
+\section{Flux-limiter methods} \label{app:fluxlimiters}
 
 Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
@@ -1204,13 +1210,11 @@ The above discussion was limited to the spatial (semi-)discretization.  A time d
 \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
 
-%\section{\\ \\ \hspace*{-7mm} Distributed vs routing} \label{app:pismdoc}
-
-%% TOO MANY APPENDIXES
+\section*{Appendix FIXME: Documentation of PISM options for hydrology models} \label{app:pismdoc}
 
 This appendix documents PISM code, configuration parameters, and runtime options.  It is not necessary to include this appendix in submitted papers, and it should probably be integrated into regular PISM documentation at some point.  Thus this may be its temporary location.
 
-\subsection{Model distributed}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
+\subsection*{Model \texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
 \begin{align}
 \ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
@@ -1222,7 +1226,7 @@ Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, 
    $$K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
 The implementation of this model is in a derived class of \verb|PISMRoutingHydrology| which is called \verb|PISMDistributedHydrology|.  An exception is that the $\tau_c$ equation is computed by the method.cc \verb|PISMMohrCoulombYieldStress::update()|.
 
-\subsection{Model routing}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
+\subsection*{Model routing}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
 \begin{align}
 \ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
 \frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
@@ -1232,7 +1236,7 @@ along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definiti
    $$K = k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P_o + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
 The implementation of this model is in \verb|PISMRoutingHydrology|, except for the $\tau_c$ equation (as above).
 
-\subsection{Model null}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
+\subsection*{Model null}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
 \begin{align}
 \ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
 \tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
@@ -1241,9 +1245,8 @@ along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition of overburd
   $$P_o = \rho_i g H.$$
 The implementation of this model is in \verb|PISMNullTransportHydrology|, except for the $\tau_c$ equation (as above).
 
-\subsection{Correspondence with PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
+\subsection*{Correspondence with PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
 
-%t
 \begin{table*}[t]
   \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by configuration parameter name.  All of these are used in \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models (last columns).} \vskip4mm \centering
   \begin{tabular}{llcc} \tophline
@@ -1274,12 +1277,5 @@ The implementation of this model is in \verb|PISMNullTransportHydrology|, except
 
 
 These parameters can be changed at runtime by using the parameter name as an option,\footnote{At least, in most cases.  Please report when this gives an ``unused options'' error.} or by modifying \verb|src/pism_config.cdl| and recompiling PISM, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The units of these parameters are listed in \verb|_doc| strings in \verb|src/pism_config.cdl|.
-
-\begin{acknowledgements}
-TEXT
-\end{acknowledgements}
-
-\bibliography{ice-bib}  % generally requires link to pism/doc/ice_bib.bib
-\bibliographystyle{agu}
 
 \end{document}

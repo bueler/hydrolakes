@@ -1,6 +1,6 @@
 # Generic make file for LaTeX: requires GNU make
 
-TEXFILE	= subhydro.tex
+TEXFILE	= gmd-hydro.tex
 
 all: $(TEXFILE:.tex=.pdf)
 
