@@ -27,6 +27,6 @@ The model has an understandable relationship to several other models:
 
 But the model lacks conduits.
 
-The current model evolved from a series of more or less flawed, but mostly serious, attempts to improve the hydrology in PISM.  An old version is in `phoenix/` in this repo.  A simpler model suitable for locating subglacial lakes is documented primarily in the `bueler-igs2012/` subdirectory in this repo; in PISM it is the `-hydrology routing` option and the `PISMRoutingHydrology` class.  A more recent and more complete, but now out-of-date version, is in `dampnotes/` in this repo.  For the history of our attempts to build a better model see `dampnotes/README.md`.  Until July 2013 the latest version was `subenhydro.tex` but then the englacial part was removed.
+The current model evolved from a series of more or less flawed, but mostly serious, attempts to improve the hydrology in PISM.  An old version is in `phoenix/` in this repo.  The simpler `-hydrology routing` model is observed to be suitable for locating subglacial lakes in the `bueler-igs2012/` subdirectory in this repo.  Another out-of-date version is in `dampnotes/` in this repo; for some of the history of our attempts to build a better model see `dampnotes/README.md`.  Until July 2013 the latest version was `subenhydro.tex`, and that was the model used in the last chapter of Ward's thesis, but then the englacial part was removed, the name because `subhydro.tex`, and then Andy changed it to `gmd-hydro.tex` in an attempt to get things going toward submission to GMD.
 
 
