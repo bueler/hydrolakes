@@ -381,7 +381,7 @@ Equation \eqref{eq:elliptic}, a variant of which we will use to determine $P$ (s
 
 \subsection{Englacial porosity as a closure regularization}  We agree that \eqref{eq:elliptic} is an inadequate model but we propose an improved model which has a different physical basis.  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Bartholomausetal2008,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep[among others]{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to (is determined by and is a linear function of; see below) the subglacial pressure.  Thus, in this hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table'' in the englacial system.  The condition $P\lesssim P_o$ is ``enforced'' on temperate glaciers by the property that water pressure significantly exceeding overburden would cause water to emerge onto the surface of the glacier and stop further increases in pressure.
 
-Appendix \ref{app:barth} shows that an extension of the lumped englacial/subglacial model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptic}, but with the crucial difference that the equation is \emph{parabolic} for the pressure and not \emph{elliptic}.  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, we use this parabolic equation in our model with constant notional englacial porosity $\phi=\phi_0$:
+\cite{Bueler2014correspondence} shows that an extension of the lumped englacial/subglacial model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptic}, but with the crucial difference that the equation is \emph{parabolic} for the pressure and not \emph{elliptic}.  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, we use this parabolic equation in our model with constant notional englacial porosity $\phi=\phi_0$:
 \begin{align}
 \frac{\phi_0}{\rho_w g} \ddt{P} &= - \Div \bq + \frac{m}{\rho_w} + \mathcal{C}(N,W)  \label{eq:regpressureequation} \\
   &\qquad\qquad - \mathcal{O}(|\bv_b|,W) - \ddt{\Wtil}. \notag
@@ -495,7 +495,7 @@ The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:blueb
 \end{equation}
 along with the bound $W \ge 0$ and additional definitions $\psi = P_o + \rho_w g (b + W)$, $K = k W^{\alpha-1} \left|\grad \psi\right|^{\beta-2}$, $\bV = - K \grad \left(P_o + \rho_w g b\right)$, and $D = \rho_w g K W$.  As noted in section \ref{sec:closures}, the $\alpha=1$ and $\beta=2$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Because of the way we have including $W$ into the hydraulic potential, so that large $W$ implies some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions and it therefore represents a modest improvement to these ``routing'' models.
 
-\item Again setting till storage to zero ($\Wtilmax=0$), the non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the porous glacier model of \cite{Bartholomausetal2011}.  The correspondence is further explained in Appendix \ref{app:barth}, with an emphasis on the pressure equation which applies in that lumped model.
+\item Again setting till storage to zero ($\Wtilmax=0$), the non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the porous glacier model of \cite{Bartholomausetal2011}.  The correspondence is further explained in \cite{Bueler2014correspondence}, with an emphasis on the pressure equation which applies in that lumped model.
 
 \item If the lateral transport model is absent then exchange equation \eqref{eq:tilldynamics} is not needed.  Now water input $m$ goes directly into till storage.  The undrained plastic bed (UPB) of \cite{Tulaczyketal2000b} is such a model; it arises as the $W=0,\bq=0,\phi=0,c_1=0,c_2=0$ reduction of \eqref{eq:bluebox} in which a constant reference effective pressure $N_0$ is used (instead of one that scales with overburden, e.g.~as ``$N_0=\delta P_o$'' in this paper):
 \begin{align}
@@ -970,88 +970,15 @@ TEXT
 \end{acknowledgements}
 
 
-\bibliography{ice-bib}  % generally requires link to pism/doc/ice_bib.bib
+\bibliography{ice-bib}  % generally requires link to pism/doc/ice-bib.bib
 \bibliographystyle{copernicus}
 
 
 \appendix
 
-\section{Relation to the Bartholomaus et al.~(2011) model}  \label{app:barth}
+\section{The transport-plus-storage problem} \label{app:transportstorage}
 
-The model in \cite{Bartholomausetal2011} describes the evolution of the hydrology of the Kennicott glacier in Alaska.  It is a significantly different model from the distributed one of \cite{Schoofetal2012}, which we compare to in the main text, but similarities exist.  Both models describe the evolution of linked-cavity systems, and both include physical cavity opening and closing processes.  On the other hand the \cite{Schoofetal2012} theory is distributed and entirely subglacial while the \cite{Bartholomausetal2011} is ``lumped'' (i.e.~the entire glacier is represented by one cell) and is both subglacial and englacial.
-
-In this Appendix we restate the published equations of the \cite{Bartholomausetal2011} model and then we derive a pressure evolution equation which applies in that model.  The form of this pressure equation is suggested by equation (12) in \cite{Bartholomausetal2011}, but its complete form is not stated.  By extending it to the distributed case, this pressure equation can be recognized as a diffusive (parabolic) version of the elliptic pressure equation in \cite{Schoofetal2012}.  This is one method for deriving our pressure equation \eqref{eq:regpressureequation} in the main text.
-
-We start by describing the variables and equations of the \cite{Bartholomausetal2011} model.  The total volume of liquid water stored in the glacier is $S(t)$.  This is split into englacial $S_{en}(t)$ and subglacial $S_{sub}(t)$ portions.  The cavities have geometry partially-determined by bedrock bumps which have cartesian spacing $\lambda_x,\lambda_y$, height $h$, and width $w_c$.  These combine to give a dimensionless capacity parameter $f=(h w_c)/(\lambda_x \lambda_y)$; the value $f=0.05$ is used for the Kennicott glacier application.  Each cavity has cross-sectional area $A_c(t)$ and volume $w_c A_c$.  The glacier occupies a rectangle of dimensions $L\times W$ in the map-plane so that the number of cavities is $\nu = (LW)/(\lambda_x\lambda_y)$.  It follows that the subglacial storage volume is $S_{sub} = (w_c A_c) \nu = (f L W/h) A_c$.
-
-Englacial water is assumed to fill crevasses and moulins up to a level $z_w(t)$ above the bedrock, in a system which has macroporosity $\phi$ (dimensionless).  Thus the englacial storage is $S_{en}=L W \phi z_w$.  In summary, the \cite{Bartholomausetal2011} model uses this essentially-kinematical equation:
-\begin{equation}
-S = S_{en} + S_{sub},  \label{eq:barth:kinematics}
-\end{equation}
-along with proportionality between $S_{en}$ and $z_w$, $S_{sub}$ and $A_c$, respectively.
- 
-Mass conservation in the model is the simple statement  \citep{Bartholomausetal2008}
-\begin{equation}
-\frac{dS}{dt} = Q_{in}(t) - Q_{out}(t). \label{eq:barth:massconserve}
-\end{equation}
-In the Kennicott glacier application, fluxes $Q_{in}$ and $Q_{out}$ are given by observations.
-
-Let $P_o=\rho_i g H$ denote the overburden pressure, $P(t)$ the water pressure, and $N(t)=P_o-P(t)$ the effective pressure applied by the glacier to its bed.  Knowledge of the water pressure $P$ is equivalent to knowledge of the amount of englacial storage because there is an assumed efficient connection of the macroporous glacier to the subglacial system, namely the equation $S_{en}=L W \phi \zen$.  Englacial water therefore applies the hydrostatic pressure to the subglacier, and thus also
-\begin{equation}
-P = \rho_w g z_w.  \label{eq:barth:englacialpressure}
-\end{equation}
-
-In the \cite{Bartholomausetal2011} model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  A wall melt parameterization is also given but, in keeping with the cavity evolution in the rest of the current paper, we simply denote it as a melt term $\dot m$.  Denote the sliding speed by $u_b$ and let $C_c = (2 A)/n^n$, where $A$ and $n$ are parameters in the (Glen) ice flow law \citep{CuffeyPaterson}.  Then the cavity area evolution equation (4) in \cite{Bartholomausetal2011} is
-\begin{equation}
-\frac{dA_c}{dt} = \dot m + u_b h - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
-\end{equation}
-The three terms on the right are opening by cavitation, melt, and closure by creep, respectively.
-
-Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure, though this may not have been recognized by \cite{Bartholomausetal2011}.  From \eqref{eq:barth:kinematics} and \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
-\begin{equation}
-\frac{dP}{dt} = \rho_w g \frac{dz_w}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}. \label{eq:barth:dPdt}
-\end{equation}
-By combining \eqref{eq:barth:dPdt} with  the time-derivative of \eqref{eq:barth:kinematics}, and using \eqref{eq:barth:massconserve} and the proportionality between $S_{sub}$ and $A_c$, we can rewrite in terms of fluxes and cavity area:
-\begin{align}
-\frac{dP}{dt} &= \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) \\
-&= \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \frac{d A_c}{dt}\right). \notag
-\end{align}
-Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c/dt$:
-\begin{align}
-&\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \bigg(Q_{in} - Q_{out} \label{eq:barth:fullpressure} \\
-&\qquad \qquad \qquad - \frac{f L }{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg) \notag
-\end{align}
-
-We observe that, though it is not stated there, \eqref{eq:barth:fullpressure} follows from the equations in \cite{Bartholomausetal2011}.  Equation \eqref{eq:barth:fullpressure} also suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
-\begin{align}
-&\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \bigg(- \frac{Q_{out} - Q_{in}}{\Delta x} \\
-&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
-\end{align}
-The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$.  Thus a distributed flowline form of the \cite{Bartholomausetal2011} theory is the partial differential equation
-\begin{align}
-&\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \bigg(- \frac{\partial Q}{\partial x}   \label{eq:barth:distpressure} \\
-&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
-\end{align}
-Equation \eqref{eq:barth:distpressure} is, for all practical purposes, the same as equation \eqref{eq:regpressureequation} in the main text.
-
-A distributed extension of the \cite{Bartholomausetal2011} theory is not, however, viable without a Darcy or other flux expression for $Q$.  One must also use a distributed mass conservation equation like \eqref{eq:conserve}.  By contrast, a flux expression, Darcy or otherwise, was not needed in the Kennicott glacier case because the lumped input and output from the hydrological system were available as data.
-
-An implication of the \cite{Bartholomausetal2011} model, again not stated there, regards the pressure in steady state.  Steady state in equation \eqref{eq:barth:cavityevolution} gives
-\begin{equation*}
-0 = \dot m + u_b h - C_c A_c (P_o-P)^n.
-\end{equation*}
-This is a relationship between pressure $P$ and cavity area $A_c$ in steady state:
-\begin{equation}
-P = P_o - \left(\frac{\dot m + u_b h}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
-\end{equation}
-This equation, which is just like equation \eqref{eq:PofWsteady} in the main text, says that in steady state the pressure is a function of the amount of water.  It is interesting to observe, however, that \eqref{eq:barth:steadypressure} shows that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining steady state.
-
-Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we get \eqref{eq:regpressureequation}.  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the \cite{Bartholomausetal2011} model is the model in \cite{Schoofetal2012}.  The main text of the current paper simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} model and an englacial-storage-regularized extension of the \cite{Schoofetal2012} model.
-
-
-\section{Analysis of model numerics} \label{app:numerics}
-
-\subsection{The transport-plus-storage problem} \label{app:transportstorage}  The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
+The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
 
 The abstract view in this Appendix starts by stating a pair of abstract equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
 \begin{align}
@@ -1133,7 +1060,9 @@ Our statement \eqref{eq:abs:discreteconserve} of discrete conservation should no
 \end{enumerate}
 
 
-\subsection{Mass conservation scheme: positivity and stability} \label{app:positivestable}  Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
+\section{Mass conservation scheme: positivity and stability} \label{app:positivestable}
+
+Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
 We start by restating equation \eqref{eq:Wupdate} with the above simplifications, also defining $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$:
 \begin{align*}
@@ -1163,7 +1092,9 @@ If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $
 Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
 
-\subsection{Flux-limiter methods} \label{app:fluxlimiters}  Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
+\section{Flux-limiter methods} \label{app:fluxlimiters}
+
+Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
 \ddt{u} + \ddx{}\left(v(x) u\right) = 0
 \end{equation}
