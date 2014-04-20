@@ -986,9 +986,10 @@ We start by describing the variables and equations of the \cite{Bartholomausetal
 
 Englacial water is assumed to fill crevasses and moulins up to a level $z_w(t)$ above the bedrock, in a system which has macroporosity $\phi$ (dimensionless).  Thus the englacial storage is $S_{en}=L W \phi z_w$.  In summary, the \cite{Bartholomausetal2011} model uses this essentially-kinematical equation:
 \begin{equation}
-S = S_{en} + S_{sub} = L W \phi z_w + \frac{f L W}{h} A_c.  \label{eq:barth:kinematics}
+S = S_{en} + S_{sub},  \label{eq:barth:kinematics}
 \end{equation}
-
+along with proportionality between $S_{en}$ and $z_w$, $S_{sub}$ and $A_c$, respectively.
+ 
 Mass conservation in the model is the simple statement  \citep{Bartholomausetal2008}
 \begin{equation}
 \frac{dS}{dt} = Q_{in}(t) - Q_{out}(t). \label{eq:barth:massconserve}
@@ -1008,26 +1009,29 @@ The three terms on the right are opening by cavitation, melt, and closure by cre
 
 Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure, though this may not have been recognized by \cite{Bartholomausetal2011}.  From \eqref{eq:barth:kinematics} and \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
 \begin{equation}
-\frac{dP}{dt} = \rho_w g \frac{dz_w}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}.
+\frac{dP}{dt} = \rho_w g \frac{dz_w}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}. \label{eq:barth:dPdt}
 \end{equation}
-But \eqref{eq:barth:kinematics} and \eqref{eq:barth:massconserve}  allow us to rewrite in terms of fluxes and cavity area:
-    $$\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{d S_{sub}}{dt}\right).$$
-Now use \eqref{eq:barth:kinematics} to write the evolution in terms of the rate of change of $A_c$:
-    $$\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \frac{d A_c}{dt}\right).$$
+By combining \eqref{eq:barth:dPdt} with  the time-derivative of \eqref{eq:barth:kinematics}, and using \eqref{eq:barth:massconserve} and the proportionality between $S_{sub}$ and $A_c$, we can rewrite in terms of fluxes and cavity area:
+\begin{align}
+\frac{dP}{dt} &= \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) \\
+&= \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \frac{d A_c}{dt}\right). \notag
+\end{align}
 Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c/dt$:
-\begin{equation}
-\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right)  \label{eq:barth:fullpressure}
-\end{equation}
-We emphasize that, though it is not stated there, equation \eqref{eq:barth:fullpressure} follows from the model equations in \cite{Bartholomausetal2011}.
+\begin{align}
+&\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \bigg(Q_{in} - Q_{out} \label{eq:barth:fullpressure} \\
+&\qquad \qquad \qquad - \frac{f L }{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg) \notag
+\end{align}
 
-Equation \eqref{eq:barth:fullpressure} suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
-\begin{equation*}
-\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \left(- \frac{Q_{out} - Q_{in}}{\Delta x} - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right).
-\end{equation*}
+We observe that, though it is not stated there, \eqref{eq:barth:fullpressure} follows from the equations in \cite{Bartholomausetal2011}.  Equation \eqref{eq:barth:fullpressure} also suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
+\begin{align}
+&\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \bigg(- \frac{Q_{out} - Q_{in}}{\Delta x} \\
+&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
+\end{align}
 The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$.  Thus a distributed flowline form of the \cite{Bartholomausetal2011} theory is the partial differential equation
-\begin{equation}
-\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \left(- \frac{\partial Q}{\partial x} - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\right).  \label{eq:barth:distpressure}
-\end{equation}
+\begin{align}
+&\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \bigg(- \frac{\partial Q}{\partial x}   \label{eq:barth:distpressure} \\
+&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
+\end{align}
 Equation \eqref{eq:barth:distpressure} is, for all practical purposes, the same as equation \eqref{eq:regpressureequation} in the main text.
 
 A distributed extension of the \cite{Bartholomausetal2011} theory is not, however, viable without a Darcy or other flux expression for $Q$.  One must also use a distributed mass conservation equation like \eqref{eq:conserve}.  By contrast, a flux expression, Darcy or otherwise, was not needed in the Kennicott glacier case because the lumped input and output from the hydrological system were available as data.
