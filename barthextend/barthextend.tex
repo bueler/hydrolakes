@@ -1,0 +1,139 @@
+\NeedsTeXFormat{LaTeX2e}
+
+% \documentclass{igs}
+% \documentclass[twocolumn]{igs}
+  \documentclass[twocolumn,letterpaper]{igs}
+% \documentclass[review]{igs}
+
+  \usepackage{igsnatbib}
+  \usepackage{stfloats}
+\usepackage{amsmath}
+
+% check if we are compiling under latex or pdflatex
+  \ifx\pdftexversion\undefined
+    \usepackage[dvips]{graphicx}
+  \else
+    \usepackage[pdftex]{graphicx}
+  \fi
+
+% the default is for unnumbered section heads
+% if you really must have numbered sections, remove
+% the % from the beginning of the following command
+% and insert the level of sections you wish to be
+% numbered (up to 4):
+
+% \setcounter{secnumdepth}{2}
+
+
+\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color}
+\usepackage[T1]{fontenc}
+
+% hyperref should be the last package we load
+\usepackage[pdftex,
+                colorlinks=true,
+                plainpages=false, % only if colorlinks=true
+                linkcolor=blue,   % only if colorlinks=true
+                citecolor=black,   % only if colorlinks=true
+                urlcolor=magenta     % only if colorlinks=true
+]{hyperref}
+
+\ifx\text\undefined
+\newcommand{\text}{\textrm}
+\else
+\fi
+
+
+\begin{document}
+
+\title{Correspondence \\ Extensions of the lumped subglacial/englacial \\ hydrology model of Bartholomaus, et al.~(
+2011)}
+
+\author{Ed Bueler}
+
+\affiliation{Department of Mathematics and Statistics and Geophysical Institute, University of Alaska Fairbanks, USA \\
+E-mail: \emph{\texttt{elbueler\@@alaska.edu}}}
+
+\abstract{[\emph{Not needed for Correspondence.}]}
+\maketitle
+
+The equations in \cite{Bartholomausetal2011} are chosen carefully so as to describe the evolution of the hydrology of the Kennicott glacier in Alaska, compatibly with carefully-observed input and output fluxes for that system.  The largely-accomplished goal of their model is to understand the abrupt drainage, through a rapidly-evolving subglacial and englacial network, of a lake which forms seasonally on the side of the glacier.
+
+Their model would seem to be significantly different from recent distributed models, for instance  \citep{Hewittetal2012,Schoofetal2012}.  Of course, some obvious similarities exist.  These models all describe the evolution of water-filled linked-cavity systems, in addition to other morphologies according to the model, and they include physical cavity opening and closing processes.  On the other hand the cited distributed theories are entirely subglacial, while the \cite{Bartholomausetal2011} model (from now on, the ``Bartholomaus model'') has both subglacial and englacial water storage.  Most essentially, however, the Bartholomaus model is ``lumped'' (i.e.~the entire hydrological system is represented by one cell), allowing a degree of parameter identification given the observed (but also spatially-lumped) input and output fluxes.
+
+This note observes that the equations of \cite{Bartholomausetal2011} actually imply a distributed theory which represents the parabolic version of the elliptic pressure equation in \cite{Schoofetal2012}.  Also, when restricted to steady state, the equations imply an apparently-unnoticed functional relationship between pressure and cavity size, a relationship that might motivate the choices made in an earlier hydrological theory \citep{FlowersClarke2002_theory}.  Note that a connection between the Bartholomaus theory and the distributed models is observed by \cite{Hewitt2013}, but that observation is limited to the addition of a englacial storage term in the mass conservation equation \cite[equation (7)]{Hewitt2013}.  Here we emphasize instead that the elliptic (i.e.~instantaneous propagation in space) pressure equation of \cite{Schoofetal2012} acquires a parabolic regularization through the addition of englacial storage (i.e.~equation \eqref{eq:barth:distpressure} below).  We will derive a pressure evolution equation which applies in the Bartholomaus model.  The form of this pressure equation is suggested by equation (12) in \cite{Bartholomausetal2011}, but its complete form is not stated.
+ 
+We start by describing the variables and equations of the Bartholomaus model.  The total volume of liquid water stored in the glacier is $S(t)$.  This is split into englacial $S_{en}(t)$ and subglacial $S_{sub}(t)$ portions.  The cavities have geometry partially-determined by bedrock bumps which have cartesian spacing $\lambda_x,\lambda_y$, height $h$, and width $w_c$.  These combine to give a dimensionless capacity parameter $f=(h w_c)/(\lambda_x \lambda_y)$; the value $f=0.05$ is used for the Kennicott glacier application.  Each cavity has cross-sectional area $A_c(t)$ and volume $w_c A_c$.  The glacier occupies a rectangle of dimensions $L\times W$ in the map-plane so that the number of cavities is $\nu = (LW)/(\lambda_x\lambda_y)$.  It follows that the subglacial storage volume is $S_{sub} = (w_c A_c) \nu = (f L W/h) A_c$.
+
+Englacial water is assumed to fill crevasses and moulins up to a level $z_w(t)$ above the bedrock, in a system which has macroporosity $\phi$ (dimensionless).  Thus the englacial storage is $S_{en}=L W \phi z_w$.  In summary, the Bartholomaus model uses this essentially-kinematical equation:
+\begin{equation}
+S = S_{en} + S_{sub},  \label{eq:barth:kinematics}
+\end{equation}
+along with proportionality between $S_{en}$ and $z_w$, $S_{sub}$ and $A_c$, respectively.
+ 
+Mass conservation in the model is the simple statement \citep{Bartholomausetal2008}
+\begin{equation}
+\frac{dS}{dt} = Q_{in}(t) - Q_{out}(t). \label{eq:barth:massconserve}
+\end{equation}
+In the Kennicott glacier application, fluxes $Q_{in}$ and $Q_{out}$ are given by observations.
+
+Let $P_o=\rho_i g H$ denote the overburden pressure, $P(t)$ the water pressure, and $N(t)=P_o-P(t)$ the effective pressure applied by the glacier to its bed.  Knowledge of the water pressure $P$ is equivalent to knowledge of the amount of englacial storage because there is an assumed efficient connection of the macroporous glacier to the subglacial system, namely the equation $S_{en}=L W \phi z_w$.  Englacial water therefore applies the hydrostatic pressure to the subglacier, and thus also
+\begin{equation}
+P = \rho_w g z_w.  \label{eq:barth:englacialpressure}
+\end{equation}
+
+In the Bartholomaus model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  A wall melt parameterization is also given but, in keeping with the cavity evolution in the rest of the current paper, we simply denote it as a melt term $\dot m$.  Denote the sliding speed by $u_b$ and let $C_c = (2 A)/n^n$, where $A$ and $n$ are parameters in the (Glen) ice flow law \citep{CuffeyPaterson}.  Then the cavity area evolution equation (4) in \cite{Bartholomausetal2011} is
+\begin{equation}
+\frac{dA_c}{dt} = \dot m + u_b h - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
+\end{equation}
+The three terms on the right are opening by cavitation, melt, and closure by creep, respectively.
+
+Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure, though this may not have been recognized by \cite{Bartholomausetal2011}.  From \eqref{eq:barth:kinematics} and \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
+\begin{equation}
+\frac{dP}{dt} = \rho_w g \frac{dz_w}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}. \label{eq:barth:dPdt}
+\end{equation}
+By combining \eqref{eq:barth:dPdt} with  the time-derivative of \eqref{eq:barth:kinematics}, and using \eqref{eq:barth:massconserve} and the proportionality between $S_{sub}$ and $A_c$, we can rewrite in terms of fluxes and cavity area:
+\begin{align}
+\frac{dP}{dt} &= \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) \\
+&= \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L }{h} \frac{d A_c}{dt}\right). \notag
+\end{align}
+Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c/dt$:
+\begin{align}
+&\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \bigg(Q_{in} - Q_{out} \label{eq:barth:fullpressure} \\
+&\qquad \qquad \qquad - \frac{f L }{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg) \notag
+\end{align}
+
+We observe that, though it is not stated there, \eqref{eq:barth:fullpressure} follows from the equations in \cite{Bartholomausetal2011}.  Equation \eqref{eq:barth:fullpressure} also suggests how to extend the \cite{Bartholomausetal2011} theory from ``lumped'' into ``distributed.''  Consider a one-dimensional glacier flowing in the positive $x$ direction.  Let the transverse width be $W$ and replace $L$ by $\Delta x$.  Note that ``$Q_{in}$'' would, in a distributed theory, be the upstream flux while ``$Q_{out}$'' would be downstream.  Thus we rewrite \eqref{eq:barth:fullpressure} as
+\begin{align}
+&\frac{\phi}{\rho_w g}\frac{dP}{dt} = \frac{1}{W} \bigg(- \frac{Q_{out} - Q_{in}}{\Delta x} \\
+&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
+\end{align}
+The continuum limit is then clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$.  Thus a distributed flowline form of the \cite{Bartholomausetal2011} theory is the partial differential equation
+\begin{align}
+&\frac{\phi}{\rho_w g} \frac{\partial P}{\partial t} = \frac{1}{W} \bigg(- \frac{\partial Q}{\partial x}   \label{eq:barth:distpressure} \\
+&\qquad \qquad \qquad \quad - \frac{f}{h} \left[\dot m + u_b h - C_c A_c (P_o-P)^n\right]\bigg). \notag
+\end{align}
+
+A distributed extension of the \cite{Bartholomausetal2011} theory is not, however, viable without a Darcy or other flux expression for $Q$.  One must also use a distributed mass conservation equation like FIXME.  By contrast, a flux expression, Darcy or otherwise, was not needed in the Kennicott glacier case because the lumped input and output from the hydrological system were available as data.
+
+FIXME  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the Bartholomaus model is the model in \cite{Schoofetal2012}.
+
+An implication of the Bartholomaus model, again not stated there, regards the pressure in steady state.  Steady state in equation \eqref{eq:barth:cavityevolution} gives
+\begin{equation*}
+0 = \dot m + u_b h - C_c A_c (P_o-P)^n.
+\end{equation*}
+This is a relationship between pressure $P$ and cavity area $A_c$ in steady state:
+\begin{equation}
+P = P_o - \left(\frac{\dot m + u_b h}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
+\end{equation}
+This equation says that in steady state the pressure is a function of the amount of water.  It is interesting to observe, however, that \eqref{eq:barth:steadypressure} shows that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining steady state.
+
+FIXME  Furthermore it is somewhat related to \citep{FlowersClarke2002_theory}
+
+
+\subsection*{Acknowledgements}  This work was supported by NASA grant \#NNX13AM16G.  Conversations with Ward van Pelt and Tim Bartholomaus were much appreciated.
+
+%         References
+\bibliography{ice-bib}
+\bibliographystyle{igs}
+
+\end{document}
