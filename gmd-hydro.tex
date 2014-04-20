@@ -99,7 +99,7 @@
 
 \linenumbers
 
-\title{A distributed numerical model of subglacial hydrology \\ in tidewater glaciers and ice sheets}
+\title{A distributed numerical model of subglacial hydrology \\ in the Parallel Ice Sheet Model}
 
 
 \author[1]{E.~Bueler}
@@ -139,24 +139,30 @@ blabla
 
 \introduction
 
-Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low hydraulic potential \citep{Clarke05}.  Beyond that there are many variations considered in the literature.  Physical processes may control the geometry of linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (cavitation), melt on the walls of cavities and conduits, or the closure of cavities and conduits by creep \citep{Hewitt2011}.  Water could be exchanged with a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
+Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low values of the modeled hydraulic potential.  Beyond that there are many variations considered in the literature.  Modeled processes may determine a geometry of linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (cavitation) [CITE?], closure of cavities and conduits by creep \citep{Hewitt2011}, or melt on the walls of cavities and conduits which causes them to open \citep{Clarke05}.  Water could be exchanged with a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
 
-This paper describes a class of models for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The cavities open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model.
+This paper describes a model for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The cavities open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, and wall melt is only computed diagnostically, but pressure is determined non-locally over each connected component of the hydrological system.  No functional relation between subglacial water amount and pressure is assumed \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.
 
-Pressure is determined non-locally over each connected component of the hydrological system.  In particular, no functional relation between subglacial water amount and pressure is assumed in our model \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.  Also, compared to other distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.
-
-In cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that the deformation of the till is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.
+Compared to some other recent distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.  We observe that in cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that its deformation is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.  FIXME: On the other hand, the HIT model and the deFluerian 2014 paper have till, with significant limitations.
 
 All water movement, whether stored in cavities or till, is carefully implemented in a mass-conserving manner.  FIXME: this is nontrivial because of transfer to/from till and because of free-boundaries
 
-Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
+Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system \citep{Walder1982}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
 
-The next section considers basic physical principles.  We generate a fundamental advection-diffusion form of the mass conservation equation.  In section \ref{sec:capacity} we consider cavity evolution and the till storage and transer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and we identify its major parameters.  In section \ref{sec:steadyverif} the simplified equations which apply in steady state are given.  In steady state the pressure is a function of subglacial water amount.  We then compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model.  These schemes are implemented in parallel in the Parallel Ice Sheet Model \citep{pism-user-manual}, with particular attention to time step restrictions and the treatment of advection.  The first numerical results, in which we show convergence under grid refinement, are for the verification case.  After that we show results for the Nordenskioldbreen tidewater glacier in Svalbard in section \ref{sec:results}.
+FIXME: this paper is newsworthy for the following list of new features:\begin{enumerate}
+\item parallel implementation
+\item water split between transport and till, and in 2D
+\item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
+\item exact solution in the radial, steady case
+\item clarity on hierarchy of closures
+\end{enumerate}
+
+Section \ref{sec:elements}, next, considers the basic physical principles of mass conservation and hydraulic potential, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is know about the connection between till mechanical properties, pore water, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution and also the till water storage and transfer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steadyverif} the simplified equations which apply in steady state are given, and we observe that in steady state the pressure is a function of subglacial water amount, an emergent property of the model.  Then we compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model, with particular attention to time step restrictions and the treatment of advection.  These schemes are implemented in the Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}), and section \ref{sec:pismdoc} documents the major options and parameters seen by a user.  Section \ref{sec:results} shows the first numerical results from the model, in which we show convergence under grid refinement in the verification case, and we examine the degree to which there is a functional relationship between water amount and pressure across all grid points in a Greenland simulation.
 
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
 
-\subsection{Mass conservation}  We assume that liquid water is incompressible and of constant density.  Thus the thickness of the layer of laterally-transportable water, denoted by $W(t,x,y)$, determines its mass.  Our statement of mass conservation (below) will describe the evolution of $W$.  In addition there is water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  We always assume the water thicknesses are nonnegative: $W \ge 0$ and $\Wtil \ge 0$.  Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  While the thickness $W$ describes the amount of water in subglacial cavities and the connections between cavities, a system through which it can travel, the water in till pore spaces is much less mobile, in the horizontal dimension especially, because of the very low hydraulic conductivity of till \citep{TrufferEchelmeyerHarrison2001,Tulaczyketal2000}.  Our model necessarily includes, however, a model for the strength of the saturated till (Section \ref{sec:tillmechanics}) and a parameterization for transfer $W \leftrightarrow \Wtil$ (Section \ref{sec:capacity}).
+\subsection{Mass conservation}  We assume that liquid water is incompressible and of constant density.  Thus the thickness of the layer of laterally-transportable water, denoted by $W(t,x,y)$, determines its mass.  Our statement of mass conservation (below) will describe the evolution of $W$.  In addition there is water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  We always assume the water thicknesses are nonnegative: $W \ge 0$ and $\Wtil \ge 0$.  Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  While the thickness $W$ describes the amount of water in subglacial cavities, and in the connections between cavities, a system through which it can travel \citep{Kamb1987}, the water in till pore spaces is much less mobile because of the very low hydraulic conductivity of till \citep{TrufferEchelmeyerHarrison2001,Tulaczyketal2000}.  Our model includes, however, a model for the strength of the saturated till (Section \ref{sec:tillmechanics}) and a parameterization of transfer $W \leftrightarrow \Wtil$ (Section \ref{sec:capacity}).
 
 The total effective thickness of the water at map-plane location $(x,y)$ and time $t$ is $W + \Wtil$; it is the conserved quantity in our model.  In two map-plane dimensions the mass conservation equation is \citep[compare][]{Clarke05}
 \begin{equation} \label{eq:conserve}
@@ -288,9 +294,9 @@ where $\mathbf{u}$ is the sliding velocity of the base of the ice.  But $\tau_c$
 where $0\le q \le 1$.  Here $u_0$ is a threshold sliding velocity above which, at least in the $q\approx 0$ cases, the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbf{u}|$ \citep{BBssasliding}.  If no connection to the plastic case is intended then equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\mathbf{\tau}_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$, including in the linear case $q=1$ in which we have $\beta = \tau_c/u_0$.
 
 
-\section{Capacity and geometry of the subglacial hydraulic system} \label{sec:capacity}
+\section{The subglacial hydraulic system} \label{sec:capacity}
 
-\subsection{Capacity of the linked-cavity distributed system}  The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
+\subsection{Capacity of a linked-cavity distributed system}  The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
 \end{equation}
@@ -319,7 +325,7 @@ c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \
 \end{equation}
 
 
-\subsection{Exchange between the distributed system and the till}  Mass conservation equation \eqref{eq:conserve} already allows water to be added or removed from till.  When water is added to till which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable.  Also, when water moves laterally in the distributed system it should be able to occupy the pore spaces of the till over/through/beside which it passes.  These considerations imply that $\Wtil$ should transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, given by bound $\Wtilmax$, of the pore spaces in the till storage.
+\subsection{Exchange between distributed system and till}  Mass conservation equation \eqref{eq:conserve} already allows water to be added or removed from till.  When water is added to till which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable.  Also, when water moves laterally in the distributed system it should be able to occupy the pore spaces of the till over/through/beside which it passes.  These considerations imply that $\Wtil$ should transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, given by bound $\Wtilmax$, of the pore spaces in the till storage.
 
 The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties is the following equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\omega\ge 0$:
 \begin{equation}
@@ -869,6 +875,78 @@ One time step follows this algorithm:
 \medskip
 This recipe goes with a reporting scheme for mass conservation.  Note that in step \emph{(ix)} water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
 
+
+\section{PISM options for hydrology models} \label{sec:pismdoc}
+
+In this section we document the PISM runtime options for hydrology options.  There are three runtime choices, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}, which we list in the order of decreasing complexity.  After that we give a correspondence (concordance) between the symbols in this paper and the relevant PISM configuration parameters.  This is not complete documentation of the user's view of the model; compare the PISM User's Manual \citep{pism-user-manual}.
+
+\subsection{\texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
+\begin{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
+\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
+       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+\end{align}
+Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, as defined in the main text:
+   $$K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
+The implementation of this model is in a derived class of \verb|PISMRoutingHydrology| which is called \verb|PISMDistributedHydrology|.  An exception is that the $\tau_c$ equation is computed by the method.cc \verb|PISMMohrCoulombYieldStress::update()|.
+
+\subsection{\texttt{routing}}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
+\begin{align}
+\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
+\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+\end{align}
+along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definitions:
+   $$K = k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P_o + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
+The implementation of this model is in \verb|PISMRoutingHydrology|, except for the $\tau_c$ equation (as above).
+
+\subsection{\texttt{null}}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
+\begin{align}
+\ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
+\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+\end{align}
+along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition of overburden pressure:
+  $$P_o = \rho_i g H.$$
+The implementation of this model is in \verb|PISMNullTransportHydrology|, except for the $\tau_c$ equation (as above).
+
+\subsection{PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
+
+\begin{table*}[t]
+  \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by configuration parameter name.  All of these are used in \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models (last columns).} \vskip4mm \centering
+  \begin{tabular}{llcc} \tophline
+    \textbf{PISM configuration name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}} \\
+    \middlehline
+    \verb|fresh_water_density| & $\rho_w$ & $\times$ & $\times$ \\
+    \verb|hydrology_cavitation_opening_coefficient| & $c_1$ \\
+    \verb|hydrology_creep_closure_coefficient| & $c_2$ \\
+    \verb|hydrology_gradient_power_in_flux| &  $\beta$ & $\times$ & \\
+    \verb|hydrology_hydraulic_conductivity| & $k$ & $\times$ & \\
+    \verb|hydrology_regularizing_porosity| & $\phi_0$ \\
+    \verb|hydrology_roughness_scale| & $W_r$ \\
+    \verb|hydrology_thickness_power_in_flux| &  $\alpha$ & $\times$ & \\
+    \verb|hydrology_tillwat_max| & $\Wtilmax$ & $\times$ & $\times$ \\
+    \verb|hydrology_tillwat_rate| & $\mu$ & $\times$ & \\
+    \verb|hydrology_tillwat_transfer_proportion| & $\omega$ & $\times$ & \\
+    \verb|ice_density| & $\rho_i$ & $\times$ & $\times$ \\
+    \verb|ice_softness| & $A$ \\
+    \verb|standard_gravity| & $g$ & $\times$ & $\times$ \\
+    \verb|till_c_0| & $c_0$ & $\times$ & $\times$ \\
+    \verb|till_compressibility_coefficient| & $C_c$ & $\times$ & $\times$ \\
+    \verb|till_effective_fraction_overburden| & $\delta$ & $\times$ & $\times$ \\
+    \verb|till_reference_void_ratio| & $e_0$ & $\times$ & $\times$ \\
+    \bottomhline
+  \end{tabular}
+  \label{tab:correspondence}
+\end{table*}
+
+
+These parameters can be changed at runtime by using the parameter name as an option,\footnote{At least, in most cases.  Please report when this gives an ``unused options'' error.} or by modifying \verb|src/pism_config.cdl| and recompiling PISM, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The units of these parameters are listed in \verb|_doc| strings in \verb|src/pism_config.cdl|.
+
+
+\section{Results}  \label{sec:results}
+
 \subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:steadyverif} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep[for example]{Wesseling}.
 
 Our exact solution is for the steady-state.  Therefore we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The true continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, but we can measure the drift (error evolving over time) of the numerical approximation to \eqref{eq:bluebox}, that is, by the scheme which is the ``recipe'' above.  The magnitude of the error depends on the spatial grid size and the rate of convergence under grid refinement is determined by our spatial discretizations.
@@ -886,41 +964,7 @@ Because they give evidence for numerical convergence, these results suggest that
 The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from the numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity may be masked by the continuum model (i.e.~desirable) diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement, requires fewer floating point operations, and requires less communication in a parallel implementation.
 
 
-
-\section{Results}  \label{sec:results}
-
-\subsection{Steady results for a tidewater glacier}
-
-FIXME: decide on where this paper is going
-
-FIXME: redo results from nbreen to use PISM and make better figures
-
-
-\begin{comment}
-\begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{icethk-icefree-float-250m}
-\caption{FIXME}
-%\label{fig:X}
-\end{figure}
-
-\begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{outline-input-250m}
-\caption{FIXME}
-%\label{fig:X}
-\end{figure}
-
-\begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{W-Pmask-250m}
-\caption{FIXME}
-%\label{fig:X}
-\end{figure}
-
-\begin{figure}[ht]
-\includegraphics[width=7.0in,keepaspectratio=true]{Po-P-250m}
-\caption{FIXME}
-%\label{fig:X}
-\end{figure}
-\end{comment}
+\subsection{Evidence for and against a relation $P(W)$}
 
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
@@ -1015,9 +1059,9 @@ This equation, which is just like equation \eqref{eq:PofWsteady} in the main tex
 Returning to equation \eqref{eq:barth:distpressure} we can now connect the theory outlined in this Appendix with the main theory in the paper.  Namely, if we extend \eqref{eq:barth:distpressure} to two horizontal dimensions ($\partial Q/\partial t \to \Div \bq$ and so on) and we add Darcy relation \eqref{eq:flux} then we get \eqref{eq:regpressureequation}.  Under any reasonable Darcy-type formulation for the flux $Q$ in \eqref{eq:barth:distpressure}, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  This $\phi\to 0$ limit of the distributed version of the \cite{Bartholomausetal2011} model is the model in \cite{Schoofetal2012}.  The main text of the current paper simultaneously describes a distributed extension of the \cite{Bartholomausetal2011} model and an englacial-storage-regularized extension of the \cite{Schoofetal2012} model.
 
 
-\section{An abstract view of the transport-plus-storage problem} \label{app:transportstorage}
+\section{Analysis of model numerics} \label{app:numerics}
 
-The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
+\subsection{The transport-plus-storage problem} \label{app:transportstorage}  The problem considered in sections \ref{sec:elements} and \ref{sec:capacity} includes a mass conservation equation for the total water amount, a portion of which is transportable, and an equation for the evolution of the water stored locally in till pore spaces.  In this Appendix we treat such a pair of coupled equations abstractly.  We show some mathematical properties of the continuum equations, and we show important properties of a simple numerical scheme for these equations.
 
 The abstract view in this Appendix starts by stating a pair of abstract equations for abstract quantities $u(t,x,y),v(t,x,y)$ satisfying bounds $u\ge 0$ and $0 \le v \le v_{\text{max}}$:
 \begin{align}
@@ -1099,9 +1143,7 @@ Our statement \eqref{eq:abs:discreteconserve} of discrete conservation should no
 \end{enumerate}
 
 
-\section{Positivity and stability of the mass conservation scheme} \label{app:positivestable}
-
-Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
+\subsection{Mass conservation scheme: positivity and stability} \label{app:positivestable}  Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
 
 We start by restating equation \eqref{eq:Wupdate} with the above simplifications, also defining $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$:
 \begin{align*}
@@ -1131,9 +1173,7 @@ If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $
 Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
 
-\section{Flux-limiter methods} \label{app:fluxlimiters}
-
-Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
+\subsection{Flux-limiter methods} \label{app:fluxlimiter}  Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the well-known goals for discretizing the fluxes in \eqref{eq:adeqn} include non-oscillation and positivity \citep{HundsdorferVerwer2010} in addition to reduced truncation error.  Schemes addressing these goals are often described as finite volume discretizations \citep{LeVeque}.  We now introduce a few such schemes using an advection-only model equation in which an abstract quantity $u(t,x)$ is transported by an abstract velocity $v(x)$:
 \begin{equation} \label{eq:modeladvect}
 \ddt{u} + \ddx{}\left(v(x) u\right) = 0
 \end{equation}
@@ -1165,6 +1205,22 @@ where
 \end{equation}
 Unfortunately, despite the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
 
+\begin{table*}[ht]
+  \centering
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
+  \begin{tabular}{lccl}
+    \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
+\hline
+    simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
+    centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
+    upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
+    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
+    \hline
+  \end{tabular}
+ \label{tab:fluxlimiters}
+\end{table*}
+
 The ``flux-limiting'' (i.e.~flux-correction-limited) approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear flux-limited formulas which restore these properties, and we list and try them here.  Because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
 
 These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
@@ -1185,21 +1241,6 @@ The schemes in Table \ref{tab:fluxlimiters} which satisfy these conditions are m
 
 For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that in every case in Table \ref{tab:fluxlimiters} where there is a correction ($\Psi(\theta)\ne 0$) we have $\Psi(1)=1/2$.  The Koren flux-limiter in Table \ref{tab:fluxlimiters} \citep{HundsdorferVerwer2010} has $\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  We can think of the Koren scheme as a positive form of the third-order upwind-biased scheme.
 
-\begin{table}[ht]
-  \centering
-  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
-  \begin{tabular}{lccl}
-    \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
-\hline
-    simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
-    centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
-    upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
-    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
-    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
-    \hline
-  \end{tabular}
- \label{tab:fluxlimiters}
-\end{table}
 
 To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas''.  Such areas, which are where $\theta_i$ in \eqref{eq:thetadefine} is $\gg 1$ or $\ll 1$, tend to be near extrema and non-smooth areas.  Thus these schemes are high-order but they (nonlinearly) revert to first-order when they get in trouble.
 
@@ -1210,72 +1251,5 @@ The above discussion was limited to the spatial (semi-)discretization.  A time d
 \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
 
 
-\section*{Appendix FIXME: Documentation of PISM options for hydrology models} \label{app:pismdoc}
-
-This appendix documents PISM code, configuration parameters, and runtime options.  It is not necessary to include this appendix in submitted papers, and it should probably be integrated into regular PISM documentation at some point.  Thus this may be its temporary location.
-
-\subsection*{Model \texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
-\begin{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
-\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
-       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
-\end{align}
-Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, as defined in the main text:
-   $$K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
-The implementation of this model is in a derived class of \verb|PISMRoutingHydrology| which is called \verb|PISMDistributedHydrology|.  An exception is that the $\tau_c$ equation is computed by the method.cc \verb|PISMMohrCoulombYieldStress::update()|.
-
-\subsection*{Model routing}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
-\begin{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
-\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
-\end{align}
-along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definitions:
-   $$K = k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P_o + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
-The implementation of this model is in \verb|PISMRoutingHydrology|, except for the $\tau_c$ equation (as above).
-
-\subsection*{Model null}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
-\begin{align}
-\ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
-\end{align}
-along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition of overburden pressure:
-  $$P_o = \rho_i g H.$$
-The implementation of this model is in \verb|PISMNullTransportHydrology|, except for the $\tau_c$ equation (as above).
-
-\subsection*{Correspondence with PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
-
-\begin{table*}[t]
-  \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by configuration parameter name.  All of these are used in \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models (last columns).} \vskip4mm \centering
-  \begin{tabular}{llcc} \tophline
-    \textbf{PISM configuration name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}} \\
-    \middlehline
-    \verb|fresh_water_density| & $\rho_w$ & $\times$ & $\times$ \\
-    \verb|hydrology_cavitation_opening_coefficient| & $c_1$ \\
-    \verb|hydrology_creep_closure_coefficient| & $c_2$ \\
-    \verb|hydrology_gradient_power_in_flux| &  $\beta$ & $\times$ & \\
-    \verb|hydrology_hydraulic_conductivity| & $k$ & $\times$ & \\
-    \verb|hydrology_regularizing_porosity| & $\phi_0$ \\
-    \verb|hydrology_roughness_scale| & $W_r$ \\
-    \verb|hydrology_thickness_power_in_flux| &  $\alpha$ & $\times$ & \\
-    \verb|hydrology_tillwat_max| & $\Wtilmax$ & $\times$ & $\times$ \\
-    \verb|hydrology_tillwat_rate| & $\mu$ & $\times$ & \\
-    \verb|hydrology_tillwat_transfer_proportion| & $\omega$ & $\times$ & \\
-    \verb|ice_density| & $\rho_i$ & $\times$ & $\times$ \\
-    \verb|ice_softness| & $A$ \\
-    \verb|standard_gravity| & $g$ & $\times$ & $\times$ \\
-    \verb|till_c_0| & $c_0$ & $\times$ & $\times$ \\
-    \verb|till_compressibility_coefficient| & $C_c$ & $\times$ & $\times$ \\
-    \verb|till_effective_fraction_overburden| & $\delta$ & $\times$ & $\times$ \\
-    \verb|till_reference_void_ratio| & $e_0$ & $\times$ & $\times$ \\
-    \bottomhline
-  \end{tabular}
-  \label{tab:correspondence}
-\end{table*}
-
-
-These parameters can be changed at runtime by using the parameter name as an option,\footnote{At least, in most cases.  Please report when this gives an ``unused options'' error.} or by modifying \verb|src/pism_config.cdl| and recompiling PISM, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The units of these parameters are listed in \verb|_doc| strings in \verb|src/pism_config.cdl|.
 
 \end{document}

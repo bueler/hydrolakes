@@ -9,6 +9,7 @@ This will be submitted to Geoscientific Model Development, an EGU journal.  To b
     $ mkdir Copernicus
     $ cd Copernicus
     $ wget http://www.geoscientific-model-development.net/Copernicus_LaTeX_Package_v_2_7.zip
+    $ unzip Copernicus_LaTeX_Package_v_2_7.zip
     $ cd ..
     $ ln -s Copernicus/copernicus.cls
     $ ln -s Copernicus/copernicus.bst
