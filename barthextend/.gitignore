@@ -29,6 +29,6 @@
 *.mtc0
 ice-bib.bib
 barthextend.pdf
-igs*.???
-
+igs/*
+igs*
 
