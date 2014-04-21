@@ -2,11 +2,11 @@
 
 % \documentclass{igs}
 % \documentclass[twocolumn]{igs}
-  \documentclass[twocolumn,letterpaper]{igs}
-% \documentclass[review]{igs}
+% \documentclass[twocolumn,letterpaper]{igs}
+  \documentclass[review,letterpaper]{igs}
 
   \usepackage{igsnatbib}
-  \usepackage{stfloats}
+  %\usepackage{stfloats}
 
 % check if we are compiling under latex or pdflatex
   \ifx\pdftexversion\undefined
@@ -18,10 +18,8 @@
 
 \usepackage{amsmath}
 
-\ifx\text\undefined
-\newcommand{\text}{\textrm}
-\else
-\fi
+% only include this in review mode:
+\include{linenopatch.tex}
 
 
 \begin{document}
@@ -34,6 +32,7 @@
 E-mail: \emph{\texttt{elbueler\@@alaska.edu}}}
 
 \abstract{[\emph{Not needed for Correspondence.}]}
+
 \maketitle
 
 The model in \cite{Bartholomausetal2011} is carefully constructed to describe the hydrology of the Kennicott Glacier in Alaska.  It uses observed input flux and a highly-simplified hydrology to reproduce the hydrograph of the Kennicott River, other hydrographs, and the glacier motion (sliding) observed during the flood.  The goal of their model is to understand both the drainage through a subglacial and englacial network, and the glacier response, from a lateral lake outburst flood which occurs each summer, that is, a j\"okulhlaup.
@@ -95,21 +94,20 @@ which describes the pressure in one cell.  Note that ``$Q_{in}$'' is the upstrea
 
 Such a distributed extension of the Bartholomaus model is not viable without a Darcy or other expression for $Q$.  A flux relation was not needed in the Kennicott glacier case because the input and output flux data form complete boundary conditions for a one-cell model.  However, using any reasonable Darcy-type formulation for the flux $Q$, such as the power laws (2.10) of \cite{Schoofetal2012}, equation \eqref{eq:barth:distpressure} becomes a nonlinear parabolic equation for the pressure.  Furthermore, when using a Darcy flux expression the $\phi\to 0$ (singular) limit of \eqref{eq:barth:distpressure} is an elliptic equation for the water pressure.  Specifically, the $\phi\to 0$ limit of \eqref{eq:barth:distpressure} is equation (2.12) in \cite{Schoofetal2012}.
 
-Note that relation \eqref{eq:barth:distpressure}, and equation \eqref{eq:barth:steadypressure} below, should be solved subject to inequalities $0 \le P \le P_o$.  This is because the emergence of water at the surface of the glacier, from the efficiently-connected englacial system, bounds the subglacial pressure;\footnote{Nearly so.  \cite{Bartholomausetal2011} report a supraglacial geyser raising water a few meters above the glacier surface.  We suppose this is negligible.} compare the physical justification of these bounds in \cite{Schoofetal2012}.
+Note that relation \eqref{eq:barth:distpressure}, and equation \eqref{eq:barth:steadypressure} below, should be solved subject to inequalities $0 \le P \le P_o$.  This is because the emergence of water at the surface of the glacier, from the efficiently-connected englacial system, bounds the subglacial pressure;\footnote{\cite{Bartholomausetal2011} report a supraglacial geyser lifting water a few meters above the glacier surface.  We suppose this situation is rare.} compare the physical justification of these bounds in \cite{Schoofetal2012}.
 
 A two-horizontal-dimension version of equation \eqref{eq:barth:distpressure} is numerically solved in the ``distributed'' hydrology model code which is part of the Parallel Ice Sheet Model in its 0.6 release (February 2014).  We have observed that implementing a parabolic equation like \eqref{eq:barth:distpressure} subject to bounds $0 \le P \le P_o$ is substantially simpler than numerically solving the variational inequality form of the corresponding elliptic pressure equation \citep{Schoofetal2012}. 
 
-An additional implication of the Bartholomaus model, again not stated in \cite{Bartholomausetal2011}, regards the pressure in steady state.  Specifically, if we assume steady state in equation \eqref{eq:barth:cavityevolution} then we can solve for pressure to find this relationship between pressure $P$ and cavity area $A_c$:
+An additional implication of the Bartholomaus model, again not stated in \cite{Bartholomausetal2011}, concerns the pressure in steady state.  Specifically, if we assume $dP/dt=0$ in equation \eqref{eq:barth:cavityevolution} then we can solve to find this relationship between pressure $P$ and cavity area $A_c$:
 \begin{equation}
 P = P_o - \left(\frac{u_b h + Z}{C_c A_c}\right)^{1/n}. \label{eq:barth:steadypressure}
 \end{equation}
-
-Because in the Bartholomaus model the cavities described by $A_c$ are assumed to be water filled---contrast \citep{Schoofetal2012}---equation \eqref{eq:barth:steadypressure} says that in steady state the pressure is a function of the amount of water, $P=P(W)$.  Because such a functional relationship is thereby supported in steady state, the use of a power-law, like $P = P_o (W/W_{crit})^{7/2}$ used by \cite{FlowersClarke2002_theory}, may be justified in some non-steady circumstances also.  On the other hand, relation \eqref{eq:barth:steadypressure} is not qualitatively-close to a power-law, other than to be increasing with $W$.  
+In the Bartholomaus model the cavities described by $A_c$ are assumed to always be water-filled---contrast \citep{Schoofetal2012}.  Thus equation \eqref{eq:barth:steadypressure} is equivalent to saying that in steady state the pressure is a function $P(W)$ of the area-averaged thickness $W$ of the subglacial water layer.  This is perhaps evidence supporting the \emph{a priori} inclusion of such a functional relationship into a model.  For example, the use of a power-law, like $P = P_o (W/W_{crit})^{7/2}$ used by \cite{FlowersClarke2002_theory}, may thereby be justified in some non-steady circumstances also.  On the other hand, relation \eqref{eq:barth:steadypressure} is not actually a power-law, though it is at least increasing with $W$.
 
 Finally, it is interesting to observe from \eqref{eq:barth:steadypressure} that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining subglacial steady state.
 
 
-\subsection*{Acknowledgements}  This work was supported by NASA grant \#NNX13AM16G.  Conversations with Ward van Pelt and Tim Bartholomaus were much appreciated.
+\subsection*{Acknowledgements}  This work was supported by NASA grant \#NNX13AM16G.  Conversations with Ward van Pelt and Tim Bartholomaus were appreciated.  Ward, Constantine Khroulev, and Andy Aschwanden helped with the implementation and testing of the PISM code.
 
 %         References
 \bibliography{ice-bib}
