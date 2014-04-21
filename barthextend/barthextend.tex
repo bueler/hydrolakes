@@ -7,7 +7,6 @@
 
   \usepackage{igsnatbib}
   \usepackage{stfloats}
-\usepackage{amsmath}
 
 % check if we are compiling under latex or pdflatex
   \ifx\pdftexversion\undefined
@@ -16,17 +15,9 @@
     \usepackage[pdftex]{graphicx}
   \fi
 
-% the default is for unnumbered section heads
-% if you really must have numbered sections, remove
-% the % from the beginning of the following command
-% and insert the level of sections you wish to be
-% numbered (up to 4):
 
-% \setcounter{secnumdepth}{2}
-
-
-\usepackage{amssymb,alltt,verbatim,xspace,fancyvrb,color}
-\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,verbatim,xspace}
+%\usepackage[T1]{fontenc}
 
 % hyperref should be the last package we load
 \usepackage[pdftex,
@@ -45,7 +36,7 @@
 
 \begin{document}
 
-\title{Correspondence \\ Extensions of the lumped subglacial-englacial \\ hydrology model of Bartholomaus, et al.~(2011)}
+\title[Extensions of the Bartholomaus hydrology model]{Correspondence \\ Extensions of the lumped subglacial-englacial \\ hydrology model of Bartholomaus, et al.~(2011)}
 
 \author{Ed Bueler}
 
@@ -55,7 +46,7 @@ E-mail: \emph{\texttt{elbueler\@@alaska.edu}}}
 \abstract{[\emph{Not needed for Correspondence.}]}
 \maketitle
 
-The equations in \cite{Bartholomausetal2011} are chosen carefully so as to describe the remarkable hydrology of the Kennicott glacier in Alaska.  Their work uses observed input flux and a highly-simplified hydrology to reproduce the hydrograph of the yearly flood of the Kennicott river, and other hydrographs.  The goal of their model is to understand the drainage, through subglacial and englacial network which evolves over the time-scale of a day, of a lake which forms each summer on the side of the glacier.
+The model in \cite{Bartholomausetal2011} is carefully constructed to describe the hydrology of the Kennicott Glacier in Alaska.  It uses observed input flux and a highly-simplified hydrology to reproduce the hydrograph of the Kennicott River, other hydrographs, and the glacier motion (sliding) observed during the flood.  The goal of their model is to understand both the drainage through a subglacial and englacial network, and the glacier response, from a lateral lake outburst flood which occurs each summer, that is, a j\"okulhlaup.
 
 Their model would seem to be significantly different from recent distributed models, specifically \cite{Schoofetal2012} and \cite{Hewittetal2012}.  Some obvious similarities exist among the models: They all describe the evolution of water-filled linked-cavity systems, with additional morphologies according to the model, and they include physical cavity opening and closing processes.  On the other hand the just-cited distributed theories are entirely subglacial, while the \cite{Bartholomausetal2011} model (from now on, the ``Bartholomaus model'') has both subglacial and englacial water storage.  Most essentially, however, the Bartholomaus model is ``lumped''.  That is, the entire glacier hydrological system is represented by one cell, with the major advantage that this allows parameter identification given the observed, also spatially-lumped, input and output fluxes.
 
