@@ -116,7 +116,9 @@ blabla
 
 Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low values of the modeled hydraulic potential.  Beyond that there are many variations considered in the literature.  Modeled processes may determine a geometry of linked cavities \citep{Kamb1987} or conduits (channels) \citep{Nye1976} in which the water moves.  These processes may include the opening of cavities by sliding of the overlying ice past bedrock bumps (cavitation) [CITE?], closure of cavities and conduits by creep \citep{Hewitt2011}, or melt on the walls of cavities and conduits which causes them to open \citep{Clarke05}.  Water could be exchanged with a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
 
-This paper describes a model for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The cavities open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, and wall melt is only computed diagnostically, but pressure is determined non-locally over each connected component of the hydrological system.  No functional relation between subglacial water amount and pressure is assumed \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.
+This paper describes a model for distributed systems of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  Water in excess of the capacity of the till ``overflows'' into the distributed system, and in this sense the model could be called a ``drained-and-conserved plastic bed'' model in contrast to the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
+
+The cavities in the distributed system open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, and wall melt is only computed diagnostically, but pressure is determined non-locally over each connected component of the hydrological system.  No functional relation between subglacial water amount and pressure is assumed \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.
 
 Compared to some other recent distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.  We observe that in cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that its deformation is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.  FIXME: On the other hand, the HIT model and the deFluerian 2014 paper have till, with significant limitations.
 
@@ -128,9 +130,11 @@ FIXME: this paper is newsworthy for the following list of new features:\begin{en
 \item parallel implementation
 \item water split between transport and till, and in 2D
 \item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
-\item exact solution in the radial, steady case
+\item exact solution of the distributed model in the radial, steady case, plus verification using this 
 \item clarity on hierarchy of closures
 \end{enumerate}
+
+FIXME: this paper documents the PISM 0.6 code released February 2014
 
 Section \ref{sec:elements}, next, considers the basic physical principles of mass conservation and hydraulic potential, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is know about the connection between till mechanical properties, pore water, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution and also the till water storage and transfer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steadyverif} the simplified equations which apply in steady state are analyzed, and we observe that in steady state the pressure is a function of subglacial water amount, an emergent property of the model.  In section \ref{sec:exactsolution} we compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model, with particular attention to time step restrictions and the treatment of advection.  These schemes are implemented in the Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}), and section \ref{sec:pismdoc} documents the major options and parameters seen by a user.  Section \ref{sec:results} shows the first numerical results from the model, in which we show convergence under grid refinement in the verification case, and we examine the degree to which there is a functional relationship between water amount and pressure across all grid points in a Greenland simulation.
 
@@ -301,21 +305,13 @@ c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \
 \end{equation}
 
 
-\subsection{Exchange between distributed system and till}  Mass conservation equation \eqref{eq:conserve} already allows water to be added or removed from till.  When water is added to till which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable.  Also, when water moves laterally in the distributed system it should be able to occupy the pore spaces of the till over/through/beside which it passes.  These considerations imply that $\Wtil$ should transfer to and from the transportable thickness $W$, while also being constrained by the finite capacity, given by bound $\Wtilmax$, of the pore spaces in the till storage.
+\subsection{Drainage of the till into the distributed system}  When water is added to fully-saturated till, which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable in the model.  It enters the distributed system described above.  In combination with mass conservation equation \eqref{eq:conserve}, achieving this dynamical situation in the model simply requires an evolution equation for $\Wtil$.  We choose this equation for simplicity, and to match the model of \cite{BBssasliding}.
 
-The simplest ordinary differential equation (in time) for $\Wtil$ which has the above properties is the following equation with a constant rate parameter $\mu\ge 0$ and a transfer ratio $\omega\ge 0$:
+The evolution equation is
 \begin{equation}
-\frac{\partial \Wtil}{\partial t} = \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right) \label{eq:tilldynamics}
+\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \label{eq:tilldynamics}
 \end{equation}
-As illustrated schematically in Figure \ref{fig:tillschema}, if $\omega W \ge \Wtilmax$ then \eqref{eq:tilldynamics} says that $\Wtil$ simply increases to $\Wtilmax$ over time, while if transport takes away water so that $\omega W < \Wtilmax$ then \eqref{eq:tilldynamics} says that the till drains and $\Wtil$ decreases.  If $\omega=0$ then the model reduces to pure decay $\partial \Wtil/\partial t = - \mu \Wtil$.  Thus $0\le \Wtil \le \Wtilmax$ at all times for the solution of \eqref{eq:tilldynamics}.  Of course, the conservation statement \eqref{eq:conserve} for the total water amount $W+\Wtil$ implies that water drained from till is transportable in the distributed system.
-
-\begin{figure*}[ht]
-\bigskip
-\includegraphics[width=4.5in,keepaspectratio=true]{tillschema}
-\bigskip
-\caption{The till-stored water amount $\Wtil$ evolves by \eqref{eq:tilldynamics}.  The bounds $0\le \Wtil \le \Wtilmax$ are maintained.  If $\omega W < \Wtilmax$ then $\Wtil$ approaches $\omega W$, from either side.  If $\omega W \ge \Wtilmax$ then $\Wtil$ approaches $\Wtilmax$ from below.}
-\label{fig:tillschema}
-\end{figure*}
+where $C_d>0$ is a fixed rate that makes the till gradually drain in the absence of water input.  In practice we choose $C_d$ to be small compared to typical values of $m/\rho_w$.  Note that actual refreeze of arbitrary strength is also allowed, as a negative value for $m$.  The solution of Equation \eqref{eq:tilldynamics} is subject to inequalities $0\le \Wtil \le \Wtilmax$.
 
 Appendix \ref{app:transportstorage} describes an abstract view of the transport-plus-storage model which combines conservation \eqref{eq:conserve} and exchange \eqref{eq:tilldynamics}.  In section \ref{sec:num} we propose a stable numerical scheme for the combination of \eqref{eq:conserve} and \eqref{eq:tilldynamics} which preserves both discrete conservation of $W+\Wtil$ and the bounds $0\le \Wtil \le \Wtilmax$ for the discretized values of $\Wtil$.  
 
@@ -399,7 +395,7 @@ Thus we use \eqref{eq:regpressureequation} with constant $\phi_0>0$ both because
 Pressure equation \eqref{eq:regpressureequation} is also a kind of stress balance, a form of conservation of momentum.  There is no obvious way to guarantee that we actually conserve momentum because the enforcement of bounds \eqref{eq:bounds} on $P$ involves large and un-accounted forces \citep{Schoofetal2012}.  However, verifiable conservation of mass is essential in the applications of a subglacial hydrology model.  We carefully consider the numerical conservation of the total water mass $W+\Wtil$ in Section \ref{sec:num}.
 
 
-\section{A new subglacial hydrology model} \label{sec:newmodel}
+\section{A new subglacial hydrology model in PISM} \label{sec:newmodel}
 
 \subsection{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a two-dimensional subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model.  The new hydrology model must be parallelizable and it must exhibit convergence of solutions under grid refinement.  The remainder of the paper will demonstrate that we have succeeded in these goals.
 
@@ -408,8 +404,9 @@ The major equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, 
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 &\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
 & \qquad \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-&\frac{\partial \Wtil}{\partial t} = \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-&\tau_c = c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
+&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
+&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
 \end{align}
 The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
 \begin{align*}
@@ -456,6 +453,7 @@ As will be described in section \ref{sec:num}, we have implemented an explicit/i
     $c_1$ & $0.5$ & $\text{m}^{-1}$ & cavitation coefficient \citep{Schoofetal2012} \\
     $c_2$ & $0.04$ & & creep closure coefficient \\
     $C_c$ & 0.12 &  & till compressibility \citep{Tulaczyketal2000} \\
+    $C_d$ & $0.001$ &  $\text{m}\,\text{a}^{-1}$ & background till drainage rate \\
     $\delta$ & 0.02 &  & fraction of overburden pressure \\
     $e_0$ & 0.69 &  & void ratio at $N=N_0$ \citep{Tulaczyketal2000} \\
     $\phi_0$ & $0.01$ & & regularizing englacial porosity \\
@@ -500,14 +498,15 @@ along with the bound $W \ge 0$ and additional definitions $\psi = P_o + \rho_w g
 \item If the lateral transport model is absent then exchange equation \eqref{eq:tilldynamics} is not needed.  Now water input $m$ goes directly into till storage.  The undrained plastic bed (UPB) of \cite{Tulaczyketal2000b} is such a model; it arises as the $W=0,\bq=0,\phi=0,c_1=0,c_2=0$ reduction of \eqref{eq:bluebox} in which a constant reference effective pressure $N_0$ is used (instead of one that scales with overburden, e.g.~as ``$N_0=\delta P_o$'' in this paper):
 \begin{align}
 &\ddt{\Wtil} = \frac{m}{\rho_w}, \label{eq:upbbox} \\
-&\tau_c = c_0 + (\tan \varphi)\, N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}, \notag
+&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
+&\Ntil = N_0\, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}, \notag
 \end{align}
 UPB depends on friction-heating feedback to keep $\Wtil$ bounded, which does not work in a membrane-stress-including theory, in which friction heating is a non-local effect of local changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water that would raise $\Wtil$ above the bound; this is a minimal ``drained'' version of the UPB model.  This model, formerly implemented in PISM, had additional diffusion and a linearization of the second of the above equations \citep{BBssasliding}.  The current paper improves PISM by implementation of a model which has transport and is mass-conserving.
 \end{enumerate}
 
-The above list is not intended to suggest that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} could be considered as a variation on the idea \textbf{(ii)} but, specifically because it has a velocity that depends on second derivatives of the surface elevation, it cannot be considered a reduction of our model.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the next section on steady states.
+The above list does not imply that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} could be considered as a variation on the idea \textbf{(ii)} but, specifically because it has a velocity that depends on second derivatives of the surface elevation, it cannot be considered a reduction of our model.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the next section on steady states.
 
-Most significantly, those models that include conduits \citep[among others]{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,PimentelFlowers2011,vanderWeletal2013} but when extended to two-horizontal dimensions all existing models \citep{Hewitt2013,Schoofmeltsupply} become ``lattice'' models without a known continuum limit.  Such modeling choices are incompatible with general-purpose continuum-approximating models like PISM where users determine grid spacing at run-time.  The hydrology submodel in PISM is only acceptable if it exhibits convergence under grid refinement.
+Most significantly, those models that include conduits \citep[among others]{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,PimentelFlowers2011,vanderWeletal2013} but when extended to two-horizontal dimensions all existing models \citep{Hewitt2013,Schoofmeltsupply} become ``lattice'' models without a known continuum limit.  Given that users determine grid spacing at run-time, a hydrology submodel in PISM is only acceptable if it exhibits convergence under grid refinement.  (See section \ref{sec:results}.)
 
 
 \section{Steady states}  \label{sec:steadyverif}
@@ -622,10 +621,10 @@ where $\omega_0 = m_0 / (2 \rho_w k)$.
 
 Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver we solve it for $dW/dr$:
 \begin{equation}
-\frac{dW}{dr} = \frac{\frac{ds_b}{dr} W (W_r - W) - \Big[\omega_0\, r W^{-1} + \frac{dP_o}{dr}\Big] W^{4/3} \left(W_r - W\right)^{2/3}}{\frac{1}{3} s_b W_r + \rho_w g W^{4/3} (W_r - W)^{2/3}}.
+\frac{dW}{dr} = \frac{\frac{ds_b}{dr} W \tilde W - \Big[\omega_0\, r W^{-1} + \frac{dP_o}{dr}\Big] W^{4/3} \tilde W^{2/3}}{\frac{1}{3} s_b W_r + \rho_w g W^{4/3} \tilde W^{2/3}}.
 \label{eq:WradialODE}
 \end{equation}
-Equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
+where $\tilde W = W_r - W$ is the amount which the water is below the roughness scale.  Equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$.
 
 \subsection{Generating a nontrivial exact solution}  To generate a nontrivial exact solution, however, we will have a positive thickness of ice at the margin so that $P_o(L^-)>0$; Figure \ref{fig:Pexact} shows this small cliff at the margin.  We also assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 Y_0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary (initial) condition for the ODE.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
