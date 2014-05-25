@@ -702,7 +702,7 @@ Because of the additional diffusion process, for stability the time step should 
 \begin{equation}
 \Delta t_W\, 2 \max D \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
 \end{equation}
-The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Appendix \ref{app:positivestable} shows this for the first-order upwind scheme, while standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
+The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Below we show this for the first-order upwind scheme, while standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
 
 We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltetal}, using observed ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  For example, diffusive restriction \eqref{eq:dtDIFFW} with representative value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
 
@@ -820,9 +820,7 @@ For either the first-order or Koren schemes, if the water input $m$ is negative 
 
 \subsection{Discretization of the pressure equation}  The pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  We use an explicit scheme so we consider stable time steps immediately.
 
-The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof technique in Appendix \ref{app:positivestable} does not suffice to \emph{prove} stability.
-% FIXME: needs explaining how stability relates to argument in Appendix C at all
-If the time step satisfies $\Delta t \le \Delta t_P$, where
+The time step restriction is comparable to \eqref{eq:dtDIFFW}, though the proof above for the stability of the mass conservation scheme does not suffice to \emph{prove} stability.  If the time step satisfies $\Delta t \le \Delta t_P$, where
 \begin{equation}
 \Delta t_P\, \left(\frac{2 \max D}{\phi_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1 \label{eq:dtDIFFP}
 \end{equation}
@@ -1057,7 +1055,7 @@ assuming $b\Delta t > 0$.  Properties \eqref{eq:abs:Vbounds} and \eqref{eq:abs:V
 \frac{U_{i,j}^{l+1} - U_{i,j}^l}{\Delta t} &= \frac{q^x_{i+1/2,j} - q^x_{i-1/2,j}}{\Delta x} + \frac{q^y_{i,j+1/2} - q^y_{i,j-1/2}}{\Delta y} + g_{ij} - \frac{V_{i,j}^{l+1} - V_{i,j}^l}{\Delta t}. \label{eq:abs:conservefd}
 \end{align}
 
-The goal is to update $U$ to time $t^{l+1}$.  Scheme \eqref{eq:abs:conservefd} supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available.  But we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} because \eqref{eq:abs:conservefd} also requires $ V_{i,j}^{l+1}$.  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in Appendix \ref{app:positivestable}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
+The goal is to update $U$ to time $t^{l+1}$.  Scheme \eqref{eq:abs:conservefd} supposes values $\{U_{ij}^l,V_{ij}^l\}$ are available.  But we use \eqref{eq:abs:conservefd} \emph{after} we use \eqref{eq:abs:Vupdate} because \eqref{eq:abs:conservefd} also requires $ V_{i,j}^{l+1}$.  The staggered-grid flux components in \eqref{eq:abs:conservefd} must be computed in some manner from the various known values, but the details are unimportant here.  Stability and positivity of scheme \eqref{eq:abs:conservefd} is addressed in section \ref{sec:num}.  Stability depends on how fluxes are evaluated; see Appendix \ref{app:fluxlimiters}.
 \medskip
 
 \item \emph{Discrete conservation}.  We can prove that equations \eqref{eq:abs:Vupdate} and \eqref{eq:abs:conservefd} conserve the discrete version of the sum $u+v$.  The continuum conservation statement, which follows from \eqref{eq:abs:transport} by using the divergence theorem, is, on a region $R$ of the $x,y$ plane,
