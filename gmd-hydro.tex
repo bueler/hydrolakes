@@ -692,7 +692,7 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection{Mass conservation time-stepping}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by a mostly-explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
+\subsection{Mass conservation: time-stepping}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by a mostly-explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
 We first consider stable time steps.  Stability for either advection scheme occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
@@ -704,7 +704,7 @@ Because of the additional diffusion process, for stability the time step should 
 \end{equation}
 The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the overall scheme for \eqref{eq:adeqn}.  Appendix \ref{app:positivestable} shows this for the first-order upwind scheme, while standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
 
-We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen, using observed ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  For example, diffusive restriction \eqref{eq:dtDIFFW} with representative value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltetal}, using observed ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  For example, diffusive restriction \eqref{eq:dtDIFFW} with representative value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
 
 This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  However, the scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.  By contrast, if implicit time-stepping is used for the pressure equation \citep{Hewittetal2012,Schoofetal2012} then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could be removed by implicit steps for the mass-conservation equation, though this requires another variational inequality formulation because of the lower bound $W\ge 0$ \citep[compare][]{JouvetBueler2012}.  Our observation that $\Delta t_{CFL} \ll \Delta t_W$ suggests that implicit time-stepping for the mass-conservation equation would not be beneficial.
 
@@ -716,7 +716,7 @@ This example suggests that, unless both the global peak velocity is unusually sl
 \label{fig:stencil}
 \end{figure}
 
-\subsection{Spatial discretization}  To set notation, suppose the rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$, $(\Wtil)_{ij}^l \approx \Wtil(t_l,x_i,y_j)$, and $\Plij \approx P(t_l,x_i,y_j)$ denote the numerical approximations.
+\subsection{Mass conservation: spatial discretization}  To set notation, suppose the rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$, $(\Wtil)_{ij}^l \approx \Wtil(t_l,x_i,y_j)$, and $\Plij \approx P(t_l,x_i,y_j)$ denote the numerical approximations.
 
 We will compute velocity components and flux components at the staggered (cell-face-centered) points shown in Figure \ref{fig:stencil} using centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.  We use ``compass'' indices such as $u_e = u_{i+1/2,j}$ for the ``east'' staggered component.  Similarly we use compass indices for staggered grid values of the water layer thickness, computed by averaging regular grid values:
 \begin{equation}
@@ -760,17 +760,44 @@ Then our scheme for approximating advection-decomposition mass conservation equa
 \frac{W_{i,j}^{l+1} - W_{i,j}^l}{\Delta t} + \frac{(\Wtil)_{i,j}^{l+1} - (\Wtil)_{i,j}^l}{\Delta t} = - \mathcal{D}_{i,j} + \frac{m_{ij}}{\rho_w}.    \label{eq:Wfd}
 \end{equation}
 
-As explained in Appendix \ref{app:transportstorage}, the updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, can be computed from the backward Euler formula:
+The updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, is computed by trivial integration of equation \eqref{eq:tilldynamics}, namely
 \begin{equation}
-(\Wtil)_{i,j}^{l+1} = \frac{(\Wtil)_{i,j}^l + \mu \Delta t \min\{\omega W_{i,j}^l, \Wtilmax\}}{1 + \mu \Delta t}.  \label{eq:tillupdatefd}
+(\Wtil)_{i,j}^{l+1} = (\Wtil)_{i,j}^l + \Delta t \left(\frac{m}{\rho_w} - C_d\right).  \label{eq:tillupdatefd}
 \end{equation}
-The value of $W_{i,j}^{l+1}$ can then be updated; the following is equivalent to \eqref{eq:Wfd}:
+More precisely, the right-hand-side value is used if it is in the closed interval $[0,\Wtilmax]$, and otherwise the bounds $0\le \Wtil \le \Wtilmax$ are enforced.  See also the abstract situation explained in Appendix \ref{app:transportstorage}.
+
+The value of $W_{i,j}^{l+1}$ can finally be updated; the following is equivalent to \eqref{eq:Wfd}:
 \begin{align}
 &W_{i,j}^{l+1} = W_{i,j}^l - (\Wtil)_{i,j}^{l+1} + (\Wtil)_{i,j}^l \label{eq:Wupdate} \\ 
 &\qquad \qquad + \Delta t \left(-\mathcal{D}_{i,j} +  \frac{m_{ij}}{\rho_w}\right). \notag
 \end{align}
 
 Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} or \eqref{eq:Wupdate} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes.
+
+\subsection{Mass conservation: positivity and stability}  Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we now sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ and $\Wtilmax=0$ case is shown.  Also, we consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar arguments.
+
+Define $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$.  Then equation \eqref{eq:Wupdate} is
+\begin{align*}
+ W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) \\
+      &\;\; - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
+      &\;\; + \mu_x \left[D_e \left(W_{i+1,j}^l - \Wlij\right) - D_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
+      &\;\; + \mu_y \left[D_n \left(W_{i,j+1}^l - \Wlij\right) - D_s \left(\Wlij - W_{i,j-1}^l\right)\right].
+\end{align*}
+Collecting terms to write the new value as a linear combination of the old values, we get
+\begin{align}
+ W_{i,j}^{l+1} &= (\nu_x u_w + \mu_x D_w) W_{i-1,j}^l + (\mu_x D_e) W_{i+1,j}^l \notag \\
+      &\qquad + (\nu_y v_s + \mu_y D_s) W_{i,j-1}^l + (\mu_y D_n) W_{i,j+1}^l  \notag \\
+      &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n \notag \\
+      &\qquad\qquad - \mu_x (D_e + D_w) - \mu_y (D_n + D_s)\Big] \Wlij \notag \\
+  &= \tilde A\, W_{i-1,j}^l + \tilde B\, W_{i+1,j}^l + \tilde C\, W_{i,j-1}^l \notag \\
+  &\qquad + \tilde D\, W_{i,j+1}^l + \tilde E\, \Wlij. \label{eq:lincomb}
+\end{align}
+Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative, depending on values of $\nu_x, \nu_y, \mu_x$, and $\mu_y$.  Requiring it to be nonnegative will generate a sufficient stability condition \citep{MortonMayers}.
+
+We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms, namely $\nu_x \alpha_e + \nu_y \beta_n \le \frac{1}{2}$, which is condition \eqref{eq:dtCFL} when generalized to all upwinding cases.  The second is a time-step restriction on the diffusion, namely $\mu_x (D_e + D_w) + \mu_y (D_n + D_s) \le \frac{1}{2}$, which is condition \eqref{eq:dtDIFFW}.  If both \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW} hold then the coefficient $\tilde E$ in \eqref{eq:lincomb} is nonnegative.
+
+Because the coefficients in linear combination \eqref{eq:lincomb} also add to one, as the reader may check, it follows  from \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, in this $m=0$ and $\Wtilmax=0$ case, which is our positivity claim.  Thus, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
+
 
 \subsection{Discrete advective fluxes}  Appendix \ref{app:fluxlimiters} reviews some of the standard theory of flux-limiters for transport schemes.  Here we state two flux-discretization alternatives which we tested as flux discretizations for scheme \eqref{eq:Wupdate}, namely first-order upwind and the Koren flux-limiter \citep{HundsdorferVerwer2010}.  They use $\Psi$ from Table \ref{tab:fluxlimiters} in Appendix \ref{app:fluxlimiters}.
 
@@ -839,11 +866,10 @@ Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j
 
 One time step follows this algorithm:
 
-\bigskip\medskip
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
-\item Get $(\Wtil)_{i,j}^{l+1}$ by implicit step \eqref{eq:tillupdatefd}.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
+\item Get $(\Wtil)_{i,j}^{l+1}$ by \eqref{eq:tillupdatefd}.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}, staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}, velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}, and staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
@@ -1057,38 +1083,6 @@ Step $\ast$ follows from \eqref{eq:abs:conservefd}.  Step $\dagger$ follows from
 
 Our statement \eqref{eq:abs:discreteconserve} of discrete conservation should now be compared  to the continuum statement \eqref{eq:abs:continuumconserve}.
 \end{enumerate}
-
-
-\section{Mass conservation scheme: positivity and stability} \label{app:positivestable}
-
-Explicit numerical scheme \eqref{eq:Wupdate} for the mass conservation PDE \eqref{eq:adeqn}, combined with the first-order upwind case of formulas \eqref{eq:adfluxes}, is sufficiently simple so that we can analyze its stability properties.  For this scheme we sketch a maximum principle argument which shows stability \citep{MortonMayers}.  The argument also shows positivity \citep{HundsdorferVerwer2010} as long as the total water input is nonnegative; here only the case $m = 0$ is shown.  We consider only the upwinding case where the discrete velocities at cell interfaces are nonnegative: $u_e\ge 0$, $u_w\ge 0$, $v_n\ge 0$, $v_s\ge 0$.  The other upwinding cases can be handled by similar special-case arguments like this one.
-
-We start by restating equation \eqref{eq:Wupdate} with the above simplifications, also defining $\nu_x = \Delta t/\Delta x$, $\nu_y = \Delta t/\Delta y$, $\mu_x = \Delta t/\Delta x^2$, and $\mu_y = \Delta t/\Delta y^2$:
-\begin{align*}
- W_{i,j}^{l+1} &= \Wlij - \nu_x \left(u_e \Wlij - u_w W_{i-1,j}^l\right) - \nu_y \left(v_n \Wlij - v_s W_{i,j-1}^l\right)  \\
-      &\qquad + \mu_x \left[D_e \left(W_{i+1,j}^l - \Wlij\right) - D_w \left(\Wlij - W_{i-1,j}^l\right)\right]  \\
-      &\qquad + \mu_y \left[D_n \left(W_{i,j+1}^l - \Wlij\right) - D_s \left(\Wlij - W_{i,j-1}^l\right)\right].
-\end{align*}
-Collecting terms to write the new value as a linear combination of the old values, we get
-\begin{align}
- W_{i,j}^{l+1} &= (\nu_x u_w + \mu_x D_w) W_{i-1,j}^l + (\mu_x D_e) W_{i+1,j}^l + (\nu_y v_s + \mu_y D_s) W_{i,j-1}^l + (\mu_y D_n) W_{i,j+1}^l  \notag \\
-      &\qquad + \Big[1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s)\Big] \Wlij \notag \\
-  &= \tilde A\, W_{i-1,j}^l + \tilde B\, W_{i+1,j}^l + \tilde C\, W_{i,j-1}^l + \tilde D\, W_{i,j+1}^l + \tilde E\, \Wlij. \label{eq:lincomb}
-\end{align}
-Because of our assumption about nonnegative velocities, and noting that the diffusivities are nonnegative, we see that coefficients $\tilde A,\tilde B,\tilde C,\tilde D$ are all nonnegative.  Only $\tilde E$ could be negative, depending on values of $\nu_x, \nu_y, \mu_x$, and $\mu_y$.  Requiring it to be nonnegative will generate a sufficient stability condition \citep{MortonMayers}.
-
-We state such a condition based on an equal split between advective and diffusive parts.  First there is a CFL restriction for the advection terms; compare \eqref{eq:dtCFL}:
-\begin{equation}
-\nu_x \alpha_e + \nu_y \beta_n = \Delta t \left(\frac{u_e}{\Delta x} + \frac{u_n}{\Delta y}\right) \le \frac{1}{2}. \label{eq:adstabcond}
-\end{equation}
-The second is a time-step restriction on the diffusion; compare \eqref{eq:dtDIFFW}:
-\begin{equation}
-\mu_x (D_e + D_w) + \mu_y (D_n + D_s) = \Delta t \left(\frac{D_e + D_w}{\Delta x^2} + \frac{D_n + D_s}{\Delta y^2}\right) \le \frac{1}{2}. \label{eq:diffstabcond}
-\end{equation}
-If \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} hold then the coefficient $\tilde E$ in \eqref{eq:lincomb} is nonnegative:
-	$$\tilde E = 1 - \nu_x u_e - \nu_y v_n - \mu_x (D_e + D_w) - \mu_y (D_n + D_s) \ge 0.$$
-
-Because the coefficients in linear combination \eqref{eq:lincomb} add to one, as the reader may check, it follows  from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:adstabcond} and \eqref{eq:diffstabcond} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, which is our positivity claim.  More generally, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, the conditions which describe all of the upwinding cases, scheme \eqref{eq:Wupdate} is stable and positivity-preserving.
 
 
 \section{Flux-limiter methods} \label{app:fluxlimiters}
