@@ -885,43 +885,31 @@ This recipe goes with a reporting scheme for mass conservation.  Note that in st
 
 \section{PISM options for hydrology models} \label{sec:pismdoc}
 
-In this section we document the PISM runtime options for hydrology options.  There are three runtime choices, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}, which we list in the order of decreasing complexity.  After that we give a correspondence (concordance) between the symbols in this paper and the relevant PISM configuration parameters.  This is not complete documentation of the user's view of the model; compare the PISM User's Manual \citep{pism-user-manual}.
+In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the ``full'' model described in this paper while the other two are reductions; we list them in order of decreasing complexity.  We also give a concordance between the symbols in this paper and the relevant PISM configuration parameters.
 
-\subsection{\texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in the main text, that is:
+\subsection{\texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
+
+\subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of the section \ref{sec:newmodel} equations, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
 \begin{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
-\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
-       & \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+&\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
+&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
+&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
+&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
 \end{align}
-Note bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, as defined in the main text:
-   $$K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
-The implementation of this model is in a derived class of \verb|PISMRoutingHydrology| which is called \verb|PISMDistributedHydrology|.  An exception is that the $\tau_c$ equation is computed by the method.cc \verb|PISMMohrCoulombYieldStress::update()|.
+along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
 
-\subsection{\texttt{routing}}  This model is chosen by runtime option \texttt{-hydrology routing}.  It is governed by a subset of the above equations, but with the equation for evolution of pressure $P$ is removed, and with the replacement $P\mapsto P_o$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
+\subsection{\texttt{null}}  This non-conserving model has option \texttt{-hydrology null}, but it is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are:
 \begin{align}
-\ddt{W} + \ddt{\Wtil} &= - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \notag \\
-\frac{\partial \Wtil}{\partial t} &= \mu \left(\min\left\{\omega W,\Wtilmax\right\} - \Wtil\right), \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+&\ddt{\Wtil} = \frac{m}{\rho_w} - C_d, \notag \\
+&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
+&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
 \end{align}
-along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, and these definitions:
-   $$K = k W^{\alpha-1} \left|\grad(P_o+\rho_w g b)\right|^{\beta-2}, \quad \bV = - K \grad\left(P_o + \rho_w g b\right), \quad D = \rho_w g K W, \quad P_o = \rho_i g H.$$
-The implementation of this model is in \verb|PISMRoutingHydrology|, except for the $\tau_c$ equation (as above).
+along with bounds $0\le \Wtil \le \Wtilmax$.
 
-\subsection{\texttt{null}}  This non-conserving model is chosen by runtime option \texttt{-hydrology null}.  This is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The  $W \leftrightarrow \Wtil$ transfer equation is replaced by a self-contained evolution equation for $\Wtil$, namely equation \eqref{eq:upbbox}.  There is an additional constant ``drainage'' rate which keeps $\Wtil$ from staying constantly at its maximum value; this is $C=$\verb|hydrology_tillwat_decay_rate_null|, and it is not listed in Table \ref{tab:correspondence} because it does not appear in the \texttt{distributed} or \texttt{routing}.  The determination of basal yield stress is unchanged.  The equations are:
-\begin{align}
-\ddt{\Wtil} &= \frac{m}{\rho_w} - C \notag \\
-\tau_c &= c_0 + (\tan \varphi)\, \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
-\end{align}
-along with bounds $0\le \Wtil \le \Wtilmax$, and the same definition of overburden pressure:
-  $$P_o = \rho_i g H.$$
-The implementation of this model is in \verb|PISMNullTransportHydrology|, except for the $\tau_c$ equation (as above).
-
-\subsection{PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM versions \texttt{stable0.6} and later.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
+\subsection{PISM configuration variables}  All of the constants in the above model are configurable parameters in PISM.  The correspondence between configuration parameters names and the symbols in this paper is listed in Table \ref{tab:correspondence} below.
 
 \begin{table*}[t]
-  \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by configuration parameter name.  All of these are used in \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models (last columns).} \vskip4mm \centering
+  \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by parameter name.  All of these are used in the \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models.} \vskip4mm \centering
   \begin{tabular}{llcc} \tophline
     \textbf{PISM configuration name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}} \\
     \middlehline
@@ -933,9 +921,8 @@ The implementation of this model is in \verb|PISMNullTransportHydrology|, except
     \verb|hydrology_regularizing_porosity| & $\phi_0$ \\
     \verb|hydrology_roughness_scale| & $W_r$ \\
     \verb|hydrology_thickness_power_in_flux| &  $\alpha$ & $\times$ & \\
+    \verb|hydrology_tillwat_decay_rate| & $C_d$ & $\times$ & $\times$ \\
     \verb|hydrology_tillwat_max| & $\Wtilmax$ & $\times$ & $\times$ \\
-    \verb|hydrology_tillwat_rate| & $\mu$ & $\times$ & \\
-    \verb|hydrology_tillwat_transfer_proportion| & $\omega$ & $\times$ & \\
     \verb|ice_density| & $\rho_i$ & $\times$ & $\times$ \\
     \verb|ice_softness| & $A$ \\
     \verb|standard_gravity| & $g$ & $\times$ & $\times$ \\
@@ -948,8 +935,7 @@ The implementation of this model is in \verb|PISMNullTransportHydrology|, except
   \label{tab:correspondence}
 \end{table*}
 
-
-These parameters can be changed at runtime by using the parameter name as an option,\footnote{At least, in most cases.  Please report when this gives an ``unused options'' error.} or by modifying \verb|src/pism_config.cdl| and recompiling PISM, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The units of these parameters are listed in \verb|_doc| strings in \verb|src/pism_config.cdl|.
+These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
 
 
 \section{Results}  \label{sec:results}
@@ -1092,6 +1078,22 @@ Because \eqref{eq:adeqn} in the main text is an advection-dominated PDE, the wel
 
 Suppose that the grid points $x_i$ are the centers of equally-spaced cells with $x_{i+1}-x_i=\Delta x$.  Cell interfaces are at $x_{i-1/2}=x_w$ (``\emph{w}'' for ``west'') and $x_{i+1/2}=x_e$ (``east'').  Suppose we do not discretize time and instead we denote $u(t,x_i)$ by $u_i(t)$.  We say a spatial discretization of \eqref{eq:modeladvect} is \emph{positive} if $u_i(0) \ge 0$ for all $i$ implies $u_i(t)\ge 0$ for all $t\ge 0$ and all $i$.  In particular, such a property is desirable for any conservation scheme for the water thickness because thicknesses are intrinsically nonnegative.
 
+\begin{table*}[ht]
+  \centering
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
+  \begin{tabular}{lccl}
+    \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
+\hline
+    simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
+    centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
+    upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
+    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
+    \hline
+  \end{tabular}
+ \label{tab:fluxlimiters}
+\end{table*}
+
 The discretizations of \eqref{eq:modeladvect} we consider here all use the fluxes $Q=v(x) u$ at the cell interfaces $x_w$ and $x_e$, namely
 \begin{equation}
 \frac{du_i}{dt} + \frac{Q_e - Q_w}{\Delta x} = 0. \label{eq:basicmodelFD}
@@ -1116,22 +1118,6 @@ where
 \theta_i = \frac{u_{i} - u_{i-1}}{u_{i+1} - u_i}.  \label{eq:thetadefine}
 \end{equation}
 Unfortunately, despite the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
-
-\begin{table*}[ht]
-  \centering
-  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
-  \begin{tabular}{lccl}
-    \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
-\hline
-    simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
-    centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
-    upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
-    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
-    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
-    \hline
-  \end{tabular}
- \label{tab:fluxlimiters}
-\end{table*}
 
 The ``flux-limiting'' (i.e.~flux-correction-limited) approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear flux-limited formulas which restore these properties, and we list and try them here.  Because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
 
