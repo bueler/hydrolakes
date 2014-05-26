@@ -996,15 +996,15 @@ Suppose that the grid points $x_i$ are the centers of equally-spaced cells with 
 
 \begin{table*}[ht]
   \centering
-  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes only apply away from  ``difficult areas''; see text.}
+  \caption{Flux schemes written in limiter form \eqref{eq:fluxlimiterform} using $\theta=\theta_i$ from \eqref{eq:thetadefine}. The formal ``order'' of the van Leer and Koren schemes (starred) only applies away from extrema; see text.}
   \begin{tabular}{lccl}
     \textbf{scheme} & \textbf{positive?} & \textbf{order} & \textbf{formula} \\
 \hline
     simple upwinding & yes & 1 & $\phantom{\Big|}\Psi(\theta) = 0$ \\
     centered         & no  & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2}$  \\
     upwind-biased    & no  & 3 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$  \\
-    van Leer 1974    & yes & 2 & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
-    Koren 1993       & yes & 3 & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
+    van Leer 1974    & yes & $2^*$ & $\phantom{\Big|}\Psi(\theta) = \frac{1}{2} \frac{\theta + |\theta|}{1+\theta}$  \\
+    Koren 1993       & yes & $3^*$ & $\phantom{\Big|}\Psi(\theta) = \max\left\{0,\min\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\}\right\}$  \\
     \hline
   \end{tabular}
  \label{tab:fluxlimiters}
@@ -1026,16 +1026,17 @@ A second-order truncation error scheme which is \emph{not} positive uses a cente
 Q_e = v_e \frac{u_i+u_{i+1}}{2} = v_e \left[u_i + \frac{1}{2} (u_{i+1} - u_i)\right]. \label{eq:centerfluxfirst}
 \end{equation}
 A yet higher-resolution scheme is third-order upwind-biased fluxes which can again be written as a correction to first-order upwinding:
-\begin{equation}
-Q_e = v_e \frac{-u_{j-1} + 5 u_i + 2 u_{i+1}}{6} = v_e \left[u_i + \left(\frac{1}{3}+\frac{1}{6} \theta_i \right) (u_{i+1} - u_i)\right] \label{eq:thirdfluxfirst}
-\end{equation}
+\begin{align}
+Q_e &= v_e \frac{-u_{j-1} + 5 u_i + 2 u_{i+1}}{6} \notag \\
+    &= v_e \left[u_i + \left(\frac{1}{3}+\frac{1}{6} \theta_i \right) (u_{i+1} - u_i)\right]  \label{eq:thirdfluxfirst}
+\end{align}
 where
 \begin{equation}
 \theta_i = \frac{u_{i} - u_{i-1}}{u_{i+1} - u_i}.  \label{eq:thetadefine}
 \end{equation}
 Unfortunately, despite the upwind-biasing in the third-order scheme, both \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} cause oscillations and are not positive.
 
-The ``flux-limiting'' (i.e.~flux-correction-limited) approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, there exist nonlinear flux-limited formulas which restore these properties, and we list and try them here.  Because the schemes under consideration are explicit, the nonlinearity does not represent a significant computational cost.
+The ``flux-limiting'' (i.e.~flux-correction-limited) approach regards the corrections in \eqref{eq:centerfluxfirst} and \eqref{eq:thirdfluxfirst} as too large to allow positivity, specifically near local extrema of $u$ \citep[section III.1.1]{HundsdorferVerwer2010}.  Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} says that we cannot get truncation error better than first-order with a discretization that is both linear and positive.  However, certain nonlinear formulas restore these properties, and we try them here.  Because the schemes are explicit, the nonlinearity does not represent a significant computational cost.
 
 These flux-limited schemes can be written in the same general form as above, with a correction to the first-order upwinded flux:
 \begin{equation}
@@ -1043,27 +1044,24 @@ Q_e = v_e \left[u_i + \Psi(\theta_i) (u_{i+1} - u_i)\right], \qquad v_e \ge 0. \
 \end{equation}
 If we have $v(x)<0$ in \eqref{eq:modeladvect} then the same function $\Psi$ should be used but with the direction reversed \citep[section III.1.1]{HundsdorferVerwer2010}:
 \begin{equation}
-Q_e = v_e \left[u_{i+1} + \Psi\left((\theta_{i+1})^{-1}\right) (u_i - u_{i+1})\right], \qquad v_e < 0. \label{eq:fluxlimiterformreversed}
+Q_e = v_e \left[u_{i+1} + \Psi\left(1/\theta_{i+1}\right) (u_i - u_{i+1})\right], \quad v_e < 0. \label{eq:fluxlimiterformreversed}
 \end{equation}
 The forms for $Q_w$ in \eqref{eq:basicmodelFD} simply replace $v_e \to v_w$, $i\to i-1$, and $i+1\to i$.  Table \ref{tab:fluxlimiters} shows several cases for $\Psi$ including those already considered.
 
-The difference ratio $\theta_i$ in \eqref{eq:thetadefine} can take any real value.  For the time-discretizations we will consider, sufficient conditions on $\Psi(\theta)$ to give a positive advection scheme for model equation \eqref{eq:modeladvect} are
+For the time-discretizations we will consider (see Table \ref{tab:fluxlimiters}), sufficient conditions on $\Psi(\theta)$ to give a positive advection scheme for model equation \eqref{eq:modeladvect} are
 \begin{equation}
 0 \le \Psi(\theta) \le 1, \qquad 0 \le \frac{\Psi(\theta)}{\theta} \le 1 \qquad \text{ for all } \theta \in \RR.
 \end{equation}
-The schemes in Table \ref{tab:fluxlimiters} which satisfy these conditions are marked with ``$\ast$''.
+Note that ratio $\theta_i$ in \eqref{eq:thetadefine} can take any real value.
 
-For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that in every case in Table \ref{tab:fluxlimiters} where there is a correction ($\Psi(\theta)\ne 0$) we have $\Psi(1)=1/2$.  The Koren flux-limiter in Table \ref{tab:fluxlimiters} \citep{HundsdorferVerwer2010} has $\Psi(\theta) = \frac{1}{3}+\frac{1}{6} \theta$ for $\frac{2}{5} \le \theta \le 4$.  We can think of the Koren scheme as a positive form of the third-order upwind-biased scheme.
+For smooth functions and fine grids we have $\theta_i\approx 1$ except near extrema where $u_{i+1} - u_i$ and $u_i - u_{i-1}$ are both near zero.  Note that each scheme in Table \ref{tab:fluxlimiters} with a correction (i.e.~$\Psi(\theta)\ne 0$) has $\Psi(1)=1/2$.  Note that the Koren flux-limiter in Table \ref{tab:fluxlimiters} is a positive form of the third-order upwind-biased scheme.
 
+To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error.  Second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas'' (extrema and non-smooth areas) where $\theta_i\gg 1$ or $\theta_i\ll 1$.  Thus these schemes are usually high-order but they (nonlinearly) revert to first-order when they get in trouble.
 
-To summarize the flux discretization choices for model equation \eqref{eq:modeladvect}, first-order upwinding \eqref{eq:upwindfluxfirst} gives positivity but only $O(\Delta x^1)$ truncation error while second-order centered differencing \eqref{eq:centerfluxfirst} and third-order upwind-biased differencing \eqref{eq:thirdfluxfirst} give better truncation error (i.e.~$O(\Delta x^2)$ and $O(\Delta x^3)$, respectively), but not positivity.  The flux-limited Koren and van Leer schemes in Table \ref{tab:fluxlimiters} give positivity and also better truncation error away from ``difficult areas''.  Such areas, which are where $\theta_i$ in \eqref{eq:thetadefine} is $\gg 1$ or $\ll 1$, tend to be near extrema and non-smooth areas.  Thus these schemes are high-order but they (nonlinearly) revert to first-order when they get in trouble.
-
-The above discussion was limited to the spatial (semi-)discretization.  A time discretization is also required, and for this we simply choose forward Euler.  The fully discrete system is positive if
+The above discussion was limited to the spatial discretization.  For the time discretization we simply choose forward Euler.  The fully discrete system is positive if the CFL-type condition
 \begin{equation}
 \max_x \frac{|v(x)|\Delta t}{\Delta x} \le \frac{1}{2} \label{eq:CFL}
 \end{equation}
-\citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).  We identify condition \eqref{eq:CFL} as simply ``CFL'' even though it is more strict than the CFL condition that suffices for stability \citep{MortonMayers}.
-
-
+holds \citep[section III.1.1]{HundsdorferVerwer2010}.  One can show that these positive schemes are also total variation diminishing (TVD) if the velocity is constant ($v(x)=v_0$).
 
 \end{document}
