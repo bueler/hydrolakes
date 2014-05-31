@@ -458,7 +458,7 @@ As will be described in section \ref{sec:num}, we have implemented an explicit/i
     $e_0$ & 0.69 &  & void ratio at $N=N_0$ \citep{Tulaczyketal2000} \\
     $\phi_0$ & $0.01$ & & regularizing englacial porosity \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
-    $k$ & $0.01$ ?? & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & conductivity coefficient \citep{Schoofetal2012} \\
+    $k$ & $0.001$ & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & conductivity coefficient \citep{Schoofetal2012} \\
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $0.1$ & $\text{m}$ & roughness scale \citep{Hewittetal2012} \\
@@ -642,7 +642,7 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 \end{equation}
 where $\tilde W = W_r - W$ is the amount which the water is below the roughness scale.
 
-\subsection{A nontrivial exact solution}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin so that $P_o(L^-)>0$.  Figure \ref{fig:Pexact} shows the solution and this small cliff in particular.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
+\subsection{A nontrivial exact solution}  \label{subsect:exactsoln}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin so that $P_o(L^-)>0$.  Figure \ref{fig:Pexact} shows the solution and this small cliff in particular.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The initial condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple, so we choose a parabolic profile
 \begin{equation}
@@ -950,11 +950,11 @@ along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
 
 \section{Results}  \label{sec:results}
 
-\subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep[for example]{Wesseling}.
+\subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of actually measuring the errors made by the numerical scheme, especially as the numerical grid is refined \citep{BLKCB,Wesseling}.
 
-As our exact solution is for steady-state, we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The true continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state; any drift is error.
+The exact solution described in subsection \ref{subsect:exactsoln}, and shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}, is for steady-state.  Thus we initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is error.
 
-For the verification runs we use the values in Table \ref{tab:verifconstants}.  The exact solution is shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}.  We do runs of one month of model time on grids with spacing decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
+For the verification runs we use the values in Table \ref{tab:verifconstants}.  We do runs of one month of model time on grids with spacing decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{refineWPpism}
@@ -962,12 +962,12 @@ For the verification runs we use the values in Table \ref{tab:verifconstants}.  
 \label{fig:refineWPpism}
 \end{figure}
 
-As they give evidence of numerical convergence, these results suggest that our numerical solution method for these coupled advection-diffusion-reaction equations for $W$ and $P$ are being solved correctly.  The rate of convergence is roughly linear (i.e.~about $O(\Delta x^1)$) because the errors arise at locations of low regularity of the solution, including the radius where $P=P_o$ and the ice sheet margin where there is a jump in the water thickness to zero.
+As they give evidence of convergence, these results suggest that our numerical schemes for these coupled advection-diffusion-reaction equations for $W$ and $P$ are implemented correctly.  The rate of convergence is roughly linear (i.e.~about $O(\Delta x^1)$) because the errors arise at locations of low regularity of the solution \citep{BLKCB}, including the radius $r=R_1$ where $P$ abruptly drops from $P_o$, and at the ice sheet margin $r=L$ where there is a jump in the water thickness to zero.
 
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on this verification evidence it is reasonable to choose first-order upwinding for applications.  This scheme is simpler to implement, requires fewer floating point operations, and requires less communication in a parallel implementation.
+The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
 
 
-\subsection{Evidence for and against a relation $P(W)$}
+\subsection{Evidence for a relation $P(W)$}
 
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
