@@ -967,16 +967,27 @@ As they give evidence of convergence, these results suggest that our numerical s
 The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
 
 
+\subsection{Running the model at whole ice sheet scale}
+
+FIXME: show $m$ and $|\bv_b|$ for greenland ice sheet on 2km grid
+
 \subsection{Evidence for a relation $P(W)$}
 
 FIXME:  text about F\&C equation \eqref{eq:PofWFC}
 
-\begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{isPofW-250m} \,
-\includegraphics[width=3.0in,keepaspectratio=true]{isPofW-250m-month}
-\caption{Left: Scatter plot of $(W,P)$ pairs for all cells at end of 5 year steady-input simulation on a 250 m grid.  Red dashed is equation \eqref{eq:PofWFC} with $W_{\text{crit}} = W_r = 1$ m.  Right: Same except at the end of a one month simulation, and with equation \eqref{eq:PofWFC} using $W_{\text{crit}} = W_r / 3$.}
-\label{fig:isPofWnbreen}
-\end{figure}
+% FIXME: for now these were generated in
+%   green-hydro/edrun/
+% by
+%   ./genfig.sh run3km/ex_distributed-decoupled.nc g3km.png
+% but we want to get them from a higher quality run
+\newcommand{\myheight}{2.0in}
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin1-g3km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin10-g3km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin30-g3km}}
+\mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin100-g3km} \,
+\includegraphics[height=2.05in,keepaspectratio=true]{bin500-g3km}}
+\caption{Scatters plot of $(W,P)$ pairs for all cells at end of FIXME year steady-input simulation on a 2000 m grid for the whole Greenland ice sheet.  Top row, left to right: $[1,10)$ m/a; $[10,30)$ m/a; $[30,100)$ m/a.  Bottom row: $[100,500)$ m/a; $[500,5000)$ m/a.  Colored by ice thickness, using a common color scale shown beside last figure.}
+\label{fig:isPofW}
+\end{figure*}
 
 
 \conclusions  \label{sec:conclusion}
