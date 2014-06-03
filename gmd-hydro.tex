@@ -958,11 +958,41 @@ As they give evidence of convergence, these results suggest that our numerical s
 The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
 
 
-\subsection{Application of the model at whole ice sheet scale}
+\subsection{Application of the model at ice sheet scale}
 
-FIXME: show $m$ and $|\bv_b|$ for Greenland ice sheet on 2km grid
+FIXME: text describing the Greenland 2km runs: spinup, routing, distributed
 
-FIXME: show $W$ and $\Wtil$ and $P$ for Greenland
+\newcommand{\grnht}{3.8in}
+
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velsurf-mag} \,
+\includegraphics[height=\grnht,keepaspectratio=true]{Greenland-surfvelmag}}
+\caption{To evaluate the result of the spin-up ice dynamical run we compare modelled ice speed at the ice surface (left; $\mathrm{m}\,\mathrm{a}^{-1}$) to satellite observations (right; $\mathrm{m}\,\mathrm{a}^{-1}$).}
+\label{fig:Greenspinupeval}
+\end{figure*}
+
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
+\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velbase-mag}}
+\caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the final state of the spin-up ice dynamical run.}
+\label{fig:Greenhydroinputs}
+\end{figure*}
+
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
+\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-bwat}}
+\caption{Outputs from the \texttt{routing} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (left; $\mathrm{m}$) and modelled transportable water layer thickness $W$ (right; $\mathrm{m}$).}
+\label{fig:Greenroutingresults}
+\end{figure*}
+
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwat} \,
+\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwprel}}
+\caption{Outputs from the \texttt{distributed} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (not shown because it is identical to the result from the \texttt{routing} model in this case; see text), the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure relative to overburden pressure $P/P_o$ (right).}
+\label{fig:Greendistributedresults}
+% note routing-decoupled-bwat.png is not shown but it really is identical to routing-decoupled-tillwat.png
+\end{figure*}
+
 
 \subsection{Evidence for a relation $P(W)$}
 
