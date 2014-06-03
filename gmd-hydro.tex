@@ -126,17 +126,6 @@ All water movement, whether stored in cavities or till, is carefully implemented
 
 Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system \citep{Walder1982}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply,Werderetal2013}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
 
-FIXME: this paper is newsworthy for the following list of new features:\begin{enumerate}
-\item parallel implementation in 2d at scale
-\item englacial porosity regularization allows $0\le P \le P_o$ model at scale (compare comment in \cite{Werderetal2013})
-\item water split between transport and till
-\item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
-\item exact solution of the distributed model in the radial, steady case, plus verification using this 
-\item clarity on hierarchy of closures
-\end{enumerate}
-
-FIXME: this paper documents the PISM 0.6 code released February 2014
-
 Section \ref{sec:elements}, next, considers the basic physical principles of mass conservation and hydraulic potential, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is know about the connection between till mechanical properties, pore water, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution and also the till water storage and transfer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steady} the simplified equations which apply in steady state are analyzed, and we observe that in steady state the pressure is a function of subglacial water amount, an emergent property of the model.  In section \ref{sec:exactsolution} we compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model, with particular attention to time step restrictions and the treatment of advection.  These schemes are implemented in the Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}), and section \ref{sec:pismdoc} documents the major options and parameters seen by a user.  Section \ref{sec:results} shows the first numerical results from the model, in which we show convergence under grid refinement in the verification case, and we examine the degree to which there is a functional relationship between water amount and pressure across all grid points in a Greenland simulation.
 
 
@@ -961,7 +950,7 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 \subsection{Application of the model at ice sheet scale}
 
-We then applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  For simplicity and consistency with prior work, the observed state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland \cite[and references therein]{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}.
+We have applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  This serves as a nontrivial example showing the implementability of the model at large computational scale with high resolution using real data, and of one-way coupling with ice dynamics.  For simplicity and consistency with prior work, the observed state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland \cite[and references therein]{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}.
 
 \newcommand{\grnht}{3.8in}
 
@@ -993,10 +982,6 @@ These runs had 1.05 million subglacial hydrology grid points at which variables 
 
 Note that higher velocities were seen in the \Nbreen case in section \ref{sec:num}, based on additional simulated surface water input added to the thermodynamically-generated basal melt rate \citep{vanPeltthesis}.  In that tidewater glacier case the pressure-evolution time-steps are seen to be substantially shorter than the mass-conservation time steps.
 
-The final values of $\Wtil$ and $W$ for the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  We see that the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  By contrast, in the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential $\psi=P_o + \rho_w g (b+W)$ used in this model.  The grid resolution of 2 km, while very high for contemporary ice dynamics models, still represents a significant spatial-averaging of the concentrated flow pathways.  Specifically, though relatively few areas have $W>1$, the continuum limit of the model would be expected to have $W\gg 1$ in concentrated pathways of a few meters to tens of meters width.  These effects are seen in detail in Figure \ref{fig:Greenroutingdetail}.
-
-On the one hand this model could be regarded as a minimal ``conduit-like'' description of the subglacial flow, because of these model concentrated pathways.  On the other hand, as noted in the introduction, there is no ``R-channel'' mechanism used in this paper; in that mechanism the dissipation heating of the flowing water would generate wall melt-back to hold the channel open.  Thus the time-dependence in the model is not ``R-channel''-like.  At a more basic level, the authenticity of subglacial ``channel'' geometry here is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited; this effect is severe in the Eastern outlet glaciers (Helheim and Kangerdlugssuaq) shown in Figure \ref{fig:Greenroutingdetail}.
-
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-bwat}}
@@ -1004,15 +989,19 @@ On the one hand this model could be regarded as a minimal ``conduit-like'' descr
 \label{fig:Greenroutingresults}
 \end{figure*}
 
-The final values of $W$ and the relative water pressure $P/P_o$ for the \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs, and indeed the field $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case; this can be seen by examination of the simple $\Wtil$ evolution equation given in section \ref{sec:capacity}.
-
-Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The tendency of this effect to spread out the water $W$, relative to the \texttt{routing} model, is clearly seen in the \texttt{distributed} results in Figure \ref{fig:Greendistributedresults}.  There is no strong concentration of $W$ along curves of steepest descent of the hydraulic potential.  Evidently this result is strongly dependent on the opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$; see Tables \ref{tab:constants} and \ref{tab:correspondence}.  (These parameters are in addition to the Darcy flux model parameters $\alpha,\beta,k$ already used in the \texttt{routing} model.)  Parameter identification through observed data is obviously needed, but also it is obviously beyond the scope of the current paper.
+The final values of $\Wtil$ and $W$ for the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  We see that the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  By contrast, in the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential $\psi=P_o + \rho_w g (b+W)$ used in this model.  The grid resolution of 2 km, while very high for contemporary ice dynamics models, still represents a significant spatial-averaging of the concentrated flow pathways.  Specifically, though relatively few areas have $W>1$, the continuum limit of the model would be expected to have $W\gg 1$ in concentrated pathways of a few meters to tens of meters width.  These effects are seen in detail in Figure \ref{fig:Greenroutingdetail}.
 
 \begin{figure*}[ht]
-\includegraphics[height=3.0in,keepaspectratio=true]{detail-routing-decoupled-bwat}
+\includegraphics[height=2.7in,keepaspectratio=true]{detail-routing-decoupled-bwat}
 \caption{Detail of transportable water $W$ plotted in Figure \ref{fig:Greenroutingresults}, covering Jakobshavn (J), Helheim (H), and Kangerdlugssuaq (K) outlet glaciers}
 \label{fig:Greenroutingdetail}
 \end{figure*}
+
+On the one hand this model could be regarded as a minimal ``conduit-like'' description of the subglacial flow, because of these model concentrated pathways.  On the other hand, as noted in the introduction, there is no ``R-channel'' mechanism used in this paper; in that mechanism the dissipation heating of the flowing water would generate wall melt-back to hold the channel open.  Thus the time-dependence in the model is not ``R-channel''-like.  At a more basic level, the authenticity of subglacial ``channel'' geometry here is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited; this effect is severe in the Eastern outlet glaciers (Helheim and Kangerdlugssuaq) shown in Figure \ref{fig:Greenroutingdetail}.
+
+The final values of $W$ and the relative water pressure $P/P_o$ for the \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs, and indeed the field $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case; this can be seen by examination of the simple $\Wtil$ evolution equation given in section \ref{sec:capacity}.
+
+Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The tendency of this effect to spread out the water $W$, relative to the \texttt{routing} model, is clearly seen in the \texttt{distributed} results in Figure \ref{fig:Greendistributedresults}.  There is no strong concentration of $W$ along curves of steepest descent of the hydraulic potential.  Evidently this result is strongly dependent on the opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$; see Tables \ref{tab:constants} and \ref{tab:correspondence}.  (These parameters are in addition to the Darcy flux model parameters $\alpha,\beta,k$ already used in the \texttt{routing} model.)  Parameter identification through observed data is obviously needed, but also it is obviously beyond the scope of the current paper.
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwat} \,
@@ -1022,24 +1011,35 @@ Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The te
 % note routing-decoupled-bwat.png is not shown but it really is identical to routing-decoupled-tillwat.png
 \end{figure*}
 
-
-\subsection{Evidence for a relation $P(W)$}
-
-FIXME:  text about F\&C equation \eqref{eq:PofWFC}
+As a final observation about the \texttt{distributed} model results, we examine the local relationship between water amount $W$ and pressure $P$.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show the large spatial variations which are characteristic of a real ice sheet.
 
 \newcommand{\myheight}{2.0in}
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin1-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin10-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin30-g2km}}
 \mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin100-g2km} \,
 \includegraphics[height=2.05in,keepaspectratio=true]{bin300-g2km}}
-\caption{Scatter plots of $(W,P)$ pairs for all cells at end of a 5 model year steady-input simulation on a 2 km grid for the whole Greenland ice sheet.  Each scatter plot shows the pairs for a select range of ice sliding speeds, as indicated.  Colored by ice thickness, using a common color scale shown beside last figure.}
-\label{fig:isPofW}
+\caption{Scatter plots of $(W,P)$ pairs for all cells at end of a 5 model year steady-input simulation on a 2 km grid for the whole Greenland ice sheet using roughness scale $W_r = 0.1$ m.  Each scatter plot shows the pairs for a select range of ice sliding speeds, as indicated.  Points are colored by ice thickness using a common scale shown beside last figure.}
+\label{fig:GreenisPofW}
 \end{figure*}
+
+Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each scatter plot, then there is usually a rough increasing relationship between $W$ and the relative pressure $P/P_o$.  Recalling that in exact steady state the equation \eqref{eq:PofWsteady} applies, the reader should also see Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}.  An increasing relationship is especially clear for high sliding velocity locations.  At such points the water amount is often comparable to the bed roughness scale $W_r$.  However, for low sliding velocities we see generally generally low water amounts ($W \lesssim W_r/10$) but a full range of pressures.  Furthermore we can observe that in thick ice with high overburden pressure (high ice thickness) the pressure $P$ is close to overburden even if there is fast sliding, while on the other hand there are locations with high sliding, high water amount, and low pressure, but they also have low ice thickness.
+
+It would be possible to implement a model without a pressure evolution equation like \eqref{eq:regpressureequation}, and instead use \eqref{eq:PofWsteady} as a prescribed relation $P(W)$.  However, we prefer such a local relationship to ``emerge'' in steady state, as here, because tests of the model with time-dependent inputs clearly suggest the importance of a full pressure evolution equation to modeling response to a seasonal surface melt cycle \citep{vanPeltthesis}.
 
 
 \conclusions  \label{sec:conclusion}
 
-FIXME:  MOST IMPORTANT?:  IMPLEMENTED COMMON EXTENSION OF MAJOR MODELS
+
+FIXME: this paper is newsworthy for the following list of new features:\begin{enumerate}
+\item parallel implementation in 2d at scale
+\item englacial porosity regularization allows $0\le P \le P_o$ model at scale (compare comment in \cite{Werderetal2013})
+\item water split between transport and till
+\item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
+\item exact solution of the distributed model in the radial, steady case, plus verification using this 
+\item clarity on hierarchy of closures allows us to implement the common extension of several published models
+\end{enumerate}
+
+FIXME: this paper documents the PISM 0.6 code released February 2014
 
 
 \begin{acknowledgements}
