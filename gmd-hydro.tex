@@ -120,15 +120,16 @@ This paper describes a model for distributed systems of linked subglacial caviti
 
 The cavities in the distributed system open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Conduits are not included in the model, and wall melt is only computed diagnostically, but pressure is determined non-locally over each connected component of the hydrological system.  No functional relation between subglacial water amount and pressure is assumed \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a new parabolic approximation of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.
 
-Compared to some other recent distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.  We observe that in cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that its deformation is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.  FIXME: On the other hand, the HIT model and the deFluerian 2014 paper have till, with significant limitations.
+Compared to some other recent distributed models \citep{Hewitt2013,Schoofetal2012}, the mass conservation equation has additional terms because water is stored in both linked cavities and till.  We observe that in cases where boreholes have actually been drilled to the bed, subglacial till is observed \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,TrufferHarrison2006,Tulaczyketal2000}.  Laboratory experiments on the rheology of till \citep{Hookeetal1997,TrufferEchelmeyerHarrison2001,Tulaczyketal2000} generally conclude that its deformation is well-approximated by a Mohr-Coulomb relation.  For this reason we adopt a compressible-coulomb-plastic till model when determining the effective pressure in the till from the amount of water stored in the till (pore volume) \citep{Tulaczyketal2000}.  FIXME: On the other hand, the HIT model \citep{vanderWeletal2013} and \cite{deFleurianetal2014} have till, with significant limitations.
 
 All water movement, whether stored in cavities or till, is carefully implemented in a mass-conserving manner.  FIXME: this is nontrivial because of transfer to/from till and because of free-boundaries
 
-Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system \citep{Walder1982}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
+Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system \citep{Walder1982}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply,Werderetal2013}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
 
 FIXME: this paper is newsworthy for the following list of new features:\begin{enumerate}
-\item parallel implementation
-\item water split between transport and till, and in 2D
+\item parallel implementation in 2d at scale
+\item englacial porosity regularization allows $0\le P \le P_o$ model at scale (compare comment in \cite{Werderetal2013})
+\item water split between transport and till
 \item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
 \item exact solution of the distributed model in the radial, steady case, plus verification using this 
 \item clarity on hierarchy of closures
@@ -960,23 +961,37 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 \subsection{Application of the model at ice sheet scale}
 
-FIXME: text describing the Greenland 2km runs: spinup, routing, distributed
+We then applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  For simplicity and consistency with prior work, the observed state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland \cite[and references therein]{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}.
 
 \newcommand{\grnht}{3.8in}
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velsurf-mag} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{Greenland-surfvelmag}}
-\caption{To evaluate the result of the spin-up ice dynamical run we compare modelled ice speed at the ice surface (left; $\mathrm{m}\,\mathrm{a}^{-1}$) to satellite observations (right; $\mathrm{m}\,\mathrm{a}^{-1}$).}
+\caption{To evaluate the result of the 2 km grid spun-up ice dynamical model we compare modelled ice speed at the ice surface (left; $\mathrm{m}\,\mathrm{a}^{-1}$) to satellite observations (right; $\mathrm{m}\,\mathrm{a}^{-1}$).}
 \label{fig:Greenspinupeval}
 \end{figure*}
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velbase-mag}}
-\caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the final state of the spin-up ice dynamical run.}
+\caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed $|\bv_b|$ (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the spun-up model.}
 \label{fig:Greenhydroinputs}
 \end{figure*}
+
+The PISM ice dynamics and thermodynamics model \citep{AschwandenBuelerKhroulevBlatter,BBssasliding,Winkelmannetal2011}, based in part on the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet.  Specifically, the model was run in a present-day climate for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  The final 2 km run, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (Of course this represents a small computation for modern clusters which may have more than 100k processors.)
+
+In the last 100 a of the final run the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
+
+The results of this whole-ice-sheet spinup were validated by comparing results to observations.  For example, the spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ of is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  This model, like those described by \cite{AschwandenAdalgeirsdottirKhroulev}, uses no distributed parameter values such as un-observable basal shear stresses.  Such distributed values would require the observed surface velocity for the inversion, and thus invalidate this data set for validation.  On the other hand, we see in Figure \ref{fig:Greenspinupeval} that, for example, the extent of the Northeast Greenland ice stream is smaller than observed, and differences in the distribution of flow in Western Greenland outlet glaciers.
+
+The spun-up model includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding coincide with areas of basal melt because sliding occurs through a balance of modelled basal resistance and membrane (longitudinal) stresses in the hybrid PISM model \citep{Winkelmannetal2011}, and furthermore the modeled basal resistance comes from the model of yield stress described in section \ref{sec:tillmechanics}.
+
+We used the fields $H$, $m$, $|\bv_b|$ as steady data in 5 model year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way (ice dynamics model $\to$ subglacial hydrology model) coupling is tested here.
+
+These runs had 1.05 million grid points at which variables $W$, $\Wtil$, and $P$ were recomputed at each time-step.  In both \texttt{routing} and \texttt{distributed} models the hydrological system was seen to become quite steady after the first two model years.  The time-steps for the hydrology model had adaptively-determined (section \ref{sec:num}) steady durations of 4 model hours for the \texttt{routing} model based on maximum subglacial water speeds of 0.05 $\text{m}\,\text{s}^{-1}$.
+
+FIXME: text describing the Greenland 2km runs: routing, distributed
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
@@ -1014,7 +1029,7 @@ FIXME:  MOST IMPORTANT?:  IMPLEMENTED COMMON EXTENSION OF MAJOR MODELS
 
 
 \begin{acknowledgements}
-The first author was supported by NASA grant \#NNX13AM16G.  Constantine Khroulev helped with the PISM implementation, and discussions with Andy Aschwanden and Tim Bartholomaus were much appreciated.
+The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation, and discussions with Andy Aschwanden and Tim Bartholomaus were much appreciated.
 \end{acknowledgements}
 
 
