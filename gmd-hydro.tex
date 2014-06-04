@@ -126,7 +126,9 @@ Our model combines a till which lacks horizontal transport with a water transpor
 
 Wall melt in cavities is calculated diagnostically from the modeled flux and hydraulic gradient.  If included as a contribution to the mass conservation equation, however, as is well-known, the addition of wall melt generates an unstable distributed system \citep{Walder1982}.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Hewittetal2012,PimentelFlowers2011,Schoofmeltsupply,Werderetal2013}.  We do not adopt such a mesh based, non-continuum model \citep[compare][]{Hewittetal2012}.  FIXME: we can adopt a dual system, but this is not yet implemented
 
-Section \ref{sec:elements}, next, considers the basic physical principles of mass conservation and hydraulic potential, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is know about the connection between till mechanical properties, pore water, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution and also the till water storage and transfer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steady} the simplified equations which apply in steady state are analyzed, and we observe that in steady state the pressure is a function of subglacial water amount, an emergent property of the model.  In section \ref{sec:exactsolution} we compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model, with particular attention to time step restrictions and the treatment of advection.  These schemes are implemented in the Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}), and section \ref{sec:pismdoc} documents the major options and parameters seen by a user.  Section \ref{sec:results} shows the first numerical results from the model, in which we show convergence under grid refinement in the verification case, and we examine the degree to which there is a functional relationship between water amount and pressure across all grid points in a Greenland simulation.
+FIXME: The goals of the current work are the selection, implementation, verification, and demonstration of a two-dimensional subglacial hydrology model which is coupled to a comprehensive three-dimensional ice dynamics model, the Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}).  To satisfy our goals the new hydrology model must be parallelizable, it must exhibit convergence of solutions under grid refinement, and its parameters must be as few as practical.  We believe this paper will demonstrate that we have succeeded in these goals.
+
+Section \ref{sec:elements} considers the basic physical principles of mass conservation and hydraulic potential, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is know about the connection between till mechanical properties, pore water, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution and also the till water storage and transfer mechanism.  Section \ref{sec:closures} reviews closures which determine the subglacial water pressure.  With these components laid out, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steady} the simplified equations which apply in steady state are analyzed, and we observe that in steady state the pressure is a function of subglacial water amount, an emergent property of the model.  In section \ref{sec:exactsolution} we compute an exact steady solution for subglacial water amount and pressure in the distributed (linked cavities) model, a useful tool for verification.  In section \ref{sec:num} we present numerical schemes for the general model, with particular attention to time step restrictions and the treatment of advection.  These schemes are implemented in PISM.  Section \ref{sec:pismdoc} documents the major options and parameters seen by a PISM user.  Section \ref{sec:results} shows the first numerical results from the model, in which we show convergence under grid refinement in the verification case, and we examine the degree to which there is a functional relationship between water amount and pressure across all grid points in a Greenland simulation.
 
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
@@ -304,7 +306,7 @@ Setting the pressure equal to the overburden pressure is the simplest closure \c
 \begin{equation}
 P = P_o.\label{eq:Pisoverburden}
 \end{equation}
-This model is sometimes used for ``routing'' subglacial water under ice sheets so as to identify subglacial lake locations \citep{Livingstoneetal2013TCD,Siegertetal2009}.  Straightforward calculations using equations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that the advection-diffusion form \eqref{eq:adeqn} has an ice-geometry-determined velocity,
+This model is sometimes used for ``routing'' subglacial water under ice sheets so as to identify subglacial lake locations \citep{Livingstoneetal2013,Siegertetal2009}.  Straightforward calculations using equations \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:Pisoverburden} show that the advection-diffusion form \eqref{eq:adeqn} has an ice-geometry-determined velocity,
 \begin{equation}
   \frac{\partial W}{\partial t} = - \Div\left(\tilde\bV\, W\right) + \Div\left(\rho_w g k \,W\, \grad W\right) + \frac{m}{\rho_w}   \label{eq:PisoverConservation}
 \end{equation}
@@ -315,7 +317,7 @@ where
 
 Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, the diffusion term $\Div\left(\rho_w g k \,W\, \grad W\right)$ on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  It therefore possesses characteristic curves \citep{Evans} which are the \emph{a priori} known trajectories of the water flow.  These trajectories are determined by ice sheet geometry.
 
-Equation \eqref{eq:PisoverConservation} without the diffusion term, as it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013TCD} and not the evolving field $W$.  Also, because the simplified model is not well-posed, numerical implementations are badly-behaved under grid refinement.  We therefore prefer equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, because it is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times and solutions will converge under sufficient grid refinement.
+Equation \eqref{eq:PisoverConservation} without the diffusion term, as it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013} and not the evolving field $W$.  Also, because the simplified model is not well-posed, numerical implementations are badly-behaved under grid refinement.  We therefore prefer equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, because it is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times and solutions will converge under sufficient grid refinement.
 
 At an almost opposite extreme in terms of the mathematical form, the second simplified closure assumes that the water pressure is locally determined by the amount of water.  \cite{FlowersClarke2002_theory} propose
 \begin{equation}
@@ -372,26 +374,22 @@ Thus our diffusion \eqref{eq:regpressureequation} for $P$ is coupled to the adve
 
 \section{A new subglacial hydrology model in PISM} \label{sec:newmodel}
 
-\subsection{Summary of equations and symbols}  The goals of the current work are the selection, implementation, verification, and demonstration of a two-dimensional subglacial hydrology model which is coupled to an existing three-dimensional ice dynamics model.  The new hydrology model must be parallelizable and it must exhibit convergence of solutions under grid refinement.  The remainder of the paper will demonstrate that we have succeeded in these goals.
-
-The major equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}, collected and re-ordered here, with till effective pressure $\Ntil$ eliminated using equation \eqref{eq:Wtilpressure}:
+\subsection{Summary of equations and symbols}  The major, coupled equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}.  Collected here for clarity they are:
 \begin{align}
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
-&\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
-& \qquad \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+, \notag \\
-&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
 &\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \notag
+&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag \\
+&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
+&\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
+& \qquad \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
 \end{align}
-The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, already defined but collected here:
+The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, recollected here:
 \begin{align*}
 K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2} && \text{effective conductivity} \\
-\bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of water $W$} \\
-D    &= \rho_w g K W && \text{diffusivity of water $W$} \\
-\psi &= P + \rho_w g (b + W) && \text{hydraulic potential} \\
+\bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of $W$} \\
+D    &= \rho_w g K W && \text{diffusivity of $W$} \\
 P_o  &= \rho_i g H && \text{overburden pressure}.
 \end{align*}
-As will be described in section \ref{sec:num}, we have implemented an explicit/implicit adaptive time-stepping numerical scheme for equations \eqref{eq:bluebox} in PISM.
 
 \begin{table*}[ht]
 \caption{Time- and space-dependent functions in subglacial hydrology model \eqref{eq:bluebox}, including symbol, units, and meaning.}
@@ -409,7 +407,8 @@ As will be described in section \ref{sec:num}, we have implemented an explicit/i
         $|\bv_b|$ & $\text{m}\,\text{s}^{-1}$ & ice sliding speed \\
         \end{tabular} \\ \hline
 \emph{output} &  \begin{tabular}{lll}
-        $\tau_c$ \phantom{l\,} & Pa \phantom{llllllllllll} & till yield stress \\
+        $\Ntil$ & Pa & effective pressure on the till \\
+        $\tau_c$ \phantom{l\;} & Pa \phantom{llllllllllll} & till yield stress \\
         \end{tabular} \\ \hline
 \end{tabular}
 \label{tab:symbols}
@@ -443,9 +442,11 @@ As will be described in section \ref{sec:num}, we have implemented an explicit/i
  \label{tab:constants}
 \end{table*}
 
-Model equations \eqref{eq:bluebox} relate the state functions, data functions, and output function listed in Table \ref{tab:symbols} to the physical constants and model parameters in Table \ref{tab:constants}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-dependent numerical model.  The ``data'' functions are either supplied by true observations or they are provided by other components an ice sheet model (e.g.~the stress balance in an ice dynamics model could provide $\bv_b$).  The output $\tau_c$ is the essential quantity to determine the basal shear stress in the stress balance equations of an ice dynamics model.
+Model equations \eqref{eq:bluebox} relate the state functions, data functions, and output function listed in Table \ref{tab:symbols} to the physical constants and model parameters in Table \ref{tab:constants}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-stepping numerical model.  The ``data'' functions are either supplied by true observations or they are provided by other components an ice sheet model (e.g.~the stress balance in an ice dynamics model will provide $|\bv_b|$).
 
-The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Although default values must be chosen for the parameters, as is done in Table \ref{tab:constants}, exploration of the parameter space is essential; see section \ref{sec:results}.
+The yield stress function $\tau_c$ is the most important output of the model.  It determines the basal shear stress used in the stress balance equations of an ice dynamics model.  Full two-way coupling would include the ice dynamics model passing fields $b$, $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and then $\tau_c$ passing in the other direction.
+
+The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Exploration of the parameter space represented by Table \ref{tab:constants} is important, but essentially it is beyond the scope of this model-description paper.
 
 \subsection{Reduction to existing models}  Four reductions (limiting cases) of model \eqref{eq:bluebox} can now be stated precisely:
 
@@ -459,7 +460,7 @@ The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- a
 \end{align}
 The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, with a small porosity parameter $\phi_0$, and with coupling to additional till storage.
 
-\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Livingstoneetal2013TCD,Siegertetal2009}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.  The pressure is not an unknown, the parameterization of cavity evolution is inactive, and the pressure evolution equation is not needed.  There is now less stiffness because the model is an advection using a mostly-geometrically-determined velocity.    The single evolution equation is
+\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Livingstoneetal2013,Siegertetal2009}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.  The pressure is not an unknown, the parameterization of cavity evolution is inactive, and the pressure evolution equation is not needed.  There is now less stiffness because the model is an advection using a mostly-geometrically-determined velocity.    The single evolution equation is
 \begin{equation}
 \frac{\partial W}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \label{eq:lakesmodel}
 \end{equation}
