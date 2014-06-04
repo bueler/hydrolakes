@@ -178,7 +178,7 @@ for $\alpha \ge 1$, $\beta>1$, and a coefficient $k>0$ with units that depend on
 \end{align}
 The second term with $\grad W$ acts diffusively in the mass conservation equation \eqref{eq:conserve}.  Because $P$ generally scales with the overburden pressure $P_o$, the first flux term in \eqref{eq:firstfluxdecomp} will dominate in the common situation $|\grad H| \gg |\grad W|$.
 
-Decomposed flux \eqref{eq:firstfluxdecomp} implies a transport process in equation \eqref{eq:conserve} with a velocity field which varies in space and time (the first term) and portion that acts diffusively (the second term).  We will construct our conservative numerical scheme based on this decomposition.  We will see later that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also significantly \emph{diffusive} in the mass conservation equation.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$, and the separation of hydraulic velocity from diffusion is more clear.
+We will construct our conservative numerical scheme based on decomposition \eqref{eq:firstfluxdecomp}.  We will see that in near-steady-state circumstances the part of the transport velocity which is proportional to $\grad P$ is also actually \emph{diffusive} in the mass conservation equation which applies for a distributed system of linked cavities; this is not obvious but it is explained in section \ref{sec:steady}.  In conditions far from steady state, however, the direction of $\grad P$ is different from the direction $\grad W$.
 
 To simplify the model slightly, the small thickness approximation $W\approx 0$ is made inside the absolute value signs in \eqref{eq:firstfluxdecomp}, namely
 \begin{equation}
@@ -188,7 +188,7 @@ This simplification, which makes no change in the $\beta=2$ case (see equation \
 \begin{equation}
 K = k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta - 2}. \label{eq:Kdefine}
 \end{equation}
-In terms of this nonlinear conductivity $K$ we write the velocity field and the diffusivity:
+In terms of this nonlinear conductivity $K$ we define a velocity field and a diffusivity coefficient:
 \begin{equation} \label{eq:vexpression}
   \bV = - K\, \grad \left(P + \rho_w g b\right), \qquad D = \rho_w g K W.
 \end{equation}
@@ -201,9 +201,9 @@ From equations \eqref{eq:conserve} and \eqref{eq:qexpression} we have an advecti
 \begin{equation} \label{eq:adeqn}
   \frac{\partial W}{\partial t} + \frac{\partial \Wtil}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}.
 \end{equation}
-There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(D \grad W\right)$.  These different schemes impose time step restrictions of different magnitudes.  We will see that equation \eqref{eq:adeqn} is often advection-dominated in the sense that $|\bV W| \gg |D \grad W|$.  However, in near-steady conditions where the velocity $\bV$ can be almost proportional to $-\grad W$ there may be no clean separation of advection and diffusion.  Certainly the numerical schemes for advection and diffusion must be tested in combination, so we measure convergence of the combined numerical schemes in section \ref{sec:results}.
+There are distinct numerical schemes (section \ref{sec:num}) for the advection term $\Div\left(\bV\, W\right)$ and the diffusion term $\Div \left(D \grad W\right)$.  These different schemes impose time step restrictions of different magnitudes.  We will see that equation \eqref{eq:adeqn} is often advection-dominated in the sense that $|\bV W| \gg |D \grad W|$.  However, we again observe that in near-steady conditions where the velocity $\bV$ can be almost proportional to $-\grad W$ there may be no clean separation of advection and diffusion (section \ref{sec:steady}).  Certainly the numerical schemes for advection and diffusion must be tested in combination, and indeed we measure convergence of the combined numerical schemes in section \ref{sec:results}.
 
-As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure \citep{Shreve1972}.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model in this paper also generates pressure fields with this property in some circumstances.  However, in a model like ours which depends on physical mechanisms for the opening and closing of cavities, the connection between $\bq$ and the surface slope is not direct or imposed.
+As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure \citep{Shreve1972}.  Therefore the gradient of the hydraulic potential frequently follows the ice surface gradient.  The pressure model in this paper also generates pressure fields with this property in some circumstances.  However, in a model which depends on physical mechanisms for the opening and closing of cavities, the connection between $\bq$ and the surface slope is not very close.
 
 
 \section{Till mechanics and hydrology} \label{sec:tillmechanics}
@@ -215,13 +215,15 @@ There is extensive evidence that deformation of saturated till is well-modeled b
 \begin{equation}
 \tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
 \end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{CuffeyPaterson}.  The effective pressure $N$ defined by equation \eqref{eq:effective} is distinct from $\Ntil$, a difference again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress.  It does not affect the model for the horizontal transport of water or the evolution of subglacial cavities.
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{CuffeyPaterson}.
+
+The effective pressure $N=P_o-P$ used in modeling cavity closure (next section) is distinct from $\Ntil$.  This distinction is again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress.  It does not affect the model for the horizontal transport of water.
 
 Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
 \begin{equation}
 e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
 \end{equation}
-Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Default values for the dimensionless constants $e_0,C_c$ used in this paper are from a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}.
+Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.
 
 We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  (Evidence for such spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.)  It follows that the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value ($\Ntil \ge N_0$) then \eqref{eq:voidpressure} implies $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms, the following are equivalent expressions:
 \begin{equation}
@@ -231,32 +233,38 @@ The different quantities are subject to the equivalent constraints
 \begin{equation}
 \Ntil \ge N_0 \quad \text{or} \quad e\le e_0 \quad \text{or} \quad \Wtil \le \Wtilmax. \label{eq:Wtilupperbound}
 \end{equation}
-Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.\footnote{Setting $\Wtilmax=0$ ``turns off'' the till storage mechanism.}
+Though the unknown parameter $\Wtilmax$ (equivalently $N_0$ or $e_0$) could vary in time and space according to a sediment evolution model, in the current paper it is a fixed constant \citep{BBssasliding,TrufferEchelmeyerHarrison2001}.
 
-The thickness $\Wtil$ is a model state variable already appearing in mass conservation equation \eqref{eq:conserve}, so we prefer this variable over its equivalent parameters $e$ and $\Ntil$, and from \eqref{eq:voidexpressions} we then see that equation \eqref{eq:voidpressure} can be written in terms of $\Wtil$ instead of $e$.  We also propose that the reference pressure scale as a proportion $\delta$ of the overburden pressure ($N_0 = \delta P_o$), but we require that $\Ntil$ be at most equal to the overburden pressure:
+The thickness $\Wtil$ is a model state variable already appearing in mass conservation equation \eqref{eq:conserve}, so we prefer this variable over equivalent parameters $e$ and $\Ntil$.  From \eqref{eq:voidexpressions} we then see that equation \eqref{eq:voidpressure} can be written in terms of $\Wtil$ instead of $e$.  We also propose that the reference pressure scale as a proportion $\delta$ of the overburden pressure ($N_0 = \delta P_o$), but we require that $\Ntil$ be at most equal to the overburden pressure:
 \begin{equation}
 \Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}. \label{eq:Wtilpressure}
 \end{equation}
 Compare equation (15) in \cite{vanderWeletal2013}.
 
-It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the till yield stress $\tau_c$ can be determined from the water amount $\Wtil$ stored in the till.  The Mohr-Coulomb relation \eqref{eq:mohrcoulomb} is, in other words, a function $\tau_c(\Wtil)$.  Regarding the parameters in this function, observed till friction angles $\varphi$ are in a $18^\circ$--\,$40^\circ$ range \citep{CuffeyPaterson}, but the spatial variablility of this parameter can be assumed to be large and unknown.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.  The maximum capacity parameter $\Wtilmax$ could possibly be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.  Like the till friction angle, the cohesion $c_0$ and the material ratio $e_0/C_c$, can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Experiments on till suggest a narrow range for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and $c_0=0$ is reasonable \citep{Tulaczyketal2000}.     A value for the ratio $e_0/C_c$ has already been addressed: $e_0/C_c=0.69/0.12=5.75$.
+It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the till yield stress $\tau_c$ can be determined from the water amount $\Wtil$ stored in the till.  The Mohr-Coulomb relation \eqref{eq:mohrcoulomb} is, therefore, a function $\tau_c(\Wtil)$.
 
-A value $e_0/C_c=5.75$ would imply, if there were no upper bound $\Ntil \le P_o$ in equation \eqref{eq:Wtilpressure}, an almost six orders of magnitude decrease in effective pressure $\Ntil$ between the no-water state $\Wtil=0$ and the full state $\Wtil=\Wtilmax$, and a corresponding decrease in the yield stress $\tau_c$ for that range of $\Wtil$ values.  However, with the given value for $e_0/C_c$, and using $\delta = 0.01$ for concreteness, the upper bound $\Ntil \le P_o$ is equivalent to $\Wtil \ge 0.652\, \Wtilmax$, that is, only till which is saturated at least 65\% results in an effective pressure lower than overburden.
+Regarding the parameters in \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure}, note that observed till friction angles $\varphi$ are in a $18^\circ$--\,$40^\circ$ range \citep{CuffeyPaterson}.  The spatial variability of this parameter can be assumed to be large and unknown.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.  The maximum capacity parameter $\Wtilmax$ could be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{TrufferHarrisonEchelmeyer2000} evidence, but for simplicity we set it to a constant value of $2$ meters.  The cohesion $c_0$ and the material ratio $e_0/C_c$ can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Experiments on till suggest small values for till cohesion, $0 \le c_0 \lesssim 1$ kPa, and so $c_0=0$ is reasonable \citep{Tulaczyketal2000}.  Values for the dimensionless constants $e_0$ and $C_c$ used in this paper are from a laboratory experiment on till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}, giving $e_0/C_c=5.75$.
 
-Actual ice sliding velocity must be determined by solving a stress balance in which the vector basal shear stress $\mathbf{\tau}_b$ appears as a boundary condition \citep{SchoofCoulombBlatter} or term \citep{BBssasliding}.  For the plastic (Coulomb) case the yield stress $\tau_c$ of the till determines the basal shear stress by
+A value $e_0/C_c=5.75$ implies, in the absence of an enforced upper bound $\Ntil \le P_o$ in equation \eqref{eq:Wtilpressure}, an almost six orders of magnitude decrease in effective pressure $\Ntil$ between the no-water state $\Wtil=0$ and the full state $\Wtil=\Wtilmax$.  There is a corresponding decrease in the yield stress $\tau_c$.  However, with the given value for $e_0/C_c$, and using $\delta = 0.01$ for concreteness, the upper bound $\Ntil \le P_o$ is equivalent to $\Wtil \ge 0.652\, \Wtilmax$.  Thus till must be at least 65\% saturated to generate an effective pressure below overburden.
+
+Ice sliding velocity is determined by solving a stress balance in which the vector basal shear stress $\boldsymbol\tau_b$ appears as a boundary condition or term in the balance \citep{BBssasliding,SchoofStream,SchoofCoulombBlatter}.  In PISM the scalar yield stress $\tau_c$ determines the basal shear stress through a sliding law
 \begin{equation}
-\mathbf{\tau}_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|} \label{eq:plasticbasalstress}
+\boldsymbol\tau_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
 \end{equation}
-where $\mathbf{u}$ is the sliding velocity of the base of the ice.  But $\tau_c$ could appear in a pseudo-plastic power law sliding relation \citep[see supplement]{AschwandenAdalgeirsdottirKhroulev} which extends \eqref{eq:plasticbasalstress}:
+where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1$ , and $u_0$ is a threshold sliding velocity \citep{AschwandenAdalgeirsdottirKhroulev}.  Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{u}/|\mathbf{u}|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbf{u}|$ as it becomes larger than the threshold $u_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$; this includes the linear case $q=1$ in which we have $\beta = \tau_c/u_0$.
+
+When water is added to fully-saturated till, which cannot increase its pore space above the maximum amount, this excess water becomes transportable in our model.  It enters the distributed system described above.  In combination with mass conservation equation \eqref{eq:conserve}, we choose the evolution equation for $\Wtil$ for  its simplicity and to match the well-tested model in previous versions of PISM, namely
 \begin{equation}
-\mathbf{\tau}_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
+\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d. \label{eq:tilldynamics}
 \end{equation}
-where $0\le q \le 1$.  Here $u_0$ is a threshold sliding velocity above which, at least in the $q\approx 0$ cases, the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbf{u}|$ \citep{BBssasliding}.  If no connection to the plastic case is intended then equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\mathbf{\tau}_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$, including in the linear case $q=1$ in which we have $\beta = \tau_c/u_0$.
+Here $C_d>0$ is a fixed rate that makes the till gradually drain in the absence of water input.  In practice we choose $C_d=1$ mm/a, which is small compared to typical values of $m/\rho_w$.  Note that any water removed from the till enters the transport system; it is conserved.  Note also that refreeze is also allowed, as a negative value for $m$.  The solution of equation \eqref{eq:tilldynamics} is subject to inequalities $0\le \Wtil \le \Wtilmax$.
+
+In section \ref{sec:num} we propose a stable numerical scheme for the combination of \eqref{eq:conserve} and \eqref{eq:tilldynamics}.  This scheme satisfies discrete conservation of $W+\Wtil$ and it satisfies bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$ for the discretized values of $W$ and $\Wtil$.
 
 
-\section{The subglacial hydraulic system} \label{sec:capacity}
+\section{Capacity of a linked-cavity distributed system} \label{sec:capacity}
 
-\subsection{Capacity of a linked-cavity distributed system}  The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
+The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
 \end{equation}
@@ -283,17 +291,6 @@ for $N$.  The implicit function theorem says that if $\partial\mathcal{C}/\parti
 \begin{equation}
 c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \label{eq:steadyOCbound}
 \end{equation}
-
-
-\subsection{Drainage of the till into the distributed system}  When water is added to fully-saturated till, which cannot increase its pore spaces above the maximum amount (section \ref{sec:tillmechanics}), this excess water should become transportable in the model.  It enters the distributed system described above.  In combination with mass conservation equation \eqref{eq:conserve}, achieving this dynamical situation in the model simply requires an evolution equation for $\Wtil$.  We choose this equation for simplicity, and to match the model of \cite{BBssasliding}.
-
-The evolution equation is
-\begin{equation}
-\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \label{eq:tilldynamics}
-\end{equation}
-where $C_d>0$ is a fixed rate that makes the till gradually drain in the absence of water input.  In practice we choose $C_d$ to be small compared to typical values of $m/\rho_w$.  Note that actual refreeze of arbitrary strength is also allowed, as a negative value for $m$.  The solution of Equation \eqref{eq:tilldynamics} is subject to inequalities $0\le \Wtil \le \Wtilmax$.
-
-In section \ref{sec:num} we propose a stable numerical scheme for the combination of \eqref{eq:conserve} and \eqref{eq:tilldynamics} which both satisfies discrete conservation of $W+\Wtil$ and the bounds $0\le \Wtil \le \Wtilmax$ for the discretized values of $\Wtil$.  
 
 
 \section{Closures to determine pressure} \label{sec:closures}
