@@ -859,7 +859,7 @@ The ice geometry may be quite general, however, with ice-free land or floating i
 \text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
 \text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
 \end{align*}
-Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is true in ice-free ocean.  The subglacial layer we are attempting to model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} masks are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
+Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is also true in ice-free ocean.  The subglacial hydrology model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice cells.
 
 One time step follows this algorithm:
 
@@ -871,7 +871,7 @@ One time step follows this algorithm:
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
 \item Get approximations $\mathcal{D}_{i,j}$ of the flux divergence from \eqref{eq:fluxdivgrid}.  For each direction (i.e.~$x$- and $y$-directions), do not compute the divided-difference contribution to the flux divergence in \eqref{eq:fluxdivgrid} if either neighbor is \texttt{icefree} or \texttt{float}.
-\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations.
+\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Then use \eqref{eq:Pfdupdate} to compute preliminary values for $P_{i,j}^{l+1}$ at the remaining locations.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wfd} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$.
@@ -879,14 +879,14 @@ One time step follows this algorithm:
 \end{enumerate}
 
 \medskip
-This recipe goes with a reporting scheme for mass conservation.  Note that in step \emph{(ix)} water is lost or gained at the margin where either the thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
+This recipe goes with a reporting scheme for mass conservation.  Note that in steps \emph{(ii)} and \emph{(ix)} water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
 
 
 \section{PISM options for hydrology models} \label{sec:pismdoc}
 
 In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the ``full'' model described in this paper while the other two are reductions; we list them in order of decreasing complexity.  We also give a concordance between the symbols in this paper and the relevant PISM configuration parameters.
 
-\subsection{\texttt{distributed}}  This PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
+\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
 
 \subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of equations \eqref{eq:bluebox}, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
 \begin{align}
@@ -897,7 +897,7 @@ In this section we document the runtime options for the PISM hydrology model \ci
 \end{align}
 along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
 
-\subsection{\texttt{null}}  This non-conserving model has option \texttt{-hydrology null}, but it is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and thus the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
+\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.   It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and thus the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
 
 \subsection{PISM configuration variables}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
 
