@@ -264,24 +264,24 @@ In section \ref{sec:num} we propose a stable numerical scheme for the combinatio
 
 \section{Capacity of a linked-cavity distributed system} \label{sec:capacity}
 
-The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}.  The evolution equation has general form
+The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}, so the evolution equation has general form
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
 \end{equation}
-where $\bv_b$ is the ice base (sliding) velocity.  Denoting $X_+= \max\{0,X\}$, as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
+where $\bv_b$ is the ice base (sliding) velocity and $N=P_o-P$ is the effective pressure from the water in the cavities.  Denoting $X_+= \max\{0,X\}$, as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
 \begin{equation}
 \mathcal{O}(|\bv_b|,Y) = c_1 |\bv_b| (W_r - Y)_+. \label{eq:openingform}
 \end{equation}
 %FIXME:  can we again try to add a bounded amount of wall-melt-by-dissipation?
-Here $W_r$ is a maximum roughness scale of the basal topography and $c_1$ is a constant; both of these constants must be indirectly constrained by observations (see Section \ref{sec:results}).  The closing term models ice creep only \citep{Hewitt2011,Schoofetal2012}:
+Here $W_r$ is a maximum roughness scale of the basal topography and $c_1$ is a constant.  The closing term models ice creep only \citep{Hewitt2011,Schoofetal2012}:
 \begin{equation}
 \mathcal{C}(N,Y) = c_2 A N^3 Y. \label{eq:closingform}
 \end{equation}
 Here $A$ is the ice softness and $c_2$ is a constant which must be constrained by observations.  We have used Glen exponent $n=3$ for concreteness.
 
-Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  The opening term $\mathcal{O}$ is nonnegative if by \eqref{eq:openingform}, and it is nonnegative where $Y<W_r$.  The closing term $\mathcal{C}$ is nonnegative because our modeled effective pressure $N$ satisfies bounds $0\le N \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
+Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  By \eqref{eq:openingform} the opening term $\mathcal{O}$ is nonnegative.  The closing term $\mathcal{C}$ in \eqref{eq:closingform} is also nonnegative because our modeled effective pressure $N$ satisfies bounds $0\le N \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
 
-The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with a Darcy flux relation like \eqref{eq:flux} and mass conservation \eqref{eq:conserve} is as follows.  If the cavity is larger than connected water sources can fill then the pressure should drop.  Lower pressure encourages inflow and by \eqref{eq:closingform} it speeds cavity closure.  Conversely, if local water sources exceed capacity then the increased pressure should push water out of the area and creep closure should be reduced.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
+The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with a Darcy flux relation like \eqref{eq:flux} and mass conservation \eqref{eq:conserve} is as follows.  If the cavity is larger than local water sources can immediately fill then the pressure should drop.  This lower pressure encourages water inflow and, by \eqref{eq:closingform}, it speeds cavity closure which brings the pressure back up.  Conversely, if local water sources exceed capacity then the increased pressure should push water out of the area and also creep closure should be reduced.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
 
 The steady states of models using \eqref{eq:hewittcapacity} have a functional relationship between thickness $Y$ and effective pressure $N$ found by solving
 \begin{equation}
@@ -291,17 +291,16 @@ for $N$.  The implicit function theorem says that if $\partial\mathcal{C}/\parti
 \begin{equation}
 c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \label{eq:steadyOCbound}
 \end{equation}
+We return to the analysis of steady states in section \ref{sec:steady}.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-At this point we do not know how to compute the water pressure $P$ given the data of the problem, namely $b$, $H$, $m$, $|\bv_b|$, $W$, $\Wtil$, and $Y$.  The (apparent) state variables of the model so far are $W$, $\Wtil$, $Y$, and $P$, but the evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:hewittcapacity}, and \eqref{eq:tilldynamics}, can only be simplified to three equations in these four unknowns.   A closure is needed.
+At this point we do not know how to compute the water pressure $P$ given the other variables and data of the problem, namely $b$, $H$, $m$, $|\bv_b|$, $W$, $\Wtil$, and $Y$.  The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:hewittcapacity}, and \eqref{eq:tilldynamics}, can be simplified to three equations in the four unknown state variables $W$, $\Wtil$, $Y$, and $P$.   A closure is needed.
 
-\subsection{Closures without cavity evolution}  We consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as steady-state reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtil=\Wtilmax=0$ in previous equations, and we state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
+\subsection{Simplified closures without cavity evolution}  We consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as steady-state reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtilmax=0$ in previous equations.  We state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
 
-\renewcommand{\labelenumi}{\textbf{\Roman{enumi}.}}
-\begin{enumerate}
-\item Setting the pressure equal to the overburden pressure is the simplest closure \citep{Shreve1972}:
+Setting the pressure equal to the overburden pressure is the simplest closure \citep{Shreve1972}:
 \begin{equation}
 P = P_o.\label{eq:Pisoverburden}
 \end{equation}
@@ -314,30 +313,23 @@ where
 \tilde\bV = - \rho_w g k \left[\frac{\rho_i}{\rho_w} \grad h + \left(1-\frac{\rho_i}{\rho_w}\right) \grad b\right].
 \end{equation}
 
-Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, the diffusion term on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  It therefore possesses characteristic curves \citep{Evans} which are the \emph{a priori} known trajectories of the water flow.  The more complete models we consider in this paper do not have such characteristic curves because they have a flux which depends on the gradient of $W$, the quantity which is being transported.
+Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{Siegertetal2009}, the diffusion term $\Div\left(\rho_w g k \,W\, \grad W\right)$ on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  It therefore possesses characteristic curves \citep{Evans} which are the \emph{a priori} known trajectories of the water flow.  These trajectories are determined by ice sheet geometry.
 
-Equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times.  By contrast, equation \eqref{eq:PisoverConservation} without the diffusion term, as it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013TCD} and not the evolving field $W$.  Also, because the simplified model is not well-posed, numerical implementations are badly-behaved under grid refinement.
+Equation \eqref{eq:PisoverConservation} without the diffusion term, as it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013TCD} and not the evolving field $W$.  Also, because the simplified model is not well-posed, numerical implementations are badly-behaved under grid refinement.  We therefore prefer equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, because it is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times and solutions will converge under sufficient grid refinement.
 
-\medskip
-
-\item At an almost opposite extreme in terms of the mathematical form, one might close the model by assuming that the water pressure is locally determined by the amount of water.  \cite{FlowersClarke2002_theory} propose
+At an almost opposite extreme in terms of the mathematical form, the second simplified closure assumes that the water pressure is locally determined by the amount of water.  \cite{FlowersClarke2002_theory} propose
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ m, while Figure \ref{fig:psteady-vb} below illustrates this function with $W_{\text{crit}}=1$ m.  Because of the local relation between water amount and pressure, implementation of a coupled ice flow and subglacial hydrology model is eased because no pressure equation (i.e.~no stress balance within liquid water) needs to be solved \citep{PimentelFlowersSchoof2010,PimentelFlowers2011}.
+For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ m.  Because of the local relation between water amount and pressure, implementation of a coupled ice flow and subglacial hydrology model is simplified because no pressure evolution equation (i.e.~no stress balance within liquid water) needs to be solved \citep{PimentelFlowersSchoof2010,PimentelFlowers2011}.
 
-One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$).  Equation \eqref{eq:PofWFC} is not, of course, intended to apply when $W$ is actually large, such as in subglacial lakes.
+One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$).  Equation \eqref{eq:PofWFC} is not, however, intended to apply when $W$ is actually large, such as in subglacial lakes.
 
-From \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC} we get the equation:
-\begin{align}
-\frac{\partial W}{\partial t} &= \Div\left((\rho_w g k \grad b)\, W\right)  \label{eq:PofWFCConservation} \\
-  &\qquad\qquad + \Div \left(k\,W \grad P_{FC}(W)\right) + \frac{m}{\rho_w}.  \notag
-\end{align}
-In the flat bedrock case $\grad b=0$ we see that \eqref{eq:PofWFCConservation} is a nonlinear diffusion.  Indeed, \cite{Schoofetal2012} observe that \eqref{eq:PofWFCConservation} generalizes the porous-medium equation $\partial W/\partial t = \grad^2 (W^\gamma)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and a significant concern when considering applications of \eqref{eq:PofWFC}, is that the direction of the flux is $-\grad W$, while it would seem that the more physical model with $\bq \sim -\grad \psi$ would give flux directions different from $-\grad W$ in many cases, especially in rapidly-evolving hydrologic systems.
-\end{enumerate}
-
-\medskip
-By constrast with these simple closures, in this paper we apply capacity evolution model \eqref{eq:hewittcapacity} for the distributed system.  However, in steady state conditions our theory recovers a functional relation $P=P(W)$, as shown in Figure \ref{fig:psteady-vb}, but this relation is not a power-law like \eqref{eq:PofWFC}.  Under steady conditions where the ice sliding velocity is zero, our theory also recovers \eqref{eq:Pisoverburden} and \eqref{eq:PisoverConservation}.  Our theory uses advection-diffusion decomposition \eqref{eq:adeqn} and thus in that sense also it extends the ``routing'' model \eqref{eq:PisoverConservation}.  These connections are further exposed in section \ref{sec:steady} below.
+In the flat bedrock case $\grad b = 0$, we can derive an equation from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC}, namely
+\begin{equation}
+\frac{\partial W}{\partial t} =  \Div \left(k\,W \grad P_{FC}(W)\right) + \frac{m}{\rho_w}. \label{eq:PofWFCConservation}
+\end{equation}
+Equation \eqref{eq:PofWFCConservation} is a nonlinear diffusion \citep{Schoofetal2012} which generalizes the porous-medium equation $\partial W/\partial t = \grad^2 (W^\gamma)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and a significant concern when considering applications of \eqref{eq:PofWFC}, is that the direction of the flux is $-\grad W$.  Physically, however, it would seem that $\bq \sim -\grad \psi$ would give flux directions different from $-\grad W$ in many cases, especially in rapidly-evolving hydrologic systems.
 
 \subsection{Full-cavity closure}  Requiring the subglacial layer to be full of water is a closure for the subglacial pressure $P$, which we adopt in our model:
 \begin{equation}
