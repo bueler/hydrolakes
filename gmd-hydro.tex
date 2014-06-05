@@ -109,7 +109,7 @@
 \maketitle
 
 \begin{abstract}
-blabla
+We describe, implement, and test a distributed subglacial hydrology model which combines a layer of saturated, plastic till with a system of water-filled, linked cavities which open through sliding-generated cavitation  and close through ice creep.  The addition of this model to the Parallel Ice Sheet Model accomplishes three specific goals: (1) conservation of the mass of two-phase (solid/liquid) water in the ice sheet, (2) simulation of variable basal till yield stress from physical mechanisms based on a minimal number of free parameters, and (3) convergence under grid refinement, in two horizontal dimensions, of both the subglacial water amount and its pressure.  By using englacial porosity as a regularization, our explicit time-stepping implementation preserves physical bounds on the pressure.  The model is shown to generalize existing models, especially the undrained plastic bed model of \cite{Tulaczyketal2000b}, the overburden-pressure-based ``routing'' model of \cite{LeBrocqetal2009,Livingstoneetal2013} and others, and the elliptic-pressure-equation model of \cite{Schoofetal2012}.  In steady state the model satisfies a functional relationship between water amount and pressure.  We construct an exact solution of the coupled equations which is used for verification of our fully-parallel numerical implementation.  We demonstrate the model at scale by five year simulations of the entire Greenland ice sheet at 2 km horizontal resolution, with one million nodes in the subglacial hydrology grid.
 \end{abstract}
 
 \introduction
