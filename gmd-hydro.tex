@@ -1019,19 +1019,21 @@ Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relativel
 It would be possible to implement a model without a pressure evolution equation like \eqref{eq:regpressureequation}, and instead use \eqref{eq:PofWsteady} as a prescribed relation $P(W)$.  However, we prefer such a local relationship to ``emerge'' in steady state, as here, because tests of the model with time-dependent inputs clearly suggest the importance of a full pressure evolution equation to modeling response to a seasonal surface melt cycle \citep{vanPeltthesis}.
 
 
-\conclusions  \label{sec:conclusion}
-
-
-FIXME: this paper is newsworthy for the following list of new features:\begin{enumerate}
-\item parallel implementation in 2d at scale
-\item englacial porosity regularization allows $0\le P \le P_o$ model at scale (compare comment in \cite{Werderetal2013})
-\item water split between transport and till
-\item new analysis of steady state explaining why (e.g.) Flowers \& Clarke might justifiably believe in $P(W)$
-\item exact solution of the distributed model in the radial, steady case, plus verification using this 
-\item clarity on hierarchy of closures allows us to implement the common extension of several published models
-\end{enumerate}
+\conclusions  \label{sec:conclusion}  The literature of subglacial hydrology modeling has grown rapidly in the last five years.  In this context the current paper is both novel and comprehensive.  It is novel in these features:\begin{itemize}
+\item parallel implementation in two horizontal dimensions at scale (sections \ref{sec:num} and \ref{sec:results}),
+\item a new analysis of steady state explaining the degree to which a functional relationship $P(W)$ is justified (section \ref{sec:steady}),
+\item an exact solution of the coupled mass and pressure equations of the distributed model in the steady angularly-symmetric case (section \ref{sec:steady}), plus verification using this solution (section \ref{sec:results}), and
+\item an englacial porosity regularization is shown to allow a practical model in which physically-motivated bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:capacity}, \ref{sec:closures}, and \ref{sec:num}).
+\end{itemize}
+We believe, however, that the comprehensive treatment here of certain subjects is also important.  We
+\begin{itemize}
+\item have clarified the relationship of several ``closures'' which turn morphological ideas about the subglacial aquifer into concrete pressure equations (section \ref{sec:closures}), and
+\item have implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
+\end{itemize}
 
 FIXME: this paper documents the PISM 0.6 code released February 2014
+
+FIXME: water split between transport and till
 
 
 \begin{acknowledgements}
