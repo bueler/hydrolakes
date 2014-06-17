@@ -115,7 +115,7 @@ We describe, implement, and test a distributed subglacial hydrology model which 
 
 \introduction
 
-Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low values of the modeled hydraulic potential.  Beyond that there are many variations considered in the literature.  Modeled aquifer geometry might be a system of linked cavities \citep{Kamb1987}, conduits \citep{Nye1976}, or a sheet \citep{CreytsSchoof2009}.  Geometry evolution processes might include the opening of cavities by sliding of the overlying ice past bedrock bumps \citep{Schoof2005cavitation}, the creation of cavities by interaction of the ice with deformable sediment \citep{Schoof2007deformablecavities}, closure of cavities and conduits by creep \citep{Hewitt2011}, or melt on the walls of cavities and conduits which causes them to open \citep{Clarke05}.  Water could move in a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
+Any reasonable dynamical model of the liquid water underneath and within a glacier or ice sheet has at least these two elements: the mass of the water is conserved and the water flows from high to low values of the modeled hydraulic potential.  Beyond that there are many variations considered in the literature.  Modeled aquifer geometry might be a system of linked cavities \citep{Kamb1987}, conduits \citep{Nye1976}, or a sheet \citep{CreytsSchoof2009}.  Geometry evolution processes might include the opening of cavities by sliding of the overlying ice past bedrock bumps \citep{Schoof2005cavitation}, the creation of cavities by interaction of the ice with deformable sediment \citep{Schoof2007deformable}, closure of cavities and conduits by creep \citep{Hewitt2011}, or melt on the walls of cavities and conduits which causes them to open \citep{Clarke05}.  Water could move in a macro-porous englacial system \citep{Bartholomausetal2011,Harperetal2010} or it could be stored in a porous till \citep{Tulaczyketal2000}.
 
 Successful models have combined subsets of these different morphologies and processes---for examples see \cite{FlowersClarke2002_theory,Hewitt2013,vanderWeletal2013,Werderetal2013,deFleurianetal2014}.  It is not, however, always true that adding more processes makes a better model.  Especially when used to understand variations in ice flow and sliding, which is a goal here, the completeness of the modeled processes in a hydrology model should be balanced against the number of uncertain model parameters and the ultimate availability of observations with which to constrain these parameters.
 
@@ -211,28 +211,30 @@ As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the i
 
 \section{Till mechanics and hydrology} \label{sec:tillmechanics}
 
-Our model includes storage of subglacial water in till both because of its role in conserving the mass of liquid water and because of its role in determining basal shear stress.  Regarding the latter role, the pressurized till can be expected to support much of the ice overburden, and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.
+Our model includes storage of subglacial water in till both because of its role in conserving the mass of liquid water and its role in determining basal shear stress.  Regarding the latter role, the pressurized till can be expected to support much of the ice overburden, and to dominate the complicated relationship between the amount of subglacial water and the amount of sliding.
 
 There is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000,SchoofTill}.  The yield stress $\tau_c$ of the saturated till satisfies the Mohr-Coulomb relation
 \newcommand{\Ntil}{N_{\text{til}}}
 \begin{equation}
 \tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
 \end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the till \citep{CuffeyPaterson}.
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the saturated till \citep{CuffeyPaterson}.
 
-The effective pressure $N=P_o-P$ used in modeling cavity closure (next section) is distinct from $\Ntil$.  This distinction is again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress.  It does not affect the model for the horizontal transport of water.
+The effective pressure $N=P_o-P$ used in modeling cavity closure (next section) is distinct from $\Ntil$.  This distinction is again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress, and it does not affect the model for the horizontal transport of water.
 
-Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
+Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of mineral solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
 \begin{equation}
 e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
 \end{equation}
 Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.
 
-We will assume throughout the current paper that liquid water fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  (Evidence for such spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.)  It follows that the void ratio $e$ and the effective water layer thickness $\Wtil$ are describing the same thing.  In fact, if $\eta_0$ denotes the effective thickness of the solids then we have $V_w = \Wtil \Delta x \Delta y$ and $V_s = \eta_0 \Delta x \Delta y$ for a map-plane grid cell.  Also, by assuming that the effective pressure has minimum value ($\Ntil \ge N_0$) then \eqref{eq:voidpressure} implies $e \le e_0$.  Let $\Wtilmax = e_0 \eta_0$, the maximum amount of water that the till can hold.  In these terms, the following are equivalent expressions:
+We will assume throughout the current paper that liquid water or ice fills subglacial spaces, and thus there are no air- or vapor-filled spaces in till.  Evidence for such gas-filled spaces does not exist for tidewater glaciers and ice sheets, regardless of morphology.  It follows that the void ratio $e$ for the liquid-filled portion of the till and the effective water layer thickness $\Wtil$ are describing the same thing.
+
+We assume the till has a maximum capacity for holding water before drainage into the transport system occurs.  This maximum occurs when the full thickness of till is liquid filled and the void ratio is at its maximum value, which we set as the reference $e_0$.  If $\Wtilmax$ is the maximum effective thickness of liquid water in the till then we have the following equivalence:
 \begin{equation}
-e = \frac{V_w}{V_s} = \frac{\Wtil}{\eta_0} = e_0 \left(\frac{\Wtil}{\Wtilmax}\right). \label{eq:voidexpressions}
+\frac{e}{e_0} = \frac{\Wtil}{\Wtilmax}. \label{eq:voidexpressions}
 \end{equation}
-The different quantities are subject to the equivalent constraints
+Given that drainage occurs above the maximum capacity in our model, from \eqref{eq:voidpressure} and \eqref{eq:voidexpressions} we have the following equivalent constraints:
 \begin{equation}
 \Ntil \ge N_0 \quad \text{or} \quad e\le e_0 \quad \text{or} \quad \Wtil \le \Wtilmax. \label{eq:Wtilupperbound}
 \end{equation}
