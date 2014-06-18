@@ -275,11 +275,11 @@ In section \ref{sec:num} we propose a stable numerical scheme for the combinatio
 
 \section{Capacity of a linked-cavity distributed system} \label{sec:capacity}
 
-The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness, which we denote by $Y$, is also called the bed separation \citep{Bartholomausetal2011}, so the evolution equation has general form
+The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness $Y$, also called the bed separation \citep{Bartholomausetal2011}, has evolution equation
 \begin{equation}
 \frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
 \end{equation}
-where $\bv_b$ is the ice base (sliding) velocity and $N=P_o-P$ is the effective pressure from the water in the cavities.  Denoting $X_+= \max\{0,X\}$, as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
+where $\bv_b$ is the ice base (sliding) velocity and $N=P_o-P$ is the effective pressure on the cavity system.  Denoting $X_+= \max\{0,X\}$, as in \cite{Schoofetal2012} we choose an opening term based on cavitation only:
 \begin{equation}
 \mathcal{O}(|\bv_b|,Y) = c_1 |\bv_b| (W_r - Y)_+. \label{eq:openingform}
 \end{equation}
@@ -287,28 +287,18 @@ Here $W_r$ is a maximum roughness scale of the basal topography and $c_1$ is a c
 \begin{equation}
 \mathcal{C}(N,Y) = c_2 A N^3 Y. \label{eq:closingform}
 \end{equation}
-Here $A$ is the ice softness and $c_2$ is a constant which must be constrained by observations.  We have used Glen exponent $n=3$ for concreteness.
+Here $A$ is the ice softness and $c_2$ is a constant which must be constrained by observations.  We have used Glen exponent $n=3$ for concreteness and simplicity.
 
-Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  By \eqref{eq:openingform} the opening term $\mathcal{O}$ is nonnegative.  The closing term $\mathcal{C}$ in \eqref{eq:closingform} is also nonnegative because our modeled effective pressure $N$ satisfies bounds $0\le N \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
+Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  By \eqref{eq:openingform} the opening term $\mathcal{O}$ is nonnegative.  The closing term $\mathcal{C}$ in \eqref{eq:closingform} is also nonnegative because our modeled pressure $P$ satisfies bounds $0\le P \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
 
-The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with a Darcy flux relation like \eqref{eq:flux} and mass conservation \eqref{eq:conserve} is as follows.  If the cavity is larger than local water sources can immediately fill then the pressure should drop.  This lower pressure encourages water inflow and, by \eqref{eq:closingform}, it speeds cavity closure which brings the pressure back up.  Conversely, if local water sources exceed capacity then the increased pressure should push water out of the area and also creep closure should be reduced.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
-
-The steady states of models using \eqref{eq:hewittcapacity} have a functional relationship between thickness $Y$ and effective pressure $N$ found by solving
-\begin{equation}
-\mathcal{O}(|\bv_b|,Y) = \mathcal{C}(N,Y) \qquad \qquad \text{(steady state)} \label{eq:hewittsteady}
-\end{equation}
-for $N$.  The implicit function theorem says that if $\partial\mathcal{C}/\partial N$ is nonzero then the effective pressure is determined from $Y$.  In our case if $0<Y<W_r$ then a unique value $N>0$ is determined by \eqref{eq:hewittsteady}.  This value may not, however, satisfy the bound $N \le P_o$ implied by \eqref{eq:bounds}.  That is, the sliding speed $|\bv_b|$ may be sufficiently large, and the bed separation $Y$ may be sufficiently below $W_r$, so that the cavitation opening rate exceeds the closing rate for any effective pressure $N$ satisfying $N\le P_o$.  In fact, for given values of $P_o$ and $|\bv_b|$, steady state equation \eqref{eq:hewittsteady} can hold for a given $Y$ only if
-\begin{equation}
-c_1 |\bv_b| (W_r - Y)_+ \le c_2 A P_o^3 Y \qquad \qquad \text{(steady state)}. \label{eq:steadyOCbound}
-\end{equation}
-We return to the analysis of steady states in section \ref{sec:steady}.
+The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with mass conservation \eqref{eq:conserve} and a Darcy flux relation like \eqref{eq:flux} is as follows.  If the cavity is larger than local water sources can immediately fill then the pressure should drop.  Lower pressure encourages water inflow and, by \eqref{eq:closingform}, it speeds cavity closure, bringing the pressure back up.  Conversely, if local water sources exceed capacity then increased pressure should push water out of the area, and also creep closure slows.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-At this point we do not know how to compute the water pressure $P$ given the other variables and data of the problem, namely $b$, $H$, $m$, $|\bv_b|$, $W$, $\Wtil$, and $Y$.  The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:hewittcapacity}, and \eqref{eq:tilldynamics}, can be simplified to three equations in the four unknown state variables $W$, $\Wtil$, $Y$, and $P$.   A closure is needed.
+At this point we do not know how to compute the water pressure $P$ given the other variables and data of the problem, namely $b$, $H$, $m$, $|\bv_b|$, $W$, $\Wtil$, and $Y$.  The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:tilldynamics}, and \eqref{eq:hewittcapacity}, can be simplified to three equations in the four unknown state variables $W$, $\Wtil$, $Y$, and $P$.   A closure is needed.
 
-\subsection{Simplified closures without cavity evolution}  We consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as steady-state reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtilmax=0$ in previous equations.  We state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
+\subsection{Simplified closures without cavity evolution}  We first consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as steady-state reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtilmax=0$ in previous equations.  We state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
 
 Setting the pressure equal to the overburden pressure is the simplest closure \citep{LeBrocqetal2009,Shreve1972}:
 \begin{equation}
@@ -325,42 +315,39 @@ where
 
 Because the approximation $W\ll H$ is usually accepted, so that the hydraulic potential is insensitive to the water layer thickness, i.e.~$\psi = P_o + \rho_w g b$ \citep{LeBrocqetal2009}, the diffusion term $\Div\left(\rho_w g k \,W\, \grad W\right)$ on the right of \eqref{eq:PisoverConservation} is usually not included.  With this common simplification, equation \eqref{eq:PisoverConservation} becomes a pure advection with a velocity $\tilde\bV$ which is independent of $W$.  It therefore possesses characteristic curves \citep{Evans} which are the \emph{a priori} known trajectories of the water flow.  These trajectories are determined by ice sheet geometry.
 
-Equation \eqref{eq:PisoverConservation} without the diffusion term, as it usually appears in the literature, will exhibit continuum solutions with infinite concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013} and not the evolving field $W$.  Also, because the simplified model is not well-posed, numerical implementations are badly-behaved under grid refinement.  We therefore prefer equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, because it is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times and solutions will converge under sufficient grid refinement.
+However, without a diffusion term equation \eqref{eq:PisoverConservation} exhibits continuum solutions with infinite water concentration at every location where the simplified potential $\psi = P_o + \rho_w g b$ has a minimum.  In fact, applications using the simplified potential tend to only compute the characteristic curves \citep[i.e.~``pathways'',][]{Livingstoneetal2013} and not the evolving field $W$.  We therefore prefer equation \eqref{eq:PisoverConservation} as stated, \emph{with} the diffusion term, because it is well-posed for positive initial and boundary values on $W$ \citep[compare][]{Hewittetal2012}.  Continuum solutions have finite water layer thickness at all times and solutions will converge under sufficient grid refinement.
 
-At an almost opposite extreme in terms of the mathematical form, the second simplified closure assumes that the water pressure is locally determined by the amount of water.  \cite{FlowersClarke2002_theory} propose
+At an almost opposite extreme in terms of the mathematical form, the second simplified closure we consider assumes that the water pressure is locally determined by the amount of water.  Specifically, \cite{FlowersClarke2002_theory} propose
 \begin{equation}
 P_{FC}(W) = P_o \left(\frac{W}{W_{\text{crit}}}\right)^{7/2}. \label{eq:PofWFC}
 \end{equation}
-For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ m.  Because of the local relation between water amount and pressure, implementation of a coupled ice flow and subglacial hydrology model is simplified because no pressure evolution equation (i.e.~no stress balance within liquid water) needs to be solved \citep{PimentelFlowersSchoof2010,PimentelFlowers2011}.
-
-One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water ($W \gg W_{\text{crit}}$).  Equation \eqref{eq:PofWFC} is not, however, intended to apply when $W$ is actually large, such as in subglacial lakes.
+For Trapridge glacier \cite{FlowersClarke2002_trapridge} use $W_{\text{crit}}=0.1$ m.  Because of the local relation between water amount and pressure, implementation of a coupled ice flow and subglacial hydrology model is simplified because no pressure evolution equation needs to be solved \citep{PimentelFlowersSchoof2010,PimentelFlowers2011}.  One obvious concern with form \eqref{eq:PofWFC} is that $P_{FC}(W)$ can be arbitrarily larger than overburden pressure for large amounts of water \citep{Schoofetal2012}.
 
 In the flat bedrock case $\grad b = 0$, we can derive an equation from \eqref{eq:conserve}, \eqref{eq:flux}, and \eqref{eq:PofWFC}, namely
 \begin{equation}
 \frac{\partial W}{\partial t} =  \Div \left(k\,W \grad P_{FC}(W)\right) + \frac{m}{\rho_w}. \label{eq:PofWFCConservation}
 \end{equation}
-Equation \eqref{eq:PofWFCConservation} is a nonlinear diffusion \citep{Schoofetal2012} which generalizes the porous-medium equation $\partial W/\partial t = \grad^2 (W^\gamma)$ \citep{VazquezPME}.  The main idea in such a nonlinear diffusion, and a significant concern when considering applications of \eqref{eq:PofWFC}, is that the direction of the flux is $-\grad W$.  Physically, however, it would seem that $\bq \sim -\grad \psi$ would give flux directions different from $-\grad W$ in many cases, especially in rapidly-evolving hydrologic systems.
+Equation \eqref{eq:PofWFCConservation} is a nonlinear diffusion which generalizes the porous-medium equation $\partial W/\partial t = \grad^2 (W^\gamma)$ \citep{Schoofetal2012,VazquezPME}.  The main idea in such a nonlinear diffusion is that the direction of the flux is $-\grad W$.  Physically, however, it would seem that $\bq \sim -\grad \psi$ would give flux directions different from $-\grad W$ in many cases, especially in rapidly-evolving hydrologic systems.
 
 \subsection{Full-cavity closure}  Requiring the subglacial layer to be full of water is a closure for the subglacial pressure $P$.  We adopt it in our model:
 \begin{equation}
 W = Y.\label{eq:strongclosure}
 \end{equation}
-The consequences of this closure are explored at some length by \cite{Schoofetal2012,Hewittetal2012,Werderetal2013}.  They describe the case where cavities are full as the ``normal pressure'' condition (e.g.~equation (4.13) in \cite{Schoofetal2012}).  Their models do not include till storage.
+The consequences of this closure are explored at some length by \cite{Schoofetal2012}, \cite{Hewittetal2012}, and \cite{Werderetal2013}.  They describe the case where cavities are full as the ``normal pressure'' condition (e.g.~equation (4.13) in \cite{Schoofetal2012}).
 
-Equation \eqref{eq:strongclosure} obviously allows us to eliminate either $W$ or $Y$ as a state variable.  We choose to eliminate $Y$ because $W$ is part of the conserved mass $W + \Wtil$.  Using equations \eqref{eq:conserve}, \eqref{eq:hewittcapacity}, and \eqref{eq:strongclosure} we have
+Equation \eqref{eq:strongclosure} obviously allows us to eliminate either $W$ or $Y$ as a state variable.  We choose to eliminate $Y$ because $W$ is part of the conserved mass $W + \Wtil$.  Using equations \eqref{eq:conserve}, \eqref{eq:hewittcapacity}, and \eqref{eq:strongclosure} we can derive
 \begin{equation}
 \mathcal{O}(|\bv_b|,W) - \mathcal{C}(N,W) + \ddt{\Wtil} + \Div\bq = \frac{m}{\rho_w}. \label{eq:elliptic}
 \end{equation}
-
-Equation \eqref{eq:elliptic}, a variant of which we will use to determine $P$---see \eqref{eq:regpressureequation} below---is not new.  In the zero till storage case (set $\Wtilmax=0$ so $\Wtil=0$), equation \eqref{eq:elliptic} is exactly the elliptic pressure equation (2.12) of \cite{Schoofetal2012}.  Given values for the water amount $W$, they solve \eqref{eq:elliptic} with pressure boundary conditions at the lateral edges of the subglacial hydrologic system to determine the pressure $P$.
+In the zero till storage case (set $\Wtilmax=0$ so $\Wtil=0$), equation \eqref{eq:elliptic} is exactly the elliptic pressure equation (2.12) of \cite{Schoofetal2012}.  Given values for the water amount $W$, they solve \eqref{eq:elliptic} with pressure boundary conditions at the lateral edges of the subglacial hydrologic system to determine the pressure $P$.
 
 \cite{Schoofetal2012} argue that a model based on \eqref{eq:elliptic} should accommodate the possibility of partially empty cavities with $W<Y$ and at zero pressure $P=0$.  Partially-filled cavities have not been observed except at the margins of glaciers, and not underneath the fast-flowing parts of tidewater glaciers and ice sheets, though of course subglacial hydrology is poorly-observed generally.
 
-The overpressure condition $P>P_o$ has been observed in ice sheets \citep[for example]{Dasetal08}, but only for short durations.  Unlike \cite{Werderetal2013}, our modelled pressure does satisfy $P\le P_o$, as would the elliptic variational inequality model of \cite{Schoofetal2012}, which \cite{Werderetal2013} dismiss as computationally prohibitive. 
+The overpressure condition $P>P_o$ has been observed in ice sheets \citep[for example]{Dasetal08}, but only for short durations.  Unlike \cite{Werderetal2013}, our modelled pressure does satisfy $P\le P_o$, as would the computationally-expensive elliptic variational inequality model of \cite{Schoofetal2012}. 
 
-\subsection{Englacial porosity as a regularization}  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Bartholomausetal2008,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013,Werderetal2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to the subglacial pressure.  Thus, in such an englacial hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table.''  As already noted, the condition $P\lesssim P_o$ is ``enforced'' on temperate glaciers by the property that water pressure significantly exceeding overburden would cause water to emerge onto the surface of the glacier and stop further increases in pressure.
+\subsection{Notional englacial porosity as a regularization}  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Bartholomausetal2008,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013,Werderetal2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to the subglacial pressure.  Thus, in such an englacial hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table.''
 
-\cite{Bueler2014correspondence} shows that an extension of the lumped englacial/subglacial model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptic}, but with the crucial difference that the equation is \emph{parabolic} for the pressure and not \emph{elliptic} (compare \cite{Hewittetal2012}).  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, we use this parabolic equation in our model with constant notional englacial porosity $\phi=\phi_0$:
+\cite{Bueler2014correspondence} shows that an extension of the lumped englacial/subglacial model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptic}, but with the crucial difference that the equation is parabolic for the pressure and not elliptic (compare \cite{Hewittetal2012}).  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, we use this parabolic equation in our model with constant notional englacial porosity $\phi=\phi_0$:
 \begin{align}
 \frac{\phi_0}{\rho_w g} \ddt{P} &= - \Div \bq + \frac{m}{\rho_w} + \mathcal{C}(N,W)  \label{eq:regpressureequation} \\
   &\qquad\qquad - \mathcal{O}(|\bv_b|,W) - \ddt{\Wtil}. \notag
@@ -369,15 +356,13 @@ Compare equations (7) in \cite{Hewitt2013} and (24) in \cite{Werderetal2013}.
 
 If the englacial porosity $\phi_0$ is small, so that there is a nearly impermeable ``cap'' on the subglacial system, as would occur under a thick ice sheet, then equation \eqref{eq:regpressureequation} is \emph{stiff} and indeed similar, in terms of numerical solution, to an elliptic equation.  However, if $\phi_0$ is relatively large then equation \eqref{eq:regpressureequation} causes local changes in subglacial pressure $P$ to be damped in the speed and range of their influence on other parts of the connected subglacial hydrologic system.
 
-We take advantage of the ``regularizing'' conversion of elliptic pressure model \eqref{eq:elliptic} to the parabolic equation \eqref{eq:regpressureequation}.  Equation \eqref{eq:regpressureequation} is stiff to a degree inversely-proportional to $\phi_0$, in the sense that the diffusive range of pressure evolution is proportional to $\phi_0$.  The \cite{Schoofetal2012} theory is the infinitely-stiff $\phi_0=0$ extreme case.  In general, stiffer equations are harder to solve numerically, and differential-algebraic equations like the system of the mass conservation equation and the elliptic equation \eqref{eq:elliptic} are the hardest \citep{AscherPetzold}.
+In fact, equation \eqref{eq:regpressureequation} is stiff to a degree inversely-proportional to $\phi_0$, in the sense that the diffusive range of pressure evolution is proportional to $\phi_0$.  The \cite{Schoofetal2012} theory is the infinitely-stiff $\phi_0=0$ case.  In general, stiffer equations are harder to solve numerically, and differential-algebraic equations like the system of the mass conservation equation and the elliptic equation \eqref{eq:elliptic} are the hardest \citep{AscherPetzold}.
 
-\cite{Schoofetal2012} show that the time-independent mathematical problem encompassing the $\Wtilmax=0$ case of \eqref{eq:elliptic}, constraints \eqref{eq:bounds}, and appropriate pressure boundary conditions can be written as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This variational inequality problem is asserted to be ``numerically prohibitive'' by \cite{Werderetal2013} when solved in two dimensions at each step of a time-stepping model.  The same difficulty applies to any \emph{implicit} time-stepping scheme using \eqref{eq:regpressureequation}.  Instead, in the current work we give an explicit time-stepping scheme in section \ref{sec:num}, with care to satisfy stability conditions on the time step.
+\cite{Schoofetal2012} show that the time-independent mathematical problem encompassing \eqref{eq:elliptic} (in the $\Wtilmax=0$ case), constraints \eqref{eq:bounds}, and appropriate pressure boundary conditions can be written as an elliptic variational inequality \citep{KinderlehrerStampacchia}.  This variational inequality problem is asserted to be ``numerically prohibitive'' by \cite{Werderetal2013} when solved in two dimensions at each step of a time-stepping model.  Instead, in our model we have an explicit time-stepping scheme---see section \ref{sec:num}---with adaptive time-stepping to satisfy stability conditions.
 
-The stiffness of pressure equation \eqref{eq:regpressureequation} follows from the incompressibility of water and the relative non-distensibility (i.e.~hardness) of the ice and bedrock.  In fact, \cite{Clarke2003} addresses stiffness in a physically-different but related way by including in his subglacial water equation a relaxation (damping) parameter  ``$\beta$'' which is based on the small compressibility of water, but which is more than two orders of magnitude larger than the physical value.  \citeapos{Clarke2003} parameter $\beta$ appears in his equation exactly as the englacial porosity $\phi_0$ appears in equation \eqref{eq:regpressureequation}, multiplying the pressure time derivative.
+Stiffness of pressure equation \eqref{eq:regpressureequation} follows from the incompressibility of water and the relative non-distensibility (i.e.~hardness) of the ice and bedrock.  \cite{Clarke2003} addresses stiffness in a physically-different but related way by including in his subglacial water equation a relaxation (damping) parameter  ``$\beta$'' which is based on the small compressibility of water, but which is more than two orders of magnitude larger than the physical value.  Clarke's parameter $\beta$ appears in his equation exactly as the englacial porosity $\phi_0$ appears in equation \eqref{eq:regpressureequation}, multiplying the pressure time derivative.
 
-A more complete model than ours could have spatial variation $\phi(x,y)$ in the englacial porosity so that different parts of the glacier could have different englacial storage capacity.  We will set the porosity constant in the current work, however, because of an absence of data to determine distributed values for $\phi(x,y)$.  Thus we use \eqref{eq:regpressureequation} with constant $\phi_0>0$ both because it is physically-motivated and because it is easier to solve than an elliptic problem.
-
-Thus our diffusion \eqref{eq:regpressureequation} for $P$ is coupled to the advection-diffusion equation \eqref{eq:adeqn} for $W$.  Section \ref{sec:num} gives a quantitative analysis of the time-scales related to solving \eqref{eq:adeqn} and \eqref{eq:regpressureequation} together.
+Equation \eqref{eq:regpressureequation} for $P$ is coupled to the advection-diffusion equation \eqref{eq:adeqn} for $W$.  Section \ref{sec:num} gives a quantitative analysis of the time-scales related to solving \eqref{eq:adeqn} and \eqref{eq:regpressureequation} together.
 
 
 \section{A new subglacial hydrology model in PISM} \label{sec:newmodel}
@@ -437,22 +422,23 @@ P_o  &= \rho_i g H && \text{overburden pressure}.
     $C_c$ & 0.12 &  & till compressibility \citep{Tulaczyketal2000} \\
     $C_d$ & $0.001$ &  $\text{m}\,\text{a}^{-1}$ & background till drainage rate \\
     $\delta$ & 0.02 &  & fraction of overburden pressure \\
-    $e_0$ & 0.69 &  & void ratio at $N=N_0$ \citep{Tulaczyketal2000} \\
-    $\phi_0$ & $0.01$ & & regularizing englacial porosity \\
+    $e_0$ & 0.69 &  & reference void ratio at $N_0$ \citep{Tulaczyketal2000} \\
+    $\phi_0$ & $0.01$ & & notional (regularizing) englacial porosity \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
     $k$ & $0.001$ & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & conductivity coefficient \citep{Schoofetal2012} \\
+    $N_0$ & $10^3$ & Pa & reference effective pressure \citep{Tulaczyketal2000} \\
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $0.1$ & $\text{m}$ & roughness scale \citep{Hewittetal2012} \\
-    $\Wtilmax$ & $2\phantom{\Big|}$ & $\text{m}$ & max.~water in till \citep{BBssasliding} \\
+    $\Wtilmax$ & $2\phantom{\Big|}$ & $\text{m}$ & maximum water in till \citep{BBssasliding} \\
     \hline
   \end{tabular}
  \label{tab:constants}
 \end{table*}
 
-Model equations \eqref{eq:bluebox} relate the state functions, data functions, and output function listed in Table \ref{tab:symbols} to the physical constants and model parameters in Table \ref{tab:constants}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-stepping numerical model.  The ``data'' functions are either supplied by true observations or they are provided by other components an ice sheet model (e.g.~the stress balance in an ice dynamics model will provide $|\bv_b|$).
+Model equations \eqref{eq:bluebox} relate the state functions, data functions, and output function listed in Table \ref{tab:symbols} to the physical constants and model parameters in Table \ref{tab:constants}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-stepping numerical model.  The ``data'' functions are either supplied by observations or by other components an ice sheet model (e.g.~the stress balance in an ice dynamics model will provide $|\bv_b|$).
 
-The yield stress function $\tau_c$ is the most important output of the model.  It determines the basal shear stress used in the stress balance equations of an ice dynamics model.  Full two-way coupling would include the ice dynamics model passing fields $b$, $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and then $\tau_c$ passing in the other direction.
+The yield stress function $\tau_c$ is the most important output of the model.  It determines the basal shear stress used in the stress balance equations of an ice dynamics model.  Full two-way coupling would include the ice dynamics model passing fields $b$, $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and $\tau_c$ passed in the other direction.
 
 The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- and space-independent) in the current paper but they could be allowed to vary spatially if desired.  Exploration of the parameter space represented by Table \ref{tab:constants} is important, but essentially it is beyond the scope of this model-description paper.
 
@@ -468,13 +454,13 @@ The model parameters in Table \ref{tab:constants} are all constant (i.e.~time- a
 \end{align}
 The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, with a small porosity parameter $\phi_0$, and with coupling to additional till storage; see section \ref{sec:closures}.
 
-\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored and the pressure reverts to overburden, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Siegertetal2009,Livingstoneetal2013}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.
+\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored, is the standard model for ``routing'' water to subglacial lakes under cold ice sheets \citep{Siegertetal2009,Livingstoneetal2013}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable.
 
 The single evolution equation of this reduced model is
 \begin{equation}
 \frac{\partial W}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \label{eq:lakesmodel}
 \end{equation}
-along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (P_o + \rho_w g b)\right|^{\beta-2}$ and $\bV = - K \grad \left(P_o + \rho_w g b\right)$.  As noted in section \ref{sec:closures}, the $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Thus this reduced model is essentially an advection, but, because of the way we have including $W$ into the hydraulic potential, so that large $W$ implies some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions.  Equation \eqref{eq:lakesmodel} therefore represents a modest improvement to the ``routing'' models used in prior work.
+along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (P_o + \rho_w g b)\right|^{\beta-2}$ and $\bV = - K \grad \left(P_o + \rho_w g b\right)$.  As noted in section \ref{sec:closures}, the $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Thus this reduced model is essentially an advection, but, because of \eqref{eq:potential} for the hydraulic potential, giving some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions.  Equation \eqref{eq:lakesmodel} therefore represents a modest improvement to the ``routing'' models \citep{Siegertetal2009,Livingstoneetal2013}.
 
 \item The non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which, in particular, $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the porous glacier model of \cite{Bartholomausetal2011}.  The correspondence is further explained in \cite{Bueler2014correspondence}, with an emphasis on the pressure equation which applies in that lumped model.
 
@@ -486,12 +472,12 @@ along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (
 \end{align}
 Note \cite{Tulaczyketal2000b} use a constant reference effective pressure $N_0$ while in this paper $\Ntil$ scales with overburden pressure; the correspondence is $N_0 = \delta P_o$.
 
-The UPB model depends on friction-heating feedback to keep $\Wtil$ bounded, which does not work in a membrane-stress-including theory, in which friction heating is a non-local effect of local changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water that would raise $\Wtil$ above the bound.  Equations \eqref{eq:upbbox} with this bound define a minimal ``drained'' version of the UPB model.
+The UPB model depends on friction-heating feedback to keep $\Wtil$ bounded, which does not work in a membrane-stress-inclusive theory, in which local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water that would raise $\Wtil$ above the bound, which is a minimal ``drained'' version of the UPB model.
 \end{enumerate}
 
-The above list does not imply that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} could be considered as a variation on the idea \textbf{(ii)} but, it cannot be considered a reduction of our model.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the next section on steady states.
+The above list does not imply that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} could be considered as a variation on idea \textbf{(ii)} above but it cannot be considered a reduction of our model.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the next section on steady states.
 
-Most significantly, models which include conduits \citep[among others]{Schoofmeltsupply,PimentelFlowers2011,Hewittetal2012} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{PimentelFlowers2011,Hewittetal2012,vanderWeletal2013} but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.  Given that users determine grid spacing at run-time, a hydrology submodel in PISM is only acceptable if it exhibits convergence under grid refinement (section \ref{sec:results}).
+Most significantly, models which include conduits \citep[among others]{Schoofmeltsupply,PimentelFlowers2011,Hewittetal2012} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{PimentelFlowers2011,Hewittetal2012,vanderWeletal2013} but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.
 
 
 \section{Analysis of steady states}  \label{sec:steady}
@@ -1041,7 +1027,7 @@ We believe, however, that the comprehensive treatment here of certain subjects i
 On the other hand, a deliberate limitation in scope of the current paper should be noted.  We demonstrate only one-way coupling here, in which the PISM ice flow and thermodynamics model feeds basal melt rate and sliding speed values to the new hydrology model.  A future publication will describe two-way coupling in a high-resolution model for the whole of the Greenland ice sheet.
 
 \begin{acknowledgements}
-The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation, and discussions with Andy Aschwanden and Tim Bartholomaus were much appreciated.
+The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Discussions with, and detailed comments by, Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
 \end{acknowledgements}
 
 
