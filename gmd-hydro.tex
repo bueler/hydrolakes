@@ -482,7 +482,7 @@ Most significantly, models which include conduits \citep[among others]{Schoofmel
 
 \section{Analysis of steady states}  \label{sec:steady}
 
-\subsection{Equations of steady state}  The steady states of equations \eqref{eq:bluebox} are of physical modelling importance because the subglacial system can be close to steady state much of the time.  But steady state mathematical analysis is also rewarding because several physical processes become decoupled.  In fact we can make four specific observations which are special to steady state, and which we find are useful in understanding the time-dependent model.  In steady state,
+\subsection{Equations of steady state}  The steady states of equations \eqref{eq:bluebox} are of physical modelling importance because the subglacial system can be close to steady state much of the time.  In steady state several physical processes become decoupled.  In fact we can make four specific observations which are special to steady state, and which we find are useful in understanding the time-dependent model:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
 \item there is a functional relationship $P=P(W)$ which determines the pressure given the water amount,
@@ -492,7 +492,7 @@ Most significantly, models which include conduits \citep[among others]{Schoofmel
 \end{enumerate}
 In this section we address (\emph{i}), (\emph{ii}), and (\emph{iii}), while (\emph{iv}) is addressed in section \ref{sec:exactsolution}.
 
-We make two simplifications before addressing steady states: we fix $\alpha=1$ and $\beta=2$ and we remove till storage from the model ($\Wtilmax=0$).  The general observations above will apply without these simplifications, but the formulas here are more manageable because of them.
+We simplify the model slightly before addressing steady states: fix $\alpha=1$ and $\beta=2$, and remove till storage by setting $\Wtilmax=0$.  The general observations above will apply without these simplifications, but the formulas here are more manageable because of them.
 
 The steady form of model \eqref{eq:bluebox}, with these simplifications, can be written as follows in terms of $\bV,\bq,W,P$:
 \begin{align}
@@ -505,29 +505,31 @@ Note that we also have bounds $W\ge 0$ and $0 \le P \le P_o$.
 
 Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are stated in the one-dimensional case by \cite{Schoofetal2012} model, where the decoupling is also noted; see equations (5.8) and (5.10) in \citep{Schoofetal2012}.
 
-\subsection{Pressure as a function of $W$ in steady state}  Relative to the time-dependent form \eqref{eq:bluebox}, we see there are separate balances between the divergence of the flux and the water input on the one hand (equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (equation \eqref{eq:openclosesteady}).  The latter balance allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  As noted in section \ref{sec:capacity}, steady state is only possible if condition \eqref{eq:steadyOCbound} holds, but here with $W$ for $Y$:
+\subsection{Pressure as a function of $W$ in steady state}  Relative to the time-dependent form \eqref{eq:bluebox}, we see there are separate balances between the divergence of the flux and the water input on the one hand (equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (equation \eqref{eq:openclosesteady}).  The latter balance allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.
+
+Steady state is only possible if a condition holds:
 \begin{equation}
 c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 W. \label{eq:steadyboundfirst}
 \end{equation}
-In this and later formulas we define the following scaled basal sliding speed which has units of pressure:
+The reason for this constraint combines the cavity evolution equation \eqref{eq:hewittcapacity}, in the steady state case, and the full-cavity closure \eqref{eq:strongclosure}, giving \eqref{eq:openclosesteady}.  But \eqref{eq:openclosesteady} is only possible if the maximum closing rate $\mathcal{C}(N,W)$, which depends on pressure $P$, can match the opening rate $\mathcal{O}(|\bv_b|,W)$, which is pressure-independent.  The maximum closure rate occurs at zero water pressure, thus \eqref{eq:steadyboundfirst}.
+
+We define the following scaled basal sliding speed which has units of pressure:
 \begin{equation}
 s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.  \label{eq:definesb}
 \end{equation}
-One may think of $s_b$ as a scale for the pressure drop associated to cavitation in steady state.  Then \eqref{eq:steadyboundfirst} is equivalent to
+One regard $s_b$ as a scale for the pressure drop from cavitation.  Then \eqref{eq:steadyboundfirst} is equivalent to
 \begin{equation}
 W \ge W_c := \frac{s_b^3}{s_b^3 + P_o^3} W_r. \label{eq:steadyboundsecond}
 \end{equation}
-Note that if the pressure drop from sliding is large ($s_b \gg P_o$) then $W_c\approx W_r$.
-
 If \eqref{eq:steadyboundfirst} or \eqref{eq:steadyboundsecond} holds then
 \begin{equation}
 P(W) = P_o - s_b \left(\frac{(W_r - W)_+}{W}\right)^{1/3}.  \label{eq:PofWsteady}
 \end{equation}
-Note that in \eqref{eq:PofWsteady} we have $P(W_c)=0$.  Underpressure ($P=0$) with subcritical water amount ($W<W_c$) does not occur in steady state though it can occur in nonsteady conditions.  Formula \eqref{eq:PofWsteady} may apply even if $W\ge W_r$, in which case the water pressure takes the overburden value $P = P_o$.  However, if $P_o=0$ then \eqref{eq:steadyboundfirst} implies that either $W\ge W_r$ or $|\bv_b|=0$.  This describes the values of $W$ and $|\bv_b|$ at ice margins where $H\to 0$ and therefore $P_o\to 0$.  These are all restrictions that apply when the cavities are full, whereas partially-filled cavities can occur in the \cite{Schoofetal2012} theory.
+Note that in \eqref{eq:PofWsteady} we have $P(W_c)=0$.  Underpressure ($P=0$) with subcritical water amount ($W<W_c$) does not occur in steady state though it can occur in nonsteady conditions.  Formula \eqref{eq:PofWsteady} may apply even if $W\ge W_r$, in which case the water pressure takes the overburden value $P = P_o$.
 
 \newcommand{\upto}{ \!\!\nearrow\! }
 \newcommand{\downto}{ \!\searrow\! }
-Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for several cases of sliding speed $|\bv_b|$.  Figure \ref{fig:psteady-Po} shows $P(W)$ for several cases of overburden pressure $P_o$.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ if $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}, which describe steady state, do not include the interval $0\le W < W_c$ because such underpressure conditions are not achieved in steady state.
+Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for different values of sliding speed $|\bv_b|$, and Figure \ref{fig:psteady-Po} for values of overburden pressure $P_o$.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ as $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} do not include the underpressure cases $0\le W < W_c$.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{psteady-vb}
@@ -541,7 +543,7 @@ Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady}
 \label{fig:psteady-Po}
 \end{figure}
 
-Recall that \cite{FlowersClarke2002_theory} propose function $P_{FC}(W)$ (equation \eqref{eq:PofWFC}) for both steady and nonsteady circumstances.  Both functions $P(W)$ in \eqref{eq:PofWsteady} and $P_{FC}(W)$ are increasing and both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity, as it does here, if cavitation influences the water pressure.  Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, a problematic condition already noted by \cite{Schoofetal2012}, but this condition does not arise in \eqref{eq:PofWsteady}.  In conclusion, an important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we will not assume a relationship $P=P(W)$ in nonsteady conditions, even though such a relation does emerge from our theory in steady state.
+Recall that \cite{FlowersClarke2002_theory} propose function $P_{FC}(W)$ for both steady and nonsteady circumstances.  Both functions $P(W)$ in \eqref{eq:PofWsteady} and $P_{FC}(W)$ in \eqref{eq:PofWFC} are increasing.  They both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity, as it does here, if cavitation influences the water pressure.  Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, but this condition does not arise in \eqref{eq:PofWsteady}.  In conclusion, an important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we will not assume a relationship $P=P(W)$ in nonsteady conditions, even though such a relation emerges in our theory in the steady state case.
 
 \subsection{Flux in steady state}  We now consider how the steady state water velocity $\bV$, and the associated water flux $\bq$, depends on other quantities.  Equation \eqref{eq:PofWsteady} defines $P(W)$ while $\bV$ depends on $\grad P$ according to equation \eqref{eq:Vsteady}.  In steady state we have
 \begin{equation}
@@ -954,7 +956,7 @@ We have applied our mass-conserving hydrology models to the entire present-day G
 \label{fig:Greenhydroinputs}
 \end{figure*}
 
-The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, based in part on the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet.  Specifically, the model was run in a present-day climate for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  The final 2 km run, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (Of course this represents a small computation for modern clusters which may have more than 100k processors.)
+The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet.  Specifically, the model was run in a present-day climate for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  The final 2 km run, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (Of course this represents a small computation for modern clusters which may have more than 100k processors.)
 
 In the last 100 a of the final run the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
 
@@ -1024,7 +1026,7 @@ We believe, however, that the comprehensive treatment here of certain subjects i
 \item we have clarified the relationship of several ``closures'' which turn morphological ideas about the subglacial aquifer into concrete pressure equations (section \ref{sec:closures}), and
 \item we have implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
 \end{itemize}
-On the other hand, a deliberate limitation in scope of the current paper should be noted.  We demonstrate only one-way coupling here, in which the PISM ice flow and thermodynamics model feeds basal melt rate and sliding speed values to the new hydrology model.  A future publication will describe two-way coupling in a high-resolution model for the whole of the Greenland ice sheet.
+On the other hand, a deliberate limitation in scope of the current paper is that we demonstrate only one-way coupling.  The PISM ice flow and thermodynamics model feeds basal melt rate and sliding speed values to the new hydrology model.  Two-way coupling in a high-resolution model for the whole of the Greenland ice sheet will appear in future work.
 
 \begin{acknowledgements}
 The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Discussions with, and detailed comments by, Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
