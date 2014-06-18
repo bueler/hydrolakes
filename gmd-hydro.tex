@@ -5,7 +5,7 @@
 \usepackage[T1]{fontenc}
 
 % hyperref should be the last package we load
-\usepackage[pdftex,
+\usepackage[draft,pdftex,
                 colorlinks=true,
                 plainpages=false, % only if colorlinks=true
                 linkcolor=blue,   % only if colorlinks=true
@@ -221,6 +221,12 @@ There is extensive evidence that deformation of saturated till is well-modeled b
 where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the saturated till \citep{CuffeyPaterson}.
 
 The effective pressure $N=P_o-P$ used in modeling cavity closure (next section) is distinct from $\Ntil$.  This distinction is again justified by the very low hydraulic conductivity of till.  The till effective pressure $\Ntil$ will only be used here as it relates to till yield stress, and it does not affect the model for the horizontal transport of water.
+
+\begin{figure}[ht]
+\includegraphics[width=3.0in,keepaspectratio=true]{Ntilfunctions}
+\caption{\textbf{(a)} FIXME.  \textbf{(b)} FIXME.}
+\label{fig:Ntilfunctions}
+\end{figure}
 
 Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of mineral solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of the effective pressure on the till and the till void ratio,
 \begin{equation}
@@ -880,21 +886,6 @@ This recipe goes with a reporting scheme for mass conservation.  Note that in st
 
 In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the ``full'' model described in this paper while the other two are reductions; we list them in order of decreasing complexity.  We also give a concordance between the symbols in this paper and the relevant PISM configuration parameters.
 
-\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
-
-\subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of equations \eqref{eq:bluebox}, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
-\begin{align}
-&\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:routingmodel} \\
-&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
-&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
-\end{align}
-along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
-
-\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.   It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and thus the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
-
-\subsection{PISM configuration variables}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
-
 \begin{table*}[t]
   \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by parameter name.  All of these are used in the \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models.} \vskip4mm \centering
   \begin{tabular}{llcc} \tophline
@@ -922,6 +913,21 @@ along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
   \label{tab:correspondence}
 \end{table*}
 
+\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
+
+\subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of equations \eqref{eq:bluebox}, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
+\begin{align}
+&\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:routingmodel} \\
+&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
+&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
+&\Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+\end{align}
+along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
+
+\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.   It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and thus the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
+
+\subsection{PISM configuration variables}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
+
 
 \section{Results}  \label{sec:results}
 
@@ -939,13 +945,6 @@ For the verification runs we use the values in Table \ref{tab:verifconstants}.  
 
 As they give evidence of convergence, these results suggest that our numerical schemes for these coupled advection-diffusion-reaction equations for $W$ and $P$ are implemented correctly.  The rate of convergence is roughly linear (i.e.~about $O(\Delta x^1)$) because the errors arise at locations of low regularity of the solution \citep{BLKCB}, including the radius $r=R_1$ where $P$ abruptly drops from $P_o$, and at the ice sheet margin $r=L$ where there is a jump in the water thickness to zero.
 
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
-
-
-\subsection{Application of the model at ice sheet scale}
-
-We have applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  This serves as a nontrivial example showing the implementability of the model at large computational scale with high resolution using real data, and of one-way coupling with ice dynamics.  For simplicity and consistency with prior work, the observed state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland \cite[and references therein]{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}.
-
 \newcommand{\grnht}{3.8in}
 
 \begin{figure*}[ht]
@@ -954,6 +953,13 @@ We have applied our mass-conserving hydrology models to the entire present-day G
 \caption{To evaluate the result of the 2 km grid spun-up ice dynamical model we compare modelled ice speed at the ice surface (left; $\mathrm{m}\,\mathrm{a}^{-1}$) to satellite observations (right; $\mathrm{m}\,\mathrm{a}^{-1}$).}
 \label{fig:Greenspinupeval}
 \end{figure*}
+
+The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
+
+
+\subsection{Application of the model at ice sheet scale}
+
+We have applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  This serves as a nontrivial example showing the implementability of the model at large computational scale with high resolution using real data, and of one-way coupling with ice dynamics.  For simplicity and consistency with prior work, the observed state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland \cite[and references therein]{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}.
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
@@ -968,6 +974,13 @@ In the last 100 a of the final run the ice sheet volume varied by less than $0.0
 
 The results of this whole-ice-sheet spinup were validated by comparing results to observations.  For example, the spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ of is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  This model, like those described by \cite{AschwandenAdalgeirsdottirKhroulev}, uses no distributed parameter values such as un-observable basal shear stresses.  Such distributed values would require the observed surface velocity for the inversion, and thus invalidate this data set for validation.  On the other hand, we see in Figure \ref{fig:Greenspinupeval} that, for example, the extent of the Northeast Greenland ice stream is smaller than observed, and differences in the distribution of flow in Western Greenland outlet glaciers.
 
+\begin{figure*}[ht]
+\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
+\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-bwat}}
+\caption{Outputs from the \texttt{routing} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (left; $\mathrm{m}$) and modelled transportable water layer thickness $W$ (right; $\mathrm{m}$).}
+\label{fig:Greenroutingresults}
+\end{figure*}
+
 The spun-up model includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding coincide with areas of basal melt because sliding occurs through a balance of modelled basal resistance and membrane (longitudinal) stresses in the hybrid PISM model \citep{Winkelmannetal2011}, and furthermore the modeled basal resistance comes from the model of yield stress described in section \ref{sec:tillmechanics}.
 
 We used the fields $H$, $m$, $|\bv_b|$ as steady data in 5 model year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling is tested here.  That is, steady ice dynamics model fed steady fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values (for both models) and $P=0$ initial values (for \texttt{distributed}).
@@ -975,13 +988,6 @@ We used the fields $H$, $m$, $|\bv_b|$ as steady data in 5 model year runs of ou
 These runs had 1.05 million subglacial hydrology grid points at which variables $W$, $\Wtil$, and $P$ were recomputed at each time-step according to the numerical model described in section \ref{sec:num}.  In both \texttt{routing} and \texttt{distributed} models the modelled hydrological system became quite steady after the first three model years.  The time-steps for the hydrology model had adaptively-determined durations which reached a steady level of 4 model hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the complete \texttt{distributed} model the time steps were actually slightly longer than \texttt{routing} primarily because the routing model concentrates large water amounts, and thus fluxes, along steepest-descent paths.  In the \texttt{distributed} model the time steps were about 6 model hours based on speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and maximum diffusivities of about $D$ of 0.25 $\text{m}^2\,\text{s}^{-1}$.
 
 Note that higher velocities were seen in the \Nbreen case in section \ref{sec:num}, based on additional simulated surface water input added to the thermodynamically-generated basal melt rate \citep{vanPeltthesis}.  In that tidewater glacier case the pressure-evolution time-steps are seen to be substantially shorter than the mass-conservation time steps.
-
-\begin{figure*}[ht]
-\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
-\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-bwat}}
-\caption{Outputs from the \texttt{routing} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (left; $\mathrm{m}$) and modelled transportable water layer thickness $W$ (right; $\mathrm{m}$).}
-\label{fig:Greenroutingresults}
-\end{figure*}
 
 The final values of $\Wtil$ and $W$ for the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  We see that the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  By contrast, in the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential $\psi=P_o + \rho_w g (b+W)$ used in this model.  The grid resolution of 2 km, while very high for contemporary ice dynamics models, still represents a significant spatial-averaging of the concentrated flow pathways.  Specifically, though relatively few areas have $W>1$, the continuum limit of the model would be expected to have $W\gg 1$ in concentrated pathways of a few meters to tens of meters width.  These effects are seen in detail in Figure \ref{fig:Greenroutingdetail}.
 
