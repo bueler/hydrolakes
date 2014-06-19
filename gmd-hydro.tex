@@ -87,8 +87,8 @@
 \author[1]{E.~Bueler}
 \author[2]{W.~Van Pelt}
 
-\affil[1]{Dept of Mathematics and Statistics, University of Alaska Fairbanks, Alaska, USA.}
-\affil[2]{IMAU}
+\affil[1]{Department of Mathematics and Statistics, University of Alaska Fairbanks, Alaska, USA}
+\affil[2]{Institute for Marine and Atmospheric Research Utrecht, The Netherlands\footnote{Current address: Norwegian Polar Institute, Tromsø, Norway}}
 
 %% The [] brackets identify the author to the corresponding affiliation, 1, 2, 3, etc. should be inserted.
 
@@ -121,7 +121,7 @@ Successful models have combined subsets of these different morphologies and proc
 
 This paper describes a carefully-selected model for a distributed system of linked subglacial cavities, with additional storage of water in the pore spaces of subglacial till.  The mass conservation equation in our model describes the evolution of the sum of the transportable water in the distributed system and the water stored in the till.  Water in excess of the capacity of the till passes into the transport system, and in this sense the model could be called a ``drained-and-conserved plastic bed'' model in contrast to the ``undrained plastic bed'' model of \cite{Tulaczyketal2000b}.
 
-The goals of the current work are the selection, implementation, verification, and practical demonstration of a two-dimensional subglacial hydrology model.  This subglacial component is an ice-dynamics-coupled sub-model of a comprehensive three-dimensional ice sheet model, the open-source Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}).  To satisfy our goals the new hydrology model must be parallelizable, it must exhibit convergence of solutions under grid refinement, and its parameters must be as few as practical.  We will demonstrate that we have succeeded in these goals.
+The goals of the current work are the selection, implementation, verification, and practical demonstration of a two-dimensional subglacial hydrology model.  This subglacial component is an ice-dynamics-coupled sub-model of a comprehensive three-dimensional ice sheet model, the open-source Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}).  To satisfy our goals the new hydrology model must be parallelizable, apply at a wide variety of spatial and temporal scales, exhibit convergence of solutions under grid refinement, and have as few parameters as practical.  We will demonstrate that we have succeeded in these goals.
 
 The cavities in our modeled distributed system open by sliding of the ice over bedrock roughness and they close by ice creep, two physical processes which combine to determine the relationship between water amount and pressure.  Pressure is thereby determined non-locally over each connected component of the hydrological system.  No functional relation between subglacial water amount and pressure is assumed \citep[compare][]{FlowersClarke2002_theory}.  The subglacial water pressure solves an equation which is a parabolic regularization of the distributed pressure equation given in elliptic variational inequality form by \cite{Schoofetal2012}.
 
@@ -136,7 +136,7 @@ The structure of the paper is as follows: Section \ref{sec:elements} considers t
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
 
-\subsection{Mass conservation}  We assume that liquid water is of constant density.  Thus the thickness of the layer of laterally-transportable (mobile) water, denoted by $W(t,x,y)$, determines its mass.  In addition there is liquid water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  Of course these thicknesses are nonnegative: $W \ge 0$ and $\Wtil \ge 0$.
+\subsection{Mass conservation}  We assume that liquid water is of constant density.  Thus the thickness of the layer of laterally-transportable (mobile) water, denoted by $W(t,x,y)$, determines its mass.  In addition there is liquid water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.
 
 Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.  While the thickness $W$ describes the amount of water in subglacial cavities, and in the connections between cavities \citep{Kamb1987}, the water in till pore spaces is much less mobile because of the very low hydraulic conductivity of till \citep{LingleBrown1987,Tulaczyketal2000,TrufferEchelmeyerHarrison2001}.  Our model includes, however, a model for the strength of the pressurized till (Section \ref{sec:tillmechanics}).
 
@@ -353,7 +353,7 @@ In the zero till storage case (set $\Wtilmax=0$ so $\Wtil=0$), equation \eqref{e
 
 \cite{Schoofetal2012} argue that a model based on \eqref{eq:elliptic} should accommodate the possibility of partially-empty cavities with $W<Y$ and at zero pressure $P=0$.  As evidence for vapor/air-filled cavities does not exist underneath tidewater glaciers or ice sheets, though of course subglacial hydrology is poorly-observed generally, we accept a potential loss of model completeness by using a full-cavity model.  An overpressure condition $P>P_o$ has been observed in ice sheets \citep[for example]{Dasetal08}, but only for short durations.  Unlike \cite{Werderetal2013}, our modelled pressure satisfies $P\le P_o$, as would the computationally-expensive elliptic variational inequality model of \cite{Schoofetal2012}. 
 
-\subsection{Notional englacial porosity as a regularization}  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Bartholomausetal2008,Fountain2005,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013,Werderetal2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to the subglacial pressure.  Thus, in such an englacial hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table.''
+\subsection{Notional englacial porosity as a regularization}  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Fountainetal2005,Bartholomausetal2008,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013,Werderetal2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to the subglacial pressure.  Thus, in such an englacial hydrologic system, higher or lower subglacial pressure is reflected by higher or lower ``water table.''
 
 \cite{Bueler2014correspondence} shows that an extension of the lumped englacial/subglacial model in \cite{Bartholomausetal2011} to the distributed case gives an equation similar to \eqref{eq:elliptic}, but with the crucial difference that the equation is parabolic for the pressure and not elliptic (compare \cite{Hewittetal2012}).  The time-derivative term is proportional to the englacial porosity $\phi$.  Based on this re-analysis of \cite{Bartholomausetal2011}, we use this parabolic equation in our model with constant notional englacial porosity $\phi=\phi_0$:
 \begin{align}
@@ -362,7 +362,7 @@ In the zero till storage case (set $\Wtilmax=0$ so $\Wtil=0$), equation \eqref{e
 \end{align}
 Compare equations (7) in \cite{Hewitt2013} and (24) in \cite{Werderetal2013}.
 
-If the englacial porosity $\phi_0$ is small, so that there is a nearly impermeable ``cap'' on the subglacial system, as would occur under a thick ice sheet, then equation \eqref{eq:regpressureequation} is \emph{stiff} and indeed similar, in terms of numerical solution, to an elliptic equation.  However, if $\phi_0$ is relatively large then equation \eqref{eq:regpressureequation} causes local changes in subglacial pressure $P$ to be damped in the speed and range of their influence on other parts of the connected subglacial hydrologic system.
+Addition of englacial porosity to the model allows a user-adjustable trade-off between temporal detail in the pressure evolution versus computational effort \citep{vanPeltthesis}.  If the englacial porosity $\phi_0$ is small, so that there is a nearly impermeable ``cap'' on the subglacial system, as would occur under a thick ice sheet, then equation \eqref{eq:regpressureequation} is \emph{stiff} and indeed similar, in terms of numerical solution, to an elliptic equation.  However, if $\phi_0$ is relatively large then equation \eqref{eq:regpressureequation} causes local changes in subglacial pressure $P$ to be damped in the speed and range of their influence on other parts of the connected subglacial hydrologic system.
 
 In fact, equation \eqref{eq:regpressureequation} is stiff to a degree inversely-proportional to $\phi_0$, in the sense that the diffusive range of pressure evolution is proportional to $\phi_0$.  The \cite{Schoofetal2012} theory is the infinitely-stiff $\phi_0=0$ case.  In general, stiffer equations are harder to solve numerically, and differential-algebraic equations like the system of the mass conservation equation and the elliptic equation \eqref{eq:elliptic} are the hardest \citep{AscherPetzold}.
 
@@ -403,6 +403,7 @@ P_o  &= \rho_i g H && \text{overburden pressure}.
         \end{tabular} \\ \hline
 \emph{data functions} &  \begin{tabular}{lll}
         $b$ & m & bedrock elevation \\
+        $\varphi$ &  & till friction angle \\
         $H$ & m & ice thickness \\
         $m$ & $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ & total melt water input into subglacier \\
         $|\bv_b|$ & $\text{m}\,\text{s}^{-1}$ & ice sliding speed \\
@@ -951,11 +952,11 @@ The rates of convergence for average errors are nearly identical for the higher 
 \label{fig:Greenhydroinputs}
 \end{figure*}
 
-The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Specifically, the model was run in a present-day climate for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  The final 2 km run, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (This represents a small computation for modern clusters which may have more than 100k processors.)
+The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and the model for till friction angle, followed those in \cite{AschwandenAdalgeirsdottirKhroulev}.  The present-day climate including surface temperature and mass balance was from \citep{Ettemaetal2009}.  The grid sequence was to run for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (This represents a small computation for modern clusters which may have more than 100k processors.)
 
-In the last 100 a of the final run the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
-
-The results of this whole-ice-sheet spinup were validated by comparing results to observations.  For example, the spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ of is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  This model, like those described by \cite{AschwandenAdalgeirsdottirKhroulev}, uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities.  We see in Figure \ref{fig:Greenspinupeval} that, for example, the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.
+The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  In the last 100 a of the final stage the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
+ 
+The results of this whole-ice-sheet spinup were validated by comparing results to present-day observations.  Though the model is in nearly steady state, the actual ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  We see that, the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.  Our model uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities.
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
@@ -1003,13 +1004,13 @@ As a final observation about the \texttt{distributed} model results, we examine 
 \label{fig:GreenisPofW}
 \end{figure*}
 
-Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each scatter plot, then there is usually a rough increasing relationship between $W$ and the relative pressure $P/P_o$.  Recall that in exact steady state the equation \eqref{eq:PofWsteady} applies; see also Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}.  At fast-sliding locations the water amount is often comparable to the bed roughness scale $W_r$.  For low sliding velocities we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  Furthermore we can observe that in thick ice with high overburden pressure the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure also have low ice thickness.
+Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each scatter plot, then there is usually a rough increasing relationship between $W$ and the relative pressure $P/P_o$.  Recall that in exact steady state the equation \eqref{eq:PofWsteady} applies; see also Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}.  At fast-sliding locations the water amount is often comparable to the bed roughness scale $W_r$.  For low sliding velocities we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  Furthermore we can observe that in thick ice with high overburden pressure the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure also have low ice thickness.  Figure \ref{fig:GreenisPofW} would show even more scatter if the run were not close to steady state, such as if there were time-varying surface melt input into the subglacier \citep{vanPeltthesis}.
 
 It would be possible to implement a model without a pressure evolution equation like \eqref{eq:regpressureequation}, and instead use \eqref{eq:PofWsteady} as a prescribed relation $P(W)$.  However, we prefer such a local relationship to ``emerge'' in steady state, as here.  Tests of the model with time-dependent inputs clearly suggest the importance of a full pressure evolution equation to modeling response to a seasonal surface melt cycle \citep{vanPeltthesis}.
 
 
 \conclusions  \label{sec:conclusion}  The literature of subglacial hydrology modeling has grown rapidly in the last five years.  In this context the current paper, which documents additions made to the Parallel Ice Sheet Model in its 0.6 version released February 2014, is both novel and comprehensive, despite primarily describing the details of a PISM submodel.  It is novel in these features:\begin{itemize}
-\item parallel implementation in two horizontal dimensions at scale (sections \ref{sec:num} and \ref{sec:results}),
+\item parallel implementation in two horizontal dimensions at scale (sections \ref{sec:num} and \ref{sec:results}) of a coupled till-and-linked-cavities model,
 \item a new analysis of steady state explaining the degree to which a functional relationship $P(W)$ is justified (section \ref{sec:steady}),
 \item an exact solution of the coupled mass and pressure equations of the distributed model in the steady angularly-symmetric case (section \ref{sec:steady}), plus verification using this solution (section \ref{sec:results}), and
 \item an englacial porosity regularization which is shown to allow a practical numerical model in which physically-motivated bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:capacity}, \ref{sec:closures}, and \ref{sec:num}).
@@ -1122,6 +1123,11 @@ de~Fleurian, B., Gagliardini, O., Zwinger, T., Durand, G., Le~Meur, E., Mair,
   D., and R{\aa}back, P.: A double continuum hydrological model for glacier
   applications, The Cryosphere, 8, 137--153, \doi{10.5194/tc-8-137-2014}, 2014.
 
+\bibitem[{Ettema et~al.(2009)}]{Ettemaetal2009}
+Ettema J. et~al.: Higher surface mass balance of the Greenland ice sheet
+  revealed by high-resolution climate modeling, Geophys. Res. Lett., 36, L12501,
+  \doi{10.1029/2009GL038110}, 2009.
+
 \bibitem[{Evans(1998)}]{Evans}
 Evans, L.~C.: Partial {D}ifferential {E}quations, Graduate Studies in
   Mathematics, American Mathematical Society, 1998.
@@ -1136,8 +1142,8 @@ Flowers, G.~E. and Clarke, G. K.~C.: A multicomponent coupled model of glacier
   hydrology 2. {A}pplication to {T}rapridge {G}lacier, {Y}ukon, {C}anada, J.
   Geophys. Res., 107, 2288, \doi{10.1029/2001JB001124}, 2002{\natexlab{b}}.
 
-\bibitem[{Fountain(2005)}]{Fountain2005}
-Fountain: FIXME, Nature, ??, ??--??, 2005.
+\bibitem[{Fountain et~al.(2005)}]{Fountainetal2005}
+Fountain, A., et al.: Fractures as the main pathways of water flow in temperate glaciers, Nature 433, 618--621, \doi{doi:10.1038/nature03296}, 2005.
 
 \bibitem[{Goeller et~al.(2013)Goeller, Thoma, Grosfeld, and
   Miller}]{Goelleretal2013}
