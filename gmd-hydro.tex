@@ -375,7 +375,7 @@ Equation \eqref{eq:regpressureequation} for $P$ is coupled to the advection-diff
 
 \section{A new subglacial hydrology model in PISM} \label{sec:newmodel}
 
-\subsection{Summary of equations and symbols}  The major, coupled equations for the model are \eqref{eq:adeqn}, \eqref{eq:mohrcoulomb}, \eqref{eq:tilldynamics}, and \eqref{eq:regpressureequation}.  Collected here for clarity they are:
+\subsection{Summary of equations and symbols}  The major, coupled equations for the model are mass conservation \eqref{eq:adeqn}, Mohr-Coulomb for yield stress \eqref{eq:mohrcoulomb}, till-stored water amount evolution \eqref{eq:tilldynamics}, an equation determining till effective pressure from water amount \eqref{eq:Wtilpressure}, and pressure evolution \eqref{eq:regpressureequation}.  Recalled here for clarity they are:
 \begin{align}
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 &\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
@@ -384,37 +384,39 @@ Equation \eqref{eq:regpressureequation} for $P$ is coupled to the advection-diff
 &\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
 & \qquad \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
 \end{align}
-The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.  We also require these associated functions, recollected here:
+The equations use these derived functions:
 \begin{align*}
 K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2} && \text{effective conductivity} \\
 \bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of $W$} \\
 D    &= \rho_w g K W && \text{diffusivity of $W$} \\
 P_o  &= \rho_i g H && \text{overburden pressure}.
 \end{align*}
+The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
 
-\begin{table*}[ht]
-\caption{Time- and space-dependent functions in subglacial hydrology model \eqref{eq:bluebox}, including symbol, units, and meaning.}
+\begin{table}[ht]
+\caption{Functions in subglacial hydrology model \eqref{eq:bluebox}.}
 \begin{tabular}{l|l}
+\textbf{Type} & \textbf{Description (symbol, units, meaning)} \\
 \hline
-\emph{state functions} & \begin{tabular}{lll}
-        $W$ & m \phantom{llllllllllll\,} & effective thickness of transportable water \\
-        $\Wtil$ & m & effective thickness of water stored in till \\
-        $P$ & Pa & pressure of transportable water \\
+\emph{state} & \begin{tabular}{lll}
+        $W$ & m \phantom{llllllllllll\,} & transportable water thickness \\
+        $\Wtil$ & m & till-stored water thickness \\
+        $P$ & Pa & transportable water pressure \\
         \end{tabular} \\ \hline
-\emph{data functions} &  \begin{tabular}{lll}
+\emph{data} &  \begin{tabular}{lll}
         $b$ & m & bedrock elevation \\
         $\varphi$ &  & till friction angle \\
         $H$ & m & ice thickness \\
-        $m$ & $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ & total melt water input into subglacier \\
+        $m$ & $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$ & total melt water input \\
         $|\bv_b|$ & $\text{m}\,\text{s}^{-1}$ & ice sliding speed \\
         \end{tabular} \\ \hline
 \emph{output} &  \begin{tabular}{lll}
-        $\Ntil$ & Pa & effective pressure on the till \\
+        $\Ntil$ & Pa & till effective pressure \\
         $\tau_c$ \phantom{l\;} & Pa \phantom{llllllllllll} & till yield stress \\
         \end{tabular} \\ \hline
 \end{tabular}
 \label{tab:symbols}
-\end{table*}
+\end{table}
 
 \begin{table*}[ht]
   \centering
@@ -445,7 +447,7 @@ P_o  &= \rho_i g H && \text{overburden pressure}.
  \label{tab:constants}
 \end{table*}
 
-Model equations \eqref{eq:bluebox} relate the state functions, data functions, and output function listed in Table \ref{tab:symbols} to the physical constants and model parameters in Table \ref{tab:constants}.  Only the state functions must be provided with initial values, and only they must be saved when stopping and restarting a time-stepping numerical model.  The ``data'' functions are either supplied by observations or by other components an ice sheet model (e.g.~the stress balance in an ice dynamics model will provide $|\bv_b|$).
+The functions of the model can be categorized into \emph{state} functions, which must be provided with initial values and which evolve according to the model, \emph{data} functions, which are either supplied by observations or by other components of an ice sheet model (e.g.~the stress balance in an ice dynamics model will provide $|\bv_b|$), and \emph{output} functions which are supplied to other components of the ice sheet model (e.g.~the yield stress $\tau_c$ is fed back to the stress balance).  Thus equations \eqref{eq:bluebox} relate the state, data, and output function listed in Table \ref{tab:symbols}, and they require the physical constants and model parameters in Table \ref{tab:constants}.
 
 The yield stress function $\tau_c$ is the most important output of the model.  It determines the basal shear stress used in the stress balance equations of an ice dynamics model.  Full two-way coupling would include the ice dynamics model passing fields $b$, $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and $\tau_c$ passed in the other direction.
 
@@ -469,7 +471,7 @@ The single evolution equation of this reduced model is
 \begin{equation}
 \frac{\partial W}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \label{eq:lakesmodel}
 \end{equation}
-along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (P_o + \rho_w g b)\right|^{\beta-2}$ and $\bV = - K \grad \left(P_o + \rho_w g b\right)$.  As noted in section \ref{sec:closures}, the $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Thus this reduced model is essentially an advection, but, because of \eqref{eq:potential} for the hydraulic potential, giving some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions.  Equation \eqref{eq:lakesmodel} therefore represents a modest improvement to the ``routing'' models \citep{Siegertetal2009,Livingstoneetal2013}.
+along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (P_o + \rho_w g b)\right|^{\beta-2}$ and $\bV = - K \grad \left(P_o + \rho_w g b\right)$.  As noted in section \ref{sec:closures}, the $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  Thus this reduced model is essentially an advection, but, because of \eqref{eq:potential} for the hydraulic potential, which implies some diffusion, model \eqref{eq:lakesmodel} is well-posed and has continuous solutions.  Equation \eqref{eq:lakesmodel} therefore represents a modest improvement to the existing ``routing'' models.
 
 \item The non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which, in particular, $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the porous glacier model of \cite{Bartholomausetal2011}.  The correspondence is further explained in \cite{Bueler2014correspondence}, with an emphasis on the pressure equation which applies in that lumped model.
 
@@ -590,7 +592,7 @@ Furthermore the values of $W$ will scale with $1/k$.  Indeed, for the simpler eq
 
 \section{An exact steady state solution}  \label{sec:exactsolution}
 
-\subsection{Radial equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane, in a case with nontrivial overburden pressure and nontrivial ice sliding speed.  This solution, which is useful for verifying numerical schemes, depends on the numerical solution of a scalar first-order ODE initial value problem, something we can do with high accuracy.  Traveling wave exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.
+\subsection{Radial equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane, in a case with nontrivial overburden pressure and nontrivial ice sliding speed.  This solution, which is useful for verifying numerical schemes, depends on the numerical solution of a scalar first-order ordinary differential equation (ODE) initial value problem, something we can do with high accuracy.  Traveling wave exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.
 
 Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady}, and assume all quantities only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  One may eliminate $\bV$.  In the flat bed case ($b=0$) the resulting pair of equations is
 \begin{align}
@@ -616,7 +618,7 @@ Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (OD
 \end{equation}
 where $\tilde W = W_r - W$ is the amount by which the water is below the roughness scale.
 
-\subsection{A nontrivial solution}  \label{subsect:exactsoln}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin so that $P_o(L^-)>0$.  Figure \ref{fig:Pexact} shows the solution and this small cliff in particular.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and by \eqref{eq:steadyboundfirst} we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
+\subsection{A nontrivial solution}  \label{subsect:exactsoln}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin (a cliff) so that $P_o(L^-)>0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and by \eqref{eq:steadyboundfirst} we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
 It is useful to have an ice cap geometry in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple, so we choose a parabolic profile
 \begin{equation}
@@ -624,7 +626,7 @@ H(r) = H_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
 where $H(0)=H_0$ is the height of the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $H(L)=0.19 h_0$ is the size of the cliff.
 
-The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is unnecessary for hydrology model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, and which increases in the radial direction:
+The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is unnecessary for hydrology model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, until a radius $r=R_1$ at which sliding starts and then increases in the radial direction:
 \begin{equation}
 |\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
                            v_0  \left(\frac{r-R_1}{L-R_1}\right)^5, & R_1 < r \le L.
@@ -836,7 +838,7 @@ Because equation \eqref{eq:defnZ} uses the updated value $(\Wtil)_{ij}^{l+1}$, e
 
 There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we set $P_{i,j}^{l+1}=(P_o)_{i,j}$ if there is no basal sliding and $P_{i,j}^{l+1}=0$ if there is sliding (because of cavitation; see equation \eqref{eq:PofWsteady}).
 
-\subsection{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution.  For convenience we treat the ice and bedrock geometry, and the ice sliding speed, as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
+\subsection{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution.  For convenience we treat the ice geometry and sliding speed as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
 
 The ice geometry may be quite general, with ice-free land or floating ice allowed at any location $(x_i,y_j)$.  The ice geometry determines boolean ``masks'' for grid cell state (based on zero sea level elevation):
 \begin{align*}
