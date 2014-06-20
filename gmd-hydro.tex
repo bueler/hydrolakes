@@ -79,7 +79,7 @@
 \begin{document}
 \graphicspath{{figs/}}
 
-\linenumbers
+%\linenumbers
 
 \title{Mass-conserving subglacial hydrology in \\ the Parallel Ice Sheet Model}
 
@@ -381,26 +381,27 @@ Equation \eqref{eq:regpressureequation} for $P$ is coupled to the advection-diff
 
 \section{A new subglacial hydrology model in PISM} \label{sec:newmodel}
 
-\subsection{Summary of equations and symbols}  The major, coupled equations for the model are mass conservation \eqref{eq:adeqn}, Mohr-Coulomb for yield stress \eqref{eq:mohrcoulomb}, till-stored water amount evolution \eqref{eq:tilldynamics}, an equation determining till effective pressure from water amount \eqref{eq:Wtilpressure}, and pressure evolution \eqref{eq:regpressureequation}.  Recalled here for clarity they are:
+\subsection{Summary of equations and symbols}  The major equations for the model are mass conservation \eqref{eq:adeqn}, Mohr-Coulomb for yield stress \eqref{eq:mohrcoulomb}, till-stored water amount evolution \eqref{eq:tilldynamics}, an equation determining till effective pressure from water amount \eqref{eq:Wtilpressure}, and pressure evolution \eqref{eq:regpressureequation}.  Recalled here for clarity they are:
 \begin{align}
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 &\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&FIXME \Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag \\
+&\Ntil = \min\left\{P_o,\, N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}\right\}, \notag \\
 &\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
 &\frac{\phi_0}{\rho_w g} \ddt{P} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w} \notag \\
 & \qquad \qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \notag
 \end{align}
-The equations use these derived functions:
+The above equations use these derived functions:
 \begin{align*}
-K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2} && \text{effective conductivity} \\
-\bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of $W$} \\
 D    &= \rho_w g K W && \text{diffusivity of $W$} \\
-P_o  &= \rho_i g H && \text{overburden pressure}.
+K    &= k W^{\alpha-1} \left|\grad(P+\rho_w g b)\right|^{\beta-2} && \text{effective conductivity} \\
+P_o  &= \rho_i g H && \text{overburden pressure} \\
+s    &= \Wtil / \Wtilmax && \text{$\Wtil$ relative to capacity} \\
+\bV  &= - K \grad\left(P + \rho_w g b\right) && \text{velocity of $W$}.
 \end{align*}
 The model also includes bounds on the state variables, namely $0\le W$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
 
 \begin{table}[ht]
-\caption{Functions in subglacial hydrology model \eqref{eq:bluebox}.}
+\caption{Functions used in subglacial hydrology model \eqref{eq:bluebox}.}
 \begin{tabular}{l|l}
 \textbf{Type} & \textbf{Description (symbol, units, meaning)} \\
 \hline
@@ -438,12 +439,12 @@ The model also includes bounds on the state variables, namely $0\le W$, $0\le \W
     $c_2$ & $0.04$ & & creep closure coefficient \\
     $C_c$ & 0.12 &  & till compressibility \citep{Tulaczyketal2000} \\
     $C_d$ & $0.001$ &  $\text{m}\,\text{a}^{-1}$ & background till drainage rate \\
-    $\delta$ & 0.02 &  & fraction of overburden pressure \\
+    $\delta$ & 0.02 &  & $\Ntil$ lower bound, as fraction of overburden pressure \\
     $e_0$ & 0.69 &  & reference void ratio at $N_0$ \citep{Tulaczyketal2000} \\
     $\phi_0$ & $0.01$ & & notional (regularizing) englacial porosity \\
     $g$ & $9.81$ & m $\text{s}^{-2}$ & acceleration of gravity \\
     $k$ & $0.001$ & $\text{m}^{2\beta-\alpha} \text{s}^{2\beta-3} \text{kg}^{1-\beta}$ & conductivity coefficient \citep{Schoofetal2012} \\
-    $N_0$ & $10^3$ & Pa & reference effective pressure \citep{Tulaczyketal2000} \\
+    $N_0$ & $1000$ & Pa & reference effective pressure \citep{Tulaczyketal2000} \\
     $\rho_i$ & $910$ & $\text{kg}\,\text{m}^{-3}$ & ice density \citep{GreveBlatter2009} \\
     $\rho_w$ & $1000$ & $\text{kg}\,\text{m}^{-3}$ & fresh water density \citep{GreveBlatter2009} \\
     $W_r$ & $0.1$ & $\text{m}$ & roughness scale \citep{Hewittetal2012} \\
@@ -483,12 +484,13 @@ along with the bound $W \ge 0$ and definitions $K = k W^{\alpha-1} \left|\grad (
 
 \item The undrained plastic bed (UPB) model of \cite{Tulaczyketal2000b} arises as the $W=0,\bq=0,\phi_0=0$ reduction of \eqref{eq:bluebox}:
 \begin{align}
-&\ddt{\Wtil} = \frac{m}{\rho_w}, \label{eq:upbbox} \\
+&\ddt{\Wtil} = \frac{m}{\rho_w} - C_d, \label{eq:upbbox} \\
 &\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&FIXME \Ntil = N_0 \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}, \notag
+&\Ntil = N_0 10^{(e_0-e)/C_c}, \notag
 \end{align}
+along with equations \eqref{eq:voidequivalent} and \eqref{eq:etaexpression} relating void ratio $e$ to the thickness $\Wtil$.
 
-The UPB model depends on friction-heating feedback to keep $\Wtil$ bounded, which does not work in a membrane-stress-inclusive theory, in which local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water that would raise $\Wtil$ above the bound, which is a minimal ``drained'' version of the UPB model.
+This UPB model depends on friction-heating feedback to keep $\Wtil$ bounded, which is not effective in a membrane-stress-inclusive theory in which local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water above the capacity, which is a minimal ``drained'' version of the UPB model.
 \end{enumerate}
 
 The above list does not imply that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} could be considered as a variation on idea \textbf{(ii)} above but it cannot be considered a reduction of our model.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the next section on steady states.
@@ -899,6 +901,7 @@ In this section we document the runtime options for the PISM hydrology model \ci
     \verb|till_c_0| & $c_0$ & $\times$ & $\times$ \\
     \verb|till_compressibility_coefficient| & $C_c$ & $\times$ & $\times$ \\
     \verb|till_effective_fraction_overburden| & $\delta$ & $\times$ & $\times$ \\
+    \verb|till_reference_effective_pressure| & $N_0$ & $\times$ & $\times$ \\
     \verb|till_reference_void_ratio| & $e_0$ & $\times$ & $\times$ \\
     \bottomhline
   \end{tabular}
@@ -912,9 +915,9 @@ In this section we document the runtime options for the PISM hydrology model \ci
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:routingmodel} \\
 &\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
 &\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&FIXME \Ntil = \min\left\{P_o,\, \delta P_o \, 10^{(e_0/C_c) \left(1 - (\Wtil/\Wtilmax)\right)}\right\}, \notag
+&\Ntil = \min\left\{P_o,\, N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}\right\}, \notag
 \end{align}
-along with the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
+along with $s=\Wtil/\Wtilmax$ and the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
 
 \subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.   It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
 
@@ -953,18 +956,22 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 \subsubsection{Spun-up initial state}  We have applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  This serves as a nontrivial example showing the implementability of the model at large computational scale with high resolution using real data, and of one-way coupling with ice dynamics.  For simplicity and consistency with prior work, the present-day state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland (Bindschadler et al., 2013; Nowicki et al., 2013; and references therein).\nocite{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}
 
+The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and the model for till friction angle, followed those in \cite{AschwandenAdalgeirsdottirKhroulev}.  The present-day climate including surface temperature and mass balance was from \citep{Ettemaetal2009}.  The grid sequence was to run for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (This represents a small computation for modern clusters which may have more than 100k processors.)
+
+The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  In the last 100 a of the final stage the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
+
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velbase-mag}}
 \caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed $|\bv_b|$ (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the spun-up model.}
 \label{fig:Greenhydroinputs}
 \end{figure*}
-
-The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and the model for till friction angle, followed those in \cite{AschwandenAdalgeirsdottirKhroulev}.  The present-day climate including surface temperature and mass balance was from \citep{Ettemaetal2009}.  The grid sequence was to run for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (This represents a small computation for modern clusters which may have more than 100k processors.)
-
-The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  In the last 100 a of the final stage the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
  
 The results of this whole-ice-sheet spinup were validated by comparing results to present-day observations.  Though the model is in nearly steady state, the actual ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  We see that, the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.  Our model uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities.
+
+The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding roughly coincide with areas of basal melt because modeled basal resistance comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
+
+\subsubsection{Experimental setup}  We then used the fields $H$, $m$, $|\bv_b|$ as steady data in five model-year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling is tested here.  That is, a steady ice dynamics model fed its fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values (for both models) and $P=0$ initial values (for \texttt{distributed}).
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
@@ -972,10 +979,6 @@ The results of this whole-ice-sheet spinup were validated by comparing results t
 \caption{Outputs from the \texttt{routing} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (left; $\mathrm{m}$) and modelled transportable water layer thickness $W$ (right; $\mathrm{m}$).}
 \label{fig:Greenroutingresults}
 \end{figure*}
-
-The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding roughly coincide with areas of basal melt because modeled basal resistance comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
-
-\subsubsection{Experimental setup}  We then used the fields $H$, $m$, $|\bv_b|$ as steady data in five model-year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling is tested here.  That is, a steady ice dynamics model fed its fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values (for both models) and $P=0$ initial values (for \texttt{distributed}).
 
 These runs had 1.05 million subglacial hydrology grid points at which variables $W$, $\Wtil$, and $P$ were recomputed at each time-step according to the numerical model described in section \ref{sec:num}.  In both \texttt{routing} and \texttt{distributed} models the modelled hydrological system became quite steady after the first three model years.  The adaptively-determined time-steps for the hydrology model reached a steady level of 4 model hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the complete \texttt{distributed} model the time steps were actually slightly longer than \texttt{routing} primarily because the routing model concentrates large water amounts, and thus fluxes, along steepest-descent paths.  In the \texttt{distributed} model the time steps were about 6 model hours based on speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and substantially-smaller maximum diffusivities of about $D$ of 0.25 $\text{m}^2\,\text{s}^{-1}$.  (Note comments on the actual diffusivity of advective fluxes in section \ref{sec:steady}.  Also, higher water velocities $\bV$ were seen in the \Nbreen case in section \ref{sec:num}, based on additional simulated surface water input added to the thermodynamically-generated basal melt rate \citep{vanPeltthesis}.  In that tidewater glacier case the pressure-evolution time-steps are seen to be substantially shorter than the mass-conservation time steps.)
 
