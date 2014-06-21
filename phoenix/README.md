@@ -6,7 +6,7 @@ Build PDF document
 
 To build phoenix.pdf you will need the PISM bibliography:
 
-    $ ln -s ~/pism/doc/ice_bib.bib
+    $ ln -s ~/pism/doc/ice-bib.bib
 
 The document requires LaTeX; do:
 
