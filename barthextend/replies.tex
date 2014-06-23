@@ -1,0 +1,205 @@
+\documentclass[11pt,reqno]{amsart}
+%prepared in AMSLaTeX, under LaTeX2e
+\addtolength{\oddsidemargin}{-.65in}
+\addtolength{\evensidemargin}{-.65in}
+\addtolength{\topmargin}{-.3in}
+\addtolength{\textwidth}{1.5in}
+\addtolength{\textheight}{.6in}
+
+\renewcommand{\baselinestretch}{1.1}
+
+\usepackage{verbatim} % for "comment" environment
+
+\usepackage[pdftex, colorlinks=true, plainpages=false, linkcolor=blue, citecolor=red, urlcolor=blue]{hyperref}
+
+\newtheorem*{thm}{Theorem}
+\newtheorem*{defn}{Definition}
+\newtheorem*{example}{Example}
+\newtheorem*{problem}{Problem}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\mtt}{\texttt}
+\usepackage{alltt,xspace}
+\usepackage[normalem]{ulem}
+\newcommand{\mfile}[1]
+{\medskip\begin{quote}\scriptsize \begin{alltt}\input{#1.m}\end{alltt} \normalsize\end{quote}\medskip}
+
+\usepackage[final]{graphicx}
+\newcommand{\mfigure}[1]{\includegraphics[height=2.5in,
+width=3.5in]{#1.eps}}
+\newcommand{\regfigure}[2]{\includegraphics[height=#2in,
+keepaspectratio=true]{#1.eps}}
+\newcommand{\widefigure}[3]{\includegraphics[height=#2in,
+width=#3in]{#1.eps}}
+
+% macros
+\usepackage{amssymb}
+
+\usepackage[T1, OT1]{fontenc}
+\renewcommand{\dh}{\fontencoding{T1}\selectfont{\symbol{240}}}
+
+\newcommand{\bod}{B\"o\dh varsson\xspace}
+\newcommand{\bods}{B\"o\dh varsson's}
+\newcommand{\citebod}{B\"o\dh varsson (1955)\xspace}
+\newcommand{\citepbod}{(B\"o\dh varsson, 1955)\xspace}
+
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bE}{\mathbf{E}}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bJ}{\mathbf{J}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\hbi}{\mathbf{\hat i}}
+\newcommand{\hbj}{\mathbf{\hat j}}
+\newcommand{\hbk}{\mathbf{\hat k}}
+\newcommand{\hbn}{\mathbf{\hat n}}
+\newcommand{\hbr}{\mathbf{\hat r}}
+\newcommand{\hbt}{\mathbf{\hat t}}
+\newcommand{\hbx}{\mathbf{\hat x}}
+\newcommand{\hby}{\mathbf{\hat y}}
+\newcommand{\hbz}{\mathbf{\hat z}}
+\newcommand{\hbphi}{\mathbf{\hat \phi}}
+\newcommand{\hbtheta}{\mathbf{\hat \theta}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\ppr}[1]{\frac{\partial #1}{\partial r}}
+\newcommand{\ppt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\ppx}[1]{\frac{\partial #1}{\partial x}}
+\newcommand{\ppy}[1]{\frac{\partial #1}{\partial y}}
+\newcommand{\ppz}[1]{\frac{\partial #1}{\partial z}}
+\newcommand{\pptheta}[1]{\frac{\partial #1}{\partial \theta}}
+\newcommand{\ppphi}[1]{\frac{\partial #1}{\partial \phi}}
+\newcommand{\pp}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppp}[2]{\frac{\partial^2 #1}{\partial^2 #2}}
+\newcommand{\pppp}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\Div}{\ensuremath{\nabla\cdot}}
+\newcommand{\Curl}{\ensuremath{\nabla\times}}
+\newcommand{\curl}[3]{\ensuremath{\begin{vmatrix} \hbi & \hbj & \hbk \\ \partial_x & \partial_y & \partial_z \\ #1 & #2 & #3 \end{vmatrix}}}
+\newcommand{\cross}[6]{\ensuremath{\begin{vmatrix} \hbi & \hbj & \hbk \\ #1 & #2 & #3 \\ #4 & #5 & #6 \end{vmatrix}}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\grad}{\nabla}
+\newcommand{\image}{\operatorname{im}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\ip}[2]{\ensuremath{\left<#1,#2\right>}}
+\newcommand{\lam}{\lambda}
+\newcommand{\lap}{\triangle}
+\newcommand{\Matlab}{\textsc{Matlab}\xspace}
+\newcommand{\exers}[1]{\bigskip\noindent\textbf{Exercises} #1}
+\newcommand{\fexer}[2]{\bigskip\noindent\textbf{Lesson #1, \##2}\quad }
+\newcommand{\prob}[1]{\bigskip\noindent\textbf{#1} }
+\newcommand{\pts}[1]{(\emph{#1 pts}) }
+\newcommand{\epart}[1]{\medskip\noindent\textbf{(#1)}\quad }
+\newcommand{\ppart}[1]{\,\textbf{(#1)}\quad }
+\newcommand{\note}[1]{[\scriptsize #1 \normalsize]}
+\newcommand{\MatIN}[1]{\mtt{>> #1}}
+\newcommand{\onull}{\operatorname{null}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\range}{\operatorname{range}}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\trace}{\operatorname{tr}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\Arg}{\operatorname{Arg}}
+
+\newcommand{\comm}[2]{\item \emph{#1}:\, #2}
+
+\renewcommand{\ln}[2]{\comm{line #1}{#2}}
+\newcommand{\lnpage}[3]{\comm{line #1 \underline{on page #2}}{#3}}
+\newcommand{\lns}[2]{\comm{lines #1}{#2}}
+\newcommand{\lnspage}[3]{\comm{lines #1 \underline{on page #2}}{#3}}
+\newcommand{\fg}[2]{\comm{Figure #1}{#2}}
+\newcommand{\eqn}[2]{\comm{equation #1}{#2}}
+
+\newcommand{\reply}[2]{
+\medskip\medskip
+\item  \begin{quote}
+\emph{#1}
+\end{quote}
+
+\medskip
+\noindent #2}
+
+
+\title[Author's replies to reviews of \emph{Correspondence: Extending \dots}]{Author's replies to reviews of \\ \emph{Correspondence: Extending the lumped \dots}}
+
+\author{Ed Bueler}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\thispagestyle{empty}
+
+
+
+\subsection*{Editor's comments and instructions}  \begin{quote}
+\emph{Chief Editor Jo Jacka:}
+
+\emph{Could you please examine the reviews and address, point by point, each of the issues raised by the reviewers? You should revise the manuscript in line with the reviewers' comments, or provide me with point-by-point well-argued reasons for not revising the manuscript.}
+\end{quote}
+
+\medskip
+\noindent I appreciate the quick review process!  I have examined and addressed the reviewer's comments point-by-point.  I have spent most of my effort making revisions to address these points.
+
+
+\subsection*{Reviewer \#1 (Hutter)}  \begin{itemize}
+\reply{This short letter discusses the glacial hydrology model of Bartholomaus and others (2011), an extension to a distributed model, and the relation to other distributed models in the literature.  As a description of how to convert a ‘lumped’ model to a distributed model it is a succinct account that may be instructive for many readers.  It is well written.}
+{FIXME}
+
+\reply{However, I have a slight issue with this model in the way that it is eventually described, and that is an issue of timescales.  As I understand it, the model that is finally proposed is to combine equation (9) with equation (10), the steady state reduction of equation (4). This makes sense if the timescale over which pressure changes is slower than the timescale over which the size of the cavities change. This may be true in some circumstances, but certainly not in all, particularly when meltwater is routed englacially from the surface and the pressure likely changes much more rapidly.  I think this needs to be pointed out very clearly, as many model applications of subglacial hydrology need to be aware of the timescales of interest and whether a model is appropriate for those. If such a discussion can be added, and the points below taken into account, I see no reason not to publish this correspondence.}
+{FIXME}
+
+\reply{Specific comments \smallskip \\
+1. Some of the discussion about the role of the pressure equation, its mathematical nature, and
+its implications in steady state are I think already well appreciated - at least more so than this
+letter seems to suggest. The addition of englacial storage in Hewitt [2013] is exactly what
+converts the elliptic pressure equation to a parabolic equation, and this is discussed extensively
+by Werder et al. [2013] - the distributed component of that model is essentially the same as
+described here.  Both of those models are not purely subglacial - they include englacial water
+in the same was as described here.}
+{FIXME}
+
+\reply{2. There are many factors of W missing (glacier width) such that the equations as written are not dimensionally consistent. In particular, when substituting for $S_{sub}$ from (5) to (6) a factor of $W$ to go with $f L/h$ is missing, and all subsequent ratios $f /h$ should read $f W/h$ (equations (7)--(9)).}
+{FIXME}
+
+\reply{3. $W$ is used both for glacier width and for distributed water sheet thickness - one had better be changed (I would suggest to use $h$ for water sheet thickness in line with Flowers and Clark (2002), and a different notation for the bedrock bump height).}
+{FIXME}
+
+\reply{4. The bound of $P_o$ mentioned in line 45 corresponds to the water pressure reaching flotation, but not to the emergence of water at the glacier surface, which would require $P$ to reach $(\rho_w/\rho_i) P_o$.}
+{FIXME}
+
+\reply{5. On line 48 it is stated that a two-dimensional version of equation (9) is solved in PISM.  Equation (9) is not a closed equation, so it should be clarified here what is actually solved  together with equation (9).  Presumably some sort of Darcy-like flux relationship relating $Q$ to  $A c$ and $\nabla P$, but also a relationship between $P$ and $A_c$ (which it should be stressed is a variable in (9)).  If it is equation (10) rather than equation (4) that is used, this is quite different from the system solved by Schoof and others (2012).}
+{FIXME}
+
+\reply{6. The steady state relationship of equation (10) between pressure and cavity size may be unstated in Bartholomaus and others (2011), but this concept is well known in glacial hydrology, and formed the basis of Schoof [2010]’s argument for distinguishing cavity-like and channel-like drainage elements. Whilst the fact it is an increasing relationship is the same as for the power law relationship of Flowers and Clarke [2002], I fail to see how this provides justification for the same relationship in non-steady circumstances.}
+{FIXME}
+\end{itemize}
+
+
+\subsection*{Reviewer \#2}  \begin{itemize}
+\reply{The reviewed article \dots is an excellent use of the correspondence format of Journal of Glaciology.  The letter synthesizes current hydrology models to find the most efficient and complete implementation of a variable subglacial/englacial hydrology for ice sheet/glacier modeling.  The derivation of equations and statement of assumptions is perfectly clear.  The discussion of implications resulting from the relevant equations is thorough.}
+{I appreciate this supportive comment.}
+
+\reply{I recommend that the manuscript be accepted for publication with a few minor corrections. The recommended corrections have been included in an annotated PDF of the manuscript.}
+{FIXME}
+
+\reply{Generally, I find that the letter would benefit from a clear statement about the motivation for the model comparisons and subsequent derivations.}
+{I totally agree.  I hope that such a summary of the goals, which now appears as the second paragraph after a first paragraph which summarizes the Bartholomaus et al.~(2011) model, will address a number of reviewer \#1's concerns as well.}
+
+\reply{The final paragraph does not offer much in the way of closure. I recommend adding a brief concluding paragraph, or reordering existing paragraphs to highlight the implementation of the new hydrology model in PISM 0.6 resulting from equation 9.}
+{While the new hydrology model in PISM was driven by the englacial model from Bartholomaus et al.~(2011), I do not want to either overemphasize this motivation (i.e.~there were other motivations of the PISM model).  Moreover this short note is not about PISM, so I have now limited references to PISM to a citation of the now-submitted PISM hydrology submodel paper (Bueler and van Pelt, 2014).}
+
+\reply{This is an excellent addition to PISM and will surely result in new and interesting modeling results.}
+{FIXME}
+
+\reply{Line by line comments \smallskip \\
+FIXME}
+{FIXME}
+
+\reply{L32-35.  FIXME}
+{FIXME}
+\end{itemize}
+
+\end{document}
