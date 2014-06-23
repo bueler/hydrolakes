@@ -144,7 +144,7 @@ width=#3in]{#1.eps}}
 \noindent I appreciate the quick review process!  I have examined and addressed the reviewer's comments point-by-point.  I have spent most of my effort making revisions to address these points.
 
 
-\subsection*{Reviewer \#1 (Hutter)}  \begin{itemize}
+\subsection*{Reviewer \#1}  \begin{itemize}
 \reply{This short letter discusses the glacial hydrology model of Bartholomaus and others (2011), an extension to a distributed model, and the relation to other distributed models in the literature.  As a description of how to convert a ‘lumped’ model to a distributed model it is a succinct account that may be instructive for many readers.  It is well written.}
 {FIXME}
 
@@ -183,10 +183,22 @@ in the same was as described here.}
 {I appreciate this supportive comment.}
 
 \reply{I recommend that the manuscript be accepted for publication with a few minor corrections. The recommended corrections have been included in an annotated PDF of the manuscript.}
-{FIXME}
+{\begin{itemize}
+\item[line 20] \emph{I think it would be useful to add a sentence or two between these two paragraphs explicitly stating the differing applicability of a distributed versus lumped model before moving on the the pressure equation(s).}
+
+I understand this comment.  In the restructured form of the introductory material, as motivated by this and related reviewer comments, there is an itemized list of the three goals of the paper.  The derivation of the pressure equation still comes first because it is purely-deductive (i.e.~it follows directly from the Bartholomaus et al.~(2011) equations).  FIXME
+
+\item[line 57]  \emph{While infrequent, I’m not convinced that such geysers are rare or unusual.  Martin Truffer and collaborators tell of such over-pressurization of  englacial water leading to similar eruptions on Black Rapids glacier.   I don’t know if this has been reported in the literature.}
+
+FIXME
+
+\item[line 61]  \emph{This is a valuable result, but I would rather see the paragraph describing the PISM implementation of Eqn 9 here as a final statement, after the discussion of steady-state implications.}
+
+FIXME
+\end{itemize}}
 
 \reply{Generally, I find that the letter would benefit from a clear statement about the motivation for the model comparisons and subsequent derivations.}
-{I totally agree.  I hope that such a summary of the goals, which now appears as the second paragraph after a first paragraph which summarizes the Bartholomaus et al.~(2011) model, will address a number of reviewer \#1's concerns as well.}
+{I totally agree.  I have to admit that my primary motivation was \emph{mathematical}, that is, to deduce more-fully the consequences of the model equations in Bartholomaus et al.~(2011), and the paper now states this motivation directly.  A much-clearer summary of the \emph{goals} of the paper, which are easier to state than motivation, now appears as the second paragraph.  (The first paragraph is, as before, a summary of the Bartholomaus et al.~(2011) model.)  I believe these revisions address some of reviewer \#1's concerns as well.}
 
 \reply{The final paragraph does not offer much in the way of closure. I recommend adding a brief concluding paragraph, or reordering existing paragraphs to highlight the implementation of the new hydrology model in PISM 0.6 resulting from equation 9.}
 {While the new hydrology model in PISM was driven by the englacial model from Bartholomaus et al.~(2011), I do not want to either overemphasize this motivation (i.e.~there were other motivations of the PISM model).  Moreover this short note is not about PISM, so I have now limited references to PISM to a citation of the now-submitted PISM hydrology submodel paper (Bueler and van Pelt, 2014).}
