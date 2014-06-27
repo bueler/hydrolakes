@@ -145,21 +145,28 @@ width=#3in]{#1.eps}}
 
 
 \subsection*{Reviewer \#1}  \begin{itemize}
-\reply{This short letter discusses the glacial hydrology model of Bartholomaus and others (2011), an extension to a distributed model, and the relation to other distributed models in the literature.  As a description of how to convert a ‘lumped’ model to a distributed model it is a succinct account that may be instructive for many readers.  It is well written.}
-{FIXME}
+\reply{This short letter discusses the glacial hydrology model of Bartholomaus and others (2011), an extension to a distributed model, and the relation to other distributed models in the literature.  As a description of how to convert a `lumped' model to a distributed model it is a succinct account that may be instructive for many readers.  It is well written.}
+{I appreciate this supportive summary.}
 
-\reply{However, I have a slight issue with this model in the way that it is eventually described, and that is an issue of timescales.  As I understand it, the model that is finally proposed is to combine equation (9) with equation (10), the steady state reduction of equation (4). This makes sense if the timescale over which pressure changes is slower than the timescale over which the size of the cavities change. This may be true in some circumstances, but certainly not in all, particularly when meltwater is routed englacially from the surface and the pressure likely changes much more rapidly.  I think this needs to be pointed out very clearly, as many model applications of subglacial hydrology need to be aware of the timescales of interest and whether a model is appropriate for those. If such a discussion can be added, and the points below taken into account, I see no reason not to publish this correspondence.}
-{FIXME}
+\reply{However, I have a slight issue with this model in the way that it is eventually described, and that is an issue of timescales.  As I understand it, the model that is finally proposed is to combine equation (9) with equation (10), the steady state reduction of equation (4).}
+{No, that is not proposed.  There is no statement that steady state equation (10) should be included in a numerical model.
+
+The only statement that could have caused this idea in the reviewer's mind is, I believe, that equation (10) is ``perhaps evidence supporting the \emph{a priori} inclusion of such a functional relationship into a model'', after which I attempted to make the relation to Flowers and Clarke who \emph{do} include such an equation, though of the wrong functional form if you believe Bartholomaus, Schoof, Hewitt, etc.  An explicit disclaimer is added regarding such an implementation idea.
+
+Indeed the submitted manuscript says ``a two-dimensional version of equation (9) is numerically solved \dots [in PISM]'' \emph{before} equation (10) is even derived.  I have added additional flags to make sure no readers think (10) is anything other than an emergent property, in steady state, of a model that solves (9) numerically.}
+
+\reply{\dots This makes sense if the timescale over which pressure changes is slower than the timescale over which the size of the cavities change. This may be true in some circumstances, but certainly not in all, particularly when meltwater is routed englacially from the surface and the pressure likely changes much more rapidly.  I think this needs to be pointed out very clearly, as many model applications of subglacial hydrology need to be aware of the timescales of interest and whether a model is appropriate for those. If such a discussion can be added, and the points below taken into account, I see no reason not to publish this correspondence.}
+{Because Bartholomaus et al.~(2011) is all about these short timescales, I assumed any reader of the current note would not consider a steady state equation as a possible numerical model component.  Nor do I.  I was trying to point out an unnoticed relationship between Bartholomaus et al.~(2011) and Flowers and Clarke (2002), both before the flood of new literature on these shorter timescales.
+
+In any case, I agree with the above comment.  Equation (10) for steady state is now explicitly disclaimed as a numerical modeling suggestion.  As it is rather important in connecting Bartholomaus et al.~(2011) with prior literature, equation (10) remains as a deduction from the Bartholomaus model.}
 
 \reply{Specific comments \smallskip \\
-1. Some of the discussion about the role of the pressure equation, its mathematical nature, and
-its implications in steady state are I think already well appreciated - at least more so than this
-letter seems to suggest. The addition of englacial storage in Hewitt [2013] is exactly what
-converts the elliptic pressure equation to a parabolic equation, and this is discussed extensively
-by Werder et al. [2013] - the distributed component of that model is essentially the same as
-described here.  Both of those models are not purely subglacial - they include englacial water
-in the same was as described here.}
-{FIXME}
+1. Some of the discussion about the role of the pressure equation, its mathematical nature, and its implications in steady state are I think already well appreciated - at least more so than this letter seems to suggest. The addition of englacial storage in Hewitt (2013) is exactly what converts the elliptic pressure equation to a parabolic equation, and this is discussed extensively by Werder et al. (2013)---the distributed component of that model is essentially the same as described here.  Both of those models are not purely subglacial---they include englacial water in the same was as described here.}
+{The reviewer is correct, and the relationship to Werder et al.~(2013) is noted.
+
+My omission is a consequence of a rapidly-changing literature, I think.  In particular, the 2D numerical implementation of equation (9) appeared in the completely-open PISM code base on 5 February 2013, \emph{before} the submission of Werder et al.~(2013).\footnote{For example, see commit \texttt{https://github.com/pism/pism/commit/e6dae9619fb11f3e2b347f82a9f837ea2b93a12a}.  My point is that my claim can be verified, not that there is any reason anyone would be reading PISM code commits!}
+
+We built a numerical model based on the distributed extension Bartholomaus et al.~(2011) before seeing any of the cited 2013 papers.  This is simply, and not surprisingly, simultaneous discovery of the englacial extension of the Schoof et al.~(2012) and Hewitt et al.~(2012) work.  Furthermore we achieve a benefit of the englacial-storage parabolic pressure equation which is explicitly discounted as ``prohibitively expensive'' in Werder et al.~(2013), namely that one can enforce bounds on the pressure; see Bueler and van Pelt, submitted.}
 
 \reply{2. There are many factors of W missing (glacier width) such that the equations as written are not dimensionally consistent. In particular, when substituting for $S_{sub}$ from (5) to (6) a factor of $W$ to go with $f L/h$ is missing, and all subsequent ratios $f /h$ should read $f W/h$ (equations (7)--(9)).}
 {FIXME}
@@ -180,13 +187,16 @@ in the same was as described here.}
 
 \subsection*{Reviewer \#2}  \begin{itemize}
 \reply{The reviewed article \dots is an excellent use of the correspondence format of Journal of Glaciology.  The letter synthesizes current hydrology models to find the most efficient and complete implementation of a variable subglacial/englacial hydrology for ice sheet/glacier modeling.  The derivation of equations and statement of assumptions is perfectly clear.  The discussion of implications resulting from the relevant equations is thorough.}
-{I appreciate this supportive comment.}
+{I have made the goals of the short note clearer so as to limit its scope to deductive consequences of the Bartholomaus et al.~(2011) original, and a bit more (i.e.~distributed extension and a comment on steady state).  Note I do not want readers to think my note makes a broader claim of the ``most efficient and complete implementation.''}
 
 \reply{I recommend that the manuscript be accepted for publication with a few minor corrections. The recommended corrections have been included in an annotated PDF of the manuscript.}
-{\begin{itemize}
+{I address these helpful points as follows:
+
+\medskip
+\begin{itemize}
 \item[line 20] \emph{I think it would be useful to add a sentence or two between these two paragraphs explicitly stating the differing applicability of a distributed versus lumped model before moving on the the pressure equation(s).}
 
-I understand this comment.  In the restructured form of the introductory material, as motivated by this and related reviewer comments, there is an itemized list of the three goals of the paper.  The derivation of the pressure equation still comes first because it is purely-deductive (i.e.~it follows directly from the Bartholomaus et al.~(2011) equations).  FIXME
+I understand this comment.  In the restructured form of the introductory material, as motivated by this and related reviewer comments, there is an itemized list of the three goals of the paper.  The derivation of the lumped pressure equation still comes first because it is purely-deductive (i.e.~it follows directly from the Bartholomaus et al.~(2011) equations).  FIXME
 
 \item[line 57]  \emph{While infrequent, I’m not convinced that such geysers are rare or unusual.  Martin Truffer and collaborators tell of such over-pressurization of  englacial water leading to similar eruptions on Black Rapids glacier.   I don’t know if this has been reported in the literature.}
 
