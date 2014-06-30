@@ -24,7 +24,7 @@
 
 \begin{document}
 
-\title[Extending the Bartholomaus hydrology model]{Correspondence \\ Extending the lumped subglacial-englacial \\ hydrology model of Bartholomaus and others (2011)}
+\title[Correspondence: Extending the Bartholomaus hydrology model]{Correspondence: \\ Extending the lumped subglacial-englacial \\ hydrology model of Bartholomaus and others (2011)}
 
 \author{Ed Bueler}
 
@@ -35,13 +35,15 @@ E-mail: \emph{\texttt{elbueler\@@alaska.edu}}}
 
 \maketitle
 
-The model in \cite{Bartholomausetal2011} is describes the hydrology of the Kennicott Glacier in Alaska.  The goals of their model are to understand drainage through the subglacial and englacial network, and also the glacier response from a lateral lake outburst flood which occurs each summer, that is, a j\"okulhlaup.  The model uses observed input flux and a highly-simplified subglacial and englacial morphology to reproduce the hydrograph of the Kennicott River, other hydrographs, and the glacier motion (sliding) observed during the flood.  The model is ``lumped,'' that is, the entire glacier hydrological system is represented by one cell, with the major advantage that this allows parameter identification given the observed input and output fluxes.
+\cite{Bartholomausetal2011} model the subglacial and englacial hydrology of the Kennicott Glacier in Alaska, and the glacier's response to a lateral lake outburst flood which occurs each summer, that is, a j\"okulhlaup.  The model uses observed input flux and highly-simplified subglacial and englacial morphology to reproduce the hydrograph of the Kennicott River, other hydrographs, and the glacier motion (sliding).  The model is ``lumped,'' that is, the entire hydrological system is represented by one cell, with the advantage that parameter identification is possible given the observed input and output fluxes.
 
-The goal of my short note is to extend their model in three specific ways: (\emph{i}) to show a (lumped) pressure equations which follows exactly from their equations, (\emph{ii}) to show how to extend their model to the distributed flow-line case, and (\emph{iii}) to state a water amount versus pressure relation which applies in the steady-state case of their model.  Thus this note is largely deductive, showing what follows from the theory in \cite{Bartholomausetal2011}, but with a distributed model as an extension.
+The goal of my short note is to extend their model in three specific ways: (\emph{i}) to show a (lumped) pressure equations which follows from their equations, (\emph{ii}) to show how to extend their model to the distributed flow-line case, with attention to the form of the distributed pressure equation, and (\emph{iii}) to state a water amount versus pressure relation which applies in the steady-state case of their model.  Thus this note is largely deductive, showing what holds in the \cite{Bartholomausetal2011} theory, but with a distributed model as an extension.
 
-The \cite{Bartholomausetal2011} model (from now on, the ``Bartholomaus model'') would seem to be significantly-different from more recent distributed models, specifically \cite{Schoofetal2012} and \cite{Hewittetal2012}.  Some obvious similarities exist among them, however.  They all describe the evolution of water-filled linked-cavity systems, with additional details according to the different models, and they all include physical cavity opening and closing processes for these cavities.  On the other hand the just-cited distributed theories are entirely subglacial, while the Bartholomaus has both subglacial and englacial water storage.  
+The \cite{Bartholomausetal2011} model (from now on, the ``Bartholomaus model'') would seem to be significantly-different from more recent distributed models, specifically \cite{Schoofetal2012} and \cite{Hewittetal2012}.  Some obvious similarities exist among them, however.  They describe the evolution of water-filled linked-cavity systems and they include physical opening and closing processes for these cavities.  On the other hand the just-cited distributed theories are entirely subglacial, while the Bartholomaus has both subglacial and englacial water storage.  
 
-The distributed version of the lumped pressure equation (i.e.~\eqref{eq:barth:fullpressure} below) is a parabolic regularization of the elliptic pressure equation in \cite{Schoofetal2012}.  Said the other way, we can show that the pressure equation in \cite{Schoofetal2012} is the zero englacial porosity limit of the distributed version of the pressure equation implicit in the Bartholomaus model.  Exposing these connections of the Bartholomaus model to more recent literature is the major motivation for this short note.  A connection between the Bartholomaus theory and distributed models is observed by \cite{Hewitt2013}, but the connection is limited to the addition of a englacial storage term in the mass conservation equation \cite[equation (7)]{Hewitt2013}.  \cite{Werderetal2013} include a parabolic pressure equation, with englacial void ratio in the coefficient of the pressure rate term.   We will show such structure is implicit in the Bartholomaus model.  More recent work shows that physical pressure bounds can be preserved by explicit time-stepping of this pressure equation \cite{BuelervanPeltDRAFT}, a part of the model dismissed as ``prohibitively expensive'' by \cite{Werderetal2013}.
+The distributed version of the lumped pressure equation (i.e.~\eqref{eq:barth:fullpressure} below) is a parabolic regularization of the elliptic pressure equation in \cite{Schoofetal2012}.  Said the other way, we can show that the pressure equation in \cite{Schoofetal2012} is the zero englacial porosity limit of the distributed version of the pressure equation implicit in the Bartholomaus model.  Exposing these connections of the Bartholomaus model to more recent literature is the major motivation for this short note.
+
+A connection between the Bartholomaus model and distributed models is observed by \cite{Hewitt2013}, but this limited to the addition of a englacial storage term in the mass conservation equation.  \cite{Werderetal2013} include a parabolic pressure equation, with englacial void ratio in the coefficient of the pressure rate term, similar to what is implicit in the Bartholomaus model.
 
 In the Bartholomaus model, the total volume of liquid water stored in the glacier is $S(t)$.  This is split into englacial $S_{en}(t)$ and subglacial $S_{sub}(t)$ portions:
 \begin{equation}
@@ -53,39 +55,36 @@ The subglacial cavities have geometry determined by bedrock bumps which have hor
 \end{equation}
 In the Kennicott glacier application, fluxes $Q_{in}$ and $Q_{out}$ are observed.
 
-Denote the subglacial water pressure by $P(t)$.  In the Bartholomaus model, $P$ is hydrostatic so knowledge of $P$ is equivalent to knowledge of englacial storage, because of the assumed efficient connection of to the subglacial system.  In fact, noting the relation $S_{en}=L W \phi z_w$ above, we have
+Denote the subglacial water pressure by $P(t)$.  In the Bartholomaus model, $P$ is hydrostatic so knowledge of $P$ is equivalent to knowledge of englacial storage, because of the assumed efficient connection to the subglacial system.  In fact, noting the relation $S_{en}=L W \phi z_w$ above, we have
 \begin{equation}
 P = \rho_w g z_w = \frac{\rho_w g}{LW\phi} S_{en}.  \label{eq:barth:englacialpressure}
 \end{equation}
 
-Now, in the Bartholomaus model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  The rate of production of subglacial water through wall melt is denoted here simply by $Z$, with sign so that $Z>0$ when cavities are enlarging.  In fact $Z$ is further parameterized in the Bartholomaus model, but the details are unimportant to our calculations.  Let $C_c = (2 A)/n^n$, where $A$ and $n$ are the ice softness parameter and power in the Glen ice flow law \citep{CuffeyPaterson}, respectively.  Denote the sliding speed by $u_b$ and let $P_o=\rho_i g H$ be the overburden pressure.  In these terms the cavity evolution equation is
+Now, in the Bartholomaus model the cavity cross-sectional area $A_c$ evolves by physical opening and closure processes.  The rate of production of subglacial water through wall melt is denoted here simply by $Z$, with sign $Z>0$ when cavities are enlarging.  The melt rate $Z$ is further parameterized in the Bartholomaus model, but the details are unimportant to the derivation here.  Let $C_c = (2 A)/n^n$, where $A$ and $n$ are the ice softness parameter and power in the Glen ice flow law \citep{CuffeyPaterson}, respectively.  Denote the sliding speed by $u_b$ and let $P_o=\rho_i g H$ be the overburden pressure.  In these terms the cavity evolution equation is
 \begin{equation}
 \frac{dA_c}{dt} = u_b h + Z - C_c A_c (P_o-P)^n.  \label{eq:barth:cavityevolution}
 \end{equation}
 The three terms on the right are opening by cavitation, opening by wall melt, and closure by creep, respectively; compare (4) in \cite{Bartholomausetal2011}.
 
-Equations \eqref{eq:barth:kinematics}, \eqref{eq:barth:massconserve}, \eqref{eq:barth:englacialpressure}, and \eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure.  From \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change:
-\begin{equation}
-\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt}. \label{eq:barth:dPdt}
-\end{equation}
-By combining \eqref{eq:barth:dPdt} with  the time-derivative of \eqref{eq:barth:kinematics}, and using both \eqref{eq:barth:massconserve} and the proportionality between $S_{sub}$ and $A_c$, we can rewrite in terms of fluxes and cavity area:
+Equations \eqref{eq:barth:kinematics}--\eqref{eq:barth:cavityevolution} combine to give an evolution equation for the pressure.  From \eqref{eq:barth:englacialpressure} we can write the pressure rate of change in terms of the englacial storage rate of change.  Then using the time-derivative of \eqref{eq:barth:kinematics}, and both \eqref{eq:barth:massconserve} and the proportionality between $S_{sub}$ and $A_c$, we can rewrite in terms of fluxes and cavity area:
 \begin{align}
-\frac{dP}{dt} &= \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) \\
+\frac{dP}{dt} &= \frac{\rho_w g}{L W \phi} \frac{d S_{en}}{dt} \\
+&= \frac{\rho_w g}{L W \phi} \left(\frac{d S}{dt} - \frac{d S_{sub}}{dt}\right) \notag \\
 &= \frac{\rho_w g}{L W \phi} \left(Q_{in} - Q_{out} - \frac{f L W}{h} \frac{d A_c}{dt}\right). \notag
 \end{align}
-Finally incorporate equation \eqref{eq:barth:cavityevolution} to eliminate $dA_c/dt$:
+Finally, equation \eqref{eq:barth:cavityevolution} eliminates $dA_c/dt$:
 \begin{align}
 &\frac{dP}{dt} = \frac{\rho_w g}{L W \phi} \bigg(Q_{in} - Q_{out} \label{eq:barth:fullpressure} \\
 &\qquad \qquad \qquad - \frac{f L W}{h} \left[u_b h + Z - C_c A_c (P_o-P)^n\right]\bigg) \notag
 \end{align}
 Thus, though it is not stated there, \eqref{eq:barth:fullpressure} follows from the equations in \cite{Bartholomausetal2011}.  Equation (12) in \cite{Bartholomausetal2011} is a restriction of \eqref{eq:barth:fullpressure} to the case of no creep closure and no input/output fluxes.
 
-Equation \eqref{eq:barth:fullpressure} suggests how to extend the Bartholomaus model from ``lumped'' to ``distributed.''  Consider a one-dimensional glacier under which the water is flowing in the positive $x$ direction.  If $W$ is the transverse width, and replacing $L$ by $\Delta x$, the along-flow length of one cell in a finite difference or finite volume scheme, then \eqref{eq:barth:fullpressure} becomes
+Furthermore, equation \eqref{eq:barth:fullpressure} suggests how to extend the Bartholomaus model from ``lumped'' to ``distributed.''  Consider a one-dimensional glacier under which the water is flowing in the positive $x$ direction.  Recalling $W$ is the transverse width, replace $L$ by $\Delta x$, the along-flow length of one cell in a finite difference or finite volume scheme.  Then \eqref{eq:barth:fullpressure} becomes
 \begin{align}
 &\frac{\phi W}{\rho_w g}\frac{dP}{dt} = - \frac{Q_{out} - Q_{in}}{\Delta x}  \label{eq:barth:pressurerewrite} \\
 &\qquad \qquad \qquad \quad - \frac{f W}{h} \left[u_b h + Z - C_c A_c (P_o-P)^n\right], \notag
 \end{align}
-which describes the pressure in one cell.  Note that ``$Q_{in}$'' is the upstream input flux into the cell while ``$Q_{out}$'' is the downstream output.  The continuum limit of \eqref{eq:barth:pressurerewrite} is clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$ as $\Delta x \to 0$.  Thus a distributed flowline form of the Bartholomaus model is the partial differential equation
+which still describes the pressure in one cell.  Note that ``$Q_{in}$'' is the upstream input flux into the cell while ``$Q_{out}$'' is the downstream output.  The continuum limit of \eqref{eq:barth:pressurerewrite} is therefore clear, with $(Q_{out} - Q_{in})/\Delta x \to \partial Q/\partial x$ as $\Delta x \to 0$.  Thus a distributed flowline form of the Bartholomaus model is the partial differential equation
 \begin{equation}
 \frac{\phi W}{\rho_w g} \frac{\partial P}{\partial t} = - \frac{\partial Q}{\partial x} - \frac{f W}{h} \left[u_b h + Z - C_c A_c (P_o-P)^n\right]. \label{eq:barth:distpressure}
 \end{equation}
@@ -102,7 +101,7 @@ In the Bartholomaus model the cavities described by $A_c$ are assumed to always 
 
 It is interesting to observe from \eqref{eq:barth:steadypressure} that the steady water pressure does not depend on the englacial macroporosity $\phi$.  Though the englacial pressure is parameterized by $P=\rho_w g z_w$ in \cite{Bartholomausetal2011}, its \emph{steady} value is entirely determined by the balance between sliding, wall melt, and creep closure in the subglacial system.  The englacial system is passive in determining subglacial steady state.
 
-A two-horizontal-dimension version of equation \eqref{eq:barth:distpressure}, using a full-cavity assumption as in the Bartholomaus model, and using the general Darcy flux relation (2.10) from \cite{Schoofetal2012}, is numerically solved in the ``distributed'' hydrology model code which is part of the Parallel Ice Sheet Model (PISM) in its 0.6 release (February 2014; Bueler and van Pelt, 2014)\nocite{BuelervanPeltDRAFT}.  We have observed that implementing a parabolic pressure equation like \eqref{eq:barth:distpressure}, subject to either of the above bounds on pressure, is substantially simpler than numerically solving the variational inequality form of the corresponding elliptic pressure equation \citep{Schoofetal2012}. 
+A two-horizontal-dimension version of equation \eqref{eq:barth:distpressure}, using a full-cavity assumption as in the Bartholomaus model, and using the general Darcy flux relation (2.10) from \cite{Schoofetal2012}, is numerically solved in the ``distributed'' hydrology model code which is part of the Parallel Ice Sheet Model (PISM) in its 0.6 release (February 2014; Bueler and van Pelt, 2014)\nocite{BuelervanPeltDRAFT}.  We have observed that implementing a parabolic pressure equation like \eqref{eq:barth:distpressure}, subject to either of the above bounds on pressure, is substantially simpler than numerically solving the variational inequality form of the corresponding elliptic pressure equation \citep{Schoofetal2012}.  In particular, our work shows that physical pressure bounds can be preserved, a part of the model dismissed as ``prohibitively expensive'' by \cite{Werderetal2013}, by explicit time-stepping of the parabolic pressure equation \cite{BuelervanPeltDRAFT}.
 
 
 \subsection*{Acknowledgements}  This work was supported by NASA grant \#NNX13AM16G.  Conversations with Ward van Pelt and Tim Bartholomaus were appreciated.  Ward, Constantine Khroulev, and Andy Aschwanden helped with the implementation and testing of the PISM code.
