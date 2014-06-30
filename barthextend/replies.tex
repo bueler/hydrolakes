@@ -153,7 +153,7 @@ width=#3in]{#1.eps}}
 
 Indeed the submitted manuscript says ``a two-dimensional version of equation (9) is numerically solved \dots [in PISM]'' \emph{before} equation (10) is even derived.  The only statement that could have caused this idea in the reviewer's mind is, I believe, the later claim that equation (10) is ``perhaps evidence supporting the \emph{a priori} inclusion of such a functional relationship into a model'', after which I relate this to Flowers and Clarke (2002), who \emph{do} include such an equation.  Many workers in subglacial hydrology do, I think, wonder if (or even hope that) there is such a functional relationship.
 
-To avoid further reader misunderstanding, an explicit disclaimer is added regarding implementing equation (10).  I have added additional flags to make sure no readers think (10) is anything other than an emergent property, in steady state, of a model that solves (9) numerically.}
+To avoid further reader misunderstanding, an explicit disclaimer is added regarding implementing equation (10).  I have added additional flags to make sure no readers think (10) is anything other than an emergent property, in steady state, of a model that solves (9) numerically.  A bit more attention has been given to the timescale distinctions in the last few paragraphs of the revised text.}
 
 \reply{\dots This makes sense if the timescale over which pressure changes is slower than the timescale over which the size of the cavities change. This may be true in some circumstances, but certainly not in all, particularly when meltwater is routed englacially from the surface and the pressure likely changes much more rapidly.}
 {Because Bartholomaus et al.~(2011) is all about these short timescales, I assume any reader of the current correspondence would not consider a steady state equation even as a possible numerical model component.  Nor do I.
@@ -208,9 +208,9 @@ Note that (4) is conservation of mass.  In a full cavity model, both equations (
 The text of the manuscript never suggests such usage of equation (10).  The revised text makes this even more clear.}
 
 \reply{6. The steady state relationship of equation (10) between pressure and cavity size may be unstated in Bartholomaus and others (2011), but this concept is well known in glacial hydrology, and formed the basis of Schoof [2010]’s argument for distinguishing cavity-like and channel-like drainage elements. Whilst the fact it is an increasing relationship is the same as for the power law relationship of Flowers and Clarke [2002], I fail to see how this provides justification for the same relationship in non-steady circumstances.}
-{This part of the text was attempting to \emph{post hoc} explain why Flowers and Clarke are not morons; I don't think they are.  In the opinion of the reviewer, were they totally unjustified, and totally lacking in hydrological intuition, by implication, in assuming an increasing relationship between subglacial water amount and pressure?  Perhaps so, but I'd like to give them the benefit of the doubt.
+{This part of the text was attempting to \emph{post hoc} explain why Flowers and Clarke are not fools; I don't think they are.  In the opinion of the reviewer, were they totally unjustified, and totally lacking in hydrological intuition, by implication, in assuming an increasing relationship between subglacial water amount and pressure?  Perhaps so, but I'd like to give them the benefit of the doubt.
 
-The Bartholomaus model is a lumped model, with actual field evidence supporting its time-dependent behavior, in which there is nonetheless such an emergent monotonic relationship between water amount and pressure, namely in steady state.  As with all parabolic PDEs, the steady state presumably informs behavior over longer non-steady timescales.  This ``longer time-scale'' qualification has now been added.}
+The Bartholomaus model is a lumped model, with actual field evidence supporting its time-dependent behavior, in which there is nonetheless such an emergent monotonic relationship between water amount and pressure, namely in steady state.  As with all parabolic PDEs, the steady state presumably informs behavior over longer non-steady timescales.  A bit more is said about time scales, and this ``longer time-scale'' qualification has now been added.}
 \end{itemize}
 
 
@@ -241,9 +241,9 @@ The Bartholomaus model is a lumped model, with actual field evidence supporting 
 \end{itemize}}
 
 \reply{Generally, I find that the letter would benefit from a clear statement about the motivation for the model comparisons and subsequent derivations.}
-{I totally agree.  I have to admit that my primary motivation was \emph{mathematical}, that is, to deduce more-fully the consequences of the model equations in Bartholomaus et al.~(2011), and the paper now states this motivation directly.
+{I agree.  Note my primary motivation was \emph{mathematical}, that is, to deduce more-fully the consequences of the model equations in Bartholomaus et al.~(2011), and the paper now states this motivation directly.
 
-A much-clearer summary of the goals of the paper, which are easier to state than motivation, now appears as the second paragraph.  The first paragraph is, as before, a summary of the Bartholomaus et al.~(2011) model.  I believe these revisions address some of reviewer \#1's concerns as well.}
+A much-clearer summary of the goals of the paper, which are easier to state than motivation, now appears as the second paragraph of the revised paper.  The first paragraph is, as before, a summary of the Bartholomaus et al.~(2011) model.  I believe these revisions address some of reviewer \#1's concerns as well.}
 
 \reply{The final paragraph does not offer much in the way of closure.  I recommend adding a brief concluding paragraph, or reordering existing paragraphs to highlight the implementation of the new hydrology model in PISM 0.6 resulting from equation (9).  This is an excellent addition to PISM and will surely result in new and interesting modeling results.}
 {While the new hydrology model in PISM was partly driven by the englacial model from Bartholomaus et al.~(2011), I do not want to overemphasize this motivation of this correspondence.  But the concluding paragraph summarizes the PISM implementation.}
