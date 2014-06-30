@@ -135,13 +135,14 @@ width=#3in]{#1.eps}}
 
 
 \subsection*{Editor's comments and instructions}  \begin{quote}
-\emph{Chief Editor Jo Jacka:}
-
 \emph{Could you please examine the reviews and address, point by point, each of the issues raised by the reviewers? You should revise the manuscript in line with the reviewers' comments, or provide me with point-by-point well-argued reasons for not revising the manuscript.}
 \end{quote}
 
 \medskip
-\noindent I appreciate the quick review process!  I have examined and addressed the reviewer's comments point-by-point.  I have spent most of my effort making revisions to address these points.
+\noindent I appreciate the quick review process!  I have examined and addressed the reviewer's comments point-by-point.  Most of my effort went into the revisions which address these points.
+
+\medskip
+\noindent The equation numbering below, in this rebuttal document, refers to the original submitted manuscript.  The revised version has one fewer equation.
 
 
 \subsection*{Reviewer \#1}  \begin{itemize}
@@ -151,21 +152,19 @@ width=#3in]{#1.eps}}
 \reply{However, I have a slight issue with this model in the way that it is eventually described, and that is an issue of timescales.  As I understand it, the model that is finally proposed is to combine equation (9) with equation (10), the steady state reduction of equation (4).}
 {No, that is not proposed.  There is no statement that steady state equation (10) should be included in a numerical model.
 
-Indeed the submitted manuscript says ``a two-dimensional version of equation (9) is numerically solved \dots [in PISM]'' \emph{before} equation (10) is even derived.  The only statement that could have caused this idea in the reviewer's mind is, I believe, the later claim that equation (10) is ``perhaps evidence supporting the \emph{a priori} inclusion of such a functional relationship into a model'', after which I relate this to Flowers and Clarke (2002), who \emph{do} include such an equation.  Many workers in subglacial hydrology do, I think, wonder if (or even hope that) there is such a functional relationship.
+Indeed the submitted manuscript says ``a two-dimensional version of equation (9) is numerically solved \dots [in PISM]'' \emph{before} equation (10) is even derived.  The only statement that could have caused this idea in the reviewer's mind is, I believe, the later speculation that equation (10) is ``perhaps evidence supporting the \emph{a priori} inclusion of such a functional relationship into a model.''  The purpose of this speculation was to relate the Bartholomaus model to Flowers and Clarke (2002), who \emph{do} include such an equation.  Many workers in subglacial hydrology wonder if (or even hope that) there is such a functional relationship.
 
 To avoid further reader misunderstanding, an explicit disclaimer is added regarding implementing equation (10).  I have added additional flags to make sure no readers think (10) is anything other than an emergent property, in steady state, of a model that solves (9) numerically.  A bit more attention has been given to the timescale distinctions in the last few paragraphs of the revised text.}
 
 \reply{\dots This makes sense if the timescale over which pressure changes is slower than the timescale over which the size of the cavities change. This may be true in some circumstances, but certainly not in all, particularly when meltwater is routed englacially from the surface and the pressure likely changes much more rapidly.}
 {Because Bartholomaus et al.~(2011) is all about these short timescales, I assume any reader of the current correspondence would not consider a steady state equation even as a possible numerical model component.  Nor do I.
 
-I was trying to point out an unnoticed relationship between Bartholomaus et al.~(2011) and Flowers and Clarke (2002).  Both of these references pre-date the flood of new literature on distributed models which incorporate these shorter timescales.
+As already stated, I was trying to point out an unnoticed relationship between Bartholomaus et al.~(2011) and Flowers and Clarke (2002).  Both of these references pre-date the flood of new literature on distributed models which, like the Bartholomaus model, incorporate shorter timescales than would be handled by the Flowers and Clarke construction.
 
-In any case, I agree with the above comment.  As noted, equation (10) for steady state is now explicitly disclaimed as a numerical model component.  As it is rather important in connecting Bartholomaus et al.~(2011) with prior literature, equation (10) remains, however, as a steady-state deduction from the Bartholomaus model.}
+In any case, I agree with the above comment.  As noted, equation (10) for steady state is now explicitly disclaimed as a numerical model component.  As it is rather important in connecting Bartholomaus et al.~(2011) with prior literature, however, equation (10) remains as a steady-state deduction from the Bartholomaus model.}
 
 \reply{\dots I think this needs to be pointed out very clearly, as many model applications of subglacial hydrology need to be aware of the timescales of interest and whether a model is appropriate for those. If such a discussion can be added, and the points below taken into account, I see no reason not to publish this correspondence.}
-{Bartholomaus et al.~(2011) is all about the timescales.  There is no need to restate their results given that this is a correspondence on a logical deduction from, and extension of, a model which is carefully tested with time-dependent, fast time-scale data.
-
-In any case, I believe this comment is motivated by the reviewer's misconception that the steady state equation (10) is used in any numerical model.}
+{Bartholomaus et al.~(2011) is all about the timescales.  There is no need to restate their results given that this is a correspondence on a logical deduction from, and extension of, a model which is carefully tested with time-dependent, fast time-scale data.  Also, I believe this comment is motivated by the reviewer's misconception that the steady state equation (10) is used in any numerical model.  Nonetheless the last few paragraphs of the revised version address the timescale distinctions.}
 
 \reply{Specific comments \smallskip \\
 1. Some of the discussion about the role of the pressure equation, its mathematical nature, and its implications in steady state are I think already well appreciated - at least more so than this letter seems to suggest. The addition of englacial storage in Hewitt (2013) is exactly what converts the elliptic pressure equation to a parabolic equation, and this is discussed extensively by Werder et al. (2013)---the distributed component of that model is essentially the same as described here.  Both of those models are not purely subglacial---they include englacial water in the same was as described here.}
@@ -173,44 +172,40 @@ In any case, I believe this comment is motivated by the reviewer's misconception
 
 My omission is a consequence of a rapidly-changing literature, I think.  In particular, the 2D numerical implementation of equation (9) appeared in the completely-open PISM code base on 5 February 2013, \emph{before} the submission of Werder et al.~(2013).\footnote{For example, see commit \texttt{https://github.com/pism/pism/commit/e6dae9619fb11f3e2b347f82a9f837ea2b93a12a}.  My point is that my claim can be verified, not that there is any reason anyone would be reading PISM code commits!}
 
-In fact, we built a numerical model based on the distributed extension Bartholomaus et al.~(2011) before seeing any of the cited 2013 papers; see van Pelt (2013) and Bueler and van Pelt, submitted).  This is simply, and not surprisingly, the simultaneous discovery of the englacial extension of the Schoof et al.~(2012) and Hewitt et al.~(2012) work.  Ward van Pelt and myself were coming from the Bartholomaus et al.~(2011) side when we noticed the pressure equation was a regularization of the Schoof et al.~(2012) elliptic variational inequality.  We already had an artificially-regularized version of the variational inequality, before we recognized that the englacial porosity in the Bartholomaus model \emph{was} the regularization.\footnote{In fact, Clarke (2003) on the ``Spring-Hutter formulation'' has yet another version of the regularization.}  The current work follows a part of our deductive path.
+In fact, we built a numerical model based on the distributed extension Bartholomaus et al.~(2011) before seeing any of the cited 2013 papers; see van Pelt (2013) and Bueler and van Pelt, 2014).  This is simply, and not surprisingly, the simultaneous discovery of the englacial extension of the Schoof et al.~(2012) and Hewitt et al.~(2012) work.  Ward van Pelt and myself were coming from the Bartholomaus et al.~(2011) side when we noticed the pressure equation was a regularization of the Schoof et al.~(2012) elliptic variational inequality.  We already had an artificially-regularized version of the variational inequality, before we recognized that the englacial porosity in the Bartholomaus model \emph{was} the regularization.\footnote{In fact, Clarke (2003) on the ``Spring-Hutter formulation'' has yet another version of the regularization.}  The current work follows a part of our deductive path.
 
-Furthermore we achieve a benefit of the englacial-storage parabolic pressure equation which is explicitly discounted as ``prohibitively expensive'' in Werder et al.~(2013), namely that one can enforce bounds on the pressure (Bueler and van Pelt, submitted).}
+Furthermore we achieve a benefit of the englacial-storage parabolic pressure equation which is explicitly discounted as ``prohibitively expensive'' in Werder et al.~(2013), namely that one can enforce bounds on the pressure (Bueler and van Pelt, 2014).}
 
 \reply{2. There are many factors of W missing (glacier width) such that the equations as written are not dimensionally consistent. In particular, when substituting for $S_{sub}$ from (5) to (6) a factor of $W$ to go with $f L/h$ is missing, and all subsequent ratios $f /h$ should read $f W/h$ (equations (7)--(9)).}
-{The reviewer is correct about this omission.  The replacement $f/h \to fW/h$ has been made in equations (6)--(9).  (Noting we implemented the 2D version in PISM, so this error in the flowline form never mattered to code or results in Bueler and van Pelt, submitted.)}
+{The reviewer is correct about this omission.  The replacement $f/h \to fW/h$ has been made in equations (6)--(9).  Noting we implemented the 2D version in PISM, this error in the flowline form never mattered to code or results in Bueler and van Pelt (2014).}
 
 \reply{3. $W$ is used both for glacier width and for distributed water sheet thickness - one had better be changed (I would suggest to use $h$ for water sheet thickness in line with Flowers and Clark (2002), and a different notation for the bedrock bump height).}
-{This is a good point.  (The notational error arose because this note started as an appendix to Bueler and van Pelt, submitted.)
-
-Because the priority is to match notation in Bartholomaus et al.~(2011), who use ``$h$'' for bedrock bump height, the use of ``$W$'' for area-averaged water thickness has been changed to ``$\eta$''.}
+{This is a good point.  The notational error arose because this note started as an appendix to Bueler and van Pelt (2014).  Because the priority is to match notation in Bartholomaus et al.~(2011), who use ``$h$'' for bedrock bump height, the use of ``$W$'' for area-averaged water thickness has been changed to ``$\eta$''.}
 
 \reply{4. The bound of $P_o$ mentioned in line 45 corresponds to the water pressure reaching flotation, but not to the emergence of water at the glacier surface, which would require $P$ to reach $(\rho_w/\rho_i) P_o$.}
-{The reviewer is correct, and the bound has been changed.  The point is that there \emph{is} a physically-meaningful upper bound on pressure.  The two physical upper bounds are within 10\% of each other.}
+{The reviewer is correct, and the bound has been changed.  The point is that there \emph{is} a physically-meaningful upper bound on pressure.  The two physical upper bounds are within 10\% of each other, and the enforcement or non-enforcement of the bounds is the same issue in a numerical model.}
 
 \reply{5. On line 48 it is stated that a two-dimensional version of equation (9) is solved in PISM.  Equation (9) is not a closed equation, so it should be clarified here what is actually solved  together with equation (9).  Presumably some sort of Darcy-like flux relationship relating $Q$ to $A c$ and $\nabla P$, \dots}
 {The paper already says this.  As stated in the text, ``using any reasonable Darcy-type formulation for the flux $Q$, such as power laws (2.10) of Schoof and others (2012), equation (9) becomes a nonlinear parabolic equation for the pressure.''
 
-As this correspondence is only incidentally about PISM, I erred in not adding enough about the PISM implementation.  It is now stated explicitly that the power law family (2.10) of Schoof and others (2012) is used in PISM.  (The powers $\alpha,\beta$ are chooseable at run-time, as are all parameters globally in PISM.)}
+As this correspondence is only incidentally about PISM, I would like to avoid documenting the PISM implementation, which is the purpose of Bueler and van Pelt (2014).  It is, however, now stated explicitly that the power law family (2.10) of Darcy-like relations from Schoof and others (2012) is used in PISM.  (The powers $\alpha,\beta$ are chooseable at run-time, as are all parameters in PISM.)}
 
 \reply{\dots but also a relationship between $P$ and $A_c$ (which it should be stressed is a variable in (9)).}
-{Absolutely not.  A \emph{closure} is needed, but it does not need to relate $P$ explicitly to anything like cavity size or water amount.  In particular, assuming full cavities suffices as a closure, exactly as done in PISM and documented in van Pelt (2013) and in Bueler and van Pelt (submitted).  This full-cavity assumption is already in the Bartholomaus model.
+{Absolutely not.  A \emph{closure} is needed, but it does not need to relate $P$ explicitly to anything like cavity size or water amount.  In particular, assuming full cavities suffices as a closure, exactly as done in PISM and documented in van Pelt (2013) and in Bueler and van Pelt (2014).  This full-cavity assumption is already in the Bartholomaus model.
 
-Of course both the mass conservation equation (4) and the pressure equation (9) must be solved in a coupled manner; again this is the content of Bueler and van Pelt (submitted), but it is also in Werder et al.~(2013).
+Of course both the mass conservation equation (4) and the pressure equation (9) must be solved in a coupled manner.  Again this is the content of Bueler and van Pelt (2014), but it is also in Werder et al.~(2013).  The need to treat the equations as coupled evolution equations is pointed out in the revised version.
 
 Given that the only time derivative in (9) is ``$\partial P/\partial t$,'' I do not see why it should be emphasized that $P$ is variable.  This is the entire context of the Bartholomaus model.  The point of this correspondence is to add the evolution equation for $P$ which follows from the Bartholomaus model.  This goal is given even greater emphasis in the introduction.}
 
 \reply{\dots  If it is equation (10) rather than equation (4) that is used, this is quite different from the system solved by Schoof and others (2012).}
-{Indeed that would be a different model, and it is not here, nor was it considered or proposed.
+{Indeed that would be a different model, and it is not here, nor was it considered or proposed.  The text of the manuscript never suggests such usage of equation (10).  The revised text makes this even more clear.
 
-Note that (4) is conservation of mass.  In a full cavity model, both equations (4) and (9) must be solved simultaneously, given that $(A_c,P)$ are the state variables.
+Note that (4) is conservation of mass.  In a full cavity model, both equations (4) and (9) must be solved simultaneously, given that $(A_c,P)$ are the state variables.}
 
-The text of the manuscript never suggests such usage of equation (10).  The revised text makes this even more clear.}
-
-\reply{6. The steady state relationship of equation (10) between pressure and cavity size may be unstated in Bartholomaus and others (2011), but this concept is well known in glacial hydrology, and formed the basis of Schoof [2010]’s argument for distinguishing cavity-like and channel-like drainage elements. Whilst the fact it is an increasing relationship is the same as for the power law relationship of Flowers and Clarke [2002], I fail to see how this provides justification for the same relationship in non-steady circumstances.}
+\reply{6. The steady state relationship of equation (10) between pressure and cavity size may be unstated in Bartholomaus and others (2011), but this concept is well known in glacial hydrology, and formed the basis of Schoof (2010)'s argument for distinguishing cavity-like and channel-like drainage elements. Whilst the fact it is an increasing relationship is the same as for the power law relationship of Flowers and Clarke (2002), I fail to see how this provides justification for the same relationship in non-steady circumstances.}
 {This part of the text was attempting to \emph{post hoc} explain why Flowers and Clarke are not fools; I don't think they are.  In the opinion of the reviewer, were they totally unjustified, and totally lacking in hydrological intuition, by implication, in assuming an increasing relationship between subglacial water amount and pressure?  Perhaps so, but I'd like to give them the benefit of the doubt.
 
-The Bartholomaus model is a lumped model, with actual field evidence supporting its time-dependent behavior, in which there is nonetheless such an emergent monotonic relationship between water amount and pressure, namely in steady state.  As with all parabolic PDEs, the steady state presumably informs behavior over longer non-steady timescales.  A bit more is said about time scales, and this ``longer time-scale'' qualification has now been added.}
+The Bartholomaus model is a lumped model, with actual field evidence supporting its time-dependent behavior, but in which there is an emergent monotonic relationship between water amount and pressure, namely in steady state.  As with all parabolic PDEs, the steady state presumably informs behavior over longer non-steady timescales.  A bit more is said about time scales, and this ``longer time-scale'' qualification has now been added.}
 \end{itemize}
 
 
@@ -223,17 +218,15 @@ The Bartholomaus model is a lumped model, with actual field evidence supporting 
 
 \medskip
 \begin{itemize}
-\item[line 20] \emph{I think it would be useful to add a sentence or two between these two paragraphs explicitly stating the differing applicability of a distributed versus lumped model before moving on the the pressure equation(s).}
+\item[line 20] \emph{I think it would be useful to add a sentence or two between these two paragraphs explicitly stating the differing applicability of a distributed versus lumped model before moving on to the pressure equation(s).}
 
 \quad In the restructured form of the introductory material, as motivated by this and related reviewer comments, there is an itemized list of the three goals of the paper.  The derivation of the lumped pressure equation still comes first because it is purely-deductive (i.e.~it follows directly from the Bartholomaus et al.~(2011) equations).
 
-\quad Of course a lumped model and a distributed model potentially have differing applicability, but I do not think that, given the current state of knowledge about subglacial hydrology, it is justified to identify some glaciers which should use one model and some the other model.
-
-\quad However, I have clarified the text after the distributed pressure equation so the reader knows that both an additional choice of Darcy-type relation \emph{and} some kind of closure, specifically the full-cavity assumption already present in the Bartholomaus model, are required to make equation (9) solvable.
+\quad While a lumped model and a distributed model potentially have differing applicability, I do not think that, given the current state of knowledge about subglacial hydrology, it is justified to identify some glaciers which should use one model and some the other model. However, I have clarified the text after the distributed pressure equation so the reader knows that both an additional choice of Darcy-type relation \emph{and} some kind of closure, specifically the full-cavity assumption already present in the Bartholomaus model, are required to make equation (9) solvable.
 
 \item[line 57]  \emph{While infrequent, I'm not convinced that such geysers are rare or unusual.  Martin Truffer and collaborators tell of such over-pressurization of  englacial water leading to similar eruptions on Black Rapids glacier.   I don't know if this has been reported in the literature.}
 
-\quad I have replaced the idea of ``rare'' with ``small''.  That is, violations of the $P\le (\rho_w/\rho_i) P_o$ bound are possible but are unlikely to be large (in a relative-to-overburden sense) or have long duration/area.
+\quad I have replaced the idea of ``rare'' with ``small''.  That is, violations of the $P\le (\rho_w/\rho_i) P_o$ bound are possible but are unlikely to be large (in a relative-to-overburden sense) or have long duration or large area.  In any case, supraglacial geysers are outside the scope of the simpler models under consideration.
 
 \item[line 61]  \emph{This is a valuable result, but I would rather see the paragraph describing the PISM implementation of Eqn (9) here as a final statement, after the discussion of steady-state implications.}
 
@@ -241,9 +234,7 @@ The Bartholomaus model is a lumped model, with actual field evidence supporting 
 \end{itemize}}
 
 \reply{Generally, I find that the letter would benefit from a clear statement about the motivation for the model comparisons and subsequent derivations.}
-{I agree.  Note my primary motivation was \emph{mathematical}, that is, to deduce more-fully the consequences of the model equations in Bartholomaus et al.~(2011), and the paper now states this motivation directly.
-
-A much-clearer summary of the goals of the paper, which are easier to state than motivation, now appears as the second paragraph of the revised paper.  The first paragraph is, as before, a summary of the Bartholomaus et al.~(2011) model.  I believe these revisions address some of reviewer \#1's concerns as well.}
+{I agree.  Note my primary motivation was \emph{mathematical}, that is, to deduce consequences of the model equations in Bartholomaus et al.~(2011).  I now state this motivation directly.  A much-clearer summary of the goals of the paper, which are easier to state than motivation, now appears as the second paragraph of the revised paper.  The first paragraph is, as before, a summary of the Bartholomaus et al.~(2011) model.  I believe these revisions address some of reviewer \#1's concerns as well.}
 
 \reply{The final paragraph does not offer much in the way of closure.  I recommend adding a brief concluding paragraph, or reordering existing paragraphs to highlight the implementation of the new hydrology model in PISM 0.6 resulting from equation (9).  This is an excellent addition to PISM and will surely result in new and interesting modeling results.}
 {While the new hydrology model in PISM was partly driven by the englacial model from Bartholomaus et al.~(2011), I do not want to overemphasize this motivation of this correspondence.  But the concluding paragraph summarizes the PISM implementation.}
