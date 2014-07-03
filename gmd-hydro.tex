@@ -331,9 +331,9 @@ where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1
 
 \section{Closures to determine pressure} \label{sec:closures}
 
-The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:tilldynamics}, and \eqref{eq:hewittcapacity}, can be simplified to three equations in the four major (state) variables $W$, $\Wtil$, $Y$, and $P$.  We do not yet know how to compute the water pressure $P$ given the other variables and data of the problem.  A closure is needed.
+The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:tilldynamics}, and \eqref{eq:hewittcapacity}, can be simplified to three equations in the four major variables $W$, $\Wtil$, $Y$, and $P$.  We do not yet know how to compute the water pressure $P$ or its rate of change $\partial P/\partial t$ given the other variables and data of the problem.  A closure is needed.
 
-\subsection{Simplified closures without cavity evolution}  We first consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as steady-state reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtilmax=0$ in previous equations.  We state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
+\subsection{Simplified closures without cavity evolution}  We first consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  These simplified closures differ in their physical motivation and the form of their mass conservation equations.  We list them because the resulting simplified conservation equations emerge as reductions of our more complete theory.  For simplicity we present them without till storage, that is, with $\Wtilmax=0$ in previous equations.  We state only the constant conductivity case ($\alpha=1$ and $\beta=2$ in equation \eqref{eq:flux}).
 
 Setting the pressure equal to the overburden pressure is the simplest closure \citep{LeBrocqetal2009,Shreve1972}:
 \begin{equation}
