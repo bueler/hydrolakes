@@ -132,7 +132,7 @@ Wall melt in the linked-cavity system can be calculated diagnostically from the 
 
 Conduits are also not included in our model.  While the pressure and amount of water in conduits could evolve by physical processes, the existing theory of conduits apparently requires their locations to be fixed a priori \citep{Schoofmeltsupply,PimentelFlowers2011,Hewittetal2012,Hewitt2013,Werderetal2013}.  Such lattice models have no known continuum limit in the map plane.  Because all PISM usage involves a run-time determination of grid resolution, which varies from 40 km to 10 mm in the applications documented in the PISM User's Manual \citep{pism-user-manual}, and because all parameters in PISM models must have grid-spacing-independent meaning, such lattice or other fixed-grid models are not acceptable as components of PISM.
 
-The structure of the paper is as follows: Section \ref{sec:elements} considers basic physical principles, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is known about till mechanical properties, water in till pore spaces, and shear stress at the base of a glacier.  In section \ref{sec:capacity} we consider cavity evolution, which then leads to a review of closures which determine the subglacial water pressure (section \ref{sec:closures}).  Based on all these elements, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steady} the simplified equations which apply in steady state are analyzed, and a steady-state functional relationship between water amount and pressure is derived.  In section \ref{sec:exactsolution} we compute an exact steady solution, a useful tool for verification.  In section \ref{sec:num} we present all numerical schemes, with particular attention to time step restrictions and the treatment of advection.  Like other parts of PISM, all the numerical schemes are implemented in parallel using the PETSc library \citep{petsc-user-ref}.  Section \ref{sec:pismdoc} documents the major options and parameters seen by a PISM user.  Section \ref{sec:results} shows numerical results from the model, starting with showing convergence under grid refinement in the verification case.  Then we demonstrate the model at scale, with five year runs on a 2 km grid covering the entire Greenland ice sheet.
+The structure of the paper is as follows: Section \ref{sec:elements} considers basic physical principles, culminating with a fundamental advection-diffusion form of the mass conservation equation.  Section \ref{sec:tillmechanics} reviews what is known about till mechanical properties, water in till pore spaces, and shear stress at the base of a glacier.  In section \ref{sec:closures} we compare closures which directly or indirectly determine the subglacial water pressure.  Based on all these elements, in section \ref{sec:newmodel} we state the combined model and its major parameters.  In section \ref{sec:steady} the simplified equations which apply in steady state are analyzed, and a steady-state functional relationship between water amount and pressure is derived.  In section \ref{sec:exactsolution} we compute an exact steady solution, a useful tool for verification.  In section \ref{sec:num} we present all numerical schemes, with particular attention to time step restrictions and the treatment of advection.  Like other parts of PISM, all the numerical schemes are implemented in parallel using the PETSc library \citep{petsc-user-ref}.  Section \ref{sec:pismdoc} documents the major options and parameters seen by a PISM user.  Section \ref{sec:results} shows numerical results from the model, starting with showing convergence under grid refinement in the verification case.  Then we demonstrate the model at scale, with five year runs on a 2 km grid covering the entire Greenland ice sheet.
 
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
@@ -236,6 +236,22 @@ There are distinct numerical approximations (section \ref{sec:num}) for the adve
 
 As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the ice surface slope because the ice overburden pressure dominates the subglacial water pressure.  The model in this paper also generates pressure fields with this property in some circumstances, but the directions of hydraulic potential and surface gradients are significantly different in general because the pressure depends on physical mechanisms for the opening and closing of cavities.
 
+\subsection{Capacity of a linked-cavity distributed system}  The rate of change of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness $Y$, also called the bed separation \citep{Bartholomausetal2011}, has evolution equation
+\begin{equation}
+\frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
+\end{equation}
+where $\bv_b$ is the ice base (sliding) velocity and $N=P_o-P$ is the effective pressure on the cavity system.  Denoting $X_+= \max\{0,X\}$, we choose an opening term based on cavitation only:
+\begin{equation}
+\mathcal{O}(|\bv_b|,Y) = c_1 |\bv_b| (W_r - Y)_+. \label{eq:openingform}
+\end{equation}
+Here $W_r$ is a maximum roughness scale of the basal topography \citep{Schoofetal2012}.  The closing term models ice creep only \citep{Hewitt2011,Schoofetal2012}:
+\begin{equation}
+\mathcal{C}(N,Y) = c_2 A N^3 Y. \label{eq:closingform}
+\end{equation}
+We have used Glen exponent $n=3$ for concreteness and simplicity.  By \eqref{eq:openingform} the opening term $\mathcal{O}$ is nonnegative, and the closing term $\mathcal{C}$ in \eqref{eq:closingform} is also nonnegative because our modeled pressure $P$ satisfies bounds $0\le P \le P_o$.
+
+The physical intuition behind a model which combines \eqref{eq:hewittcapacity} with mass conservation \eqref{eq:conserve} and a Darcy flux relation like \eqref{eq:flux} is as follows.  If the cavity is larger than local water sources can immediately fill then the pressure should drop.  Lower pressure encourages water inflow and, by \eqref{eq:closingform}, it speeds cavity closure, bringing the pressure back up.  Conversely, if local water sources exceed capacity then increased pressure should push water out of the area and slow creep closure.
+
 
 \section{Till hydrology and mechanics} \label{sec:tillmechanics}
 
@@ -251,7 +267,7 @@ Here $C_d\ge 0$ is a fixed rate that makes the till gradually drain in the absen
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{Ntilfunctions}
-\caption{\textbf{(a)} Equation \eqref{eq:voidpressureexponential} determines the effective pressure $\Ntil$ as a function of the void ratio $e$, as shown here.  Reference values of $e_0$ and $N_0$ are indicated.  \textbf{(b)}  The same curve, with $\Ntil$ as a function of $\Wtil$, and  bounded above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$ (solid curve), is used in our model.  The case shown is for 1000 meters ice thickness.}
+\caption{\textbf{(a)} Equation \eqref{eq:voidpressure} determines the effective pressure $\Ntil$ as a function of the void ratio $e$, as shown here.  Reference values of $e_0$ and $N_0$ are indicated.  \textbf{(b)}  The same curve, with $\Ntil$ as a function of $\Wtil$, and  bounded above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$ (solid curve), is used in our model.  The case shown is for 1000 meters ice thickness.}
 \label{fig:Ntilfunctions}
 \end{figure}
 
@@ -311,27 +327,6 @@ It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} tha
 \boldsymbol\tau_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
 \end{equation}
 where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1$ , and $u_0$ is a threshold sliding velocity \citep{AschwandenAdalgeirsdottirKhroulev}.  Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{u}/|\mathbf{u}|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of $|\mathbf{u}|$ as $|\mathbf{u}| \gg u_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$; in the linear case $q=1$ we have $\beta = \tau_c/u_0$.
-
-
-\section{Capacity of a linked-cavity distributed system} \label{sec:capacity}
-
-The evolution of the area-averaged thickness of the cavities in a distributed linked-cavity system can be described as the difference of opening and closing rates \citep{Hewitt2011}.  This thickness $Y$, also called the bed separation \citep{Bartholomausetal2011}, has evolution equation
-\begin{equation}
-\frac{\partial Y}{\partial t} = \mathcal{O}(|\bv_b|,Y) - \mathcal{C}(N,Y) \label{eq:hewittcapacity}
-\end{equation}
-where $\bv_b$ is the ice base (sliding) velocity and $N=P_o-P$ is the effective pressure on the cavity system.  Denoting $X_+= \max\{0,X\}$, we choose an opening term based on cavitation only:
-\begin{equation}
-\mathcal{O}(|\bv_b|,Y) = c_1 |\bv_b| (W_r - Y)_+. \label{eq:openingform}
-\end{equation}
-Here $W_r$ is a maximum roughness scale of the basal topography \citep{Schoofetal2012} and $c_1$ is a constant.  The closing term models ice creep only \citep{Hewitt2011,Schoofetal2012}:
-\begin{equation}
-\mathcal{C}(N,Y) = c_2 A N^3 Y. \label{eq:closingform}
-\end{equation}
-Here $A$ is the ice softness and $c_2$ is a constant which must be constrained by observations.  We have used Glen exponent $n=3$ for concreteness and simplicity.
-
-Equation \eqref{eq:hewittcapacity} describes the evolution of the upper surface of the subglacial cavities.  By \eqref{eq:openingform} the opening term $\mathcal{O}$ is nonnegative.  The closing term $\mathcal{C}$ in \eqref{eq:closingform} is also nonnegative because our modeled pressure $P$ satisfies bounds $0\le P \le P_o$.  The opening and closing terms \eqref{eq:openingform} and \eqref{eq:closingform} satisfy the inequalities (2.5)--(2.7) in \cite{Schoofetal2012}.
-
-The physical intuition behind a pressure model which combines \eqref{eq:hewittcapacity} with mass conservation \eqref{eq:conserve} and a Darcy flux relation like \eqref{eq:flux} is as follows.  If the cavity is larger than local water sources can immediately fill then the pressure should drop.  Lower pressure encourages water inflow and, by \eqref{eq:closingform}, it speeds cavity closure, bringing the pressure back up.  Conversely, if local water sources exceed capacity then increased pressure should push water out of the area, and also creep closure slows.  This ``intuition'' requires a pressure closure, however, which is addressed in the next section.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
@@ -987,7 +982,7 @@ These runs had 1.05 million subglacial hydrology grid points at which variables 
 
 On the one hand this model could be regarded as a minimal ``conduit-like'' description of the subglacial flow, because of these model concentrated pathways.  On the other hand, as noted in the introduction, there is no ``R-channel'' mechanism used in this paper; in that mechanism the dissipation heating of the flowing water would generate wall melt-back to hold the channel open.  Thus the time-dependence and flux magnitudes in the model are not ``R-channel''-like.  At a more basic level, the authenticity of subglacial ``channel'' geometry here is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited; this effect is severe in the Eastern outlet glaciers (Helheim and Kangerdlugssuaq) shown in Figure \ref{fig:Greenroutingdetail}.
 
-\subsubsection{\texttt{distributed} results}  The final values of $W$ and the relative water pressure $P/P_o$ for the five model-year \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is full ($\Wtil=\Wtilmax=2$ m) in essentially all areas where basal melt occurs, so $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case.  (Note the simple $\Wtil$ evolution equation given in section \ref{sec:capacity}.)
+\subsubsection{\texttt{distributed} results}  The final values of $W$ and the relative water pressure $P/P_o$ for the five model-year \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is full ($\Wtil=\Wtilmax=2$ m) in essentially all areas where basal melt occurs, so $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case.  (Note the simple $\Wtil$ evolution equation given in section \ref{sec:tillmechanics}.)
 
 Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The tendency of this effect to spread out the water $W$, relative to the \texttt{routing} model, is clearly seen in the \texttt{distributed} results in Figure \ref{fig:Greendistributedresults}.  There is no strong concentration of $W$ along curves of steepest descent of the hydraulic potential.  This result is strongly dependent on the opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$; see Tables \ref{tab:constants} and \ref{tab:correspondence}.  (These are in addition to the Darcy flux model parameters $\alpha,\beta,k$ already used in the \texttt{routing} model.)  Parameter identification through observed data is obviously needed, but it is beyond the scope of the current paper.
 
@@ -1019,7 +1014,7 @@ It would be possible to implement a model without a pressure evolution equation 
 \item parallel implementation in two horizontal dimensions at scale (sections \ref{sec:num} and \ref{sec:results}) of a coupled till-and-linked-cavities model,
 \item a new analysis of steady state explaining the degree to which a functional relationship $P(W)$ is justified (section \ref{sec:steady}),
 \item an exact solution of the coupled mass and pressure equations of the distributed model in the steady angularly-symmetric case (section \ref{sec:steady}), plus verification using this solution (section \ref{sec:results}), and
-\item an englacial porosity regularization which is shown to allow a practical numerical model in which physically-motivated bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:capacity}, \ref{sec:closures}, and \ref{sec:num}).
+\item an englacial porosity regularization which is shown to allow a practical numerical model in which physically-motivated bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:closures} and \ref{sec:num}).
 \end{itemize}
 We believe, however, that the comprehensive treatment here of certain subjects is also important.  We assert that
 \begin{itemize}
