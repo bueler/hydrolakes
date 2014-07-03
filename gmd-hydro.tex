@@ -59,6 +59,7 @@
 \newcommand\vf{\varphi}
 
 \newcommand{\Ntil}{N_{\text{til}}}
+\newcommand{\hatNtil}{\hat N_{\text{til}}}
 \newcommand{\Wtil}{W_{\text{til}}}
 \newcommand{\Wtilmax}{W_{\text{til}}^{\text{max}}}
 \newcommand{\zen}{z_{\text{en}}}
@@ -238,39 +239,35 @@ As is well known \citep{Clarke05}, the flux $\bq$ depends significantly on the i
 
 \section{Till hydrology and mechanics} \label{sec:tillmechanics}
 
-Till with pressurized liquid water in its pore spaces can be expected to support much of the ice overburden.  When present, such saturated till is central to the complicated relationship between the amount of subglacial water and the amount of sliding.  Our model includes storage of subglacial water in till, potentially everywhere under the ice sheet, both because of its role in conserving the mass of liquid water and its role in determining basal shear stress.
+Till with pressurized liquid water in its pore spaces can be expected to support much of the ice overburden in areas where the ice base is not frozen.  When present, such saturated till is central to the complicated relationship between the amount of subglacial water and the speed of sliding.  Our model includes storage of subglacial water in till, potentially everywhere under the ice sheet, both because of its role in conserving the mass of liquid water and its role in determining basal shear stress.
 
-We will assume throughout that liquid water or ice fills pore spaces in the till, and that there are no air- or vapor-filled pore spaces.  Recalling that water production under the interior of ice sheets is determined by basal thermodynamics, including geothermal flux and friction-heating, we suppose that when $m=0$ and $\Wtil=0$ then the pore spaces in the till are filled with ice and the basal shear stress is correspondingly-high.  When $\Wtil$ but small the till will generally have both liquid water and ice in the pore spaces, and only when $\Wtil$ attains sufficiently large values is the till conceived-of as entirely melted, at which point a drop in effective pressure becomes possible (subsection \ref{subsec:effectivepressuretill} below).
+We will assume throughout that liquid water or ice fills pore spaces in the till, and that there are no air- or vapor-filled pore spaces.  We suppose that when $m=0$ and $\Wtil=0$ then the pore spaces in the till are filled with ice and the basal shear stress is correspondingly-high.  When $\Wtil$ is small the till will generally hold both liquid water and ice.  Only when $\Wtil$ attains sufficiently large values is the till conceived-of as entirely melted, at which point a drop in effective pressure becomes possible (subsection \ref{subsec:effectivepressuretill} below).
 
-\subsection{Evolution of water amount}  While the thickness $W$ describes the amount of water in subglacial cavities, and in the connections between cavities \citep{Kamb1987}, the water in till pore spaces is much less mobile because of the very low hydraulic conductivity of till \citep{LingleBrown1987,Tulaczyketal2000,TrufferEchelmeyerHarrison2001}.  We choose an evolution equation for $\Wtil$ for simplicity \citep{BBssasliding}, namely
+\subsection{Evolution of water amount}  While the thickness $W$ in \eqref{eq:conserve} describes the amount of water in subglacial cavities, and in the connections between cavities \citep{Kamb1987}, the water in till pore spaces is much less mobile because of the very low hydraulic conductivity of till \citep{LingleBrown1987,Tulaczyketal2000,TrufferEchelmeyerHarrison2001}.  Therefore we choose an evolution equation for $\Wtil$ for simplicity \citep{BBssasliding}, namely
 \begin{equation}
 \frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d. \label{eq:tilldynamics}
 \end{equation}
-Here $C_d\ge 0$ is a fixed rate that makes the till gradually drain in the absence of water input.  In practice we choose $C_d=1$ mm/a, which is small compared to typical values of $m/\rho_w$.  Refreeze is also allowed, as a negative value for $m$.  Note that any water removed from the till enters the transport system; it is conserved.  Equation \eqref{eq:tilldynamics} is essentially the same as equation (2) in \cite{Tulaczyketal2000b}.  In section \ref{sec:num} we propose a stable numerical scheme for the combination of \eqref{eq:conserve} and \eqref{eq:tilldynamics}, and this scheme satisfies discrete conservation of $W+\Wtil$ and physical bounds for the discretized values of $W$ and $\Wtil$.
+Here $C_d\ge 0$ is a fixed rate that makes the till gradually drain in the absence of water input.  Equation \eqref{eq:tilldynamics} is the same as equation (2) in \cite{Tulaczyketal2000b}.  In practice we choose $C_d=1$ mm/a, which is small compared to typical values of $m/\rho_w$.  Refreeze is also allowed, as a negative value for $m$.  Note that any water removed from the till enters the transport system; it is conserved.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{Ntilfunctions}
-\caption{\textbf{(a)} Equation \eqref{eq:voidpressureexponential} determines the effective pressure $\Ntil$ as a function of the void ratio $e$, as shown here.  Reference values $e_0=0.69$, $N_0=10^3$ Pa used by \cite{Tulaczyketal2000} are indicated.  \textbf{(b)}  In this paper $\Ntil$ is rewritten as a function of $\Wtil$.  It is bounded above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$.  Excess water, with $\Wtil>\Wtilmax$ and $\Ntil<\delta P_o$, is ``dumped'' into the transport system, so we use the bounded model shown as a solid curve, and not the remaining unbounded parts (dotted).  The case with 1000 meters ice thickness, $\delta = 0.02$, and $\Wtilmax=2.0$ meters is shown.}
+\caption{\textbf{(a)} Equation \eqref{eq:voidpressureexponential} determines the effective pressure $\Ntil$ as a function of the void ratio $e$, as shown here.  Reference values of $e_0$ and $N_0$ are indicated.  \textbf{(b)}  The same curve, with $\Ntil$ as a function of $\Wtil$, and  bounded above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$ (solid curve), is used in our model.  The case shown is for 1000 meters ice thickness.}
 \label{fig:Ntilfunctions}
 \end{figure}
 
-\subsection{Effective pressure on the till} \label{subsec:effectivepressuretill} There is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000,SchoofTill}.  The yield stress $\tau_c$ of the saturated till satisfies the Mohr-Coulomb relation
+\subsection{Effective pressure on the till} \label{subsec:effectivepressuretill} There is extensive evidence that deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000,SchoofTill}.  The yield stress $\tau_c$ of such till satisfies the Mohr-Coulomb relation
 \begin{equation}
 \tau_c = c_0 + (\tan \varphi) \Ntil  \label{eq:mohrcoulomb}
 \end{equation}
-where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the saturated till \citep{CuffeyPaterson}.\footnote{The effective pressure $N=P_o-P$ used in the next section for modeling cavity closure is distinct from $\Ntil$.  This distinction is justified by the very low hydraulic conductivity of till.  Also, $\Ntil$ does not affect the model for the horizontal transport of water.}
+where $c_0$ is the till cohesion, $\varphi$ is the till friction angle, and $\Ntil$ is the effective pressure of the overlying ice on the saturated till \citep{CuffeyPaterson}.  (The effective pressure $N=P_o-P$ used in the next section for modeling cavity closure is distinct from $\Ntil$ in \eqref{eq:mohrcoulomb}.  This distinction is justified by the very low hydraulic conductivity of till.)
 
-Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of mineral solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of $\Ntil$ and $e$,
+Let $e = V_w / V_s$ be the till void ratio, where $V_w$ is the volume of water in the pore spaces and $V_s$ is the volume of mineral solids \citep{Tulaczyketal2000}.  From the standard theory of soil mechanics and from laboratory experiments on till \citep{Hookeetal1997,Tulaczyketal2000}, a linear relation exists between the logarithm of $\Ntil$ and $e$,
 \begin{equation}
 e = e_0 - C_c \log_{10}\left(\Ntil / N_0\right).  \label{eq:voidpressure}
 \end{equation}
-Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Equivalently, $\Ntil$ is an exponential function of $e$ \citep[equation (15)]{vanderWeletal2013},
-\begin{equation}
-\Ntil = N_0 10^{(e_0 - e)/C_c}.  \label{eq:voidpressureexponential}
-\end{equation}
-Figure \ref{fig:Ntilfunctions}(a) shows a graph of \eqref{eq:voidpressureexponential}.  Note that in \eqref{eq:voidpressure} and \eqref{eq:voidpressureexponential}, $\Ntil$ is nonzero for all finite values of $e$.
+Figure \ref{fig:Ntilfunctions}(a) shows a graph of \eqref{eq:voidpressure}.  Here $e_0$ is the void ratio at a reference effective pressure $N_0$ and $C_c$ is the coefficient of compressibility of the till.  Equivalently, $\Ntil$ is an exponential function of $e$, namely $\Ntil = N_0 10^{(e_0 - e)/C_c}$ \citep[equation (15)]{vanderWeletal2013}.  Note that in \eqref{eq:voidpressure}, $\Ntil$ is nonzero for all finite values of $e$.
 
-While equations \eqref{eq:voidpressure} or \eqref{eq:voidpressureexponential} suggest that the effective pressure could be any positive number, in fact the area-averaged value of $\Ntil$ under ice sheets and glaciers has limits.  It cannot exceed the overburden pressure for any sustained period.  Furthermore our model of subglacial water movement is that once the till is close to its maximum capacity then the excess water will be ``dumped'' into a transport system.  We suppose this occurs at a small, fixed fraction of the overburden pressure.  Thus we assume bounds
+While equations \eqref{eq:voidpressure} suggest that the effective pressure could be any positive number, in fact the area-averaged value of $\Ntil$ under ice sheets and glaciers has limits.  It cannot exceed the overburden pressure for any sustained period.  Furthermore, once the till is close to its maximum capacity then the excess water will be ``drained'' into a transport system.  We suppose this occurs at a small, fixed fraction of the overburden pressure.  Thus we assume bounds
 \begin{equation}
 \delta P_o \le \Ntil \le P_o  \label{eq:Ntilbounds}
 \end{equation}
@@ -284,23 +281,23 @@ On the other hand we will describe the maximum capacity of the till by specifyin
 \begin{equation}
 0 \le \Wtil \le \Wtilmax.  \label{eq:Wtilbounds}
 \end{equation}
-The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at the maximum void ratio $e$, and by \eqref{eq:voidequivalent} $\Wtil$ is also maximum.  But then equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} combine to express the solid-till thickness $\eta$ in terms of our preferred parameters and the overburden pressure,
+The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at the maximum void ratio $e$ and at maximum $\Wtil$.  But then equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} combine to express the solid-till thickness $\eta$ in terms of our preferred parameters and the overburden pressure,
 \begin{equation}
 \eta = \frac{\Wtilmax}{e_0 - C_c \log_{10}\left(\delta P_o / N_0\right)}.  \label{eq:etaexpression}
 \end{equation}
 
-From \eqref{eq:voidpressureexponential}, \eqref{eq:voidequivalent}, and \eqref{eq:etaexpression}, the effective pressure $\Ntil$ can now be written as the following function of $\Wtil$:
+From \eqref{eq:voidpressure}, \eqref{eq:voidequivalent}, and \eqref{eq:etaexpression}, the effective pressure $\Ntil$ can now be written as the following function of $\Wtil$:
 \begin{equation}
-\Ntil = N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}
+\hatNtil = N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}
 \label{eq:NtilofWtil}
 \end{equation}
 where $s = \Wtil/\Wtilmax$.  However, as noted above, $\Ntil$ is bounded, so the form we use is shown in Figure \ref{fig:Ntilfunctions}(b):
 \begin{equation}
-\Ntil = \min\left\{P_o,\, N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}\right\}.
+\Ntil = \min\left\{P_o,\, \hatNtil\right\}.
 \label{eq:Wtilpressure}
 \end{equation}
 
-It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ can be determined from the water amount $\Wtil$.  The Mohr-Coulomb relation \eqref{eq:mohrcoulomb} is, therefore, a relationship $\tau_c(\Wtil)$ in our model.  Regarding the parameters in this relation:
+It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ can be determined from the water amount $\Wtil$.  Regarding the parameters in this relation:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
 \item Experiments on till suggest small values for cohesion, $0 \le c_0 \lesssim 1$ kPa \citep{Tulaczyketal2000}, and we choose $c_0=0$ for concreteness.
@@ -309,11 +306,11 @@ It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} tha
 \item The till capacity parameter $\Wtilmax$ could be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{Rooneyetal1987} evidence, but for simplicity we set it to a constant $2$ meters.
 \end{enumerate}
 
-\subsection{Sliding law}  Ice sliding velocity is determined by solving a stress balance in which the vector basal shear stress $\boldsymbol\tau_b$ appears either as a boundary condition \citep{SchoofCoulombBlatter} or as a term in the balance \citep{SchoofStream,BBssasliding}.  In PISM the scalar yield stress $\tau_c$ determines the basal shear stress through a sliding law
+\subsection{Sliding law}  The ice sliding velocity is determined by solving a stress balance in which the vector basal shear stress $\boldsymbol\tau_b$ appears either as a boundary condition \citep{SchoofCoulombBlatter} or as a term in the balance \citep{SchoofStream,BBssasliding}.  In PISM the scalar yield stress $\tau_c$ determines the basal shear stress through a sliding law
 \begin{equation}
 \boldsymbol\tau_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
 \end{equation}
-where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1$ , and $u_0$ is a threshold sliding velocity \citep{AschwandenAdalgeirsdottirKhroulev}.  Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{u}/|\mathbf{u}|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of the sliding speed $|\mathbf{u}|$ as it becomes larger than the threshold $u_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$; this includes the linear case $q=1$ in which we have $\beta = \tau_c/u_0$.
+where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1$ , and $u_0$ is a threshold sliding velocity \citep{AschwandenAdalgeirsdottirKhroulev}.  Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{u}/|\mathbf{u}|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of $|\mathbf{u}|$ as $|\mathbf{u}| \gg u_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$; in the linear case $q=1$ we have $\beta = \tau_c/u_0$.
 
 
 \section{Capacity of a linked-cavity distributed system} \label{sec:capacity}
