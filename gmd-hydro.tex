@@ -589,7 +589,7 @@ Because of the additional diffusion process, for stability the time step should 
 \end{equation}
 The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the scheme.  (We show this for the first-order upwind scheme, but standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.)
 
-We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis,vanPeltetal}.  We used a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis}.  We used a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
 
 This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  The scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction, but we suppose that $\Delta t_{CFL}$ is controlling for $\Delta x \gg 100$ m.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.
 
@@ -838,9 +838,9 @@ The rates of convergence for average errors are nearly identical for the higher 
 
 \subsection{Application of the model at ice sheet scale}
 
-\subsubsection{Spun-up initial state}  We have applied our mass-conserving hydrology models to the entire present-day Greenland ice sheet at 2 km resolution.  This serves as a nontrivial example showing the implementability of the model at large computational scale with high resolution using real data, and of one-way coupling with ice dynamics.  For simplicity and consistency with prior work, the present-day state of the ice sheet, especially data for the ice thickness, surface mass balance, and surface temperature, were taken from the SeaRISE data set for Greenland (Bindschadler et al., 2013; Nowicki et al., 2013; and references therein).\nocite{Bindschadler2013SeaRISE,Nowicki2013GreenlandSeaRISE}
+We now apply our mass-conserving hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics for a realistic distribution of sliding and basal melt rate.
 
-The PISM ice dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and the model for till friction angle, followed those in \cite{AschwandenAdalgeirsdottirKhroulev}.  The present-day climate including surface temperature and mass balance was from \citep{Ettemaetal2009}.  The grid sequence was to run for 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation of all model fields at each refinement stage.  This whole spinup used 2800 processor-hours on parallel runs of 72 processors on a linux cluster using 2.2 GHz AMD Opteron Processors.  (This represents a small computation for modern clusters which may have more than 100k processors.)
+\subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and till friction angle, follow \cite{AschwandenAdalgeirsdottirKhroulev}.  The steady present-day climate of the ice sheet, especially surface mass balance and surface temperature \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.  The grid sequence was 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid.  All model fields were bilinearly interpolated at each refinement stage.  This whole spinup used 2800 processor-hours on 72 processors on a linux cluster with 2.2 GHz AMD Opteron processors, a small computation for modern supercomputers.
 
 The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  In the last 100 a of the final stage the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
 
@@ -851,11 +851,13 @@ The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uni
 \label{fig:Greenhydroinputs}
 \end{figure*}
  
-The results of this whole-ice-sheet spinup were validated by comparing results to present-day observations.  Though the model is in nearly steady state, the actual ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  We see that, the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.  Our model uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities.
+The results of this whole-ice-sheet spinup were validated by comparing results to present-day observations.  (Though the model is in nearly steady state, the actual Greenland ice sheet may not be as close to steady.)  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  We see that the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.  However, our model uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities \citep{AschwandenAdalgeirsdottirKhroulev}.
 
 The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding roughly coincide with areas of basal melt because modeled basal resistance comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
 
-\subsubsection{Experimental setup}  We then used the fields $H$, $m$, $|\bv_b|$ as steady data in five model-year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling is tested here.  That is, a steady ice dynamics model fed its fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values (for both models) and $P=0$ initial values (for \texttt{distributed}).
+\subsubsection{Experimental setup}  We used fields $H$, $m$, $|\bv_b|$ from the spun-up state as steady data in five model-year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling was tested: a steady ice dynamics model fed its fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values and $P=0$ initial values (for \texttt{distributed}).
+
+These runs had 1.05 million subglacial hydrology grid points at which variables $W$, $\Wtil$, and $P$ were recomputed at each time-step according to the numerical model described in section \ref{sec:num}.  In both \texttt{routing} and \texttt{distributed} models the modelled hydrological system became quite steady after the first three model years.
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
@@ -864,9 +866,9 @@ The spun-up initial state includes, in particular, modelled ice thickness $H$, b
 \label{fig:Greenroutingresults}
 \end{figure*}
 
-These runs had 1.05 million subglacial hydrology grid points at which variables $W$, $\Wtil$, and $P$ were recomputed at each time-step according to the numerical model described in section \ref{sec:num}.  In both \texttt{routing} and \texttt{distributed} models the modelled hydrological system became quite steady after the first three model years.  The adaptively-determined time-steps for the hydrology model reached a steady level of 4 model hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the complete \texttt{distributed} model the time steps were actually slightly longer than \texttt{routing} primarily because the routing model concentrates large water amounts, and thus fluxes, along steepest-descent paths.  In the \texttt{distributed} model the time steps were about 6 model hours based on speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and substantially-smaller maximum diffusivities of about $D$ of 0.25 $\text{m}^2\,\text{s}^{-1}$.  (Note comments on the actual diffusivity of advective fluxes in subsection \ref{subsec:steady}.  Also, higher water velocities $\bV$ were seen in the \Nbreen case in section \ref{sec:num}, based on additional simulated surface water input added to the thermodynamically-generated basal melt rate \citep{vanPeltthesis}.  In that tidewater glacier case the pressure-evolution time-steps are seen to be substantially shorter than the mass-conservation time steps.)
+The adaptively-determined time-steps for the hydrology model reached a steady level of 4 model hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the \texttt{distributed} model the time steps were actually slightly longer, primarily because \texttt{routing} concentrates large water amounts and fluxes along steepest-descent paths.  The time steps were about 6 model hours based on speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and smaller maximum diffusivities $D$ of about 0.25 $\text{m}^2\,\text{s}^{-1}$.  (Higher water velocities $\bV$ were seen in the 250 m grid resolution \Nbreen case mentioned in section \ref{sec:num}, based on additional simulated surface water input added to the thermodynamically-generated basal melt rate \citep{vanPeltthesis}, and the pressure time steps in that case were shorter than the mass time steps.)
 
-\subsubsection{\texttt{routing} results}  The final values of $\Wtil$ and $W$ for the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  We see that the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  In the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential; this effect is seen in detail in Figure \ref{fig:Greenroutingdetail}.  The grid resolution of 2 km, while very high for contemporary ice dynamics models, still represents a significant spatial ``smearing'' of the flow pathways.  Specifically, though relatively few areas have $W>1$, the continuum limit of the model would be expected to have $W\gg 1$ in concentrated pathways of a few meters to tens of meters width.  These effects are seen in detail in Figure \ref{fig:Greenroutingdetail}.
+\subsubsection{\texttt{routing} results}  The final values of $\Wtil$ and $W$ for the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  We see that the till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  In the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential; this effect is seen in detail in Figure \ref{fig:Greenroutingdetail}.  The grid resolution of 2 km, while very high for contemporary ice dynamics models, still represents a significant spatial ``smearing'' of the flow pathways.  Specifically, though relatively few areas have $W>1$ m, the continuum limit of the model would be expected to have $W\gg 1$ m in concentrated pathways of a few meters to tens of meters width.
 
 \begin{figure*}[ht]
 \includegraphics[height=2.7in,keepaspectratio=true]{detail-routing-decoupled-bwat}
@@ -874,21 +876,20 @@ These runs had 1.05 million subglacial hydrology grid points at which variables 
 \label{fig:Greenroutingdetail}
 \end{figure*}
 
-On the one hand this model could be regarded as a minimal ``conduit-like'' description of the subglacial flow, because of these model concentrated pathways.  On the other hand, as noted in the introduction, there is no ``R-channel'' mechanism used in this paper; in that mechanism the dissipation heating of the flowing water would generate wall melt-back to hold the channel open.  Thus the time-dependence and flux magnitudes in the model are not ``R-channel''-like.  At a more basic level, the authenticity of subglacial ``channel'' geometry here is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited; this effect is severe in the Eastern outlet glaciers (Helheim and Kangerdlugssuaq) shown in Figure \ref{fig:Greenroutingdetail}.
+This model could be regarded as a minimal ``conduit-like'' description of the subglacial flow, because of these concentrated pathways.  As noted in the introduction, however, our model has no ``R-channel'' conduit mechanism, in which dissipation heating of the flowing water generates wall melt-back.  The location of pathways/conduit here is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited; the results are especially suspect in the Eastern outlet glaciers in Figure \ref{fig:Greenroutingdetail}.
 
-\subsubsection{\texttt{distributed} results}  The final values of $W$ and the relative water pressure $P/P_o$ for the five model-year \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is full ($\Wtil=\Wtilmax=2$ m) in essentially all areas where basal melt occurs, so $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case.  (Note the simple $\Wtil$ evolution equation given in section \ref{sec:tillmechanics}.)
+\subsubsection{\texttt{distributed} results}  The final values of $W$ and the relative water pressure $P/P_o$ for the five model-year \texttt{distributed} run are shown in Figure \ref{fig:Greendistributedresults}.  Again the till is full ($\Wtil=2$ m) in essentially all areas where basal melt occurs, and indeed $\Wtil$ is not shown because it is identical to that in the \texttt{routing} model in this one-way coupled case.
 
-Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The tendency of this effect to spread out the water $W$, relative to the \texttt{routing} model, is clearly seen in the \texttt{distributed} results in Figure \ref{fig:Greendistributedresults}.  There is no strong concentration of $W$ along curves of steepest descent of the hydraulic potential.  This result is strongly dependent on the opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$; see Tables \ref{tab:constants} and \ref{tab:correspondence}.  (These are in addition to the Darcy flux model parameters $\alpha,\beta,k$ already used in the \texttt{routing} model.)  Parameter identification through observed data is obviously needed, but it is beyond the scope of the current paper.
+Recall that $|\bv_b|$ determines the pressure drop caused by cavitation.  The effect is to spread out the water $W$ relative to the \texttt{routing} model, as clearly seen in Figure \ref{fig:Greendistributedresults}.  There is no strong concentration of $W$ along curves of steepest descent of the hydraulic potential.  This result depends, however, on the opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$; see Tables \ref{tab:constants} and \ref{tab:correspondence}.  Darcy flux model parameters $\alpha,\beta,k$ are also important.  Parameter identification using observed surface data, though needed, is beyond our current scope.
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwat} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwprel}}
-\caption{Outputs from the \texttt{distributed} hydrology model are the modelled till-stored water layer thickness $\Wtil$ (not shown because it is identical to the result from the \texttt{routing} model in this case; see text), the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure relative to overburden pressure $P/P_o$ (right).}
+\caption{Outputs from the \texttt{distributed} hydrology model include the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure, shown relative to overburden pressure $P/P_o$ (right).}
 \label{fig:Greendistributedresults}
-% note routing-decoupled-bwat.png is not shown but it really is identical to routing-decoupled-tillwat.png
 \end{figure*}
 
-As a final observation about the \texttt{distributed} model results, we examine the local relationship between water amount $W$ and pressure $P$.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show the large spatial variations which are characteristic of a real ice sheet.
+We can examine the local relationship between water amount $W$ and pressure $P$ in the \texttt{distributed} results.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show the large spatial variations which are characteristic of a real ice sheet.  Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each scatter plot, then there is usually a rough increasing relationship between $W$ and the relative pressure $P/P_o$.  At fast-sliding locations the water amount is often comparable to the bed roughness scale $W_r$.  For low sliding velocities we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  In thick ice the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure also have low ice thickness.  Note Figure \ref{fig:GreenisPofW} would show even more scatter if the run were not close to steady state, for example if there were time-varying surface melt input into the subglacier \citep{vanPeltthesis}.
 
 \newcommand{\myheight}{2.0in}
 \begin{figure*}[ht]
@@ -899,33 +900,30 @@ As a final observation about the \texttt{distributed} model results, we examine 
 \label{fig:GreenisPofW}
 \end{figure*}
 
-Figure \ref{fig:GreenisPofW} shows that if we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each scatter plot, then there is usually a rough increasing relationship between $W$ and the relative pressure $P/P_o$.  Recall that in exact steady state the equation \eqref{eq:PofWsteady} applies; see also Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po}.  At fast-sliding locations the water amount is often comparable to the bed roughness scale $W_r$.  For low sliding velocities we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  Furthermore we can observe that in thick ice with high overburden pressure the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure also have low ice thickness.  Figure \ref{fig:GreenisPofW} would show even more scatter if the run were not close to steady state, such as if there were time-varying surface melt input into the subglacier \citep{vanPeltthesis}.
 
-It would be possible to implement a model without a pressure evolution equation like \eqref{eq:regpressureequation}, and instead use \eqref{eq:PofWsteady} as a prescribed relation $P(W)$.  However, we prefer such a local relationship to ``emerge'' in steady state, as here.  Tests of the model with time-dependent inputs clearly suggest the importance of a full pressure evolution equation to modeling response to a seasonal surface melt cycle \citep{vanPeltthesis}.
-
-
-\conclusions  \label{sec:conclusion}  The literature of subglacial hydrology modeling has grown rapidly in the last five years.  In this context the current paper, which documents additions made to the Parallel Ice Sheet Model in its 0.6 version released February 2014, is both novel and comprehensive, despite primarily describing the details of a PISM submodel.  It is novel in these features:\begin{itemize}
-\item parallel implementation in two horizontal dimensions at scale (sections \ref{sec:num} and \ref{sec:results}) of a coupled till-and-linked-cavities model,
-\item a new analysis of steady state explaining the degree to which a functional relationship $P(W)$ is justified (subsection \ref{subsec:steady}),
-\item an exact solution of the coupled mass and pressure equations of the distributed model in the steady angularly-symmetric case (subsection \ref{subsec:steady}), plus verification using this solution (section \ref{sec:results}), and
-\item an englacial porosity regularization which is shown to allow a practical numerical model in which physically-motivated bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:closures} and \ref{sec:num}).
+\conclusions  \label{sec:conclusion}  The literature of subglacial hydrology modeling has grown rapidly in the last five years.  This model-description paper, which documents additions made to the Parallel Ice Sheet Model in its 0.6 version released February 2014, is, however, both novel and comprehensive.  It is novel in these features:\begin{itemize}
+\item a 2D parallel implementation in of a coupled till-and-linked-cavities model (sections \ref{sec:elements}--\ref{sec:num}),
+\item an englacial porosity regularization which allows a practical numerical model in which physical bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:closures} and \ref{sec:num}),
+\item an analysis of steady state (subsection \ref{subsec:steady} and Appendix A), describing the diffusivity of the advective flux,
+\item an exact solution of the coupled mass and pressure equations in the steady radial case (section \ref{sec:exactsolution}), leading to verification (section \ref{sec:results}), and
+\item demonstration at whole ice-sheet scale on a million-point hydrology grid (section \ref{sec:results}).
 \end{itemize}
-We believe, however, that the comprehensive treatment here of certain subjects is also important.  We assert that
+The comprehensive treatment here of certain subjects is also important.  We have
 \begin{itemize}
-\item we have clarified the relationship of several ``closures'' which turn morphological ideas about the subglacial aquifer into concrete pressure equations (section \ref{sec:closures}), and
-\item we have implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
+\item clarified the relationship of several ``closures'' which turn morphological ideas about the subglacial aquifer into concrete pressure equations (section \ref{sec:closures}), and
+\item created and implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
 \end{itemize}
-On the other hand, a deliberate limitation in scope of the current paper is that we demonstrate only one-way coupling: the PISM ice flow and thermodynamics model feeds basal melt rate and sliding speed values to the hydrology model.  Two-way coupling in a high-resolution model for the whole of the Greenland ice sheet will appear in future work.
+A deliberate limitation in scope of the current paper is that we show only one-way coupling: the PISM ice flow and thermodynamics model feeds basal melt rate and sliding speed values to the hydrology model.  Two-way coupling  will appear in future work.
 
 \begin{acknowledgements}
-The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Discussions with, and detailed comments by, Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
+The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Detailed comments by Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
 \end{acknowledgements}
 
 
 %\bibliography{ice-bib}  % generally requires link to pism/doc/ice-bib.bib
 %\bibliographystyle{copernicus}
 
-\begin{thebibliography}{68}
+\begin{thebibliography}{67}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{{\tt #1}}
 \providecommand{\urlprefix}{URL }
@@ -1138,12 +1136,6 @@ Morton, K.~W. and Mayers, D.~F.: Numerical {S}olutions of {P}artial
   {D}ifferential {E}quations: {A}n {I}ntroduction, Cambridge University Press,
   2nd edn., 2005.
 
-\bibitem[{Nowicki and others(2013)Nowicki et~al.}]{Nowicki2013GreenlandSeaRISE}
-Nowicki, S. et~al.: Insights into spatial sensitivities of ice mass response to
-  environmental change from the SeaRISE ice sheet modeling project: II.
-  Greenland, J. Geophys. Res.: Earth Surface, 118, 1025--1044,
-  \doi{10.1002/jgrf.20076}, 2013.
-
 \bibitem[{Nye(1976)}]{Nye1976}
 Nye, J.~F.: Water flow in glaciers: {J}\"okulhlaups, tunnels and veins, J.
   Glaciol., 17, 181--207, 1976.
@@ -1245,11 +1237,6 @@ van Pelt, W.: Modelling the dynamics and boundary processes of {S}valbard
   glaciers, Ph.D. thesis, Institute for Marine and Atmospheric Research Utrecht
   (IMAU), The Netherlands, 2013.
 
-\bibitem[{van Pelt et~al.(2012)}]{vanPeltetal}
-van Pelt, W. et~al.: Simulating melt, runoff and refreezing on
-  {N}ordenski\"oldbreen, {S}valbard, using a coupled snow and energy balance
-  model, The Cryosphere, 6, 641--659, \doi{10.5194/tc-6-641-2012}, 2012.
-
 \bibitem[{V{\'a}zquez(2007)}]{VazquezPME}
 V{\'a}zquez, J.~L.: The {P}orous {M}edium {E}quation, Oxford Mathematical
   Monographs, The Clarendon Press Oxford University Press, Oxford, 2007.
@@ -1277,21 +1264,17 @@ Winkelmann, R. et~al.: The {P}otsdam {P}arallel {I}ce {S}heet
 
 \appendix
 
-\section{Analysis of steady states}
+\section{Analysis of steady states}  Relative to the time-dependent form \eqref{eq:bluebox}, steady-state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} have separate balances between the divergence of the flux and the water input (equation \eqref{eq:masscontsteady}), and the opening and closing processes (equation \eqref{eq:openclosesteady}).
 
-\subsection{Pressure as a function of $W$ in steady state}  Relative to the time-dependent form \eqref{eq:bluebox}, in steady-state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} we see there are separate balances between the divergence of the flux and the water input on the one hand (equation \eqref{eq:masscontsteady}), and the opening and closing processes on the other hand (equation \eqref{eq:openclosesteady}).  The latter balance allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.
-
-Steady state is only possible if a condition holds:
+Equation \eqref{eq:openclosesteady} allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  Steady state is only possible if a condition holds:
 \begin{equation}
 c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 W. \label{eq:steadyboundfirst}
 \end{equation}
-That is, steady state is only possible if the maximum closing rate $\mathcal{C}(N,W)$, which depends on pressure $P$, can match the opening rate $\mathcal{O}(|\bv_b|,W)$, which is pressure-independent.  The maximum closure rate occurs at zero water pressure, thus \eqref{eq:steadyboundfirst}.
-
-We define the following scaled basal sliding speed which has units of pressure:
+That is, the maximum closing rate $\mathcal{C}(N,W)$, which occurs at zero water pressure, must match the opening rate $\mathcal{O}(|\bv_b|,W)$, which is pressure-independent.  Define the following scaled basal sliding speed which has units of pressure; it is a scale for the pressure drop from cavitation:
 \begin{equation}
 s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.  \label{eq:definesb}
 \end{equation}
-One may regard $s_b$ as a scale for the pressure drop from cavitation.  Then \eqref{eq:steadyboundfirst} is equivalent to
+Then \eqref{eq:steadyboundfirst} is equivalent to
 \begin{equation}
 W \ge W_c := \frac{s_b^3}{s_b^3 + P_o^3} W_r. \label{eq:steadyboundsecond}
 \end{equation}
@@ -1303,7 +1286,7 @@ Note that in \eqref{eq:PofWsteady} we have $P(W_c)=0$.  Underpressure ($P=0$) wi
 
 \newcommand{\upto}{ \!\!\nearrow\! }
 \newcommand{\downto}{ \!\searrow\! }
-Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for different values of sliding speed $|\bv_b|$, and Figure \ref{fig:psteady-Po} for values of overburden pressure $P_o$.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ as $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} do not include the underpressure cases $0\le W < W_c$.
+Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady} for different values of sliding speed $|\bv_b|$, and Figure \ref{fig:psteady-Po} shows the function for values of overburden pressure $P_o$.  We see that as the water amount reaches the roughness scale ($W\upto W_r$) the pressure rises rapidly to overburden ($P(W) \upto P_o$).  At the other extreme, we see that $P(W) \downto 0$ as $W \downto W_c$.  The curves $P(W)$ in Figures \ref{fig:psteady-vb} and \ref{fig:psteady-Po} do not include the underpressure cases $0\le W < W_c$ wherein \eqref{eq:steadyboundsecond} is violated.
 
 \begin{figure}[ht]
 \includegraphics[width=2.8in,keepaspectratio=true]{psteady-vb}
@@ -1317,11 +1300,9 @@ Figure \ref{fig:psteady-vb} shows the function $P(W)$ from \eqref{eq:PofWsteady}
 \label{fig:psteady-Po}
 \end{figure}
 
-Recall that \cite{FlowersClarke2002_theory} propose function $P_{FC}(W)$ for both steady and nonsteady circumstances.  Both functions $P(W)$ in \eqref{eq:PofWsteady} and $P_{FC}(W)$ in \eqref{eq:PofWFC} are increasing.  They both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity, as it does here, if cavitation influences the water pressure.
+Recall that \cite{FlowersClarke2002_theory} propose function $P_{FC}(W)$ for both steady and nonsteady circumstances.  Both functions $P(W)$ in \eqref{eq:PofWsteady} and $P_{FC}(W)$ in \eqref{eq:PofWFC} are increasing.  They both relate the water pressure to the overburden pressure $P_o$.  However, while in \eqref{eq:PofWsteady} the relation to $P_o$ is additive, in \eqref{eq:PofWFC} it is a multiplicative scaling.  The power law form \eqref{eq:PofWFC} is not justified by the physical reasoning which led to equation \eqref{eq:PofWsteady}, even in steady state.   It would appear that any functional relationship $P(W)$ should also depend on the sliding velocity, as it does here, if cavitation influences the water pressure.  Also, the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, but this condition does not arise in \eqref{eq:PofWsteady}.  In the current paper is that we do not set a relationship $P=P(W)$ at all, even though such a relation emerges in runs with steady state inputs.
 
-Of course the $W>W_{\text{crit}}$ case gives $P_{FC}(W) > P_o$ in \eqref{eq:PofWFC}, but this condition does not arise in \eqref{eq:PofWsteady}.  An important contrast between the \cite{FlowersClarke2002_theory} theory and the current paper is that we will not assume a relationship $P=P(W)$ in nonsteady conditions, even though such a relation emerges in our theory in the steady state case.
-
-\subsection{Flux in steady state}  We now consider how the steady state water velocity $\bV$, and the associated flux $\bq$, depends on other quantities.  Because $\bV$ depends on $\grad P$, according to equations \eqref{eq:Vsteady} and \eqref{eq:PofWsteady} in steady state we have
+We now consider how the steady state water velocity $\bV$, and the associated flux $\bq$, depends on other quantities.  Because $\bV$ depends on $\grad P$, according to equations \eqref{eq:Vsteady} and \eqref{eq:PofWsteady} in steady state we have
 \begin{equation}
 \frac{\partial P}{\partial W} = \frac{s_b W_r}{3 W^{4/3} (W_r - W)^{2/3}} \label{eq:dPdWsteady}
 \end{equation}
@@ -1332,7 +1313,7 @@ if $W_c < W < W_r$.  If $W\le W_c$ then $\partial P/\partial W$ is undefined, an
 \end{align}
 where $\psi_o = P_o + \rho_w g b$.
 
-Formula \eqref{eq:Vsteadyexpand} helps us understand the steady state meaning of the advective flux ``$\bV W$'' in $\bq$.  The direction of water velocity $\bV$ is determined by a combination of a geometric direction ($\grad \psi_o$), a direction derived from spatial variations in the sliding speed ($\grad s_b$), and a diffusive direction ($\grad W$).  Thus a portion of $\bV W$ is diffusive in steady state, in addition to the \emph{a priori} diffusive flux $- D \grad W$.  In fact we can write the whole flux as a linear combination of gradients,
+Formula \eqref{eq:Vsteadyexpand} helps us understand the advective flux ``$\bV W$'' in $\bq$.  The direction of water velocity $\bV$ is determined by a combination of a geometric direction ($\grad \psi_o$), a direction derived from spatial variations in the sliding speed ($\grad s_b$), and a diffusive direction ($\grad W$).  Thus a portion of $\bV W$ is diffusive in steady state, in addition to the \emph{a priori} diffusive flux $- D \grad W$.  In fact we can write the whole flux as a linear combination of gradients,
 \begin{equation}
 \bq = - k A_1 \grad \psi_o + k A_2 \grad s_b - k A_3 \grad W,  \label{eq:qabstract}
 \end{equation}
@@ -1344,16 +1325,11 @@ with coefficients
 \end{align}
 The first two coefficients $A_1,A_2$ go to zero as $W\to 0$, but $A_3$ remains large when $W\to 0$ as long as sliding is occurring ($s_b > 0$).  Thus for low water amount and sustained sliding we should think of the water as diffusing in the layer.  When the water thickness is greater, namely if it is almost the roughness scale ($W\lesssim W_r$), then $A_3$ is large in sliding cases ($s_b>0$); again the effect is diffusive.
 
-It is not surprising that when the ice thickness, bed elevation, sliding velocity, or water thickness fields are highly-variable in space then we can expect larger speeds $|\bV|$ in steady state, and formula \eqref{eq:qabstract} reflects this intuition.  The magnitude of the velocity determines the CFL time step restriction \citep{MortonMayers}, so spatial variability will generally shorten time steps; see section \ref{sec:num}.
-
-
-\subsection{Hydraulic conductivity in steady state}  In steady state the water amount $W$ roughly scales with $1/k$ where $k$ is the hydraulic conductivity.  In fact, if we combine equation \eqref{eq:masscontsteady} with \eqref{eq:qabstract} and rearrange slightly then we find
+In steady state the water amount $W$ roughly scales with $1/k$ where $k$ is the hydraulic conductivity.  In fact, if we combine equation \eqref{eq:masscontsteady} with \eqref{eq:qabstract} and rearrange slightly then we find
 \begin{equation}
 -\Div \left(A_3 \grad W\right) = \frac{m}{k \rho_w} + \Div \left(A_1 \grad \psi_o\right) - \Div \left(A_2 \grad s_b\right).  \label{eq:ellipticforWsteadyone}
 \end{equation}
 
-One may regard \eqref{eq:ellipticforWsteadyone} as a non-linear elliptic equation for $W$.  In fact, in the case where $H$, $b$, and $|\bv_b|$ are all spatially-uniform, so that $\grad \psi_o = \grad s_b = 0$, equation \eqref{eq:ellipticforWsteadyone} is of the form $-\Div \left(A_3(W) \grad W\right) = m/(k \rho_w)$ where $A_3(W) = A_3$ is given in \eqref{eq:qcoefficient}.  If $W$ is both bounded away from zero and bounded away from the roughness scale $W_r$ (i.e.~there is $\eps>0$ so that $\eps < W < W_r-\eps$) then this equation is uniformly elliptic.  Thus a maximum principle applies \citep{Evans}.  This means that the maximum of $W$ will equal or exceed the maximum of $W$ along the boundary of that region, so the graph of $W$ is concave down.  However, if $W\approx 0$  or $W\lesssim W_r$ then the diffusivity coefficient $A_3(W)$ will be large and so the values of $W$ away from the boundary will be flattened-out by the resulting fast diffusion.
-
-Furthermore the values of $W$ will scale with $1/k$.  Indeed, for the simpler equation $-\Div \left(D_0 \grad W\right) = m_0/(k \rho_w)$, with $D_0,m_0$ positive constants, on a disc of radius $L$, and zero boundary values, the solution $W(r) = m_0 (1-(r/L)^2) / (4 k D_0 \rho_w)$ has a maximum value $W(0)$ which precisely scales as $1/k$.  As seen in numerical results, the solution $W$ of \eqref{eq:ellipticforWsteadyone} will also scale with $1/k$ if $\grad \psi_o$ and $\grad s_b$ are not too large, though fast-diffusion flattening of the maximum of $W$ will occur when $W$ is close to the limits of the interval $[0,W_r]$.
+One may regard \eqref{eq:ellipticforWsteadyone} as a non-linear elliptic equation for $W$.  In fact, in the case where $H$, $b$, and $|\bv_b|$ are all spatially-uniform, so that $\grad \psi_o = \grad s_b = 0$, equation \eqref{eq:ellipticforWsteadyone} is of the form $-\Div \left(A_3(W) \grad W\right) = m/(k \rho_w)$ where $A_3(W) = A_3$ is given in \eqref{eq:qcoefficient}.  If $W$ is both bounded away from zero and bounded away from the roughness scale $W_r$ (i.e.~there is $\eps>0$ so that $\eps < W < W_r-\eps$) then this equation is uniformly elliptic.  Thus a maximum principle applies \citep{Evans}.  This means that the maximum of $W$ will equal or exceed the maximum of $W$ along the boundary of that region, so the graph of $W$ is concave down.  Thus the values of $W$ will scale with $1/k$.  Indeed, for the simpler equation $-\Div \left(D_0 \grad W\right) = m_0/(k \rho_w)$, with $D_0,m_0$ positive constants, on a disc of radius $L$, and zero boundary values, the solution has maximum value $W(0)$ which precisely scales as $1/k$.  As seen in numerical results, the solution $W$ of \eqref{eq:ellipticforWsteadyone} will also scale with $1/k$ if $\grad \psi_o$ and $\grad s_b$ are not too large.  (However, if $W\approx 0$  or $W\lesssim W_r$ then the diffusivity coefficient $A_3(W)$ will be large and so the values of $W$ away from the boundary will be flattened-out by the resulting fast diffusion.)
 
 \end{document}
