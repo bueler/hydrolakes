@@ -477,6 +477,7 @@ The above list does not imply that all possible subglacial hydrology models are 
 0 &= - \Div \bq + \frac{m}{\rho_w}, \label{eq:masscontsteady} \\
 0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
+Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are stated in the one-dimensional case by \cite{Schoofetal2012} model, where the decoupling is also noted; see equations (5.8) and (5.10) in \citep{Schoofetal2012}.
 
 We can make four specific observations about solutions to \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}, which we find are useful in understanding the time-dependent model at longer time-scales also:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
@@ -486,38 +487,31 @@ We can make four specific observations about solutions to \eqref{eq:Vsteady}--\e
 \item the water amount $W$ generally scales inversely with the conductivity, and
 \item exact solutions can be constructed.
 \end{enumerate}
-In Appendix A we detail points (\emph{i}), (\emph{ii}), and (\emph{iii}).  Observation (\emph{iv}) is addressed in section \ref{sec:exactsolution}, next.
-
-Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are stated in the one-dimensional case by \cite{Schoofetal2012} model, where the decoupling is also noted; see equations (5.8) and (5.10) in \citep{Schoofetal2012}.
+In Appendix A we detail points (\emph{i}), (\emph{ii}), and (\emph{iii}).  Observation (\emph{iv}) is addressed in the next section \ref{sec:exactsolution}.
 
 
 \section{An exact steady state solution}  \label{sec:exactsolution}
 
-\subsection{Radial equations}  The above steady equations are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane, in a case with nontrivial overburden pressure and nontrivial ice sliding speed.  This solution, which is useful for verifying numerical schemes, depends on the numerical solution of a scalar first-order ordinary differential equation (ODE) initial value problem, something we can do with high accuracy.  Traveling wave exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.
+\subsection{Radial equations}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane, in a case with nontrivial overburden pressure and ice sliding speed.  This solution is useful for verifying numerical schemes.  It depends on the numerical solution of a scalar first-order ordinary differential equation (ODE) initial value problem, something we can do with high accuracy.  Traveling wave exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.
 
-Consider steady state equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady}, and assume all quantities only depend on the radial coordinate $r = \sqrt{x^2+y^2}$.  One may eliminate $\bV$.  In the flat bed case ($b=0$) the resulting pair of equations is
+Consider the flat bed case ($b=0$).  Assuming dependence only on the radial coordinate $r = \sqrt{x^2+y^2}$, from equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} one may eliminate the velocity to get
 \begin{align}
 &q = - k W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
 &\frac{1}{r}\frac{d}{dr}\left(r\,q\right) = \frac{m}{\rho_w}. \label{eq:rsconserve}
 \end{align}
 
-In the case of constant water input where $m = m_0 > 0$, which we assume for the exact solution, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
+In the case of constant water input $m = m_0$, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
 \begin{equation}
 q(r) = \frac{m_0}{2\rho_w} \, r. \label{eq:qradial}
 \end{equation}
 Suppose $h(r)$ is given so that $P_o(r)$ is also determined.  Assume that the scaled sliding speed $s_b(r)$ has a bounded derivative and that the solution $W(r)$ satisfies conditions $W_c < W < W_r$; these properties can be verified for the constructed solution.  By combining \eqref{eq:PofWsteady}, \eqref{eq:dPdWsteady}, \eqref{eq:rsflux}, and \eqref{eq:qradial} we can eliminate $q$ and $P$ to find
 \begin{align}
-&\omega_0\, r = - W\, \bigg[\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W}\right)^{1/3}  \label{eq:ODEfirst} \\
+&\omega_0\, r = - W\, \bigg[\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W}\right)^{1/3}  \label{eq:WradialODE} \\
 &\qquad \qquad \qquad + \left(\frac{s_b W_r}{3 W^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\bigg] \notag
 \end{align}
 where $\omega_0 = m_0 / (2 \rho_w k)$.
 
-Equation \eqref{eq:ODEfirst} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver we solve it for $dW/dr$:
-\begin{equation}
-\frac{dW}{dr} = \frac{\frac{ds_b}{dr} W \tilde W - \Big[\omega_0\, r W^{-1} + \frac{dP_o}{dr}\Big] W^{4/3} \tilde W^{2/3}}{\frac{1}{3} s_b W_r + \rho_w g W^{4/3} \tilde W^{2/3}}.
-\label{eq:WradialODE}
-\end{equation}
-where $\tilde W = W_r - W$ is the amount by which the water is below the roughness scale.
+Equation \eqref{eq:WradialODE} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver we solve it for $dW/dr$.
 
 \subsection{A nontrivial solution}  \label{subsect:exactsoln}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin (a cliff) so that $P_o(L^-)>0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and by \eqref{eq:steadyboundfirst} we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
 
@@ -525,9 +519,9 @@ It is useful to have an ice cap geometry in which the surface gradient formula i
 \begin{equation}
 H(r) = H_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
 \end{equation}
-where $H(0)=H_0$ is the height of the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $H(L)=0.19 h_0$ is the size of the cliff.
+where $H(0)=H_0$ is the height (thickness) at the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $H(L)=0.19 h_0$ is the size of the cliff.
 
-The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but a coupled ice and water dynamics solution is unnecessary for hydrology model verification.  Instead we choose a well-behaved sliding speed function which has no sliding near the ice cap center, until a radius $r=R_1$ at which sliding starts and then increases in the radial direction:
+The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but for hydrology model verification we simply choose a well-behaved sliding speed function which has no sliding near the ice cap center, until a radius $r=R_1$ at which sliding increases:
 \begin{equation}
 |\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
                            v_0  \left(\frac{r-R_1}{L-R_1}\right)^5, & R_1 < r \le L.
@@ -535,30 +529,30 @@ The sliding speed could be determined by a model for stresses at the ice base an
 \end{equation}
 It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
 
-Now we solve ODE \eqref{eq:WradialODE} with initial condition $W(L)$ and using the specific values in Table \ref{tab:verifconstants}.  We use adaptive numerical ODE solvers, both a Runge-Kutta 4(5) Dormand-Prince method and a variable-order stiff solver, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$.  The two solvers gave essentially identical results.  Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed at $r\approx R_1$.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.
+Now we solve ODE \eqref{eq:WradialODE} with initial condition $W(L)$ and the specific values in Table \ref{tab:verifconstants}.  We use adaptive numerical ODE solvers, both a Runge-Kutta 4(5) Dormand-Prince method and a variable-order stiff solver, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$.  The two solvers gave essentially identical results.  Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed at $r\approx R_1$.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.
 
 Because equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}, we can also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure.  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$, but at $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.  Figure \ref{fig:Pexact} shows the corresponding pressure solution $P(r)=P(W(r))$ from \eqref{eq:PofWsteady}.
 
-\begin{table*}[ht]
+\begin{table}[ht]
   \centering
   \caption{Constants used in constructing the exact solution.}
-  \begin{tabular}{lllp{3.0in}}
+  \begin{tabular}{llll}
     \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
 \hline
     $\alpha$ & $1$ & & power in flux \\
     $\beta$  & $2$ & & power in flux \\
-    $H_0$ & $500$ & m & ice cap center thickness \\
+    $H_0$ & $500$ & m & center thickness \\
     $k$   & $0.01/(\rho_w g)$ & $\text{m}^3\,\text{s}\,\text{kg}^{-1}$ & hydraulic conductivity \\
-    $L$   & $22.5$& km & $=0.9 R_0$; location of cliff \\
-    $m_0$ & $0.2\rho_w$ & $\text{kg}\,\text{m}^{-2}\,\text{a}^{-1}$ & constant water input rate; $= 20 \,\text{cm}\,\text{a}^{-1}$ \\
-    $R_0$ & $25$  & km & ideal ice cap radius (at which $H\to 0$) \\
-    $R_1$ & $5$   & km & radial location $r=R_1$ of onset of sliding \\
+    $L$   & $22.5$& km & cliff at $r=0.9 R_0$ \\
+    $m_0$ & $0.2\rho_w$ & $\text{kg}\,\text{m}^{-2}\,\text{a}^{-1}$ & water input rate \\
+    $R_0$ & $25$  & km & ideal ice cap radius \\
+    $R_1$ & $5$   & km & sliding starts \\
     $v_0$ & $100$ & $\text{m}\,\text{a}^{-1}$ & sliding speed scale \\
     $W_r$ & $1$ & m & roughness scale \\
     \hline
   \end{tabular}
  \label{tab:verifconstants}
-\end{table*}
+\end{table}
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{exact-W-plot-onu}
@@ -572,7 +566,7 @@ The reason for stiffness near $R_1$ is that as the sliding goes to zero the cavi
 \end{equation}
 Though we have not derived it this way, Equation \eqref{eq:WradialODEnoslide} is the steady radial form of the mass conservation equation under the ``$P=P_o$'' closure, namely equation \eqref{eq:PisoverConservation}.
 
-In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \omega_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W=W^*= 0.21764$ m because $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers used here confirm that $W(r)$ is asymptotic to this constant value $W^*$ as $r\to 0$, and that $W(r)\approx W^*$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
+In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \omega_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W^*= 0.21764$ m because $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers used here confirm that $W(r)$ is asymptotic to this constant value $W^*$ as $r\to 0$, and that $W(r)\approx W^*$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{exact-P-plot}
@@ -580,12 +574,10 @@ In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies 
 \label{fig:Pexact}
 \end{figure}
 
-In summary, we have derived and analyzed an exact solution, in a case with angular symmetry, of the steady state form of the coupled model \eqref{eq:bluebox}, assuming $\Wtilmax=0$ and $b=0$.  This solution will be helpful in verifying the numerical schemes in the next section.
-
 
 \section{Numerical schemes}  \label{sec:num}
 
-\subsection{Mass conservation: time-stepping}  Mass conservation equation \eqref{eq:adeqn}, which is part of the combined mathematical model \eqref{eq:bluebox}, will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  A pair of schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
+\subsection{Mass conservation: time-stepping}  The mass conservation equation in model \eqref{eq:bluebox} will be discretized by an explicit, conservative finite difference method.   A centered, second-order scheme will be applied to the diffusion part.  Two schemes for the advection part will be compared, namely first-order upwinding and a higher-order flux-limited upwind-biased method.
 
 We first consider stable time steps.  Stability for the advection schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
 \begin{equation}
@@ -593,13 +585,15 @@ We first consider stable time steps.  Stability for the advection schemes occurs
 \end{equation}
 Because of the additional diffusion process, for stability the time step should also satisfy $\Delta t \le \Delta t_{W}$  where \citep{MortonMayers}
 \begin{equation}
-\Delta t_W\, 2 \max D \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{2}. \label{eq:dtDIFFW}
+\Delta t_W\, \max D \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{4}. \label{eq:dtDIFFW}
 \end{equation}
-The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the scheme for \eqref{eq:adeqn}.  Below we show this for the first-order upwind scheme, but standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.
+The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the scheme.  (We show this for the first-order upwind scheme, but standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.)
 
-We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis,vanPeltetal}, using observed ice and bedrock geometry, a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis,vanPeltetal}.  We used a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
 
-This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  The scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction, but we suppose that $\Delta t_{CFL}$ is controlling for $\Delta x \gg 100$ m.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.  If implicit time-stepping is used for the pressure equation, which requires variational inequality treatment \citep{Schoofetal2012}, then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could be removed by implicit steps for the mass-conservation equation, though it would seem this requires another variational inequality formulation because of the lower bound $W\ge 0$.  Our observation that $\Delta t_{CFL} \ll \Delta t_W$ for practical ice sheet grids suggests that implicit time-stepping for the mass-conservation equation is not beneficial.
+This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  The scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction, but we suppose that $\Delta t_{CFL}$ is controlling for $\Delta x \gg 100$ m.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.
+
+If implicit time-stepping is used for the pressure equation, which requires variational inequality treatment to preserve physical pressure bounds \citep{Schoofetal2012}, then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could also be removed by implicit steps for the mass-conservation equation, though it would seem this requires another variational inequality formulation because of the lower bound $W\ge 0$.  Our observation that $\Delta t_{CFL} \ll \Delta t_W$ for practical ice sheet grids suggests that implicit time-stepping for the mass-conservation equation is not beneficial.
 
 \begin{figure}[ht]
 \centering
@@ -645,13 +639,13 @@ v_s &= v_n\big|_{(i,j-1)}, \quad K_s = K_n\big|_{(i,j-1)}, \quad D_s = D_n\big|_
 
 Now we define $Q_e(u_e)$, $Q_w(u_w)$, $Q_n(v_n)$, and $Q_s(v_s)$ as the face-centered (staggered-grid) normal components of the advective flux $\bV W$.  These quantities are described in more detail in the next subsection.  They use only the staggered velocity component but there is upwinding to determine which $W$ value, or combination of $W$ values, is used.
 
-The grid values of $\Div \bq = \Div (\bV W) - \Div (D \grad W)$ using \eqref{eq:velocitycomp} and \eqref{eq:diffusivitycomp} now become:
+The grid values of $\mathcal{D} = \Div \bq = \Div (\bV W) - \Div (D \grad W)$ using \eqref{eq:velocitycomp} and \eqref{eq:diffusivitycomp} now become:
 \begin{align}
 &\mathcal{D}_{i,j} =  \frac{Q_e(u_e) - Q_w(u_w)}{\Delta x} + \frac{Q_n(v_n) - Q_s(v_s)}{\Delta y}  \label{eq:fluxdivgrid} \\
 &\qquad \qquad - \frac{D_e (W_{i+1,j}^l - \Wlij) - D_w (\Wlij - W_{i-1,j}^l)}{\Delta x^2} \notag \\
-&\qquad \qquad - \frac{D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)}{\Delta y^2},  \notag
+&\qquad \qquad - \frac{D_n (W_{i,j+1}^l - \Wlij) - D_s (\Wlij - W_{i,j-1}^l)}{\Delta y^2}.  \notag
 \end{align}
-where ``$\mathcal{D}$'' is for ``divergence.''  To ensure conservation, $Q_e(u_e)$ used in computing $\mathcal{D}_{i,j}$ must be the same as $Q_w(u_w)$ used in computing $\mathcal{D}_{i+1,j}$, and similarly for ``north'' and ``south'' staggered fluxes; our formulas have these properties.
+To ensure conservation, $Q_e(u_e)$ used in computing $\mathcal{D}_{i,j}$ must be the same as $Q_w(u_w)$ used in computing $\mathcal{D}_{i+1,j}$, and similarly for ``north'' and ``south'' staggered fluxes; our formulas have these properties.
 
 Now our scheme for approximating mass conservation equation \eqref{eq:adeqn} is
 \begin{equation}
@@ -663,9 +657,9 @@ The updated value of $\Wtil$, which appears on the left side of \eqref{eq:Wfd}, 
 \end{equation}
 The right-hand-side value is used if it is in the closed interval $[0,\Wtilmax]$, but otherwise the bounds $0\le \Wtil \le \Wtilmax$ are enforced.  Once $\Wtil^{l+1}$ is computed, the value of $W^{l+1}$ can be updated by \eqref{eq:Wfd} in a mass-conserving way.
 
-Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes; see subsection \ref{subsect:discretefluxes} below.
+Assuming no error in the flux components $Q$, the local truncation error \citep{MortonMayers} of scheme \eqref{eq:Wfd} would be $O(\Delta t^1 + \Delta x^2 + \Delta y^2)$ as an approximation of \eqref{eq:adeqn}.  The actual truncation error depends on the nature of the approximation which generates the discrete fluxes, next.
 
-\subsection{Discrete advective fluxes}  \label{subsect:discretefluxes}  Well-chosen discrete approximations of the advective flux $\bV W$ are important to the accuracy of the whole scheme.  Mass conservation of these schemes essentially follows from using the staggered-grid values as described in the last subsection.  In our explicit time-stepping framework we expect, and can show in the simpler first-order case (see next subsection), that stability follows from enforcing a CFL restriction.  To examine accuracy, however, we test two flux discretization schemes \eqref{eq:Wfd}, namely first-order upwind and the Koren flux-limited third-order scheme \citep{HundsdorferVerwer2010}.  Both schemes achieve non-oscillation and positivity, but with different local truncation error and complexity of implementation.  The third-order scheme is best explained as a modification of the better-known conservative (``donor cell''; \cite{LeVeque}) first-order upwind scheme we use.
+\subsection{Discrete advective fluxes}  \label{subsect:discretefluxes}  We test two flux discretization schemes \eqref{eq:Wfd}, namely first-order upwind and the Koren flux-limited third-order scheme \citep{HundsdorferVerwer2010}.  Both schemes achieve non-oscillation and positivity, but with different local truncation error and complexity of implementation.  The third-order scheme is best explained as a modification of the better-known conservative (``donor cell''; \cite{LeVeque}) first-order upwind scheme we use.
 
 In fact, the following formulas apply in the cases $u_e \ge 0$, $u_e < 0$, $v_n \ge 0$, and $v_n < 0$, respectively:
 \begin{align}
@@ -679,13 +673,12 @@ The subscripted $\theta$ quotients are as follows:
 \theta_i &= \frac{W_{i,j}-W_{i-1,j}}{W_{i+1,j} - W_{i,j}}, & (\theta_{i+1})^{-1} &= \frac{W_{i+2,j}-W_{i+1,j}}{W_{i+1,j} - W_{i,j}}, \\
 \theta_j &= \frac{W_{i,j}-W_{i,j-1}}{W_{i,j+1} - W_{i,j}}, & (\theta_{j+1})^{-1} &= \frac{W_{i,j+2}-W_{i,j+1}}{W_{i,j+1} - W_{i,j}}.
 \end{align*}
+
 The first-order upwind scheme simply sets $\Psi(\theta)=0$ in formulas \eqref{eq:adfluxes}.  The Koren scheme ``limits'' its third-order and positive-coefficient correction to the upwind scheme by using this formula \citep{HundsdorferVerwer2010}:
 \begin{equation}
 \Psi(\theta) = \max\left\{0,\min\Big\{1,\theta,\frac{1}{3}+\frac{1}{6} \theta\Big\}\right\}.  \label{eq:korenPsi}
 \end{equation}
-Thus one does not compute $\theta$ quotients at all when using first-order upwind.  On the other hand, when using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is extended because regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are also involved in updating $W_{i,j}$.
-
-The flux-correction-limited Koren third-order scheme bypasses the first-order limitation of positive linear finite difference/volume schemes imposed by Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} by having a nonlinear correction formula, i.e. the combination of \eqref{eq:adfluxes} and \eqref{eq:korenPsi} above.  Though the Koren scheme is usually third-order where smoothness allows, it reverts to first-order at extrema and other non-smooth areas where $\theta \gg 1$ or $\theta \ll 1$.
+When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is extended because regular grid neighbors $W_{i+2,j}$, $W_{i-2,j}$, $W_{i,j+2}$, $W_{i,j-2}$ are also involved in updating $W_{i,j}$.  The flux-correction-limited Koren third-order scheme bypasses the first-order limitation of positive linear finite difference/volume schemes imposed by Godunov's barrier theorem \citep[section I.7.1]{HundsdorferVerwer2010} by having a nonlinear correction formula, i.e. the combination of \eqref{eq:adfluxes} and \eqref{eq:korenPsi} above.  Though the Koren scheme is usually third-order where smoothness allows, it reverts to first-order at extrema and other non-smooth areas where $\theta \gg 1$ or $\theta \ll 1$.
 
 For either the first-order or Koren schemes, if the water input $m$ is negative then we must actively enforce the positivity of the water thickness $W$.  Positivity of the source-free advection-diffusion scheme is a desirable property but it does not ensure positivity of the solution if there is actual water removal (i.e.~if $(m/\rho_w) - \partial \Wtil/\partial t < 0$).  Therefore we project (reset) $W$ to be nonnegative at the end of each time step.
 
@@ -706,7 +699,7 @@ Requiring $\tilde E$ in \eqref{eq:lincomb} to be nonnegative is a sufficient sta
 
 Because the coefficients in linear combination \eqref{eq:lincomb} also add to one, as the reader may check, it follows  from \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW} that the scheme is stable \citep{MortonMayers}.  It also follows from \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW} that if $\Wlij\ge 0$ for all $i,j$ then \eqref{eq:lincomb} gives $W_{ij}^{l+1}\ge 0$, in this $m=0$ and $\Wtilmax=0$ case, which is our positivity claim.  Thus, under conditions \eqref{eq:dtCFL} and \eqref{eq:dtDIFFW}, scheme \eqref{eq:Wfd} is stable and positivity-preserving.
 
-\subsection{Discretization of the pressure equation}  The pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  The time step restriction for our explicit pressure scheme is comparable to \eqref{eq:dtDIFFW}, though the proof above for the stability of the mass conservation scheme does not suffice to \emph{prove} stability.  That is, if the time step satisfies $\Delta t \le \Delta t_P$, where
+\subsection{Discretization of the pressure equation}  The pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  The time step restriction for our explicit pressure scheme is comparable to \eqref{eq:dtDIFFW}, though the proof above for the stability of the mass conservation scheme does not suffice to prove stability.  That is, if the time step satisfies $\Delta t \le \Delta t_P$, where
 \begin{equation}
 \Delta t_P\, \left(\frac{2 \max D}{\phi_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1 \label{eq:dtDIFFP}
 \end{equation}
@@ -746,16 +739,16 @@ The ice geometry may be quite general, with ice-free land or floating ice allowe
 \text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
 \text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
 \end{align*}
-Here we take a sea-water density $\rho_{sw}=1028.0$ and $H_{\text{float}}=h_{i,j} / (1 - r)$  is the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is also true in ice-free ocean.  The subglacial hydrology model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice-filled cells.
+Here we take a sea-water density $\rho_{sw}=1028.0$ and define $H_{\text{float}}=h_{i,j} / (1 - r)$ as the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is also true in ice-free ocean.  The subglacial hydrology model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice-filled cells.
 
 One time step follows this algorithm:
 
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
-\item Get $(\Wtil)_{i,j}^{l+1}$ by \eqref{eq:tillupdatefd}.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
+\item Get $(\Wtil)_{i,j}^{l+1}$ by \eqref{eq:tillupdatefd}.  Enforce $0\le \Wtil \le \Wtilmax$.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}, staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}, velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}, and staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
-\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}, based on the current staggered-grid values of $u,v,$ and $D$.
+\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
 \item Get approximations $\mathcal{D}_{i,j}$ of the flux divergence from \eqref{eq:fluxdivgrid}.  For each direction (i.e.~$x$- and $y$-directions), do not compute the divided-difference contribution to the flux divergence in \eqref{eq:fluxdivgrid} if either neighbor is \texttt{icefree} or \texttt{float}.
 \item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Then use \eqref{eq:Pfdupdate} to compute values for $P_{i,j}^{l+1}$ at the remaining locations.
@@ -771,7 +764,7 @@ This recipe goes with a reporting scheme for mass conservation.  Note that in st
 
 \section{PISM options for hydrology models} \label{sec:pismdoc}
 
-In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the complete model described in this paper.  The other two are reductions; we list them in order of decreasing complexity.  We also give a concordance between the symbols in this paper and the relevant PISM configuration parameters.
+In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the complete model described in this paper.  The other two are reductions; we list them in order of decreasing complexity.
 
 \begin{table*}[t]
   \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by parameter name.  All of these are used in the \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models.} \vskip4mm \centering
@@ -801,29 +794,27 @@ In this section we document the runtime options for the PISM hydrology model \ci
   \label{tab:correspondence}
 \end{table*}
 
-\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:symbols} and \ref{tab:constants}.
+\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:constants} and \ref{tab:symbols}.
 
 \subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of equations \eqref{eq:bluebox}, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
 \begin{align}
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:routingmodel} \\
-&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
-&\tau_c = c_0 + (\tan \varphi)\, \Ntil, \notag \\
-&\Ntil = \min\left\{P_o,\, N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}\right\}, \notag
+&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag
 \end{align}
-along with $s=\Wtil/\Wtilmax$ and the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.
+along with bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.  The determination of $\Ntil$ and $\tau_c$ is unchanged.
 
-\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.   It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The determination of basal yield stress is unchanged.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and the first of equations \eqref{eq:routingmodel} is gone.  Bounds $0\le \Wtil \le \Wtilmax$ remain.
+\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.  It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and the first of equations \eqref{eq:routingmodel} is gone.
 
-\subsection{PISM configuration variables}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
+\subsection{Configurable constants}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
 
 
 \section{Results}  \label{sec:results}
 
 \subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of measuring and analysing the errors made by the numerical scheme, especially as the numerical grid is refined \citep{Wesseling,BLKCB}.
 
-The exact solution described in subsection \ref{subsect:exactsoln}, and shown in Figures \ref{fig:Wexact} and \ref{fig:Pexact}, is for steady-state.  We initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after some period of time integration.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is error.
+We initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after one model-month.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is error.
 
-For the verification runs we use the values in Table \ref{tab:verifconstants}.  We do one model-month runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
+For the verification runs we use the values in Table \ref{tab:verifconstants}.  We do runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{refineWPpism}
@@ -842,7 +833,7 @@ This convergence evidence suggests that the coupled advection-diffusion-reaction
 \label{fig:Greenspinupeval}
 \end{figure*}
 
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in our parallel implementation.
+The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in a parallel implementation like ours.
 
 
 \subsection{Application of the model at ice sheet scale}
