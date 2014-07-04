@@ -141,41 +141,47 @@ width=#3in]{#1.eps}}
 \end{quote}
 
 \medskip
-\noindent Thanks for the quick comments.  I can address them point-by-point.  Most of my effort went into revisions motivated by these comments; the rebuttals below are brief.   The line and equation numbering below refer to the original submitted manuscript.
+\noindent Thanks for the quick, positive, and helpful comments.  I can address them point-by-point.  Most of my effort went into revisions motivated by these comments.  Some rebuttals below may seem flippant but the text itself underwent serious and careful reduction and revision.   The line and equation numbering below refer to the original submitted manuscript.
 
 \subsection*{Detailed replies}  
 \begin{itemize}
-\reply{Overall: This paper is very long, and I believe unduly so. This could impact the review process in that it may scare off potential referees, and the reviews themselves may take longer than usual. In the equation descriptions, there is a fair amount of discussion that could be considered review (e.g. 5.1), and the descriptions of the equations actually used are in some places long-winded (e.g. 5.3). Many of the details of the steady state analysis, while new, should be in an appendix.}{As we have a single model with few parameters which generalizes four major, apparently-disparate published models (i.e.~basically Tulaczyck, LeBrocq, Bartholomaus, and Schoof), there is no way to avoid length.
+\reply{Overall: This paper is very long, and I believe unduly so. This could impact the review process in that it may scare off potential referees, and the reviews themselves may take longer than usual. In the equation descriptions, there is a fair amount of discussion that could be considered review (e.g. 5.1), and the descriptions of the equations actually used are in some places long-winded (e.g. 5.3). Many of the details of the steady state analysis, while new, should be in an appendix.}{As we have a single model which generalizes four major, apparently-disparate published models (i.e.~basically Tulaczyck, LeBrocq, Bartholomaus, and Schoof), there is no way to avoid length.
 
 \medskip
-But I agree.  I have followed your advice to put the steady state analysis in the appendix, and additional reductions make the total length two pages less.  Significantly, the reader gets to the end of the conclusion on page 20 now, as opposed to page 23 before.
+But I agree with the sentiment.  I have followed your advice to put all details of the steady state analysis in the appendix.  Additional reductions make the total length two pages less.  The reader reaches the conclusion on page 20 now, as opposed to page 23 before.
 
 \medskip
-A reader I strongly trust on this, Martin Truffer, managed to get through the whole thing.  Yes, this shows his endurance, but his final comment was ``I am learning a lot reading this, especially a lot of context between these different subglacial drainage models. This is not just a good paper for PISM, it is really educational for any glaciologist.''  So I am going to trust that some readers, and perhaps even some reviewers, get all the way through, and appreciate the comprehensive aspects, the ``fair amount of discussion'' needed to make sense of the nutty state of the current literature.}
+A reader I trust on this, Martin Truffer, managed to get through the whole thing.  Yes, this shows his endurance, but his final comment was ``I am learning a lot reading this, especially a lot of context between these different subglacial drainage models. This is not just a good paper for PISM, it is really educational for any glaciologist.''  So I am going to trust that some readers, and perhaps even some reviewers, get all the way through, and appreciate the comprehensive aspects.  A ``fair amount of discussion'' is needed to make sense of the nutty state of the current literature, given how little of this stuff is observable.}
 
-\reply{Also, something i am curious about -- could a more realistic treatment of till hydrology (with a closure for pore pressure) serve as a better-constrained regularization of the thickness equation?}{It would be nice to have a closure for pore pressure that relates it to cavity/conduit pressure.  Do you have one?  I.e.~do you know how to change the pressure of nearly-zero-conductivity saturated till 10 meters away from a conduit or a cavity of a known pressure?
-
-\medskip
-It must have a lot to do with motion of the till, not just motion of the water through immobile till.  As we want a model which does minimal harm to ice dynamics in PISM, it is more important that it have few parameters than that it have this particular process speculation, in my opinion.  People like Truffer and Tulaczyck are so far not speculating about a meaningfully-area-averaged rule, that I know of.  So I am sticking with a simpler idea, as in Tulaczyck: assume all the water goes in the till.  Then add a simple idea: decide on a capacity for the till; once the till is full the water goes in the transport network.  And the latter has a closure or two; see the paper.
+\reply{Also, something i am curious about -- could a more realistic treatment of till hydrology (with a closure for pore pressure) serve as a better-constrained regularization of the thickness equation?}{It would be nice to have a closure for pore pressure that relates it to cavity/conduit pressure.  Do you have one?  I.e.~do you know how to change the pressure of nearly-zero-conductivity saturated till 10 meters away from a conduit or a cavity of a known pressure?  It must have a lot to do with motion of the till, not just motion of the water through immobile till.
 
 \medskip
-Regarding the role of till in regularizing the transportable water pressure equation:  There isn't such a role as far as I can tell.  The idea about englacial porosity as a regularization is that gravitational potential energy can be had by having the pressure do the work of pushing water up in the network.  For till you'd have to speculate that it is really viscously compressible or something, which is hard to believe (and hard to parameterize, though Clarke (1983) sort of did such a thing).
+As we want a model which does minimal harm to ice dynamics in PISM, it is more important that it have few parameters than to engage in this particular process speculation, \emph{in my opinion}.  Tillologists (Truffer, Tulaczyck, \dots) are so far not speculating about a meaningfully-area-averaged rule, \emph{that I know of}.  This paper sticks with a simpler idea, as in Tulaczyck et all (2000b), the UPB model: assume all the water goes in the till.  Then add a simple idea: decide on a capacity for the till; once the till is full the water goes in the transport network.  And the latter has a pressure model with a closure (or two; see the paper).
 
 \medskip
-Regarding the role of till in regularizing the water layer \emph{thickness} equation:  It is so diffusive that it doesn't really need it.  Not sure I am responding to your curiosity, so moving on \dots}
+Regarding the role of till in regularizing the water layer \emph{thickness} equation:  It is so diffusive that it doesn't need a regularization.  See the discussion of the (nontrivial) diffusiveness in the paper.
+
+\medskip
+Regarding the role of till in regularizing the transportable water \emph{pressure} equation:  There isn't such a role as far as I can tell.  The idea about englacial porosity as a regularization is that gravitational potential energy can be had by having the pressure do the work of pushing water up in the network.  This means pressure waves have a harder time traveling though the system.  For till properties to have the same effect you'd have to speculate that it is really viscously compressible or something, which is hard to believe (and hard to parameterize, though Clarke (1983) sort of did such a thing).
+
+\medskip
+Not sure I am responding to your curiosity, so moving on \dots}
 
 \reply{Detailed comments:
-l65: i'm not sure, but i think ``drained'' refers to the case where the till is well-hydraulically connected to some aquifer of imposed pressure.}{Not sure about ``imposed pressure,'' but if you mean ``modeled pressure,'' then yes that is what we all mean by ``drained.''  That is exactly the meaning I want, and I am now using it throughout.  (Previously ``dumped'' was used in some places.)}
+l65: i'm not sure, but i think ``drained'' refers to the case where the till is well-hydraulically connected to some aquifer of imposed pressure.}{Not sure about ``imposed pressure,'' but if you mean ``modeled pressure,'' then yes that is exactly what we mean by ``drained.''  Previously ``dumped'' was used in some places, i.e.~the excess water is ``dumped'' out of the till into the transport system, but now it is ``drained'' throughout.}
 
 \reply{l117: the placing of the conduits can be quite general, down to the grid scale in hewitt 2013 i believe.}{No doubt, but the key phrases for the reader of this part are that the conduit models have ``no known continuum limit'' and the parameters don't have ``grid-spacing-independent meaning''.
 
 \medskip
-The current conduit models are not ``lattice models'' because they have a grid---that's just numerical PDEs.  They're ``lattice models'' because when you change the spacing between conduits you have to refit the coefficients by some essentially unknown procedure to get the same effect (but on the finer grid \dots).  Said a possibly better way: If Schoof and company knew the continuum limit they would write down a PDE (with spatial derivatives in the directions perpendicular to the conduits, not just along them).  Instead they are o.k.~with readers figuring that someday they will model all the conduits in detail.  As this won't happen for millenia, everyone is happy being hopeful.
+We are not calling the current conduit models ``lattice models'' because they have a grid or they can be drawn as edges on a graph---that's just numerical PDEs for you.  They are ``lattice models'' because when you change the spacing between conduits you have to refit the coefficients by some essentially unknown procedure to get the ``same'' effect.  (I.e.~the same effect but on the finer grid which should be resolving more detail \dots).
 
 \medskip
-But for PISM we need the model to not blow up when the user decides to refine or coarsen by several factors of two.  We need a PDE or system thereof.  This drives the paper.}
+Said a possibly better way: If Schoof and company knew the continuum limit they would write it down as a PDE.  This PDE would have spatial derivatives in the directions perpendicular to the conduits, not just along them, and it would be translation/rotation invariant in the map-plane (because it is supposed to be physics).  I suppose they figure that parameters in their lattice model will someday be understood correctly.
 
-\reply{l205: switch infinitesimal and infinite}{I take this as an indication of my bad writing.  I did mean these words the way they are used.  But I rewrote this to (hopefully) reduce confusion: ``Indeed, subglacial lakes of infinitesimal extent and infinite depth form at local minima of the hydraulic potential if [the diffusion term] is absent \dots''}
+\medskip
+But we need PISM to not blow up when the user decides to refine or coarsen by several factors of two, for example.  We are not just writing a process-speculation paper but intending to provide a tool.  We need a PDE, or system thereof, and this drives the paper.}
+
+\reply{l205: switch infinitesimal and infinite}{I take this as an indication of my bad writing.  I meant these words the way they were used, but I rewrote this to (hopefully) reduce confusion.  The new version says ``Indeed, subglacial lakes of infinitesimal extent and infinite depth form at local minima of the hydraulic potential if [the diffusion term] is absent \dots''}
 
 \reply{l242: *the* power-law?}{Yup.}
 
@@ -187,14 +193,28 @@ But for PISM we need the model to not blow up when the user decides to refine or
 
 \reply{eq (57) -- are you being consistent with lower/uppercase for ice thickness?}{In this case the bed is flat and $H=h$.  As ``$H$'' appears in the relevant formulas (i.e.~only for overburden pressure), I've kept it the way it was.}
 
-\reply{l1072: I believe this is true for conservation laws and TVD schemes -- but since the continuity equation is coupled to other physics (opening/closure), i'm not sure you can make this claim definitively}{That's why the relevant sentence only ``suggests'' the same conclusion for the higher-order schemes.}
+\newcommand{\bV}{\mathbf{V}}
+\reply{l1072: I believe this is true for conservation laws and TVD schemes -- but since the continuity equation is coupled to other physics (opening/closure), i'm not sure you can make this claim definitively}{That's why the relevant sentence only ``suggests'' the same conclusion for the higher-order schemes.  The issue is not the coupling per se but the regularity of the velocity field $\bV$.  A proof of convergence which worked for provided $\bV(t,x,y)$ with a given amount of regularity would work in the coupled case if that regularity can be shown for the continuum solution of the coupled system.}
 
-\reply{eq (61): i don't know the exact result up to numerical constants and i'm not going to look it up, but i just want to make sure there is not a typo, i.e. the "2" looks out of place}{FIXME}
+\reply{eq (61): i don't know the exact result up to numerical constants and i'm not going to look it up, but i just want to make sure there is not a typo, i.e. the "2" looks out of place}{I checked, and it is correct.  There is an extra ``$1/2$'' compared to what you expect because of the half-and-half split between the advection term and diffusion term in the argument we are giving for our \emph{sufficient} stability condition.  Necessity is a whole 'nother matter.}
 
-\reply{l1320-1326: how do these boundary conditions compare to those used in schoof et al 2012?}{FIXME}
+\reply{l1320-1326: how do these boundary conditions compare to those used in schoof et al 2012?}{The answer to your question is a big mess, and it is much of what I mean by the ``nutty'' literature.  In summary:
 
-\reply{comment on section 11: not clear on the convergence test. was each simulation actually allowed to equilibrate? if so, or if not, what was the stopping criterion? did you examine whether the model equilibrates to this state from a more distant point?}{FIXME}
+\medskip
+Schoof et al (2012) describes these boundary conditions as though in two dimensions in the text, but then implements a numerical model only in one dimension.  Hewitt et al (2012) adds conduits but sticks to 1D for numerical examples.  Then Hewitt (2013) and Werder et al (2013) come out with 2D numerics \dots but they abandon the pressure bounds which are the whole point of Schoof et al (2012), and which drive the complexity of the boundary conditions!  Indeed Werder et al (2013) say that ``the numerical procedure used in [Schoof et al (2012) and Hewitt et al (2012)] is prohibitively expensive to use in 2-D.''  What they really mean is that the bounds $0\le P \le P_o$ are not part of their continuum model, as this would force their FEM procedure to actually be a variational inequality solver.  And, indeed, their results include significantly negative effective pressures in some cases; e.g.~see Figure 12 in Werder et al (2013).
 
+\medskip
+The Werder et al (2013) model turns out mostly to be an unstructured-grid version of Schoof (2010), but with englacial water, and not an extension of Schoof et al (2012) which one would think.  But the situation is nuttier than that:  As we show in our paper, the englacial porosity regularization makes the pressure model parabolic, so (though they don't see this) it is now easy to add back the pressure bounds.  In doing so the boundary conditions become essentially obvious, especially as all analysis (Schoof and company and ours) suggests strongly that the coupled mass and pressure equations are diffusion-like..  Thus one is free to have boundary conditions all the way around the domain; there is no outflow boundary per se.  The boundary condition analysis in Schoof et al (2012) does not as it stands address either our model or Werder et al (2013), because of the englacial porosity regularization making the problem (apparently) parabolic.
+
+\medskip
+How am I doing?}
+
+\reply{comment on section 11: not clear on the convergence test. was each simulation actually allowed to equilibrate? if so, or if not, what was the stopping criterion? \dots}{There is no reason to equilibriate.  The point is to measure error under spatial refinement, using an exact solution which is a solution of the steady state equations, \emph{and thus is a solution of the time-dependent equations also}, for this initial value problem.  The runs were for one model month; this is now more clearly stated.}
+
+\reply{\dots did you examine whether the model equilibrates to this state from a more distant point?}{No we did not examine this systematically at all.  This is a very reasonable question, but only if one is willing to accept a long answer.  Even for coupled nonlinear ODEs there is a space of initial conditions to explore; here with our coupled nonlinear PDEs the space is \dots actually large.
+
+\medskip
+But think about what the whole-Greenland simulation we have is doing: we are looking at many different outlet glaciers and such simultaneously.  In that sense we look at a much bigger state space than other hydrology papers (except Siegert et al and such who look for subglacial lakes in Antarctica with a much-simplified model which we have improved).  On the other hand our paper has no observation-based analysis of the Greenland results; it is just a demo calculation.  This is why it is in Geosci.~Model Dev.~not The Cryosphere, I suppose.}
 \end{itemize}
 
 \end{document}
