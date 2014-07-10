@@ -4,6 +4,8 @@ TEXFILE	= gmd-hydro.tex
 
 all: $(TEXFILE:.tex=.pdf)
 
+# unzip figszip.zip to build
+
 %.pdf: %.tex
 	pdflatex $<
 	pdflatex $<
