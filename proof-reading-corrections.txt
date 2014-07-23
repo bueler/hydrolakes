@@ -1,0 +1,131 @@
+Dear Production Editor Anja Kesting --
+
+Thanks for your type-setting so far which is of high quality.  The list below
+mostly corrects my errors, not yours.
+
+The author names and affiliations are correct.
+
+I have a few corrections, as follows.
+
+running head:  "Mass-conserving subglacial hydrology in PISM" is better as a
+running head, but if it is too long then the current "Subglacial hydrology
+in PISM" is correct.
+
+page 3, line 6:  This is a proof-reading question.  Are citations uniformly
+chronological or alphabetical?  Note "(Bartholomaus et al., 2011; Harper et al.,
+2010)" is alphabetical but I had intended the multi-citations to be chronological.
+
+page 3, line 27: "used in" --> "added to"
+
+page 6, line 10: "an other" --> "and other"
+
+page 6, line 13: "glacier surface" --> "glacier upper surface"
+
+page 6, line 15: "is determined" --> "is primarily determined"
+
+page 7, line 21: "(Bartholomaus et al., 2011; Bueler, 2014)" --> "(Bartholomaus et al., 2011)"
+
+page 9, line 4: "us define" --> "us redefine"
+
+page 9, line 22--23:  Remove parentheses from this sentence.
+
+page 9, line 27: "potential and surface gradients" --> "potential gradient and surface gradient"
+
+page 11, lines 1--2:  First sentence should read: "In areas where the ice base
+is not frozen, till with pressurized liquid water in its pore spaces can be
+expected to support much of the ice overburden."
+
+page 11, line 9: "when $m = 0$ and $W_{til} = 0$" --> "when $W_{til} = 0$"
+
+page 11, line 15: "of water" --> "of mobile water"
+
+page 15, line 6: "(12), (16), and (13)" --> "(12), (13), and (16)"
+
+page 15, line 24: "(1), (6)" --> "(1), (5)"
+
+page 16, equation (27): "k" --> "K"
+
+page 16, equation (28): "k" --> "K"
+
+page 16, line 9: "k" --> "K" in formula
+
+page 16, line 14: "solutions with" --> "solutions $W$ with"
+
+page 17, equation (30): "k" --> "K"
+
+page 18, line 19: "subglacial water then" --> "subglacial hydrology then"
+
+page 19, line 10: "equation. If" --> "equation.  By contrast, if"
+
+page 19, line 13: "the system is" --> "the system in Sect. 5 (below) is"
+
+page 19, line 14: "and hardest" --> "and is hardest"
+
+page 19, line 21: "(Sect. 7," --> "(Sect. 7),"
+
+page 19, line 22: "Eq. 4" --> "Eq. (4)"
+
+page 19, line 22: "cost Sect. 9)" --> "cost (Sect. 9)"
+
+page 19, line 23: "pressure equation (Eq. 33)" --> "pressure Eq. (32)"
+
+page 22, line 14: "This model" --> "This lumped model"
+
+page 23, line 7: "state, which" --> "state, and this"
+
+page 23, line 25: "the water" --> "by Eqs. (39) and (40) the water"
+
+page 24, line 11: "dimension appear" --> "dimension also appear"
+
+page 24, line 21: "h(r)" --> "H(r)"
+
+page 25, line 21: "h_0" --> "H_0"
+
+page 25, line 22: "h_0" --> "H_0"
+
+page 28, line 2: "(We" --> "We"
+
+page 28, lines 3--4: "scheme, Hundsdorfer and Verwer, 2010.)" -->
+"scheme (Hundsdorfer and Verwer, 2010)."
+
+page 28, lines 13--14: "simulation" --> "example"
+
+page 28, line 15: "global peak" --> "maximum"
+
+page 28, line 15: "slow," --> "slow"
+
+page 35, line 13: "b_{i,j}^l" --> "b_{i,j}"
+
+page 36, line 4: "no ice $H_{i,j}=0$ and land ($b_{i,j}>0$)" -->
+"land ($b_{i,j}>0$) and no ice ($H_{i,j}=0$)"
+
+page 36, line 7: "Eq. (A4)." --> "Eq. (A4))."
+
+page 38, line 15: "Eq (34)" --> "Eqs. (34)"
+
+page 38, line 19: "Eq. (34)" --> "Eqs. (34)"
+
+page 39, lines 9--10:  This sentence should be replaced:  "The equations are ...
+is gone." --> "It uses only evolution Eq. (16)."
+
+page 40, lines 16--17: "resolution" --> "order"
+
+page 42, line 6: "However, our" --> "Our"
+
+page 42, lines 7--8: "velocities (Aschwanden et al., 2013)." --> "velocities."
+
+page 43, line 19: "pathways/conduits" --> "pathways"
+
+page 46, line 9: "drop from" --> "drop caused by"
+
+page 47, line 23: Start a new paragraph with "Equations ..."
+
+page 48, line 1: Do not start a new paragraph here.
+
+page 48, line 16: "almost the" --> "almost at the"
+
+page 49, line 8: "(However," --> "However,"
+
+page 49, line 10: "diffusion.)" --> "diffusion."
+
+
