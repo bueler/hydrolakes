@@ -128,4 +128,75 @@ page 49, line 8: "(However," --> "However,"
 
 page 49, line 10: "diffusion.)" --> "diffusion."
 
+Remarks on reference list:
+
+TS1:              author = {Satish Balay and Shrirang Abhyankar and Mark~F. Adams and Jed Brown and Peter Brune
+                      and Kris Buschelman and Victor Eijkhout and William~D. Gropp
+                      and Dinesh Kaushik and Matthew~G. Knepley
+                      and Lois Curfman McInnes and Karl Rupp and Barry~F. Smith
+                      and Hong Zhang}
+
+TS2:  Bindschadler, Robert A.; Nowicki, Sophie; Abe-Ouchi, Ayako; Aschwanden, Andy; Choi, Hyeungu; Fastook, Jim; Granzow, Glen; Greve, Ralf; Gutowski, Gail; Herzfeld, Ute; Jackson, Charles; Johnson, Jesse; Khroulev, Constantine; Levermann, Anders; Lipscomb, William H.; Martin, Maria A.; Morlighem, Mathieu; Parizek, Byron R.; Pollard, David; Price, Stephen F.; Ren, Diandong; Saito, Fuyuki; Sato, Tatsuru; Seddik, Hakime; Seroussi, Helene; Takahashi, Kunio; Walker, Ryan; Wang, Wei Li
+
+TS3:  This has not yet been accepted.
+
+TS4:  Bueler, Ed; Lingle, Craig S.; Kallen-Brown, Jed A.; Covey, David N.; Bowman, Latrice N.
+
+TS5:  Both "Clarke, G.K." and "Clarke, G." should be "Clarke, G.K.C."
+
+TS6:  The J Geophys Res articles are really annoying this way.  The full bibtex from AGU is
+@article {JGRF:JGRF608,
+author = {Creyts, Timothy T. and Schoof, Christian G.},
+title = {Drainage through subglacial water sheets},
+journal = {Journal of Geophysical Research: Earth Surface},
+volume = {114},
+number = {F4},
+issn = {2156-2202},
+url = {http://dx.doi.org/10.1029/2008JF001215},
+doi = {10.1029/2008JF001215},
+pages = {n/a--n/a},
+keywords = {subglacial drainage, water flow, hydraulic morphology},
+year = {2009},
+}
+
+TS7 and TS8:  Geophys Res Lett is also bad this way.  Full bibtex from AGU:
+@article {GRL:GRL25920,
+author = {Ettema, Janneke and van den Broeke, Michiel R. and van Meijgaard, Erik and van de Berg, Willem Jan and Bamber, Jonathan L. and Box, Jason E. and Bales, Roger C.},
+title = {Higher surface mass balance of the Greenland ice sheet revealed by high-resolution climate modeling},
+journal = {Geophysical Research Letters},
+volume = {36},
+number = {12},
+issn = {1944-8007},
+url = {http://dx.doi.org/10.1029/2009GL038110},
+doi = {10.1029/2009GL038110},
+pages = {n/a--n/a},
+keywords = {Greenland ice sheet, surface mass balance},
+year = {2009},
+}
+
+TS9:  Andrew G. Fountain, Robert W. Jacobel, Robert Schlichting, Peter Jansson
+
+TS10:  HOOKE R. LE B., HANSON B., IVERSON N. R., JANSSON P., FISCHER U. H.
+
+TS11:  Philippe Huybrechts, Tony Payne, and the EISMINT Intercomparison Group
+
+TS12:  JGR again.  Here is bibtex:
+@article {JGRF:JGRF738,
+author = {Pimentel, S. and Flowers, G. E. and Schoof, C. G.},
+title = {A hydrologically coupled higher-order flow-band model of ice dynamics with a Coulomb friction sliding law},
+journal = {Journal of Geophysical Research: Earth Surface},
+volume = {115},
+number = {F4},
+issn = {2156-2202},
+url = {http://dx.doi.org/10.1029/2009JF001621},
+doi = {10.1029/2009JF001621},
+pages = {n/a--n/a},
+keywords = {ice-flow modeling, glaciology, glacier sliding},
+year = {2010},
+}
+
+TS13:  last access date = 23 July 2014
+
+TS14:  S. T. Rooney, D. D. Blankenship, R. B. Alley, C. R. Bentley
+
 
