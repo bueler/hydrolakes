@@ -4,11 +4,7 @@ TEXFILE	= barthextend.tex
 
 all: $(TEXFILE:.tex=.pdf)
 
-# link ice-bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
-
-%.pdf: %.tex ice-bib.bib
-	pdflatex $<
-	bibtex $(<:.tex=.aux)
+%.pdf: %.tex
 	pdflatex $<
 	pdflatex $<
 
