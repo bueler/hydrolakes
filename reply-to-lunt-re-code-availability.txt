@@ -1,0 +1,9 @@
+We appreciate the clarification of editorial policies on code availability in GMD papers.  It is our error for having overlooked these rules.  The Parallel Ice Sheet Model has always had a fully open development process, with public access to the source for all versions, including universal access to the tip of the development trunk branch.
+
+Our paper already provides the URL pism-docs.org, through which all code and documentation is available, but it is easy to add/revise according to this Editor comment, as follows.
+
+Proposed revised title: "Mass-conserving subglacial hydrology in the Parallel Ice Sheet Model version 0.6"
+
+Proposed revision to add a final section: "Code availability.  The source code for all versions of PISM is available through host website https://github.com/pism/pism.  Version 0.6 is downloadable by command 'git clone -b stable0.6 git://github.com/pism/pism.git pism0.6' or by download of the compressed archive https://github.com/pism/pism/archive/v0.6.1.tar.gz.  Extensive PDF and searchable browser documentation for PISM is contained both in the source code release above and online through PISM homepage http://www.pism-docs.org/.  PISM is licensed under the GNU General Public License (version 3, 29 June 2007)."
+
+We believe that the editorial policy requirement that "The paper must be accompanied by the code, or means of accessing the code, for the purpose of peer-review" is completely satisfied by the URLs in the paragraph above.
