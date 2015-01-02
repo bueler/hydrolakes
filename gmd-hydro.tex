@@ -5,7 +5,8 @@
 \usepackage[T1]{fontenc}
 
 % hyperref should be the last package we load
-\usepackage[draft,pdftex,
+%\usepackage[draft,pdftex,
+\usepackage[pdftex,
                 colorlinks=true,
                 plainpages=false, % only if colorlinks=true
                 linkcolor=blue,   % only if colorlinks=true
@@ -48,7 +49,7 @@
 
 %\linenumbers
 
-\title{Mass-conserving subglacial hydrology in \\ the Parallel Ice Sheet Model}
+\title{Mass-conserving subglacial hydrology in the Parallel Ice Sheet Model version 0.6}
 
 
 \author[1]{E.~Bueler}
@@ -701,6 +702,12 @@ The comprehensive treatment here of certain subjects is also important.  We have
 \item created and implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
 \end{itemize}
 A deliberate limitation in scope of the current paper is that we show only one-way coupling.  In this paper the PISM ice flow and thermodynamics model feeds basal melt rate and sliding velocities to the hydrology model.  Two-way coupling  will appear in future work.
+
+
+\section{Code availability}  \label{sec:availability}
+
+The source code for all versions of PISM is available through host website \url{https://github.com/pism/pism}.  Extensive PDF and searchable browser documentation for PISM is contained both in the source code and online through PISM homepage \url{http://www.pism-docs.org/}.  PISM is licensed under the GNU General Public License (version 3).
+
 
 \begin{acknowledgements}
 The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Detailed comments by Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
