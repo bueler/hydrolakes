@@ -209,8 +209,8 @@ the W term?}
 {}
 
 \reply{p.~4713, l.~1 Near here, or somewhere else within the paper, please compare your
-values for hydraulic conductivity with those that may be calculated from field observations. Are your values in line with those found in the field? Googling “subglacial
-hydraulic conductivity” yields several points of comparison.}
+values for hydraulic conductivity with those that may be calculated from field observations. Are your values in line with those found in the field? Googling ``subglacial
+hydraulic conductivity'' yields several points of comparison.}
 {}
 
 \reply{p.~4714, l.~15 Here and nearby: define $c_1$, $c_2$, and A.}
@@ -222,7 +222,7 @@ potentially does not include till water storage beneath some parts of the ice sh
 
 \reply{p.~4715, l.~20 Why not include lateral transport of water through till if vertical transport
 is included? Till is often regarded as having an anisotropic hydraulic conductivity (e.g.,
-Jones, 1993, “A comparison of pumping and slug tests. . .” in Ground Water vol.~31(6)).
+Jones, 1993, ``A comparison of pumping and slug tests. . .'' in Ground Water vol.~31(6)).
 Horizontal conductivity can be at least several times greater than vertical conductivity.}
 {}
 
@@ -247,8 +247,8 @@ odd.}
 \reply{p.~4717, l.~1 What is the effect of this choice? How was it selected?}
 {}
 
-\reply{p.~4718, l.~16 I recommend changing the title of this section to “Basal motion relation”
-or some other phrase. “Sliding law” implies slip at the interface between the ice and its
+\reply{p.~4718, l.~16 I recommend changing the title of this section to ``Basal motion relation''
+or some other phrase. ``Sliding law'' implies slip at the interface between the ice and its
 bed, whether bedrock or sediment, whereas your equation for yield stress (eq. 17) is
 appropriate for till deformation.}
 {}
@@ -264,21 +264,21 @@ used inconsistently throughout the paper.}
 \reply{p.~4719, l.~4 What value of $q$ have you selected for your simulations? Justification?}
 {}
 
-\reply{p.~4720, l.~1  While “velocity” is technically correct, it is an odd choice for a thickness
-change. I suggest using “rate.”}
+\reply{p.~4720, l.~1  While ``velocity'' is technically correct, it is an odd choice for a thickness
+change. I suggest using ``rate.''}
 {}
 
 \reply{p.~4720, l.~5 Define $h$- the ice surface elevation.}
 {}
 
-\reply{p.~4722, l.~7 “\dots does not exist for tidewater glaciers or ice sheets.” This may not
+\reply{p.~4722, l.~7 ``\dots does not exist for tidewater glaciers or ice sheets.'' This may not
 be strictly true see Gulley et al, 2009, in QSR, where they report exploring many
 englacial conduits. In subsequent work, Gulley has mapped subglacial conduits. A
-safer statement would be that “vapor/air-filled cavities are not known to exist far from
-glacier margins.”  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
+safer statement would be that ``vapor/air-filled cavities are not known to exist far from
+glacier margins.''  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
 {}
 
-\reply{p.~4722, l.~10 “observed in ice sheets and glaciers“ instead of “observed in ice sheets”}
+\reply{p.~4722, l.~10 ``observed in ice sheets and glaciers`` instead of ``observed in ice sheets''}
 {}
 
 \reply{p.~4722, l.~21 Add that the englacial water table is intended to represent the mean
@@ -290,7 +290,7 @@ significantly over very short distances.}
 \reply{p.~4723, l.~8 You might add that we can expect phi to be large everywhere that $dP/dt$
 would be large (a highly fractured temperate glacier in coastal Alaska), and that phi
 would be small only where $dP/dt$ is small (ice sheet interiors). Thus, even hydrauli-
-cally/numerically “stiff” ice sheets shouldn’t experience physical or numerical shocks.}
+cally/numerically ``stiff'' ice sheets shouldn’t experience physical or numerical shocks.}
 {}
 
 \reply{p.~4724, eq. 34 As before, are these m's supposed to be the same?}
@@ -331,7 +331,7 @@ Move essential material out of the appendix and into the main text.}
 \reply{p.~4730, l.~5 What is the justification of the 5th power in the sliding speed?}
 {}
 
-\reply{p.~4730, l.~17 Define what you mean by “under”, “normal” and “over” pressure.}
+\reply{p.~4730, l.~17 Define what you mean by ``under'', ``normal'' and ``over'' pressure.}
 {}
 
 \reply{p.~4731, l.~13 Give a few sentence introduction to the numerics here. The point is to
@@ -341,7 +341,7 @@ would be useful to guide the reader.}
 {}
 
 \reply{p.~4731, l .19 Near here, is it necessary for a model development paper to include a
-reference for “CFL” and “upwind”}
+reference for ``CFL'' and ``upwind''}
 {}
 
 \reply{p.~4731, l.~21 Be sure to clarify that $u$ and $v$ are not components of $v_b$, but are for the water speed.}
@@ -351,7 +351,7 @@ reference for “CFL” and “upwind”}
 {}
 
 \reply{p.~4736, l.~7 Is it important that the reader understand what it means for a scheme to
-be “flux-limited?” Without modeling expertise myself, I’m not sure what this means.}
+be ``flux-limited?'' Without modeling expertise myself, I’m not sure what this means.}
 {}
 
 \reply{p.~4742, l.~17 Because you report that your scheme is mass conserving so prominently
@@ -393,7 +393,7 @@ $W$ is vaguely in line with the results of the Flowers (2002) model, although yo
 reveals additional complexity.}
 {}
 
-\reply{p.~4749, l.~17 “seemingly-disparate”}
+\reply{p.~4749, l.~17 ``seemingly-disparate''}
 {}
 
 \reply{p.~4750, l.~20 Again, reference the observation that steady pressure here increases as
@@ -563,9 +563,243 @@ say.}
 
 
 \subsection*{Comments by Anonymous Referee \#3}\begin{itemize}
-\reply{FIXME}
+\reply{\textbf{Summary of the manuscript}\\
+The manuscript (MS) describes a novel subglacial hydrology model implemented as
+part of the PISM ice sheet model. To my knowledge, this model together with the
+model of de Fleurian et al. (2014) (Elmer/Ice) are the currently most complex hydrology
+models included in large scale ice sheet models. The hydrology model consists of a
+cavity-like layer which can conduct the water horizontally, and two storage components:
+a till layer and an englacial aquifer. The coupling to ice flow would be through the yield
+strength of the till, which in terms depends on the amount of water stored (although no
+two-way coupled runs are demonstrated). The model performs well on test cases with
+analytic solutions and on an application to the Greenland ice sheet.\\
+The MS is very detailed and describes the mathematical model, some analytic solutions, the numerical implementation and some test applications. The MS is suitable for
+publication in GMD after the comments below are addressed.}
 {}
 
+\reply{\textbf{Mathematical model}\\
+My main comments are that water in englacial storage is not accounted for, that the
+statements $0 \le P \le P_o$ and $W = Y$ are inconsistent, and that boundary conditions are
+omitted. Further, in the mathematical sections it is never explained how in detail the
+bounds on P and also W till are enforced, although it can be deciphered from the later
+sections on numerical implementation. Also the authors mention that their pressure
+regularisation is necessary to allow enforcing $0 \le P \le P_o$ (by projection).  Why is this
+so? Why could this not be done using the elliptic pressure equation?}
+{}
+
+\reply{Mass conservation (Eq. 1, 34a) should also take into account $W_{eng}$, the equivalent
+layer of water stored englacially:
+   $$\frac{\partial W}{\partial t} + \frac{\partial W_{till}}{\partial t} + \frac{\partial W_{eng}}{\partial t} + \nabla \cdot \mathbf{q} = m /\rho_w. \qquad (1)$$
+In particular, for the void ratios ($\phi_0 = 0.01$) considered in this MS the $W_{eff}$ term is
+important.  For instance, a relatively small pressure difference of 10 m water head leads
+to a change in $W_{eff}$ of $0.1 m$ which is on the order of $W$. In fact, having $\phi_0 = 0.01$ is
+probably beyond what may be considered a regularisation (i.e. having negligible effect
+on the solution), and the MS should be updated accordingly.}
+{}
+
+\reply{If possible, it would be nice to state the bounds on the various state equations more
+explicitly, e.g.:
+  $$\frac{\partial W_{till}}{\partial t} = \begin{cases} m /\rho_w - C_d & \text{if \dots} \\
+  0 & \text{otherwise}  \end{cases} \qquad (2)$$
+Or if that is not possible, state the bounds next to the equations.}
+{}
+
+\reply{For the pressure, according to the numerics outlined in section 7.6, the authors solve
+Eq.33 on the whole domain for $P$ and then project/update P such that $0 \le P \le P_o$
+(except where $W = 0$ also $P = P_o$ ). Therefore $Y = P$ is only true in the so-called
+''normal-pressure'' regions, which should be stated. In the overpressure or underpres-
+sure regions the authors instead use the mathematical closures $P = P_o$ and $P = 0$,
+which should also be stated. Also, it seems that the pressure equation is solved for
+the whole domain using boundary conditions at the edge of the domain, which is in
+contrast to Schoof et al. (2012). This difference needs to be discussed in a section
+about boundary conditions.}
+{}
+
+\reply{Even apart from the storage term (which the authors acknowledge), the presented
+scheme is not quite equivalent to the one in Schoof et al. (2012): To determine the
+regions where pressure equation needs to be solved (Eq.34c in this MS) Schoof et al.
+(2012) uses constraints on $W$ and not on $P$ (see their equations 4.1, 4.7 and 4.11). In
+the region where the pressure equation is solved, Schoof et al. (2012) uses appropri-
+ate boundary condition to link to the adjacent regions.  Also in underpressure regions
+Schoof et al. (2012) solve both for $Y$ and $W$ (their $h$ and $h_w$).}
+{}
+
+\reply{To illustrate the impact of the different models, here a pathological case which (I think)
+the mathematical model of Schoof et al. (2012) handles fine but the one in this MS less
+so:}
+{}
+
+\reply{Starting with an initial, steady state with a region where $W > W_r$ and $P = P_o$.  Decrease input into that region until $P < P_o$, i.e.~something like a draining subglacial lake.
+Now (as far as I understand the equations in the MS) $W$ in that region would evolve
+according to Eq.13, i.e.~shrink by viscous creep (unless $P < 0$ at which point it would
+again evolve according to Eq.34a). This contrasts to Schoof et al. (2012) which keeps
+$P = P_o$ until $W \le W_r$.}
+{}
+
+\reply{Not getting this and other corner cases right is not bad and still results in a great
+subglacial hydrology model, in particular for the application intended here. However,
+Schoof et al. (2012) gets them right(er) (as far as I understand) and thus the authors'
+claims that they successfully solve that problem should be a bit more qualified (see
+line-comments below).}
+{}
+
+\reply{Other comments\\
+The manuscript is quite lengthy and could do with some streamlining. Among others,
+Section 4.1 and 5.2 should be merged, Section 9.2.1 should be shortened and Fig.~6
+removed.}
+{}
+
+\reply{It would help if the authors would state the unknown variables at the beginning of the
+mathematical description.}
+{}
+
+\reply{The authors mention frozen conditions but never go into details about them.  What
+happens to the cavity sheet and till layer when input is negative?  What does the water
+pressure do?  What do the cavities and thus $W$ do?  In fact, the evolution equation for
+$Y$ does not contain a melt/freeze term so $Y > 0$ even when frozen.  How does this link
+to setting $P = P_o$ when $W = 0$ (p.4742 l.4).  This should warrant at least a paragraph.}
+{}
+
+\reply{\textbf{Comments by line}\\
+Comments by page and line number (add 4700 to the page number):\\
+p.6 l.8 State how many parameters are used}
+{}
+
+\reply{p.6 l.8 Instead of ``We use englacial porosity as a regularization, and we preserve
+physical bounds on the pressure.'' write ``We use englacial porosity as a regularization to impose physical bounds on the pressure.''  But in fact, I am not sure this statement is right, as bounds on the pressure are enforced by projecting it onto $0 \le P \le P_o$.}
+{}
+
+\reply{p.6 l.21 reword ``reasonable''}
+{}
+
+\reply{p.8 l.4-6 This is not quite right, see my Section above.}
+{}
+
+\reply{p.8 l.19-24 Maybe this paragraph should be moved to start at line 7.}
+{}
+
+\reply{p.8 l.29 Whilst no mathematical proven of convergence of grid-based models is available,  they do seem to converge under grid refinement in a statistical sense (see appendix of Werder et al. (2013)).  Also, their parameters are independent of the grid.  Thus automatic grid-resolution determination should be possible.}
+{}
+
+\reply{p.9 l.8 ``closures'' here and elsewhere can be confused with ``creep closure,'' reword.}
+{}
+
+\reply{p.9 l.19 It would help to briefly introduce which processes will be described and in
+particular which are the unknown variables (or major variables as the authors call
+them later).}
+{}
+
+\reply{p.10 Eq.1 add a term $\partial W_{eng}/\partial t$}
+{}
+
+\reply{p.10 l.9 it is not quite clear what ``the two-dimensional subglacial layer'' is. Presumably
+it is the layer which has thickness $W$.}
+{}
+
+\reply{p.10 l.18 Specify that the pressure $P$ is at the top of the water layer too.}
+{}
+
+\reply{p.16 l.8 write ``and $N_{til} = P_o-P_{til}$ is the effective pressure of the overlying ice on the saturated till \dots''}
+{}
+
+\reply{p.16 l.10 Should be ``previous section'' but specify section number instead.}
+{}
+
+\reply{p.16 l.19 I find $N_0$ confusing. The very similar looking subscript ``o'' in $P_o$ refers overburden but the ``$0$'' is something else. Maybe $N_r$ or $N_{ref}$?}
+{}
+
+\reply{p.17 l.8-16 What follows in this part is unclear. Reformulate of this introductory sentence ``On the other hand we will describe the maximum capacity of the till by specifying \dots'' to prepare the reader that instead of working with $\delta$ you change to $W_{til}^{max}$.}
+{}
+
+\reply{p.17 l.10 Should this not just be $W_{til} < W_{til}^{max}$.  The lower bound is never used, or is it?}
+{}
+
+\reply{p.19 l.10 For this section the $Y$ equation is not needed/decoupled. That should be
+mentioned.}
+{}
+
+\reply{p.20 l.22 comma after ``consider.''}
+{}
+
+\reply{p.22 l.10 Expand here (or maybe elsewhere) on how $P \le P_o$ is enforced.}
+{}
+
+\reply{p.23 l.15-22 This paragraph is a bit misplaced in this section.  Maybe the enforcement
+of the various constraints, including $0 \le P \le P_o$, warrants its own section.  Which
+is where this paragraph would belong.}
+{}
+
+\reply{p.23 l.19-22 These two sentences suggest that the authors have solved the ``prohibitively expensive'' problem of Werder et al. (2013).  But as discussed above, they only solve a simplified version of Schoof et al. (2012) without channels.  Reword.}
+{}
+
+\reply{p.24 Sec.5.1 I like this summary. One suggestion: write the equations in Eq.34 all as
+``time derivative of unknown = something.'' Add the boundary conditions.}
+{}
+
+\reply{p.25 l.1-8 Either be specific about which functions are what type or leave the paragraph away.}
+{}
+
+\reply{p.25 l.1-8 Either be specific about which functions are what type or leave the paragraph away.}
+{}
+
+\reply{25 Sec.5.2 This section should be merged with section 4.1, probably at this location in
+the MS.}
+{}
+
+\reply{p.25 l.11-19 as stated above, I don’t think this is quite the Schoof et al. (2012) model.}
+{}
+
+\reply{p.27 l.23 write ``layer thickness'' instead of ``amount''}
+{}
+
+\reply{p.28 l.1 write ``layer thickness'' instead of ``amount'' (and other places in the MS)}
+{}
+
+\reply{p.37 l.15 What happens when $W < 0$ should probably be discussed in the mathematical section too.}
+{}
+
+\reply{p.39 l.14 For a mountain glacier porosity seems to be around $0.01$ (Bartholomaus
+et al., 2011).  Porosity for an ice sheet may be more on the order of $10^{-4}$.}
+{}
+
+\reply{p.40 l.13 What is the ``active subglacial layer''?}
+{}
+
+\reply{p.42 l.17 is this connected to the statement on p. 37, l.15? How?}
+{}
+
+\reply{p.45 l.20 write ``The spin-up grid sequence...''}
+{}
+
+\reply{45 Sec.9.2.1 This section is too long and detailed considering this is not about ice flow modelling.  Is this spin-up different from others used before?  Also in a similar
+vein, Fig.~6~could be removed.}
+{}
+
+\reply{p.48 l.5-7 The till is either completely full or empty.  If I understand the dependence of sliding on the till hydrology correctly, this means either fully slippery on not at all.
+So, is there no dependence of sliding on hydrology?  Maybe this point could be
+briefly discussed.}
+{}
+
+\reply{\textbf{Comments for tables and figures}\\
+Tab.~3 Why is $W_r$ so much higher here?}
+{}
+
+\reply{Fig.~2 Label $R_1$ and $L$.}
+{}
+
+\reply{Fig 2 \& 3 they could be combined.}
+{}
+
+\reply{Fig.~6 could be left away}
+{}
+
+\reply{Fig.~8 \& 11 mention what model run this is for}
+{}
+
+\reply{Fig.~11 Add a label to the colour-scale. Also, I think there is a inconsistency between
+the caption and the text (p.48, l.18), one says ice thickness one says sliding
+speed.}
+{}
 \end{itemize}
 
 
