@@ -1,0 +1,410 @@
+\documentclass[11pt,reqno]{amsart}
+%prepared in AMSLaTeX, under LaTeX2e
+\addtolength{\oddsidemargin}{-.65in}
+\addtolength{\evensidemargin}{-.65in}
+\addtolength{\topmargin}{-.3in}
+\addtolength{\textwidth}{1.5in}
+\addtolength{\textheight}{.6in}
+
+\renewcommand{\baselinestretch}{1.1}
+
+\usepackage{verbatim} % for "comment" environment
+
+\usepackage[pdftex, colorlinks=true, plainpages=false, linkcolor=blue, citecolor=red, urlcolor=blue]{hyperref}
+
+\newtheorem*{thm}{Theorem}
+\newtheorem*{defn}{Definition}
+\newtheorem*{example}{Example}
+\newtheorem*{problem}{Problem}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\mtt}{\texttt}
+\usepackage{alltt,xspace}
+\usepackage[normalem]{ulem}
+\newcommand{\mfile}[1]
+{\medskip\begin{quote}\scriptsize \begin{alltt}\input{#1.m}\end{alltt} \normalsize\end{quote}\medskip}
+
+\usepackage[final]{graphicx}
+\newcommand{\mfigure}[1]{\includegraphics[height=2.5in,
+width=3.5in]{#1.eps}}
+\newcommand{\regfigure}[2]{\includegraphics[height=#2in,
+keepaspectratio=true]{#1.eps}}
+\newcommand{\widefigure}[3]{\includegraphics[height=#2in,
+width=#3in]{#1.eps}}
+
+% macros
+\usepackage{amssymb}
+
+\usepackage[T1, OT1]{fontenc}
+\renewcommand{\dh}{\fontencoding{T1}\selectfont{\symbol{240}}}
+
+\newcommand{\bod}{B\"o\dh varsson\xspace}
+\newcommand{\bods}{B\"o\dh varsson's}
+\newcommand{\citebod}{B\"o\dh varsson (1955)\xspace}
+\newcommand{\citepbod}{(B\"o\dh varsson, 1955)\xspace}
+
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bE}{\mathbf{E}}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bJ}{\mathbf{J}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\hbi}{\mathbf{\hat i}}
+\newcommand{\hbj}{\mathbf{\hat j}}
+\newcommand{\hbk}{\mathbf{\hat k}}
+\newcommand{\hbn}{\mathbf{\hat n}}
+\newcommand{\hbr}{\mathbf{\hat r}}
+\newcommand{\hbt}{\mathbf{\hat t}}
+\newcommand{\hbx}{\mathbf{\hat x}}
+\newcommand{\hby}{\mathbf{\hat y}}
+\newcommand{\hbz}{\mathbf{\hat z}}
+\newcommand{\hbphi}{\mathbf{\hat \phi}}
+\newcommand{\hbtheta}{\mathbf{\hat \theta}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\ppr}[1]{\frac{\partial #1}{\partial r}}
+\newcommand{\ppt}[1]{\frac{\partial #1}{\partial t}}
+\newcommand{\ppx}[1]{\frac{\partial #1}{\partial x}}
+\newcommand{\ppy}[1]{\frac{\partial #1}{\partial y}}
+\newcommand{\ppz}[1]{\frac{\partial #1}{\partial z}}
+\newcommand{\pptheta}[1]{\frac{\partial #1}{\partial \theta}}
+\newcommand{\ppphi}[1]{\frac{\partial #1}{\partial \phi}}
+\newcommand{\pp}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ppp}[2]{\frac{\partial^2 #1}{\partial^2 #2}}
+\newcommand{\pppp}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\Div}{\ensuremath{\nabla\cdot}}
+\newcommand{\Curl}{\ensuremath{\nabla\times}}
+\newcommand{\curl}[3]{\ensuremath{\begin{vmatrix} \hbi & \hbj & \hbk \\ \partial_x & \partial_y & \partial_z \\ #1 & #2 & #3 \end{vmatrix}}}
+\newcommand{\cross}[6]{\ensuremath{\begin{vmatrix} \hbi & \hbj & \hbk \\ #1 & #2 & #3 \\ #4 & #5 & #6 \end{vmatrix}}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\grad}{\nabla}
+\newcommand{\image}{\operatorname{im}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\ip}[2]{\ensuremath{\left<#1,#2\right>}}
+\newcommand{\lam}{\lambda}
+\newcommand{\lap}{\triangle}
+\newcommand{\Matlab}{\textsc{Matlab}\xspace}
+\newcommand{\exers}[1]{\bigskip\noindent\textbf{Exercises} #1}
+\newcommand{\fexer}[2]{\bigskip\noindent\textbf{Lesson #1, \##2}\quad }
+\newcommand{\prob}[1]{\bigskip\noindent\textbf{#1} }
+\newcommand{\pts}[1]{(\emph{#1 pts}) }
+\newcommand{\epart}[1]{\medskip\noindent\textbf{(#1)}\quad }
+\newcommand{\ppart}[1]{\,\textbf{(#1)}\quad }
+\newcommand{\note}[1]{[\scriptsize #1 \normalsize]}
+\newcommand{\MatIN}[1]{\mtt{>> #1}}
+\newcommand{\onull}{\operatorname{null}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\range}{\operatorname{range}}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\trace}{\operatorname{tr}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\Arg}{\operatorname{Arg}}
+
+\newcommand{\comm}[2]{\item \emph{#1}:\, #2}
+
+\renewcommand{\ln}[2]{\comm{line #1}{#2}}
+\newcommand{\lnpage}[3]{\comm{line #1 \underline{on page #2}}{#3}}
+\newcommand{\lns}[2]{\comm{lines #1}{#2}}
+\newcommand{\lnspage}[3]{\comm{lines #1 \underline{on page #2}}{#3}}
+\newcommand{\fg}[2]{\comm{Figure #1}{#2}}
+\newcommand{\eqn}[2]{\comm{equation #1}{#2}}
+
+\newcommand{\reply}[2]{
+\medskip\medskip
+\item  \begin{quote}
+\emph{#1}
+\end{quote}
+
+\medskip
+\noindent #2}
+
+
+\title[Replies to Referee Comments]{Replies to all referee comments on \\ \emph{Mass-conserving subglacial hydrology in PISM}}
+
+\author{Ed Bueler}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\thispagestyle{empty}
+
+
+\subsection*{Comments by Dr.~Bartholomaus}\begin{itemize}
+
+\reply{In this manuscript, the authors present a novel extension of the existing Parallel Ice Sheet Model that includes the most complete treatment to date of subglacial hydrology in a large-scale ice sheet model.  Subglacial hydrology is immensely important in glacier dynamics, but is often neglected in the major ice sheet models used to predict future sea level rise.  The computational expense of tracking changes in the rapidly evolving subglacial environment has generally prevented all but the crudest of parameterizations (see table 2 of Bindschadler 2013's summary of the SeaRISE experiment).\\
+Thus, the present work is novel and worthy of publication in GMD.  The writing is generally clear and fluent.  Both the theoretical development of the continuum equations and the numerical implementation are clearly outlined.\\
+Beyond these over-arching strengths, I have four critiques that I believe would significantly enhance the impact and accessibility of the manuscript. These four opportunities for improvement are below. My line edits follow these more significant points.}
+{}
+
+\reply{---Four significant opportunities---\\
++ The authors offer some comparison between
+their model and those of Werder, Hewitt, Flowers, Schoof, etc., but these are generally smaller scale models that have yet to be implemented or applied at the ice sheet
+scale, and rarely to the complex geometries of existing glaciers or ice sheets. Some
+discussion regarding how the new PISM hydrology model compares with the hydrology models of other major ice sheet models, such as those discussed in the SeaRISE
+project would be very valuable.  At present, comparison to existing ice sheet models is
+entirely lacking.  Without much knowledge of these models myself, I suspect that the
+present model may represent a significant advance over the implementations in other
+ice sheet models.  If appropriate, the authors may consider adding a sentence regarding this comparison to the abstract.  Also, by way of review, please consider adding a
+table comparing features of presently-used ice sheet models.}
+{}
+
+\reply{+ Considering that efficient, low-pressure conduits are such important features of the
+subglacial hydrologic system, some discussion/justification of why a model without conduits is useful is necessary.  While consistent model behavior under grid refinement is
+certainly tremendously valuable, if one of the fundamental processes (i.e., transport of
+water in conduits) is entirely neglected, then all the model results may be called into
+question.  The present model is still an improvement on the general lack of subglacial
+hydrology in existing ice sheet models, but ideally, conduits will be included in future
+generations of ice sheets.}
+{}
+
+\reply{+ This manuscript and model includes an ambiguous mixing of hard-bedded and soft-bedded ideas. For example, the model includes opening and closing of cavities at
+the glacier bed, driven by basal sliding (section 2.5).  This is generally considered
+a hard-bedded view of basal hydrology and motion.  However, the description of the
+Mohr-Coulomb yield stress for till (section 3.2) is appropriate for soft beds and basal
+motion accomplished by deformation \emph{within} the till, not at the interface between the
+till and the glacier ice. Similarly, the sliding law that depends on the till's yield stress
+(section 3.3) is also a soft-bedded concept. The combination of soft- and hard-bedded
+ideas in this model appears to be inappropriate or at least confusing. Furthermore,
+the description of 1-way and 2-way coupling could be more clear. If the rate of basal
+motion ($u_b$ or $v_b$) is an input to the model, then why is there a section on the sliding
+law (section 3.3)?}
+{}
+
+\reply{+ It is interesting and surprising to note that you find an inverse relationship between
+water pressure and basal motion for systems at steady state. This is contrary to almost
+all prevailing sliding laws. Is a result of the 1-way coupling ($v_b$ that does not directly
+depend on water pressure)? Whatever the cause, it is sufficiently surprising to warrant
+additional discussion.}
+{}
+
+\reply{---Line Edits---\\
+p.~4706, l.~26 Also consider citing Walder 1982 if your purpose is to highlight some of
+the early work here.}
+{}
+
+\reply{p.~4707 l.~5 I think the best reference for englacial porosity is Fountain et al.~2005, from
+Storglaciaren.}
+{}
+
+\reply{p.~4708, l.~24 It may be worth mentioning that wall melt in linked cavities is generally
+expected to be small (Kamb, 1987 and Bartholomaus et al., 2011)}
+{}
+
+\reply{p.~4709, l.~1 What are the ramifications of neglecting to model conduits? Many observational studies (including work by Nienow, Mair, Anderson, Cowton, Harper) have
+shown that efficient conduits are a fundamental component of subglacial hydrology.
+How will your model provide insightful and realistic results without a conduit component?}
+{}
+
+\reply{p.~4712, l.~17 It is not immediately clear to me why $\nabla H \gg \nabla W$. Where does this
+suggestion/observation come from?}
+{}
+
+\reply{p.~4712, l.~23 If here you assume that W $\ll$ b or P, and thus can be neglected in eq. 8,
+why have you made the distinction in eq. 2 and the discussion that follows to include
+the W term?}
+{}
+
+\reply{p.~4713, l.~1 Near here, or somewhere else within the paper, please compare your
+values for hydraulic conductivity with those that may be calculated from field observations. Are your values in line with those found in the field? Googling “subglacial
+hydraulic conductivity” yields several points of comparison.}
+{}
+
+\reply{p.~4714, l.~15 Here and nearby: define $c_1$, $c_2$, and A.}
+{}
+
+\reply{p.~4715, l.~6 Phrasing is ambiguous, as it makes it sound as though your model
+potentially does not include till water storage beneath some parts of the ice sheet.}
+{}
+
+\reply{p.~4715, l.~20 Why not include lateral transport of water through till if vertical transport
+is included? Till is often regarded as having an anisotropic hydraulic conductivity (e.g.,
+Jones, 1993, “A comparison of pumping and slug tests. . .” in Ground Water vol.~31(6)).
+Horizontal conductivity can be at least several times greater than vertical conductivity.}
+{}
+
+\reply{p.~4715, l.~20 Is m in eq. 16 the same as m in eq. 1? If so, these terms cancel out of
+eq. 1.}
+{}
+
+\reply{p.~4715, l.~20 If $m/\rho$ is almost always bigger than $C_d$, then $dW_{til}/dt$ is always
+increasing up to the cap $W_{til}^{max}$. It would be useful to lay this out more explicitly,
+and include eq. 21 in this subsection. Essentially, you have a Boolean relationship,
+where in some places there is wet till and other places the till is frozen. Is model
+sensitive to selection of $W_{til}^{max}$?}
+{}
+
+\reply{p.~4715, l.~24 Inclusion of $C_d$ with fixed value is poorly justified and seems very
+ad hoc. Even if used by Tulaczyk, why is it necessary here and what is the model
+sensitivity to the selection of 1 mm a$^{-1}$? A constant rate of till water drainage into the
+subglacial hydrologic system, that does not depend on pressure gradients, seems very
+odd.}
+{}
+
+\reply{p.~4717, l.~1 What is the effect of this choice? How was it selected?}
+{}
+
+\reply{p.~4718, l.~16 I recommend changing the title of this section to “Basal motion relation”
+or some other phrase. “Sliding law” implies slip at the interface between the ice and its
+bed, whether bedrock or sediment, whereas your equation for yield stress (eq. 17) is
+appropriate for till deformation.}
+{}
+
+\reply{p.~4718, l.~21 q is already used for flux (even if printed in bold-face to identify its vector
+character). I suggest using another variable name.}
+{}
+
+\reply{p.~4718, l.~23 Previously (eq. 14), $v_b$ was the rate of basal motion. $u$ and $v_b$ are
+used inconsistently throughout the paper.}
+{}
+
+\reply{p.~4719, l.~4 What value of $q$ have you selected for your simulations? Justification?}
+{}
+
+\reply{p.~4720, l.~1  While “velocity” is technically correct, it is an odd choice for a thickness
+change. I suggest using “rate.”}
+{}
+
+\reply{p.~4720, l.~5 Define $h$- the ice surface elevation.}
+{}
+
+\reply{p.~4722, l.~7 “\dots does not exist for tidewater glaciers or ice sheets.” This may not
+be strictly true see Gulley et al, 2009, in QSR, where they report exploring many
+englacial conduits. In subsequent work, Gulley has mapped subglacial conduits. A
+safer statement would be that “vapor/air-filled cavities are not known to exist far from
+glacier margins.”  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
+{}
+
+\reply{p.~4722, l.~10 “observed in ice sheets and glaciers“ instead of “observed in ice sheets”}
+{}
+
+\reply{p.~4722, l.~21 Add that the englacial water table is intended to represent the mean
+over some large area of glacier, perhaps $>1$ km$^2$. Here, it is best to avoid the extreme
+complications of, e.g., Fudge, 2008 in J Glac, where subglacial water pressures vary
+significantly over very short distances.}
+{}
+
+\reply{p.~4723, l.~8 You might add that we can expect phi to be large everywhere that $dP/dt$
+would be large (a highly fractured temperate glacier in coastal Alaska), and that phi
+would be small only where $dP/dt$ is small (ice sheet interiors). Thus, even hydrauli-
+cally/numerically “stiff” ice sheets shouldn’t experience physical or numerical shocks.}
+{}
+
+\reply{p.~4724, eq. 34 As before, are these m's supposed to be the same?}
+{}
+
+\reply{p.~4724, eq. 34 This is an odd combination of equations, because the top equation is a
+component of the bottom equation, but the middle equation has not been incorporated
+in the bottom equation.}
+{}
+
+\reply{p.~4726, l.~3 Note that this is essentially the same as eq. 27.}
+{}
+
+\reply{p.~4726, l.~23 Another connection is presented on p.~4721.}
+{}
+
+\reply{p.~4727, l.~20 Around here, discuss that, in steady state, eq. 41 suggests that at water
+pressure decreases, the rate of basal motion increases. This flies in the face of most
+sliding laws. Can you offer any insight as to how we are to incorporate these two views
+in our understanding of hydrology and glacier dynamics? Is the one-way coupling of
+your hydrology model with a glacier dynamics model sufficient to gain insight?}
+{}
+
+\reply{p.~4727, l.~20 Also note that $P$ depends also on $v_b$, not on $W$ alone.}
+{}
+
+\reply{p.~4727, l.~23 I don’t see the relationship between eq. 41 and the $VW$ advective flux.
+Please elaborate.}
+{}
+
+\reply{p.~4729, l.~5 Readers should not have to turn to the appendix to learn what $s_b$ is.
+Move essential material out of the appendix and into the main text.}
+{}
+
+\reply{p.~4729, l.~6 Defining this new $\omega_0$ variable seems unnecessary.}
+{}
+
+\reply{p.~4730, l.~5 What is the justification of the 5th power in the sliding speed?}
+{}
+
+\reply{p.~4730, l.~17 Define what you mean by “under”, “normal” and “over” pressure.}
+{}
+
+\reply{p.~4731, l.~13 Give a few sentence introduction to the numerics here. The point is to
+discretize eq. 34. What is the order of calculations? What will feed into what over the
+next sub-sections of section 7? A thumbnail sketch similar to what is presented in 7.6
+would be useful to guide the reader.}
+{}
+
+\reply{p.~4731, l .19 Near here, is it necessary for a model development paper to include a
+reference for “CFL” and “upwind”}
+{}
+
+\reply{p.~4731, l.~21 Be sure to clarify that $u$ and $v$ are not components of $v_b$, but are for the water speed.}
+{}
+
+\reply{p.~4732, l.~8 Parenthesis around the citation}
+{}
+
+\reply{p.~4736, l.~7 Is it important that the reader understand what it means for a scheme to
+be “flux-limited?” Without modeling expertise myself, I’m not sure what this means.}
+{}
+
+\reply{p.~4742, l.~17 Because you report that your scheme is mass conserving so prominently
+in the abstract, you should report how much error is involved with step (x), where
+negative water thicknesses are discarded. This could be for the Greenland run of
+section 9.2.}
+{}
+
+\reply{p.~4745, l.~22 Are the 2800 processor-hours on each of the 72 processors or divided
+amongst the processors?}
+{}
+
+\reply{p.~4746, l.~16 Do you specify a geothermal heat flux? The handling (or lack thereof) of
+geothermal heat should also be specified earlier, where the model setup is described.}
+{}
+
+\reply{p.~4746, l.~18 Please report if you identified any basal freeze-on ($m < 0$) consistent with
+Bell et al., 2014, Nat. Geosci., vol.~7?}
+{}
+
+\reply{p.~4747, l.~25 Again, this is a good place to discuss the ramifications of a model without
+R-channels. What are the limitations of your model? Is there a way that aspects of R-channels emerge in your model without explicit channel modeling?}
+{}
+
+\reply{p.~4748, l.~2 What about the eastern outlet glacier results makes them particularly
+suspect? 7, C1774--C1781, 2014}
+{}
+
+\reply{p.~4748, l.~4 You report on the run time for your spin-up with the null hydrology model,
+but what are the processor demands for the distributed model described here?}
+{}
+
+\reply{p.~4748, l.~5 Another statement regarding the sensitivity of results to $W_{til}ˆ{max}$ would
+be useful here.}
+{}
+
+\reply{p.~4748, l.~20 Around here, worth mentioning that pressure as an increasing function of
+$W$ is vaguely in line with the results of the Flowers (2002) model, although your model
+reveals additional complexity.}
+{}
+
+\reply{p.~4749, l.~17 “seemingly-disparate”}
+{}
+
+\reply{p.~4750, l.~20 Again, reference the observation that steady pressure here increases as
+sliding decreases, which is inconsistent with almost all sliding laws.}
+{}
+
+\reply{Table 3 Odd to present the melt rate as a function of water density. Change this to a
+straight scalar (i.e., 200).}
+{}
+\end{itemize}
+
+
+
+\end{document}
