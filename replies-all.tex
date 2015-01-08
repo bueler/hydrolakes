@@ -139,7 +139,8 @@ width=#3in]{#1.eps}}
 Thus, the present work is novel and worthy of publication in GMD.  The writing is generally clear and fluent.  Both the theoretical development of the continuum equations and the numerical implementation are clearly outlined.}
 {We appreciate this summary and the comments below, which have improved the text.  We note that scalability, so that the model can apply at high resolution to a whole ice sheet, dominates the design of the model, and will motivate many of the replies below.}
 
-\reply{Beyond these over-arching strengths, I have four critiques that I believe would significantly enhance the impact and accessibility of the manuscript. These four opportunities for improvement are below. My line edits follow these more significant points.---Four significant opportunities---\\
+\reply{Beyond these over-arching strengths, I have four critiques that I believe would significantly enhance the impact and accessibility of the manuscript. These four opportunities for improvement are below. My line edits follow these more significant points.\\
+---Four significant opportunities---\\
 + The authors offer some comparison between
 their model and those of Werder, Hewitt, Flowers, Schoof, etc., but these are generally smaller scale models that have yet to be implemented or applied at the ice sheet
 scale, and rarely to the complex geometries of existing glaciers or ice sheets. Some
@@ -149,8 +150,8 @@ entirely lacking.  Without much knowledge of these models myself, I suspect that
 present model may represent a significant advance over the implementations in other
 ice sheet models.  If appropriate, the authors may consider adding a sentence regarding this comparison to the abstract.  Also, by way of review, please consider adding a
 table comparing features of presently-used ice sheet models.}
-{Roughly-speaking, we \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{JohnsonFastook,LeBrocqetal2009,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which essentially uses the overburden-pressure-based \texttt{routing} model described in our manuscript, is the only whole-ice-sheet-scale work we know about.\footnote{Note that none of the reviewers mention this whole ice sheet scale application, but we care.  The fact that we are building an improvement of the \cite{LeBrocqetal2009,Siegertetal2009} model is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.  It has not yet been applied at whole ice sheet scale (S.~Price personal communication).\\
-We believe it would be inappropriate, and a surprising use of space, to add a table comparing features of presently-used ice sheet models in a PISM model-description paper.}
+{Roughly-speaking, we \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{JohnsonFastook,LeBrocqetal2009,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which essentially uses the overburden-pressure-based \texttt{routing} model described in our manuscript, is the only whole-ice-sheet-scale work we know about.\footnote{Note that none of the reviewers mention this whole ice sheet scale application, but we care about it.  The fact that we are building an improvement of the \cite{LeBrocqetal2009,Siegertetal2009} model is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.  It has not yet been applied at whole ice sheet scale (S.~Price personal communication).\\
+\indent We believe it would be inappropriate, and a surprising use of space, to add a table comparing features of presently-used ice sheet models in a PISM model-description paper.}
 
 \reply{+ Considering that efficient, low-pressure conduits are such important features of the
 subglacial hydrologic system, some discussion/justification of why a model without conduits is useful is necessary.  While consistent model behavior under grid refinement is
@@ -161,9 +162,9 @@ hydrology in existing ice sheet models, but ideally, conduits will be included i
 generations of ice sheets.}
 {We discuss why a conduit model is not included in our model, and we have amplified the point in the revised version.  At present, \emph{all} 2D conduit models are \emph{not physics} by the normal standards of the field (e.g.~the field ``climate modeling'' or ``fluid modeling'' or ``continuum physics'', according to taste).  Note that ``consistent model behavior under grid refinement,'' in the sense used by this reviewer, is normally called ``continuum physics''.\footnote{Numerical model behaviour under grid refinement, as normally meant by the field of numerical approximations of continuum physics, is the very different concept of numerical convergence to the solution of a differential equation.  It is directly addressed by our verification case.} \\
 \indent We clearly state that the existing lattice models of 2D conduits can't work in a user-controlled large-scale ice dynamics model, and that for that reason we do not add them.  That these models are useful for process exploration is not denied or disputed.\\
-\indent We encourage this reviewer, and the other reviewers who we also believe (by their questions) are interested in including conduits into subglacial hydrology models, to proceed in the normal manner of physics and attempt to develop a PDE description (i.e.~a lattice-free formulation) of conduit effects.  Or they can apply an actual conduit formation model to whole ice sheet scale, that is, one the causes a conduit to appear at the location where the data suggests it should, not where an input grid forces it.  To complain that we have not invented this ourselves, in addition to the other actions of this paper, is bizarre.\\
-\indent Note that 2D linked-cavities could be forced onto the nodes of a 2D lattice also.  We, and \emph{all} existing 2D models, of which we cite the ones we know, \emph{do not put linked-cavities on a lattice because we (collective) have the PDE which describe their effect}.  We have added this point to the paper. \\
-\indent That ``all the model results may be called into question'' is the normal state of affairs in climate modeling, but this phrase profoundly explains why we don't use lattice models.  It would be sad for a user to use PISM coupled to a GCM and then have a reviewer of the result correctly point out that there was a single subsystem in the entire coupled mess which was not using the usual translation-invariant structures of physics \dots namely a 2D lattice model of subglacial conduits.\\
+\indent We encourage this reviewer, and the other reviewers who we also believe (by their questions) are interested in including conduits into subglacial hydrology models, to proceed in the normal manner of physics and attempt to develop a PDE description (i.e.~a lattice-free formulation) of conduit effects.  Or they can apply an actual conduit formation model to whole ice sheet scale, that is, one the causes a conduit to appear at the location where the data suggests it should, not where an input grid forces it.  To complain that we have not invented the former ourselves, or made a model trillions of times more efficient than existing models so that we can claim that latter, in addition to the other actions of this paper, is bizarre.\\
+\indent Note that 2D linked-cavities could be forced onto the nodes of a 2D lattice also.  We, and \emph{all} existing 2D models, of which we cite the ones we know, do not put linked-cavities on a lattice because we (collectively) \emph{do} have the PDE which describes the effect of a linked cavity system as continuum physics.  We have added this point to the paper. \\
+\indent That ``all the model results may be called into question'' is the normal state of affairs in climate modeling.  But this phrase profoundly explains why we \emph{don't} use lattice models.  It would be sad for a user to use PISM coupled to a GCM and then have a reviewer of the result correctly point out that there was a single subsystem in the entire coupled mess which was not using the usual translation-invariant structures of physics \dots namely a 2D lattice model of subglacial conduits.\\
 \indent Finally, we completely agree that ``ideally conduits will be included in future
 generations of ice sheet [models]''.}
 
@@ -199,34 +200,43 @@ depend on water pressure'', we remark that sliding laws usually relate basal she
 \reply{---Line Edits---\\
 p.~4706, l.~26 Also consider citing Walder 1982 if your purpose is to highlight some of
 the early work here.}
-{}
+{We cite Walder 1982 line 22 of page 4708.  We use Creyts and Schoof at this point on page 4706 because only a stable (i.e.~viable) models aquifer geometry are worth listing.}
 
-\reply{p.~4707 l.~5 I think the best reference for englacial porosity is Fountain et al.~2005, from
-Storglaciaren.}
-{}
+\reply{p.~4707 l.~5 I think the best reference for englacial porosity is Fountain et al.~2005, from Storglaciaren.}
+{These citations here are about models.  We cite Fountain later when describing observations.}
 
 \reply{p.~4708, l.~24 It may be worth mentioning that wall melt in linked cavities is generally
 expected to be small (Kamb, 1987 and Bartholomaus et al., 2011)}
-{}
+{We have added this comment, thanks.}
 
 \reply{p.~4709, l.~1 What are the ramifications of neglecting to model conduits? Many observational studies (including work by Nienow, Mair, Anderson, Cowton, Harper) have
 shown that efficient conduits are a fundamental component of subglacial hydrology.
 How will your model provide insightful and realistic results without a conduit component?}
-{}
+{Remember that the model is intended for whole ice sheet use.  We want, therefore, a \emph{well-posed extension} of the models used for identifying subglacial lakes \cite{LeBrocqetal2009,Siegertetal2009}, and we want a \emph{mass-conserving extension} of a successful (in terms of explaining surface velocity observations) ice stream basal stress model \cite{AschwandenAdalgeirsdottirKhroulev,BBssasliding,Tulaczyketal2000}, and we want ice streams to have significant width as they are observed to (but which they would not if mechanisms like till and linked cavities did not draw water out of the gradient descent paths of the \texttt{routing} model; compare figures in section 9).\\
+\indent While the above purposes are all quite prominent in the paper we actually wrote, they are essentially ignored by these and other reviewer comments, which tend to focus on current controversies in modeling mountain glaciers, and on the short-time behavior of drainage events in the warmer areas of the smaller ice sheets. \\
+\indent We had also assumed that models like \cite{Bartholomausetal2011}, which seem to explain the behavior of (rare) well-observed hydrological-plus-glacier-dynamics systems without using conduits, were of some value, but we may be wrong.}
 
-\reply{p.~4712, l.~17 It is not immediately clear to me why $\nabla H \gg \nabla W$. Where does this
-suggestion/observation come from?}
-{}
+\reply{p.~4712, l.~17 It is not immediately clear to me why $\nabla H \gg \nabla W$. Where does this suggestion/observation come from?}
+{We have revised this sentence to say: ``If $P$ scales with the overburden pressure $P_o$ then the first term will dominate in the situation $|\nabla (H+b)| \gg |\nabla W|$''.  We no longer assert the situation is ``common''.\\
+\indent This comment is in the context of explaining why, for nearly the first time, we have included ``$\rho_w g W$'' into the formula for hydraulic potential.  We presumed that the reason it is left out of nearly all prior literature is because that literature assumes that flow along the gradient of the (prior) hydraulic potential $\psi = P + \rho_w g b$ dominates over the gradient of the other part (i.e.~the gradient of the added part ``$\rho_w g W$'').  This is the case in which it would be acceptable to leave out the added part.\\
+\indent So either: (i) all the prior literature is worthless (perfectly possible), or (ii) the case $|\nabla (H+b)| \gg |\nabla W|$ is worth considering to relate to prior literature (and so we consider it).  In our model we only assume $|\nabla (H+b)| \gg |\nabla W|$ a part of the given formula for the flux.  We are here primarily trying to describe the complicated relationship between flux and the two gradients.}
 
-\reply{p.~4712, l.~23 If here you assume that W $\ll$ b or P, and thus can be neglected in eq. 8,
-why have you made the distinction in eq. 2 and the discussion that follows to include
-the W term?}
-{}
+\reply{p.~4712, l.~23 If here you assume that W $\ll$ b or P, and thus can be neglected in eq. 8, why have you made the distinction in eq. 2 and the discussion that follows to include the W term?}
+{This question only makes sense if ``you assume that W $\ll$ b or P'' is interpreted as ``you assume that $|\nabla W| \ll |\nabla (H+b)|$''.  We do not compare values of $W$ (a thickness) to $b$ (an elevation) to $P$ (a pressure); we are comparing \emph{gradients} of distances.\\
+\indent As noted, the simplification is for simplicity, in particular for simplicity in the final implementation code.  Despite the simplification we \emph{keep} the part of the flux proportional to $\grad W$, thus the simplified model is always diffusive for any pressure closure, so the \texttt{routing} model is well-posed (unlike the related models in the prior literature \cite{LeBrocqetal2009,Siegertetal2009}).  As we also say, the simplification makes no difference at all if $\beta=2$, which is used in more than half the cited work which picks a value for $\beta$.\\
+\indent Finally, the simplification occurs inside our formula for the effective hydraulic conductivity $K$, which is wildy-uncertain in practice anyway.  That is, in the formula
+  $$K = k W^{\alpha-1} |\grad(P+\rho_w g b)|^{\beta-2}$$
+the coefficient $k$ and the powers $\alpha,\beta$ are all subject to the most rank speculation (as we point out in citations in subsection 2.3).}
 
 \reply{p.~4713, l.~1 Near here, or somewhere else within the paper, please compare your
-values for hydraulic conductivity with those that may be calculated from field observations. Are your values in line with those found in the field? Googling ``subglacial
+values for hydraulic conductivity [$k$] with those that may be calculated from field observations. Are your values in line with those found in the field? Googling ``subglacial
 hydraulic conductivity'' yields several points of comparison.}
-{}
+{I have looked and not found.  There is not a single observational paper I can find which argues that a directly-measurable value of the hydraulic conductivity is describing the average effect of a linked cavity system over the area of a grid cell relevant to this work (100 m to 5 km squares, say).  Values are, of course, always given when these papers include a \emph{model}---our Table A1 cites the default value of $k$ as from \cite{Schoofetal2012}---but one should be very skeptical that a value from applying one model to the data is still the right value when applying a different model to the data. \\
+\indent Of course hydraulic conductivity for \emph{till} is given, based on specific \emph{in situ} observational work, and such values appear in the literature we cite (and dominate the results from Googling ``subglacial hydraulic conductivity'').  But the till hydraulic conductivity value should not be used as $k$.  The conductivity of till is so low that water does not move laterally through till in a time, and over distances, which could explain any of the apparent behavior of water under glaciers and ice sheets.  Rather it is the macroscopic conductivity of the connected cavity network which is relevant.  Such a network can be present even as there is sediment (till) lying around, and this is the situation we are attempting to model. \\
+\indent  To quote \cite{Bartholomausetal2011}, which we cite, \begin{quote}
+\emph{Each of these three parameters, $\gamma$, $[k=]C\tau_b^n$, and $\phi$, is only weakly constrained by observations reported in the literature.  \dots $[k=]C\tau_b^n$ has units that depend on the exponent, and varies from $1.5\times 10^{-5}\, \text{m}\,\text{s}^{-1}\,\text{Pa}^{0.18}$ to $1.1\times 10^{-3}\, \text{m}\,\text{s}^{-1}\,\text{Pa}^{0.4}$ (Jansson, 1995; Sugiyama and Gudmundsson, 2004).}
+\end{quote}
+Is this ``weakly constrained'' result the kind of ``field observations'' meant by the reviewer?  Why should space in this model description paper be used to recapitulate such a weak and uncertain state of affairs?  We want to avoid, in a model description paper, asserting that any particular value of any constant is correct.  We are building the model so users can relate its relatively few parameters ($k$ among them) to rich, but often indirect, available data.  As pointed out in our paper, ``Darcy flux parameters $\alpha,\beta,k$ are also important [to the distribution of water thickness in the model results].  Parameter identification using observed surface data, though needed, is beyond the scope of this paper.''  Indeed, the journal is \emph{Geoscientific Model Development} not \emph{Journal of Glaciology}, and the conductivity $k$ is an adjustable parameter in the model, and the source of the default value (Table A1) is cited, and this situation should suffice.}
 
 \reply{p.~4714, l.~15 Here and nearby: define $c_1$, $c_2$, and A.}
 {}
@@ -841,7 +851,7 @@ addition to GMD.}
 \end{itemize}
 
 
-\begin{thebibliography}{13}
+\begin{thebibliography}{}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{{\tt #1}}
 \providecommand{\urlprefix}{URL }
@@ -854,6 +864,12 @@ addition to GMD.}
 Aschwanden, A., Adalgeirsd{\'o}ttir, G., and Khroulev, C.: Hindcasting to
   measure ice sheet model sensitivity to initial states, The Cryosphere, 7,
   1083--1093, \doi{10.5194/tc-7-1083-2013}, 2013.
+
+\bibitem{Bartholomausetal2011}
+Bartholomaus, T.~C., Anderson, R.~S., and Anderson, S.~P.: Growth and collapse
+  of the distributed subglacial hydrologic system of {K}ennicott {G}lacier,
+  {A}laska, {USA}, and its effects on basal motion, J. Glaciol., 57, 985--1002,
+  2011.
 
 \bibitem{BBssasliding}
 Bueler, E. and Brown, J.: Shallow shelf approximation as a ``sliding law'' in a
@@ -900,6 +916,11 @@ Siegert, M., Le~Brocq, A., and Payne, A.: Hydrological connections between
   Antarctic subglacial lakes, the flow of water beneath the East Antarctic Ice
   Sheet and implications for sedimentary processes, pp. 3--10, Wiley-Blackwell,
   2009.
+
+\bibitem{Tulaczyketal2000}
+Tulaczyk, S., Kamb, W.~B., and Engelhardt, H.~F.: Basal mechanics of {I}ce
+  {S}tream {B}, {W}est {A}ntarctica 2.~{U}ndrained plastic bed model, J.
+  Geophys. Res., 105, 483--494, 2000{\natexlab{b}}.
 
 \bibitem{vanderWeletal2013}
 van~der Wel, N., Christoffersen, P., and Bougamont, M.: The influence of
