@@ -188,7 +188,7 @@ ideas in this model appears to be inappropriate or at least confusing. \dots}
 \indent One connection between $\mathbf{v}_b$ and $\tau_c$ is our hydrology model.  The other is the whole ice dynamics model of PISM, which ice-sheet-modeler readers know takes boundary stress as an input and produces velocity as an output.  This ice dynamics model is well-described in literature we cite. \\
 \indent As hinted above, the normal use of sliding laws in ice sheet modeling is to have \emph{no} physical meaning to the coefficient of the sliding law, and often to set it by inversion of surface velocities, thus totally by-passing a process-based description of how it might evolve.  We think that having mass-conservation for liquid water in the subglacial system, and using a physically-based computation of the coefficient in a sliding law, is a preferred situation.}
 
-\reply{+ It is interesting and surprising to note that you find an inverse relationship between
+\reply{\label{inversepage} + It is interesting and surprising to note that you find an inverse relationship between
 water pressure and basal motion for systems at steady state. This is contrary to almost
 all prevailing sliding laws. Is a result of the 1-way coupling ($v_b$ that does not directly
 depend on water pressure)? Whatever the cause, it is sufficiently surprising to warrant
@@ -215,26 +215,27 @@ shown that efficient conduits are a fundamental component of subglacial hydrolog
 How will your model provide insightful and realistic results without a conduit component?}
 {Remember that the model is intended for whole ice sheet use.  We want, therefore, a \emph{well-posed extension} of the models used for identifying subglacial lakes \cite{LeBrocqetal2009,Siegertetal2009}, and we want a \emph{mass-conserving extension} of a successful (in terms of explaining surface velocity observations) ice stream basal stress model \cite{AschwandenAdalgeirsdottirKhroulev,BBssasliding,Tulaczyketal2000}, and we want ice streams to have significant width as they are observed to, but which they would not without a pressure-evolution equation.\footnote{If mechanisms like linked cavities do not draw water out of the hydraulic-gradient descent paths then the water is concentrated along characteristics.  Compare \texttt{routing} and \texttt{distributed} figures in section 9.}\\
 \indent While the above purposes are all quite prominent in the paper we actually wrote, they are essentially ignored by these and other reviewer comments, which tend to focus on current controversies in modeling mountain glaciers, and on the short-time behavior of drainage events in the warmer areas of the smaller ice sheets, as these are the topics which are current among researchers trying to model conduits. \\
-\indent We had also assumed that models like \cite{Bartholomausetal2011}, which seem to explain the behavior of (rare) well-observed hydrological-plus-glacier-dynamics systems without using conduits, were of some value, but we may be wrong.}
+\indent We had assumed that models like \cite{Bartholomausetal2011}, which seem to explain the behavior of (rare) well-observed hydrological-plus-glacier-dynamics systems without using conduits, were of some value, but we may be wrong.}
 
 \reply{p.~4712, l.~17 It is not immediately clear to me why $\nabla H \gg \nabla W$. Where does this suggestion/observation come from?}
 {We have revised the relevant sentence to say: ``If $P$ scales with the overburden pressure $P_o$ then the first term will dominate in the situation $|\nabla (H+b)| \gg |\nabla W|$''.  We no longer assert the situation is ``common''.\\
 \indent This comment is in the context of explaining why, for nearly the first time, we have included ``$\rho_w g W$'' into the formula for hydraulic potential.  We presumed that the reason it is left out of nearly all prior literature is because that literature assumes that flow along the gradient of the (prior) hydraulic potential $\psi = P + \rho_w g b$ dominates over the gradient of the other part (i.e.~the gradient of the added part ``$\rho_w g W$'').  This is the only case in which it would be acceptable to leave out the added part, as almost all prior literature does. \\
-\indent So either: (i) all the prior literature is worthless (perfectly possible), or (ii) the case $|\nabla (H+b)| \gg |\nabla W|$ is worth considering as a way to relate our formulas to prior literature, and that is the spirit in which we consider it.  (In our model we only assume $|\nabla (H+b)| \gg |\nabla W|$ in a minor part of the given formula for the flux.)  We are here primarily trying to describe the complicated relationship between flux and the two gradients.}
+\indent So either: (i) all the prior literature is worthless (perfectly possible), or (ii) the case $|\nabla (H+b)| \gg |\nabla W|$ is worth considering as a way to relate our formulas to prior literature, and that is the spirit in which we consider it. \\
+\indent Our model only assumes $|\nabla (H+b)| \gg |\nabla W|$ in a minor part of the given formula for the flux; see the next reply.}
 
 \reply{p.~4712, l.~23 If here you assume that W $\ll$ b or P, and thus can be neglected in eq. 8, why have you made the distinction in eq. 2 and the discussion that follows to include the W term?}
-{This question only makes sense if ``you assume that W $\ll$ b or P'' is interpreted as ``you assume that $|\nabla W| \ll |\nabla (H+b)|$''.  We do not compare values of $W$ (a thickness) to $b$ (an elevation) to $P$ (a pressure); we are comparing \emph{gradients} of distances.\\
-\indent As noted, the simplification is for simplicity, in particular for simplicity in the final implementation code.  Despite the simplification we \emph{keep} the part of the flux proportional to $\grad W$, thus the simplified model is always diffusive for any pressure closure, and so, in particular, the \texttt{routing} model is well-posed unlike the related models in the prior literature \cite{LeBrocqetal2009,Siegertetal2009}.  As we also say, the simplification makes no difference at all if $\beta=2$, which is used in more than half the cited work which picks a value for $\beta$.\\
-\indent Finally, the simplification occurs inside our formula for the effective hydraulic conductivity $K$, which is wildy-uncertain in practice anyway.  That is, in the formula
+{This question only makes sense if ``you assume that W $\ll$ b or P'' is interpreted as ``you assume that $|\nabla W| \ll |\nabla (H+b)|$''.  We do not compare values of $W$ (a thickness) to $b$ (an elevation) to $P$ (a pressure); we are comparing only gradients of distances to each other.\\
+\indent As noted, the simplification is for simplicity, in particular for simplicity in the final implementation.  Despite the simplification we \emph{keep} the part of the flux proportional to $\grad W$, so the model is more complete than any other applied at ice sheet scale.  Furthermore, the simplified model is always diffusive for any pressure closure, and so, in particular, the \texttt{routing} model is well-posed unlike the related models in the prior literature \cite{LeBrocqetal2009,Siegertetal2009}. \\
+\indent The simplification occurs inside our formula for the effective hydraulic conductivity $K$, which is wildy-uncertain in practice anyway.  That is, in the formula
   $$K = k W^{\alpha-1} |\grad(P+\rho_w g b)|^{\beta-2}$$
-the correct values for coefficient $k$ and the powers $\alpha,\beta$ are all subject to the most rank and data-free speculation, as we imply in citations in subsection 2.3 which give a wide range of values.}
+the correct values for coefficient $k$ and the powers $\alpha,\beta$ are all subject to the most rank and data-free speculation, as we imply in citations in subsection 2.3 which give a wide range of values.  The simplification makes no difference at all if $\beta=2$, which is used in more than half the cited work which picks a value for $\beta$.}
 
 \reply{p.~4713, l.~1 Near here, or somewhere else within the paper, please compare your
 values for hydraulic conductivity [$k$] with those that may be calculated from field observations. Are your values in line with those found in the field? Googling ``subglacial
 hydraulic conductivity'' yields several points of comparison.}
 {We have looked and not found.  There is not a single observational paper we can find which argues that a directly-measurable value of the hydraulic conductivity is describing the average effect of a linked cavity system over the area of a grid cell relevant to this work (100 m to 5 km squares, say).  Values are, of course, always given when these papers include a \emph{model}---our Table A1 cites the default value of $k$ as from \cite{Schoofetal2012}---but one should be very skeptical that a value from applying one model to the data is still the right value when applying a different model to the data. \\
-\indent Of course hydraulic conductivity for \emph{till} is given, based on specific \emph{in situ} observational work, and such values appear in the literature we cite (and dominate the results from Googling ``subglacial hydraulic conductivity'').  But the till hydraulic conductivity value should not be used as $k$.  The conductivity of till is so low that water does not move laterally through till in a time, and over distances, which could explain any of the apparent behavior of water under glaciers and ice sheets.  Rather it is the macroscopic conductivity of the connected cavity network which is relevant.  Such a network can be present even as there is sediment (till) lying around, and this is the situation we are attempting to model. \\
-\indent  To quote \cite{Bartholomausetal2011}, which we cite, \begin{quote}
+\indent Of course hydraulic conductivity for \emph{till} is given in literature, based on specific \emph{in situ} observational work.  Such values appear in the literature we cite, and they dominate the results from Googling ``subglacial hydraulic conductivity''.  But the till hydraulic conductivity value should not be used as $k$.  The conductivity of till is so low that water does not move laterally through till in a time, and over distances, which could explain any of the apparent behavior of water under glaciers and ice sheets.  Rather it is the macroscopic conductivity of the connected cavity network which is relevant.  (Such a network can be present even as there is sediment (till) lying around; this is the situation we are modelling. \\
+\indent  To quote \cite{Bartholomausetal2011}, which we already cite, \begin{quote}
 \emph{Each of these three parameters, $\gamma$, $[k=]C\tau_b^n$, and $\phi$, is only weakly constrained by observations reported in the literature.  \dots $[k=]C\tau_b^n$ has units that depend on the exponent, and varies from $1.5\times 10^{-5}\, \text{m}\,\text{s}^{-1}\,\text{Pa}^{0.18}$ to $1.1\times 10^{-3}\, \text{m}\,\text{s}^{-1}\,\text{Pa}^{0.4}$ (Jansson, 1995; Sugiyama and Gudmundsson, 2004).}
 \end{quote}
 Is this ``weakly constrained'' result the kind of ``field observations'' meant by the reviewer?  Why should space in this model description paper be used to recapitulate such a weak and uncertain state of affairs?  We want to avoid, in a model description paper, asserting that any particular value of any constant is correct.  We are building the model so users can relate its relatively few parameters ($k$ among them) to rich, but often indirect, available data.  As pointed out in our paper, ``Darcy flux parameters $\alpha,\beta,k$ are also important [to the distribution of water thickness in the model results].  Parameter identification using observed surface data, though needed, is beyond the scope of this paper.''  Indeed, the journal is \emph{Geoscientific Model Development} not \emph{Journal of Glaciology}, and the conductivity $k$ is an adjustable parameter in the model.  The source of the default value (Table A1) is cited.  This situation should suffice.}
@@ -247,31 +248,29 @@ potentially does not include till water storage beneath some parts of the ice sh
 {The issue is that the majority (by area) under the world's ice sheets does not have \emph{liquid} water under it, though it may have till.  The equations for till storage, transfer into the transport system, and weakening of the saturated till, must all reflect the amount of \emph{liquid} water there, not frozen water.  We model frozen locations as not having liquid water in the till, so $W_{til}=0$.  We have attempted to make this point clearer, without adding too much text.}
 
 \reply{p.~4715, l.~20 Why not include lateral transport of water through till if vertical transport is included?  Till is often regarded as having an anisotropic hydraulic conductivity (e.g., Jones, 1993, ``A comparison of pumping and slug tests. . .'' in Ground Water vol.~31(6)).  Horizontal conductivity can be at least several times greater than vertical conductivity.}
-{The reason for not including horizontal transport is the standard fact of ice sheets: stuff is thin.  In particular, any till thickness ever given in the literature is 1/1000 (or less) of the lateral distances traveled by subglacial water.  Anisotropy is irrelevant unless the horizontal conductivity can make up for the thinness.  But, as the reviewer says, the conductivity in the horizontal is not one thousand or more times the conductivity in the vertical.  Of course, there may be a transport network of cavities or conduits in addition.  We attempt to model the former, since physical evolution equations are available for it, in combination with till storage, and this is exactly the overall structure of the model.}
+{The reason for not including horizontal transport is the standard fact of ice sheets: stuff is thin.  In particular, any till thickness ever given in the literature is 1/1000 (or less) of the lateral distances traveled by subglacial water.  Anisotropy is irrelevant unless the horizontal conductivity can make up for this thinness.  As the reviewer says, the conductivity in the horizontal is \emph{not} one thousand or more times the conductivity in the vertical.\\
+\indent Of course, there is presumably a transport network of cavities, conduits, or thin sheets in addition.  We attempt to model the former, since continuum physics evolution equations are available for it, and it is stable.  The overall structure of the model is exactly that we model transport in combination with till storage.}
 
 \reply{p.~4715, l.~20 Is m in eq. 16 the same as m in eq. 1?  If so, these terms cancel out of
 eq. 1.}
-{Yes, $m$ in equation (16) is the same as in equation (1).  Yes, they cancel out when $W_{til}< W_{til}^{max}$, so that no water enters the transport network (i.e.~so that $\partial W/\partial t=0$ in (1)) in that case.  But we conserve water.  Thus if the right side of (16) is positive and also $W_{til} = W_{til}^{max}$, at a given location, then $\partial W_{til}/\partial t=0$ (i.e.~we put no more water in till) and the water goes into $W$ according to equation (1). \\
+{Yes, $m$ in equation (16) is the same as in equation (1).  Yes, they cancel out when $W_{til}< W_{til}^{max}$, so that no water enters the transport network (i.e.~so that $\partial W/\partial t=0$ in (1)) in that case.  But we conserve water.  Thus if the right side of (16) is positive and also $W_{til} = W_{til}^{max}$, at a given location, then $\partial W_{til}/\partial t=0$, i.e.~we put no more water in till, and the water goes into the transport network ($W$) according to equation (1). \\
 \indent We have attempted to clarify this logic here in section 3, and also in section 7 where numerical schemes are nailed down.}
 
 \reply{p.~4715, l.~20 If $m/\rho$ is almost always bigger than $C_d$, then $dW_{til}/dt$ is always increasing up to the cap $W_{til}^{max}$. It would be useful to lay this out more explicitly, and include eq. 21 in this subsection. Essentially, you have a Boolean relationship, where in some places there is wet till and other places the till is frozen. Is model sensitive to selection of $W_{til}^{max}$?}
-{Yes, when $m$ is positive, so that there is basal melt,\footnote{Note that the majority by area of ice sheets are assumed to have frozen base, so $m\le 0$ there.} then $m/\rho$ is almost always bigger than $C_d$, so that $dW_{til}/dt$ is always increasing up to the cap $W_{til}^{max}$.  The figures in section 9 reflect this. \\
+{Yes, when there is positive\footnote{Note that the majority by area of ice sheets are assumed to have frozen base, so $m\le 0$ there.} basal melt, then $m/\rho$ is almost always bigger than $C_d$, so that $dW_{til}/dt$ is always increasing up to the cap $W_{til}^{max}$.  The figures in section 9 reflect this. \\
 \indent Though we would not say we have a ``Boolean relationship,'' we agree with the spirit of the reviewer's assertion.  We repeatedly emphasize that we enforce inequalities including (21), the bounds on $W_{til}$.  It follows that in some places there is wet till and other places the till is frozen; well-known reference \cite{BBssasliding} covers these ideas.\\
-\indent No, the model is not very sensitive to the selection of $W_{til}^{max}$, at least in areas of substantial basal melt rate.  This is because of our Figure 1(b), which shows that the effective pressure $N_{til}$ is a weak function of $W_{til}$ once the till is weak enough (i.e.~$N_{til}$ is low enough) to allow sliding. \\
-\indent Reducing the length of the paper, which we agree with reviewers and editor is a priority, requires \emph{not} writing out as text all possible conclusions from the equations, as we think is implicitly suggested here.}
+\indent No, the model is not very sensitive to the selection of $W_{til}^{max}$, at least in areas of substantial basal melt rate.  This is because of our Figure 1(b), which shows that the effective pressure $N_{til}$ is a weak function of $W_{til}$ once the till is weak enough (i.e.~$N_{til}$ is low enough) to allow sliding.}
 
 \reply{p.~4715, l.~24 Inclusion of $C_d$ with fixed value is poorly justified and seems very ad hoc.  Even if used by Tulaczyk, why is it necessary here and what is the model sensitivity to the selection of 1 mm a$^{-1}$?  A constant rate of till water drainage into the subglacial hydrologic system, that does not depend on pressure gradients, seems very odd.}
-{We agree that Tulaczyk's use of $C_d$ is ad hoc.  We need such a background loss of till-stored water, like him, but unlike him we have implemented a \emph{conservation} model.  We keep track of all the water globally, but we need previously wet areas which become frozen to not eternally remain weak (i.e.~with till full of liquid water).\\
-\indent In areas resembling anything in the northern hemisphere, with relatively high basal melt rates, the model is insensitive to $C_d$.  In areas of very low melt rate (e.g.~EAIS) there is a time-scale sensitivity.  We have no time-dependent information about changes in EAIS subglacial melt rates with which to constrain values. \\
-\indent The implication that we should use something complicated (which is the only alternative to ``ad hoc'' here) implies many unconstrained parameters instead of few.   If the reviewer has 2D, data-supported, physics-based, applicable-at-large-scale models of how till and a linked-cavity (or other) system interact, then we hope he publishes that.  We don't have it.  We seek relative simplicity and few parameters, instead of implementing idle process speculation.}
+{We agree that Tulaczyk's use of $C_d$ is ad hoc.  We need such a background loss of till-stored water, like him, but unlike him we have implemented a \emph{conservation} model.  We keep track of all the water globally, but we need previously wet areas which no longer have water input to not eternally remain weak (i.e.~with till full of liquid water).\\
+\indent In areas resembling anything in the northern hemisphere, with relatively high basal melt rates, the model is insensitive to $C_d$.  In areas of very low melt rate (e.g.~EAIS) there is a time-scale sensitivity.  We have no time-dependent information about changes in EAIS subglacial melt rates with which to constrain values.  The implication that we should use something complicated (which is the only alternative to ``ad hoc'' here) implies many unconstrained parameters instead of few.   If the reviewer has 2D, data-supported, physics-based, applicable-at-large-scale models of how till and a linked-cavity (or other) system interact, then we hope he publishes that.  We can't find it.  We seek relative simplicity and few parameters, instead of implementing idle process speculation.}
 
 \reply{p.~4717, l.~1 What is the effect of this choice? How was it selected?}
-{The value $\delta=0.02$ is based on the observations that subglacial water pressure at the bottoms of boreholes, i.e.~in till, have pressure within a few percent of overburden pressure.  The idea is that fully saturated till has water pressure which is $(1-0.02)P_o=0.98 P_o$. \\
-\indent  This parameter \emph{is} very influential on sliding, and is explored the right way (i.e.~by using lots of observations of surface velocity) in \cite{AschwandenAdalgeirsdottirKhroulev}, though in a non-conserving hydrology context there.}
+{The value $\delta=0.02$ is based on the observations that subglacial water pressure at the bottoms of boreholes, i.e.~in till, have pressure within a few percent of overburden pressure.  The particular value used means that fully saturated till has water pressure which is $(1-0.02)P_o=0.98 P_o$.  This parameter \emph{is} very influential on sliding, and is explored the right way (i.e.~by using lots of observations of surface velocity) in \cite{AschwandenAdalgeirsdottirKhroulev}, though using a non-conserving subglacial hydrology model there.}
 
 \reply{p.~4718, l.~16 I recommend changing the title of this section to ``Basal motion relation'' or some other phrase. ``Sliding law'' implies slip at the interface between the ice and its bed, whether bedrock or sediment, whereas your equation for yield stress (eq. 17) is appropriate for till deformation.}
 {Ice sheet modelers use ``sliding law'' the way we do, and ice sheet models can't make the distinction implied by this reviewer.  That is, there is no distinction in results in any existing ice sheet model between modeling slip at the ice-bed interface and a meter down within the till.  Vertical resolution like this is only in the heads of process modelers. \\
-\indent Equation (25) is called a sliding law by all readers familiar with ice sheet modeling, the target audience of this paper.}
+\indent Equation (25) is called a sliding law by all readers familiar with ice sheet modeling, the target audience of this paper.  The reviewer also calls it a sliding law in other comments.}
 
 \reply{p.~4718, l.~21 q is already used for flux (even if printed in bold-face to identify its vector character).  I suggest using another variable name.}
 {Exponent $q$ is used in prior literature, including \cite{AschwandenAdalgeirsdottirKhroulev}, and in the PISM users manual.\footnote{Despite the content of all reviews \dots oddly enough we are actually trying to publish a model description.}  There is consistent use of bold for vectors in the paper, thus the flux is $\mathbf{q}$ while the power is $q$, so no confusion will arise.}
@@ -289,94 +288,88 @@ eq. 1.}
 {This is simply a typo.  It should be $H$, the ice thickness.  Corrected.}
 
 \reply{p.~4722, l.~7 ``\dots does not exist for tidewater glaciers or ice sheets.'' This may not be strictly true see Gulley et al, 2009, in QSR, where they report exploring many englacial conduits.  In subsequent work, Gulley has mapped subglacial conduits.  A safer statement would be that ``vapor/air-filled cavities are not known to exist far from glacier margins.''  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
-{The relevant sentence has been removed in the revisions which shortened the paper.  This idea, that vapor/air filled cavities are not a concern supported well by observations, is not important enough to comment on.}
+{The relevant sentence has been removed in the revisions which shortened the paper.  This idea, that vapor/air filled cavities are not a concern supported well by observations, in a model intended for ice sheets, is not important enough to comment on.}
 
 \reply{p.~4722, l.~10 ``observed in ice sheets and glaciers`` instead of ``observed in ice sheets''}
-{}
+{We have clarified that we only mean ice sheets here by only citing Das 2008.}
 
 \reply{p.~4722, l.~21 Add that the englacial water table is intended to represent the mean
 over some large area of glacier, perhaps $>1$ km$^2$. Here, it is best to avoid the extreme
 complications of, e.g., Fudge, 2008 in J Glac, where subglacial water pressures vary
 significantly over very short distances.}
-{}
+{Our point is not that there is variation over any particular scale, but that efficient connection to the subglacier implies a close connection between subglacial pressure and the height of water englacially.  This is not, fundamentally, contradicted by Fudge 2008.  We agree that our (notional) englacial water table represents a spatial-average of the nearly unobservable englacial macroporous network.}
 
-\reply{p.~4723, l.~8 You might add that we can expect phi to be large everywhere that $dP/dt$
-would be large (a highly fractured temperate glacier in coastal Alaska), and that phi
-would be small only where $dP/dt$ is small (ice sheet interiors). Thus, even hydrauli-
-cally/numerically ``stiff'' ice sheets shouldn’t experience physical or numerical shocks.}
-{}
+\reply{p.~4723, l.~8 You might add that we can expect phi to be large everywhere that $dP/dt$ would be large (a highly fractured temperate glacier in coastal Alaska), and that phi would be small only where $dP/dt$ is small (ice sheet interiors). Thus, even hydraulically/numerically ``stiff'' ice sheets shouldn’t experience physical or numerical shocks.}
+{Actually, we think $dP/dt$ may be very large in ice sheet ``interiors'', namely during abrupt subglacial lake filling or drainage (observed in Antarctica) or moulin drainage of supraglacial lakes (observed in Greenland).  We don't really expect the model to be good for either highly-fractured temperate glaciers in Alaska, or in modeling the temporal detail associated to the above ice sheet dramas.  Instead of discussing at length all possible consequences, regarding this material we must let the equations themselves do some of the job.}
 
 \reply{p.~4724, eq. 34 As before, are these m's supposed to be the same?}
-{}
+{Yes.  See comment above.}
 
-\reply{p.~4724, eq. 34 This is an odd combination of equations, because the top equation is a
-component of the bottom equation, but the middle equation has not been incorporated
-in the bottom equation.}
-{}
+\reply{p.~4724, eq. 34 This is an odd combination of equations, because the top equation is a component of the bottom equation, but the middle equation has not been incorporated in the bottom equation.}
+{Yes.  This is ``odd'' but that is different from ``incorrect.'' \\
+\indent The context: As clearly stated in subsections 2.3 and 2.4, one can write either of two expressions for the flux, namely $\mathbf{q} = -K W \grad \psi$ or $\mathbf{q} = \mathbf{V} W - D \grad W$.  And a term $\nabla\cdot\mathbf{q}$ appears in both the water amount evolution equation and the pressure evolution equation.  \\
+\indent The complications are the (i) we are indeed enforcing inequalities on $W,W_{til},P$, and (ii) we want to handle the $\nabla\cdot\mathbf{q}$ terms by the same numerics, with a split between diffusive and advective parts.  These are both made most clear, given that we don't want to write a paper using variational inequalities which would only be understandable to mathematicians, when we describe the numerical scheme in section 7.\\
+\indent  After writing (and tossing) our paper many times with different expository choices, we find the current exposition most clear.  If the reviewer finds it incorrect he should say so.}
 
 \reply{p.~4726, l.~3 Note that this is essentially the same as eq. 27.}
-{}
+{Yes.  This redundancy in the exposition has been removed.}
 
 \reply{p.~4726, l.~23 Another connection is presented on p.~4721.}
-{}
+{Yes, we have noted this connection now.}
 
-\reply{p.~4727, l.~20 Around here, discuss that, in steady state, eq. 41 suggests that at water
-pressure decreases, the rate of basal motion increases. This flies in the face of most
-sliding laws. Can you offer any insight as to how we are to incorporate these two views
-in our understanding of hydrology and glacier dynamics? Is the one-way coupling of
-your hydrology model with a glacier dynamics model sufficient to gain insight?}
-{}
+\reply{p.~4727, l.~20 Around here, discuss that, in steady state, eq. 41 suggests that at water pressure decreases, the rate of basal motion increases. This flies in the face of most sliding laws. Can you offer any insight as to how we are to incorporate these two views in our understanding of hydrology and glacier dynamics?  Is the one-way coupling of your hydrology model with a glacier dynamics model sufficient to gain insight?}
+{The reviewer has already made this comment above (page \pageref{inversepage}), and we address it there.  In summary, we are not stating a sliding law, we are stating a consequence of the equations (esp.~equation (13) which comes from Hewitt 2011 among other places), and the reviewer does not assert that this deduction is in error.}
 
 \reply{p.~4727, l.~20 Also note that $P$ depends also on $v_b$, not on $W$ alone.}
-{}
+{Here $P$ depends on a lot of things, sorry.  Our notation ``$P(W)$'' emphasizes that one can write the equation as a function which yields $P$ given $W$, if all other symbols in the equation are defined.  This is the usual convention in more than a century of exposition in theories using mathematics.\footnote{A mathematician would presumably be equally happy calling it more precisely ``$P(A,c_1,c_2,W_r,P_o,|\mathbf{v}_b|,W)$,'' but probably not the reader.}}
 
-\reply{p.~4727, l.~23 I don’t see the relationship between eq. 41 and the $VW$ advective flux.
-Please elaborate.}
-{}
+\reply{p.~4727, l.~23 I don’t see the relationship between eq. 41 and the $VW$ advective flux.  Please elaborate.}
+{As noted immediately after this claim about equations (41) \emph{and} (38), we explain it in the Appendix.  It is nontrivial, which is why we explain it. \\
+\indent Note that claim iii in this list has been removed, as not sufficiently important, and so as to reduce total length.}
 
-\reply{p.~4729, l.~5 Readers should not have to turn to the appendix to learn what $s_b$ is.
-Move essential material out of the appendix and into the main text.}
-{}
+\reply{p.~4729, l.~5 Readers should not have to turn to the appendix to learn what $s_b$ is. Move essential material out of the appendix and into the main text.}
+{Fair enough.  As noted at the top of this document we have replaced section 6 by a brief text summary, in section 5.4, and this $s_b$ issue does not arise.}
 
 \reply{p.~4729, l.~6 Defining this new $\omega_0$ variable seems unnecessary.}
-{}
+{Again, the relevant text has been removed, and the issue does not arise.}
 
 \reply{p.~4730, l.~5 What is the justification of the 5th power in the sliding speed?}
-{}
+{In constructing an exact solution for the purpose of verification, specificity is essential, and qualitative reasonableness is of some importance.  Here the power is used for  a combination of simplicity (thus it is an integer) and smoothness (noting the power on $|\mathbf{v}_b|$ is 1/3 in the formula $P(W)$, smoothness requires that this power exceed 3). \\
+\indent Note that the reader is no longer bothered with the particular power.  Section 6 is replaced by a short text description of the construction of the nearly-exact solution, and then Figures A2 and A3 which show the solution.}
 
 \reply{p.~4730, l.~17 Define what you mean by ``under'', ``normal'' and ``over'' pressure.}
-{}
+{Yes.  We have added this into the text.}
 
 \reply{p.~4731, l.~13 Give a few sentence introduction to the numerics here. The point is to
 discretize eq. 34. What is the order of calculations? What will feed into what over the
 next sub-sections of section 7? A thumbnail sketch similar to what is presented in 7.6
 would be useful to guide the reader.}
-{}
+{We believe that our organization of the exposition of the numerics is already appropriate.  We want, a serious reader who has made it this far to see an adequately-precise description.  Precision requires we have defined most symbols before 7.6, where the summary happens.}
 
 \reply{p.~4731, l .19 Near here, is it necessary for a model development paper to include a
 reference for ``CFL'' and ``upwind''}
-{}
+{We beg to differ.  We believe that readers of this material will normally prefer not to see these defined, as they are so common.  Note that in the same text we do not define ``explicit'', ``finite difference'', ``centered,'' ``second-order,'' ``stability,'' or ``convergence'' either.  Should we really?}
 
 \reply{p.~4731, l.~21 Be sure to clarify that $u$ and $v$ are not components of $v_b$, but are for the water speed.}
-{}
+{Thanks for the reminder.  We have now defined $u,v$ components at their first use.}
 
 \reply{p.~4732, l.~8 Parenthesis around the citation}
-{}
+{Yes, got it.}
 
 \reply{p.~4736, l.~7 Is it important that the reader understand what it means for a scheme to be ``flux-limited?''  Without modeling expertise myself, I’m not sure what this means.}
-{}
+{Readers experienced with numerical advection schemes will know, but in any case the references to Morton and Mayers and to Hundsdorfer and Verwer do adequately address it.}
 
 \reply{p.~4742, l.~17 Because you report that your scheme is mass conserving so prominently
 in the abstract, you should report how much error is involved with step (x), where
 negative water thicknesses are discarded. This could be for the Greenland run of
 section 9.2.}
-{}
+{FIXME}
 
 \reply{p.~4745, l.~22 Are the 2800 processor-hours on each of the 72 processors or divided amongst the processors?}
-{It is the total number of processor-hours in the computation, as is standard in describing parallel computations, and in using the units ``processor-hours''.}
+{It is the total number of processor-hours in the computation, as is standard in describing parallel computations and when using the units ``processor-hours''.}
 
 \reply{p.~4746, l.~16 Do you specify a geothermal heat flux? The handling (or lack thereof) of geothermal heat should also be specified earlier, where the model setup is described.}
-{The ``handling of geothermal heat'' is handled and documented carefully in \cite{}.}
+{We specify geothermal flux from input data to the model.  The relevant Shapiro and Fitzwoller data is addressed in the SeaRISE description paper (\cite{Bindschadler2013SeaRISE}, cited), and the ``handling of geothermal heat'' is handled and documented carefully at full paper length (\cite{AschwandenBuelerKhroulevBlatter}, cited).\footnote{If anyone tells you that ``handling the geothermal flux'' requires less than a full polythermal thermodynamics scheme for the entire ice sheet, they are lying.}}
 
 \reply{p.~4746, l.~18 Please report if you identified any basal freeze-on ($m < 0$) consistent with Bell et al., 2014, Nat. Geosci., vol.~7?}
 {Why?  As noted, we allow basal freeze-on.  As noted the computation }
@@ -849,11 +842,21 @@ Aschwanden, A., Adalgeirsd{\'o}ttir, G., and Khroulev, C.: Hindcasting to
   measure ice sheet model sensitivity to initial states, The Cryosphere, 7,
   1083--1093, \doi{10.5194/tc-7-1083-2013}, 2013.
 
+\bibitem{AschwandenBuelerKhroulevBlatter}
+Aschwanden, A., Bueler, E., Khroulev, C., and Blatter, H.: An enthalpy
+  formulation for glaciers and ice sheets, J. Glaciol., 58, 441--457,
+  \doi{10.3189/2012JoG11J088}, 2012.
+
 \bibitem{Bartholomausetal2011}
 Bartholomaus, T.~C., Anderson, R.~S., and Anderson, S.~P.: Growth and collapse
   of the distributed subglacial hydrologic system of {K}ennicott {G}lacier,
   {A}laska, {USA}, and its effects on basal motion, J. Glaciol., 57, 985--1002,
   2011.
+
+\bibitem{Bindschadler2013SeaRISE}
+Bindschadler, R. et~al.: Ice-sheet model sensitivities to environmental forcing
+  and their use in projecting future sea-level ({T}he {S}ea{RISE} {P}roject),
+  J. Glaciol, 59, 195--224, 2013.
 
 \bibitem{BBssasliding}
 Bueler, E. and Brown, J.: Shallow shelf approximation as a ``sliding law'' in a
