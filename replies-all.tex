@@ -240,38 +240,33 @@ hydraulic conductivity'' yields several points of comparison.}
 Is this ``weakly constrained'' result the kind of ``field observations'' meant by the reviewer?  Why should space in this model description paper be used to recapitulate such a weak and uncertain state of affairs?  We want to avoid, in a model description paper, asserting that any particular value of any constant is correct.  We are building the model so users can relate its relatively few parameters ($k$ among them) to rich, but often indirect, available data.  As pointed out in our paper, ``Darcy flux parameters $\alpha,\beta,k$ are also important [to the distribution of water thickness in the model results].  Parameter identification using observed surface data, though needed, is beyond the scope of this paper.''  Indeed, the journal is \emph{Geoscientific Model Development} not \emph{Journal of Glaciology}, and the conductivity $k$ is an adjustable parameter in the model.  The source of the default value (Table A1) is cited.  This situation should suffice.}
 
 \reply{p.~4714, l.~15 Here and nearby: define $c_1$, $c_2$, and A.}
-{}
+{We have done so.}
 
 \reply{p.~4715, l.~6 Phrasing is ambiguous, as it makes it sound as though your model
 potentially does not include till water storage beneath some parts of the ice sheet.}
-{}
+{The issue is that the majority (by area) under the world's ice sheets does not have \emph{liquid} water under it, though it may have till.  The equations for till storage, transfer into the transport system, and weakening of the saturated till, must all reflect the amount of \emph{liquid} water there, not frozen water.  We model frozen locations as not having liquid water in the till, so $W_{til}=0$.  We have attempted to make this point clearer, without adding too much text.}
 
-\reply{p.~4715, l.~20 Why not include lateral transport of water through till if vertical transport
-is included? Till is often regarded as having an anisotropic hydraulic conductivity (e.g.,
-Jones, 1993, ``A comparison of pumping and slug tests. . .'' in Ground Water vol.~31(6)).
-Horizontal conductivity can be at least several times greater than vertical conductivity.}
-{}
+\reply{p.~4715, l.~20 Why not include lateral transport of water through till if vertical transport is included?  Till is often regarded as having an anisotropic hydraulic conductivity (e.g., Jones, 1993, ``A comparison of pumping and slug tests. . .'' in Ground Water vol.~31(6)).  Horizontal conductivity can be at least several times greater than vertical conductivity.}
+{The reason for not including horizontal transport is the standard fact of ice sheets: stuff is thin.  In particular, any till thickness ever given in the literature is 1/1000 (or less) of the lateral distances traveled by subglacial water.  Anisotropy is irrelevant unless the horizontal conductivity can make up for the thinness.  But, as the reviewer says, the conductivity in the horizontal is not one thousand or more times the conductivity in the vertical.  Of course, there may be a transport network of cavities or conduits in addition.  We attempt to model the former, since physical evolution equations are available for it, in combination with till storage, and this is exactly the overall structure of the model.}
 
-\reply{p.~4715, l.~20 Is m in eq. 16 the same as m in eq. 1? If so, these terms cancel out of
+\reply{p.~4715, l.~20 Is m in eq. 16 the same as m in eq. 1?  If so, these terms cancel out of
 eq. 1.}
-{}
+{Yes, $m$ in equation (16) is the same as in equation (1).  Yes, they cancel out when $W_{til}< W_{til}^{max}$, so that no water enters the transport network (i.e.~so that $\partial W/\partial t=0$ in (1)) in that case.  But we conserve water.  Thus if the right side of (16) is positive and also $W_{til} = W_{til}^{max}$, at a given location, then $\partial W_{til}/\partial t=0$ (i.e.~we put no more water in till) and the water goes into $W$ according to equation (1). \\
+\indent We have attempted to clarify this logic here in section 3, and also in section 7 where numerical schemes are nailed down.}
 
-\reply{p.~4715, l.~20 If $m/\rho$ is almost always bigger than $C_d$, then $dW_{til}/dt$ is always
-increasing up to the cap $W_{til}^{max}$. It would be useful to lay this out more explicitly,
-and include eq. 21 in this subsection. Essentially, you have a Boolean relationship,
-where in some places there is wet till and other places the till is frozen. Is model
-sensitive to selection of $W_{til}^{max}$?}
-{}
+\reply{p.~4715, l.~20 If $m/\rho$ is almost always bigger than $C_d$, then $dW_{til}/dt$ is always increasing up to the cap $W_{til}^{max}$. It would be useful to lay this out more explicitly, and include eq. 21 in this subsection. Essentially, you have a Boolean relationship, where in some places there is wet till and other places the till is frozen. Is model sensitive to selection of $W_{til}^{max}$?}
+{Yes, when $m$ is positive, so that there is basal melt,\footnote{Note that the majority by area of ice sheets are assumed to have frozen base, so $m\le 0$ there.} then $m/\rho$ is almost always bigger than $C_d$, so that $dW_{til}/dt$ is always increasing up to the cap $W_{til}^{max}$.  The figures in section 9 reflect this. \\
+\indent Though we would not say we have a ``Boolean relationship,'' we agree with the spirit of the reviewer's assertion.  We repeatedly emphasize that we enforce inequalities including (21), the bounds on $W_{til}$.  It follows that in some places there is wet till and other places the till is frozen; well-known reference \cite{BBssasliding} covers these ideas.\\
+\indent No, the model is not very sensitive to the selection of $W_{til}^{max}$, at least in areas of substantial basal melt rate.  This is because of our Figure 1(b), which shows that the effective pressure $N_{til}$ is a weak function of $W_{til}$ once the till is weak enough (i.e.~$N_{til}$ is low enough) to allow sliding. \\
+\indent Reducing the length of the paper, which we agree with reviewers and editor is a priority, requires \emph{not} writing out as text all possible conclusions from the equations, as we think is implicitly suggested here.}
 
-\reply{p.~4715, l.~24 Inclusion of $C_d$ with fixed value is poorly justified and seems very
-ad hoc. Even if used by Tulaczyk, why is it necessary here and what is the model
-sensitivity to the selection of 1 mm a$^{-1}$? A constant rate of till water drainage into the
-subglacial hydrologic system, that does not depend on pressure gradients, seems very
-odd.}
-{}
+\reply{p.~4715, l.~24 Inclusion of $C_d$ with fixed value is poorly justified and seems very ad hoc.  Even if used by Tulaczyk, why is it necessary here and what is the model sensitivity to the selection of 1 mm a$^{-1}$?  A constant rate of till water drainage into the subglacial hydrologic system, that does not depend on pressure gradients, seems very odd.}
+{We agree that Tulaczyk's use of $C_d$ is ad hoc.  We need such a background loss of till-stored water, like him, but unlike him we have implemented a \emph{conservation} model.  We keep track of all the water globally, but we need previously wet areas which become frozen to not eternally remain weak (i.e.~with till full of liquid water).\\
+\indent In areas resembling anything in the northern hemisphere, with relatively high basal melt rates, the model is insensitive to $C_d$.  In areas of very low melt rate (e.g.~EAIS) there is a time-scale sensitivity.  We have no time-dependent information about changes in EAIS subglacial melt rates with which to constrain values. \\
+\indent The implication that we should use something complicated (which is the only alternative to ``ad hoc'' here) implies many unconstrained parameters instead of few.   If the reviewer has 2D, data-supported, physics-based, applicable-at-large-scale models of how till and a linked-cavity (or other) system interact, then we hope he publishes that.  We don't have it.  We seek relative simplicity and few parameters, instead of implementing idle process speculation.}
 
 \reply{p.~4717, l.~1 What is the effect of this choice? How was it selected?}
-{}
+{The value $\delta=0.02$ FIXME}
 
 \reply{p.~4718, l.~16 I recommend changing the title of this section to ``Basal motion relation''
 or some other phrase. ``Sliding law'' implies slip at the interface between the ice and its
