@@ -132,12 +132,19 @@ width=#3in]{#1.eps}}
 
 \thispagestyle{empty}
 
+We thank the reviewers for many thoughtful comments.  Indeed, there are 20 pages of reviewer comments below.  Our replies take another 20 pages, thus this 40 page single-spaced document.
+
+As emphasized by the editor and some reviewers, the paper should be shortened, and we have done so.  Specifically we replace section 6 (``An exact steady state solution'') and subsection 7.4 by brief text summaries, and Table A3 has been removed.  Just as significant, certain exposition has been made much briefer.  The accompanying \texttt{latexdiff} output is enormous because essentially every paragraph has been revised, and most shortened.  As a result the two-column-format length of the paper has shrunk from 26 pages to FIXME pages.
+
+Nonetheless, the \emph{majority} of the reviewers' comments amount to asking us to add process models and add commentary.  This has been resisted.  Furthermore, it is frustrating that none of the reviewers seem to acknowledge, or have apparent experience in, applying models of any type at whole ice sheet scale, which is clearly our emphasis.  Our model is already a super-model of four (identified) important subglacial hydrology models in the literature, and we have demonstrated it at unprecedented scale.  We clearly explain why we make the choices we do, and we document the nontrivial numerics and configurability that make it useful.
+
 
 \subsection*{Comments by Dr.~Bartholomaus}\begin{itemize}
 
 \reply{In this manuscript, the authors present a novel extension of the existing Parallel Ice Sheet Model that includes the most complete treatment to date of subglacial hydrology in a large-scale ice sheet model.  Subglacial hydrology is immensely important in glacier dynamics, but is often neglected in the major ice sheet models used to predict future sea level rise.  The computational expense of tracking changes in the rapidly evolving subglacial environment has generally prevented all but the crudest of parameterizations (see table 2 of Bindschadler 2013's summary of the SeaRISE experiment).\\
 Thus, the present work is novel and worthy of publication in GMD.  The writing is generally clear and fluent.  Both the theoretical development of the continuum equations and the numerical implementation are clearly outlined.}
-{We appreciate this summary and the comments below, which have improved the text.  We note that scalability, so that the model can apply at high resolution to a whole ice sheet, dominates the design of the model, and will motivate many of the replies below.}
+{We appreciate this summary and the comments below, which have improved the text.\\
+\indent \emph{Scalability}, so that the model can apply at high resolution to a whole ice sheet, and \emph{configurability}, so that climate modelers inexperienced in fiddling with subglacial hydrology models can use it, are goals which dominate the design of the model.  These goal motivates many of the replies below.}
 
 \reply{Beyond these over-arching strengths, I have four critiques that I believe would significantly enhance the impact and accessibility of the manuscript. These four opportunities for improvement are below. My line edits follow these more significant points.\\
 ---Four significant opportunities---\\
@@ -150,23 +157,17 @@ entirely lacking.  Without much knowledge of these models myself, I suspect that
 present model may represent a significant advance over the implementations in other
 ice sheet models.  If appropriate, the authors may consider adding a sentence regarding this comparison to the abstract.  Also, by way of review, please consider adding a
 table comparing features of presently-used ice sheet models.}
-{Roughly-speaking, we \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{JohnsonFastook,LeBrocqetal2009,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which essentially uses the overburden-pressure-based \texttt{routing} model described in our manuscript, is the only whole-ice-sheet-scale work we know about.\footnote{None of the reviewers mention this whole ice sheet scale application, but we care about it.  The fact that we are building an improvement of the \cite{LeBrocqetal2009,Siegertetal2009} model is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.  It has not yet been applied at whole ice sheet scale (S.~Price personal communication).\\
-\indent We believe it would be inappropriate, and a surprising use of space, to add a table comparing features of presently-used ice sheet models in a PISM model-description paper.}
+{We \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{JohnsonFastook,LeBrocqetal2009,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which essentially uses an ill-posed version of the well-posed overburden-pressure-based \texttt{routing} model described in our manuscript, is the only whole-ice-sheet-scale work we know about.\footnote{None of the reviewers mention this whole ice sheet scale application, but we care about it.  The fact that we are building an improvement of the \cite{LeBrocqetal2009,Siegertetal2009} model is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.\footnote{It has not yet been applied at whole ice sheet scale (S.~Price personal communication).}\\
+\indent We believe it would be inappropriate, and a surprising use of space, to add a table comparing features of presently-used ice sheet models in a PISM model-description paper.  It is already an inherent deficiency of model description papers that they can only describe a snapshot of an evolving piece of software.  Snapshotting other software projects, many of which do not have open development heads, unlike PISM, would only make this worse.}
 
-\reply{+ Considering that efficient, low-pressure conduits are such important features of the
-subglacial hydrologic system, some discussion/justification of why a model without conduits is useful is necessary.  While consistent model behavior under grid refinement is
-certainly tremendously valuable, if one of the fundamental processes (i.e., transport of
-water in conduits) is entirely neglected, then all the model results may be called into
-question.  The present model is still an improvement on the general lack of subglacial
-hydrology in existing ice sheet models, but ideally, conduits will be included in future
-generations of ice sheets.}
-{We discuss why a conduit model is not included in our model, and we have amplified the point in the revised version.\\
-\indent  At present, \emph{all} 2D conduit models are \emph{not physics} by the normal standards of the field (e.g.~the field ``climate modeling'' or ``fluid modeling'' or ``continuum physics'', according to taste).  Note that ``consistent model behavior under grid refinement,'' in the sense used by this reviewer, is normally called ``continuum physics'' not ``grid refinement''.\footnote{Numerical model behaviour under grid refinement, as normally meant by the field of numerical approximations of continuum physics, is the very different concept of numerical convergence to the solution of a differential equation.  It is directly addressed by our verification case.} \\
+\reply{+ Considering that efficient, low-pressure conduits are such important features of the subglacial hydrologic system, some discussion/justification of why a model without conduits is useful is necessary.  While consistent model behavior under grid refinement is certainly tremendously valuable, if one of the fundamental processes (i.e., transport of water in conduits) is entirely neglected, then all the model results may be called into question.  The present model is still an improvement on the general lack of subglacial hydrology in existing ice sheet models, but ideally, conduits will be included in future generations of ice sheets.}
+{We discuss why a conduit model is not included in our model, and we have amplified our points in the revised version.\\
+\indent  At present, \emph{all} 2D conduit models are \emph{not physics} by the normal standards of the field (e.g.~the field ``climate modeling'' or ``fluid modeling'' or ``continuum physics'', according to taste).  Note that ``consistent model behavior under grid refinement,'' in the sense used by this reviewer, is normally called ``continuum physics'', and has been the standard for physics since Fourier and Maxwell.\footnote{Numerical model behaviour under ``grid refinement'', as used in the field of numerical approximations of continuum physics, and as normal in geoscientific models, is the very different concept of numerical convergence to the solution of a differential equation.  It is directly addressed by our verification case.} \\
 \indent We clearly state that the existing lattice models of 2D conduits can't work in a user-controlled large-scale ice dynamics model, and that for that reason we do not add them.  That these models are useful for process exploration is not denied or disputed.\\
+\indent Linked-cavities could also be forced onto the nodes of a 2D lattice, but we, and \emph{all} existing 2D models, of which we cite the ones we know, do not put them on a lattice because we (collectively) \emph{do} have the PDE which describes the effect of a linked cavity system as continuum physics.  We have added this point to the paper. \\
 \indent We encourage this reviewer, and the other reviewers who we also believe (by their questions) are interested in including conduits into subglacial hydrology models, to proceed in the normal manner of physics and attempt to develop a PDE description (i.e.~a lattice-free formulation) of conduit effects.  Or they can apply an actual conduit formation model to whole ice sheet scale, that is, one the causes a conduit to appear at the location where the data suggests it should, not where an input grid forces it.  To complain that we have not invented the former ourselves, or made a model trillions of times more efficient than existing models so that we can claim that latter, in addition to the other actions of this paper, is bizarre.\\
-\indent Note that 2D linked-cavities could be forced onto the nodes of a 2D lattice also.  We, and \emph{all} existing 2D models, of which we cite the ones we know, do not put linked-cavities on a lattice because we (collectively) \emph{do} have the PDE which describes the effect of a linked cavity system as continuum physics.  We have added this point to the paper. \\
 \indent That ``all the model results may be called into question'' is the normal state of affairs in climate modeling.  But this phrase profoundly explains why we \emph{don't} use lattice models.  It would be sad for a user to use PISM coupled to a GCM and then have a reviewer of the result correctly point out that there was a single subsystem in the entire coupled mess which was not using the usual translation-invariant structures of physics \dots namely a 2D lattice model of subglacial conduits.\\
-\indent Finally, we completely agree that ``ideally conduits will be included in future
+\indent We completely agree that ``ideally conduits will be included in future
 generations of ice sheet [models]''.}
 
 \reply{+ This manuscript and model includes an ambiguous mixing of hard-bedded and soft-bedded ideas. For example, the model includes opening and closing of cavities at
@@ -178,25 +179,24 @@ till and the glacier ice. Similarly, the sliding law that depends on the till's 
 (section 3.3) is also a soft-bedded concept. The combination of soft- and hard-bedded
 ideas in this model appears to be inappropriate or at least confusing. \dots}
 {We are not quite sure why our mixing of hard- and soft-bedded morphology is ``ambiguous''.  The equations are clear.\\
-\indent Though the reviewer may not have read it, we cite \cite{Schoof2007deformable} which models the formation of cavities in a deformable subglacial till.  This is precisely a ``combination of soft- and hard-bedded ideas'' for ``opening and closing of cavities at
-the glacier bed, driven by basal sliding'' in the sense used by the reviewer.  We also cite   \cite{vanderWeletal2013} which uses till essentially as we do, combined with a conduit in a 1D model. \\
-\indent We do not believe our use is inappropriate or confusing.  We continue to be mystified that the field often avoids including till in model-based exploration of hard-bed processes, given that we can't find a single published (or unpublished) example of a till-free borehole to the bed in ice of any substantial thickness.  (And none are offered by reviewers.) \\
-\indent Indeed the Mohr-Coulomb yield stress for till is appropriate for soft beds and basal motion accomplished by deformation within the till.  However, basal \emph{ice} deformation may occur in a thin (meters) layer of temperate ice with high water and sediment content. This deformation, and notional hard-bed sliding if it occurs, are all modeled in the current literature by power-law sliding laws.  An ice sheet model, and the data (such as surface velocities and uncertain bed elevation) available to it, cannot distinguish these mechanisms occurring close to the bed.  As stated in section 3.3, our yield stress is used as a physically-meaningful coefficient in a power law for sliding---see also recent PISM literature like \cite{AschwandenAdalgeirsdottirKhroulev}---and such power laws are effectively regularized yield stress models \cite{SchoofCoulombBlatter} in the range of powers we use.  Having the coefficient of the sliding law be physically meaningful, with units of stress, and being tied to modeled basal water pressure, is both conceptually and practically better then providing a sliding law to PISM users with no physical meaning of, or physically-based way to model the variation of, the coefficient.}
+\indent Though the reviewer may not have read it, we cite \cite{Schoof2007deformable} which models the formation of cavities, by sliding, in a deformable subglacial till.  This is precisely a ``combination of soft- and hard-bedded ideas'' for ``opening and closing of cavities at the glacier bed, driven by basal sliding'' in the sense used by the reviewer.  We also cite   \cite{vanderWeletal2013} which uses till essentially as we do, combined with a conduit in a 1D model. \\
+\indent The literature of subglacial hydrology usually avoids including till in model-based exploration of hard-bed processes, but we can't find a single published (or unpublished) example of a till-free bed-reaching borehole in ice of any substantial thickness, and none are offered by reviewers.  Because we expect based on the few existing basal observations that the majority of the ice overburden pressure of an ice sheet, in wet-based areas, is supported by saturated till, we include a model for its strength, namely Mohr-Coulomb. \\
+\indent Yes, the Mohr-Coulomb model for the yield stress for till is appropriate for soft beds and basal motion accomplished by deformation within the till.  However, basal \emph{ice} deformation may occur in a thin (meters) layer of temperate ice with high water and sediment content. This deformation, and also notional hard-bed sliding if it occurs, are all modeled in the current literature by power-law sliding relations.  An ice sheet model, and the actual data available to constrain it,\footnote{Esp.~DEM, surface velocity, and bed elevation.} cannot distinguish these mechanisms occurring close to the bed.  As stated in section 3.3, our computed yield stress value $\tau_c$ is used as a physically-meaningful coefficient in a power law for sliding \cite{AschwandenAdalgeirsdottirKhroulev}, and such power laws are effectively regularized Coulomb stress models in the range of powers we use \cite{SchoofCoulombBlatter}.  Having the coefficient of the sliding law be physically meaningful, and being tied to modeled basal water pressure so that it can physically evolve, is both conceptually and practically better then providing a sliding law with no physical meaning of, or physically-based way to model the temporal- or spatial-variation of, the coefficient.}
 
 \reply{\dots  Furthermore, the description of 1-way and 2-way coupling could be more clear. If the rate of basal motion ($u_b$ or $v_b$) is an input to the model, then why is there a section on the sliding law (section 3.3)?}
-{Section 3.3 is included exactly to give meaning to the yield stress $\tau_c$ as a submodel output.  Because this is a model description paper for a submodel of PISM, we are obliged to state what the inputs and outputs of the model are.\\
-\indent One connection between $\mathbf{v}_b$ and $\tau_c$ is our hydrology model.  The other is the whole ice dynamics model of PISM, which readers know takes boundary stress as an input and produces velocity as an output.  This ice dynamics model is well-described elsewhere, in literature we cite. \\
-\indent Roughly-speaking, the normal use of sliding laws in ice sheet modeling is to have \emph{no} physical meaning to the coefficient of the sliding law, and often to set it by inversion of surface velocities (i.e.~totally by-passing a process which might set it).  We think that having mass-conservation for liquid water in the subglacial system, and using a physically-based computation of the coefficient in a sliding law, is a preferred situation.}
+{Section 3.3 is included exactly to give meaning to the yield stress $\tau_c$ as a submodel output.  Because this is a model description paper for a submodel of PISM, we are obliged to state what the inputs and outputs of the submodel are.\\
+\indent One connection between $\mathbf{v}_b$ and $\tau_c$ is our hydrology model.  The other is the whole ice dynamics model of PISM, which ice-sheet-modeler readers know takes boundary stress as an input and produces velocity as an output.  This ice dynamics model is well-described in literature we cite. \\
+\indent As hinted above, the normal use of sliding laws in ice sheet modeling is to have \emph{no} physical meaning to the coefficient of the sliding law, and often to set it by inversion of surface velocities, thus totally by-passing a process-based description of how it might evolve.  We think that having mass-conservation for liquid water in the subglacial system, and using a physically-based computation of the coefficient in a sliding law, is a preferred situation.}
 
 \reply{+ It is interesting and surprising to note that you find an inverse relationship between
 water pressure and basal motion for systems at steady state. This is contrary to almost
 all prevailing sliding laws. Is a result of the 1-way coupling ($v_b$ that does not directly
 depend on water pressure)? Whatever the cause, it is sufficiently surprising to warrant
 additional discussion.}
-{Despite complaints elsewhere about inclusion of it in the Appendix, we include an analysis of steady states because this analysis is (mostly) not done elsewhere for the (now) standard linked-cavity system equations (e.g.~from \cite{Hewitt2011,Schoofetal2012}).  Our first point is that these equations imply a functional form $P(W)$ at steady state, and thus that Flowers and Clarke \cite{FlowersClarke2002} are not crazy to propose such.\\
-\indent There emerges a ``inverse relationship between water pressure and basal motion for systems at steady state'' from this analysis.  Why is this surprising?  Basal motion generates cavities (i.e.~space for the water to fill), so the pressure drops.  Said another way (as we do in the paper), sliding increases the opening rate, so if creep closure must balance it then the pressure must drop to speed the closure.  We presumed this observation, which is not offered as a ``sliding law'' at all, and indeed should not be used that way, was standard.  In any case it follows from the equations, the reviewers don't believe our analysis is in error, and we have included it with the prominence we believe it deserves. \\
+{We include an analysis of steady states because this analysis is (mostly) not done elsewhere for the (now) standard linked-cavity system equations (e.g.~from \cite{Hewitt2011,Schoofetal2012}).  Our first point is that these equations imply a functional form $P(W)$ at steady state, and thus that Flowers and Clarke \cite{FlowersClarke2002} are not crazy to propose such.\\
+\indent Indeed there emerges a ``inverse relationship between water pressure and basal motion for systems at steady state'' from this analysis.  Why is this surprising?  Basal motion generates cavities (i.e.~space for the water to fill), so the pressure drops.  Said another way (as we do in the paper), sliding increases the opening rate, so if creep closure must balance it then the pressure must drop to speed the closure.  We presumed this observation, which is not offered as a ``sliding law'' at all, and indeed should not be used that way, was standard.  In any case it follows from the equations, the reviewers don't believe our analysis is in error, and we have included it with the prominence we believe it deserves. \\
 \indent Presumably the idea is surprising because the reviewer believes in sliding laws.  Regarding the idea that the sliding velocity ``does not directly
-depend on water pressure'', we remark that sliding laws usually relate basal shear stress \emph{and} water pressure \emph{and} velocity.  The presence of longitudinal stresses in the ice implies that there should ultimately be a \emph{globalized} connection from water pressure back to sliding velocity, via (e.g.) stress boundary conditions at the edges of the glacier; such connection is outside of the scope of this submodel description paper, but is described at length in \cite{BBssasliding}, which we cite.  Our analysis of steady states is not offered as a sliding law, and in that sense the reviewer is correct that our analysis ``is a result of the 1-way coupling'' in the sense that conservation of momentum in the ice plays no role in the relationship.  The relationship simply follows from equations (13), (14), (15) in their steady state cases; the reviewer does not hint here that any of these equations, or our analysis, is incorrect.}
+depend on water pressure'', we remark that sliding laws usually relate the basal shear stress applied to the ice \emph{and} the water pressure \emph{and} the ice base velocity.  The presence of longitudinal stresses in the ice implies that there should ultimately be a \emph{globalized} connection from water pressure back to sliding velocity, via (e.g.) stress boundary conditions at the boundary of the ice fluid mass (i.e.~the glacier); such connection is outside of the scope of this submodel description paper, but is described at length in \cite{BBssasliding}, which we cite.  Our analysis of steady states is not offered as a sliding law, and in that sense the reviewer is correct that our analysis ``is a result of the 1-way coupling'' in the sense that conservation of momentum in the ice plays no role in the relationship.  The relationship simply follows from equations (13), (14), (15) in their steady state cases, as clear in the paper.   The reviewer does not hint here that any of these equations, or our analysis, is incorrect.}
 
 \reply{---Line Edits---\\
 p.~4706, l.~26 Also consider citing Walder 1982 if your purpose is to highlight some of
@@ -266,38 +266,30 @@ eq. 1.}
 \indent The implication that we should use something complicated (which is the only alternative to ``ad hoc'' here) implies many unconstrained parameters instead of few.   If the reviewer has 2D, data-supported, physics-based, applicable-at-large-scale models of how till and a linked-cavity (or other) system interact, then we hope he publishes that.  We don't have it.  We seek relative simplicity and few parameters, instead of implementing idle process speculation.}
 
 \reply{p.~4717, l.~1 What is the effect of this choice? How was it selected?}
-{The value $\delta=0.02$ FIXME}
+{The value $\delta=0.02$ is based on the observations that subglacial water pressure at the bottoms of boreholes, i.e.~in till, have pressure within a few percent of overburden pressure.  The idea is that fully saturated till has water pressure which is $(1-0.02)P_o=0.98 P_o$. \\
+\indent  This parameter \emph{is} very influential on sliding, and is explored the right way (i.e.~by using lots of observations of surface velocity) in \cite{AschwandenAdalgeirsdottirKhroulev}, though in a non-conserving hydrology context there.}
 
-\reply{p.~4718, l.~16 I recommend changing the title of this section to ``Basal motion relation''
-or some other phrase. ``Sliding law'' implies slip at the interface between the ice and its
-bed, whether bedrock or sediment, whereas your equation for yield stress (eq. 17) is
-appropriate for till deformation.}
-{}
+\reply{p.~4718, l.~16 I recommend changing the title of this section to ``Basal motion relation'' or some other phrase. ``Sliding law'' implies slip at the interface between the ice and its bed, whether bedrock or sediment, whereas your equation for yield stress (eq. 17) is appropriate for till deformation.}
+{Ice sheet modelers use ``sliding law'' the way we do, and ice sheet models can't make the distinction implied by this reviewer.  That is, there is no distinction in results in any existing ice sheet model between modeling slip at the ice-bed interface and a meter down within the till.  Vertical resolution like this is only in the heads of process modelers. \\
+\indent Equation (25) is called a sliding law by all readers familiar with ice sheet modeling, the target audience of this paper.}
 
-\reply{p.~4718, l.~21 q is already used for flux (even if printed in bold-face to identify its vector
-character). I suggest using another variable name.}
-{}
+\reply{p.~4718, l.~21 q is already used for flux (even if printed in bold-face to identify its vector character).  I suggest using another variable name.}
+{Exponent $q$ is used in prior literature, including \cite{AschwandenAdalgeirsdottirKhroulev}, and in the PISM users manual.\footnote{Despite the content of all reviews \dots oddly enough we are actually trying to publish a model description.}  There is consistent use of bold for vectors in the paper, thus the flux is $\mathbf{q}$ while the power is $q$, so no confusion will arise.}
 
-\reply{p.~4718, l.~23 Previously (eq. 14), $v_b$ was the rate of basal motion. $u$ and $v_b$ are
-used inconsistently throughout the paper.}
-{}
+\reply{p.~4718, l.~23 Previously (eq. 14), $v_b$ was the rate of basal motion. $u$ and $v_b$ are used inconsistently throughout the paper.}
+{This has been corrected.  Only ``$\mathbf{v}_b$'' is used for the ice base sliding speed.}
 
 \reply{p.~4719, l.~4 What value of $q$ have you selected for your simulations? Justification?}
-{}
+{Value $q=0.25$ was used in the spinup that preceded the hydrology run \cite{AschwandenAdalgeirsdottirKhroulev}.  The sliding law equation (25) is, as stated above, included so that the reader knows that $\tau_c$ is a model output and how it is used, so the particular $q$ value is unimportant.  More important content, explaining the meaning of the $q=0$ and $q=1$ extremes, is given instead.}
 
-\reply{p.~4720, l.~1  While ``velocity'' is technically correct, it is an odd choice for a thickness
-change. I suggest using ``rate.''}
-{}
+\reply{p.~4720, l.~1  While ``velocity'' is technically correct, it is an odd choice for a thickness change. I suggest using ``rate.''}
+{Sorry.  We mean that $\tilde{\mathbf{V}}$ is a velocity, not $\partial W/\partial t$.  This has been clarified.}
 
 \reply{p.~4720, l.~5 Define $h$- the ice surface elevation.}
-{}
+{This is simply a typo.  It should be $H$, the ice thickness.  Corrected.}
 
-\reply{p.~4722, l.~7 ``\dots does not exist for tidewater glaciers or ice sheets.'' This may not
-be strictly true see Gulley et al, 2009, in QSR, where they report exploring many
-englacial conduits. In subsequent work, Gulley has mapped subglacial conduits. A
-safer statement would be that ``vapor/air-filled cavities are not known to exist far from
-glacier margins.''  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
-{}
+\reply{p.~4722, l.~7 ``\dots does not exist for tidewater glaciers or ice sheets.'' This may not be strictly true see Gulley et al, 2009, in QSR, where they report exploring many englacial conduits.  In subsequent work, Gulley has mapped subglacial conduits.  A safer statement would be that ``vapor/air-filled cavities are not known to exist far from glacier margins.''  The distinction regarding tidewater glaciers or ice sheets is unnecessary.}
+{The relevant sentence has been removed in the revisions which shortened the paper.  This idea, that vapor/air filled cavities are not a concern supported well by observations, is not important enough to comment on.}
 
 \reply{p.~4722, l.~10 ``observed in ice sheets and glaciers`` instead of ``observed in ice sheets''}
 {}
@@ -371,8 +363,7 @@ reference for ``CFL'' and ``upwind''}
 \reply{p.~4732, l.~8 Parenthesis around the citation}
 {}
 
-\reply{p.~4736, l.~7 Is it important that the reader understand what it means for a scheme to
-be ``flux-limited?'' Without modeling expertise myself, I’m not sure what this means.}
+\reply{p.~4736, l.~7 Is it important that the reader understand what it means for a scheme to be ``flux-limited?''  Without modeling expertise myself, I’m not sure what this means.}
 {}
 
 \reply{p.~4742, l.~17 Because you report that your scheme is mass conserving so prominently
@@ -381,17 +372,14 @@ negative water thicknesses are discarded. This could be for the Greenland run of
 section 9.2.}
 {}
 
-\reply{p.~4745, l.~22 Are the 2800 processor-hours on each of the 72 processors or divided
-amongst the processors?}
-{}
+\reply{p.~4745, l.~22 Are the 2800 processor-hours on each of the 72 processors or divided amongst the processors?}
+{It is the total number of processor-hours in the computation, as is standard in describing parallel computations, and in using the units ``processor-hours''.}
 
-\reply{p.~4746, l.~16 Do you specify a geothermal heat flux? The handling (or lack thereof) of
-geothermal heat should also be specified earlier, where the model setup is described.}
-{}
+\reply{p.~4746, l.~16 Do you specify a geothermal heat flux? The handling (or lack thereof) of geothermal heat should also be specified earlier, where the model setup is described.}
+{The ``handling of geothermal heat'' is handled and documented carefully in \cite{}.}
 
-\reply{p.~4746, l.~18 Please report if you identified any basal freeze-on ($m < 0$) consistent with
-Bell et al., 2014, Nat. Geosci., vol.~7?}
-{}
+\reply{p.~4746, l.~18 Please report if you identified any basal freeze-on ($m < 0$) consistent with Bell et al., 2014, Nat. Geosci., vol.~7?}
+{Why?  As noted, we allow basal freeze-on.  As noted the computation }
 
 \reply{p.~4747, l.~25 Again, this is a good place to discuss the ramifications of a model without
 R-channels. What are the limitations of your model? Is there a way that aspects of R-channels emerge in your model without explicit channel modeling?}
