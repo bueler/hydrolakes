@@ -418,18 +418,21 @@ which accounts for subglacial drainage of meltwater.  The model and a number of
 subcases are described in considerable detail and then the numerical implementation
 is described.  A simple steady state solution is used to test the numerical method, and
 the model is then applied to the whole of the Greenland ice sheet.\\
-I enjoyed reading this paper.  It represents to my knowledge the first serious attempt
+\indent I enjoyed reading this paper.  It represents to my knowledge the first serious attempt
 to include an evolving subglacial drainage model within an ice-sheet scale ice-sheet
-model, and the results are encouraging.  As such, I would like to recommend publication.  However, I have a few issues that I think need to be clarified or thought about first.\\
-The major comments are here, followed by some specific but more minor points.}
-{}
+model, and the results are encouraging.  As such, I would like to recommend publication.  However, I have a few issues that I think need to be clarified or thought about first.}
+{We appreciate this accurate summary of the paper.}
 
-\reply{1. The first term of (33), involving the pressure derivative and which represents
+\reply{The major comments are here, followed by some specific but more minor points.\\
+\indent 1. The first term of (33), involving the pressure derivative and which represents
 changes in englacial water content, ought to appear in (34a) also, since this term
 derives from the mass flux into/out of the englacial system, and it is the addition
 of this term to the mass conservation equation (34a) that gives rise to its appearance in (33).  As it stands in (34), subtraction of the first and third equations
 puts the $\partial P/\partial t$ term into the opening/closure equation $\partial W/\partial t$, which I don't see justification for.}
-{}
+{First, as we state, we only have \emph{notional} englacial porosity, because it is used as a regularization.  The englacial storage itself would require another mass variable (e.g.~$W_{eng}$ used below) and then more coupling parameters between subsystems\footnote{I.e.~transfers between $W_{til}$, $W$, and $W_{eng}$ all need to be parameterized.  We wrote such a model and paper and threw it away.} would be required. \\
+\indent The reviewer's statement that the term ``represents changes in englacial water content'' is wrong.  Rather, changes to englacial water content (i.e.~the time-derivative term in (33)) is balanced by the net result of all the terms on the right side.\\
+\indent Apparently this is the first time that the reviewer has noticed that the divergence of flux term $\Div\mathbf{q}$ appears in both the water thickness and pressure evolution equations, in a model which has three components: (i) mass conservation, (ii) cavity thickness evolution, and (iii) full cavities.  Such models appear in \cite{Hewitt2011,Hewittetal2012,Schoofetal2012,Werderetal2013}, and we would think that they are familiar to the reviewer.  For instance, the ``first term of (33) involving the pressure derivative'' is also a term in (32), which is verbatim from \cite{Schoofetal2012}.\\
+\indent In any case we cannot know what ``justification'' should be in the reviewer's head.  If the reviewer asserts our deduction is wrong here then he/she should say so.}
 
 \reply{2. p4738, l11, and this section generally---is it clear that these arguments prove
 stability for the \emph{system} of equations in this model (in which the coefficients in (60),
@@ -440,7 +443,8 @@ no doubt that the method is stable, but I think if the stability properties are 
 discussed in this much detail, it needs to be done for the whole system together,
 and not for the individual components of the operator splitting separately. Or if
 there is an argument as to why this is sufficient, that should be included.}
-{}
+{Yes, these arguments prove the stability of the numerical scheme for the particular equation in the presence of irregular coefficients which might come from coupling.  We are not using a linearized stability analysis here,\footnote{E.g.~von Neumann or Fourier analysis \cite{MortonMayers}.} which would ``see'' the coupling if present, but a \emph{maximum principle} analysis, which often gives overly-pessimistic stability conditions.  One of the benefits of max principle analysis, however, is that the details of the coefficients, including the possibility of them coming from coupling to other equations, don't enter into the analysis.\footnote{Thus the max principle analysis of stability of schemes for abstract heat-like PDEs $u_t=(1+x^2)u_{xx}$ and $u_t=(1+w^2)u_{xx}$, where $w$ is the solution of another equation, is the same.  But note that the \emph{positivity} of the coefficient is important here, regardless of the source.}  If the reviewer's ``standard results'' for advection-diffusion equations come from a linear stability analysis, which is the most standard we suppose, then no we are not using these ``standard results.''\\
+\indent On the other hand, the case of negative source term, which in this case comes from outside the model (i.e.~through the melt rate $m$ not through the involvement of coupled equations for $P$ and $W_{til}$), requires enforcing inequalities, and this is not in our stability analysis, as we state.  Furthermore, so as to shorten the paper we have removed the subsection in which the scheme is shown to have positivity-preserving and stable properties.  We have replaced this subsection with a brief text description.}
 
 \reply{3. The boundary conditions should really be described in more detail.  It'd be help-
 ful to state mathematically what boundary conditions are imposed (in section 5
@@ -877,6 +881,11 @@ Goeller, S.: Antarctic {S}ubglacial {H}ydrology: {I}nteractions of subglacial la
 \bibitem{Hewitt2011}
 Hewitt, I.~J.: Modelling distributed and channelized subglacial drainage: the
   spacing of channels, J. Glaciol., 57, 302--314, 2011.
+
+\bibitem{Hewittetal2012}
+Hewitt, I.~J., Schoof, C., and Werder, M.~A.: Flotation and free surface flow
+  in a model for subglacial drainage. {P}art {II}: {C}hannel flow, J. Fluid
+  Mech., 702, 157--188, 2012.
 
 \bibitem{HoffmanPrice2014}
 Hoffman, M. J. and Price, S.: Feedbacks between coupled subglacial hydrology and glacier dynamics, J. Geophys. Res. Earth Surf., 119, \doi{10.1002/2013JF002943}, 2014.
