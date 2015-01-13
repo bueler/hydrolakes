@@ -157,7 +157,7 @@ entirely lacking.  Without much knowledge of these models myself, I suspect that
 present model may represent a significant advance over the implementations in other
 ice sheet models.  If appropriate, the authors may consider adding a sentence regarding this comparison to the abstract.  Also, by way of review, please consider adding a
 table comparing features of presently-used ice sheet models.}
-{We \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{JohnsonFastook,LeBrocqetal2009,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which essentially uses an ill-posed version of the well-posed overburden-pressure-based \texttt{routing} model described in our manuscript, is the only whole-ice-sheet-scale work we know about.\footnote{None of the reviewers mention this whole ice sheet scale application, but we care about it.  The fact that we are building an improvement of the \cite{LeBrocqetal2009,Siegertetal2009} model is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.\footnote{It has not yet been applied at whole ice sheet scale (S.~Price personal communication).}\\
+{We \emph{do} compare to existing large-scale models, by describing and citing the work of \cite{Goeller2014,LeBrocqetal2009,Livingstoneetal2013,Siegertetal2009}.  Such find-the-subglacial-lakes modeling, which either uses an ill-posed version of our well-posed overburden-pressure-based \texttt{routing} model, or a balance velocity model, is the only whole-ice-sheet-scale work we know about.\footnote{None of the reviewers mention this whole ice sheet scale application, but we care about it.  The fact that we are building an improvement of the \cite{Goeller2014,LeBrocqetal2009,Livingstoneetal2013,Siegertetal2009} models is important to us, clearly stated in the paper, and apparently of no interest to reviewers, who just want to complain about our lack of their preferred process modeling.}  We have also added a citation to \cite{HoffmanPrice2014}, which describes the construction of a related hydrology submodel within the Community Ice Sheet Model, but which is applied only at the scale of a single idealized mountain glacier.\footnote{It has not yet been applied at whole ice sheet scale (S.~Price personal communication).}\\
 \indent We believe it would be inappropriate, and a surprising use of space, to add a table comparing features of presently-used ice sheet models in a PISM model-description paper.  It is already an inherent deficiency of model description papers that they can only describe a snapshot of an evolving piece of software.  Snapshotting other software projects, many of which do not have open development heads, unlike PISM, would only make this worse.}
 
 \reply{+ Considering that efficient, low-pressure conduits are such important features of the subglacial hydrologic system, some discussion/justification of why a model without conduits is useful is necessary.  While consistent model behavior under grid refinement is certainly tremendously valuable, if one of the fundamental processes (i.e., transport of water in conduits) is entirely neglected, then all the model results may be called into question.  The present model is still an improvement on the general lack of subglacial hydrology in existing ice sheet models, but ideally, conduits will be included in future generations of ice sheets.}
@@ -868,21 +868,26 @@ Flowers, G.~E. and Clarke, G. K.~C.: A multicomponent coupled model of glacier
   hydrology 1. {T}heory and synthetic examples, J. Geophys. Res., 107, 2287,
   \doi{10.1029/2001JB001122}, 2002{\natexlab{a}}.
 
+\bibitem{Goeller2014}
+Goeller, S.: Antarctic {S}ubglacial {H}ydrology: {I}nteractions of subglacial lakes, basal water flow, and ice dynamics, PhD Dissertation, Universit\"at Bremen, 2014.
+
 \bibitem{Hewitt2011}
 Hewitt, I.~J.: Modelling distributed and channelized subglacial drainage: the
   spacing of channels, J. Glaciol., 57, 302--314, 2011.
 
 \bibitem{HoffmanPrice2014}
 Hoffman, M. J. and Price, S.: Feedbacks between coupled subglacial hydrology and glacier dynamics, J. Geophys. Res. Earth Surf., 119, \doi{10.1002/2013JF002943}, 2014.
-
-\bibitem{JohnsonFastook}
-Johnson, J. and Fastook, J.~L.: Northern {H}emisphere glaciation and its
-  sensitivity to basal melt water, Quat. Int., 95, 65--74, 2002.
   
 \bibitem{LeBrocqetal2009}
 Le~Brocq, A., Payne, A., Siegert, M., and Alley, R.: A subglacial water-flow
   model for {W}est {A}ntarctica, J. Glaciol., 55, 879--888,
   \doi{10.3189/002214309790152564}, 2009.
+
+\bibitem{Livingstoneetal2013}
+Livingstone, S.~J., Clark, C.~D., Woodward, J., and Kingslake, J.: Potential
+  subglacial lake locations and meltwater drainage pathways beneath the
+  {A}ntarctic and {G}reenland ice sheets, The Cryosphere, 7, 1721--1740,
+  \doi{10.5194/tc-7-1721-2013}, 2013.
 
 \bibitem{SchoofCoulombBlatter}
 Schoof, C.: Coulomb friction and other sliding laws in a higher order glacier
@@ -923,3 +928,4 @@ Werder, M., Hewitt, I., Schoof, C., and Flowers, G.: Modeling channelized and
 
 
 \end{document}
+
