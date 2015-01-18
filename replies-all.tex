@@ -443,18 +443,16 @@ no doubt that the method is stable, but I think if the stability properties are 
 discussed in this much detail, it needs to be done for the whole system together,
 and not for the individual components of the operator splitting separately. Or if
 there is an argument as to why this is sufficient, that should be included.}
-{Yes, these arguments prove the stability of the numerical scheme for the particular equation in the presence of irregular coefficients which might come from coupling.  We are not using a linearized stability analysis here,\footnote{E.g.~von Neumann or Fourier analysis \cite{MortonMayers}.} which would ``see'' the coupling if present, but a \emph{maximum principle} analysis, which often gives overly-pessimistic stability conditions.  One of the benefits of max principle analysis, however, is that the details of the coefficients, including the possibility of them coming from coupling to other equations, don't enter into the analysis.\footnote{Thus the max principle analysis of stability of schemes for abstract heat-like PDEs $u_t=(1+x^2)u_{xx}$ and $u_t=(1+w^2)u_{xx}$, where $w$ is the solution of another equation, is the same.  But note that the \emph{positivity} of the coefficient is important here, regardless of the source.}  If the reviewer's ``standard results'' for advection-diffusion equations come from a linear stability analysis, which is the most standard we suppose, then no we are not using these ``standard results.''\\
+{Yes, these arguments prove the stability of the numerical scheme for the particular equation in the presence of irregular coefficients which might come from coupling.  We are not using a linearized stability analysis here,\footnote{E.g.~von Neumann or Fourier analysis \cite{MortonMayers}.} which would ``see'' the coupling if present, but a \emph{maximum principle} analysis, which often gives overly-pessimistic stability conditions.  One of the benefits of max principle analysis, however, is that the details of the coefficients, including the possibility of them coming from coupling to other equations, don't enter into the analysis.\footnote{Thus the max principle analysis of stability of schemes for abstract heat-like PDEs $u_t=(1+x^2)u_{xx}$ and $u_t=(1+w^2)u_{xx}$, where $w$ is the solution of another equation, is the same.  But note that the \emph{positivity} of the coefficient is important here, not its origin.}  If the reviewer's ``standard results'' for advection-diffusion equations come from a linear stability analysis, which is the most standard we suppose, then no we are not using these ``standard results.''\\
 \indent On the other hand, the case of negative source term, which in this case comes from outside the model (i.e.~through the melt rate $m$ not through the involvement of coupled equations for $P$ and $W_{til}$), requires enforcing inequalities, and this is not in our stability analysis, as we state.  Furthermore, so as to shorten the paper we have removed the subsection in which the scheme is shown to have positivity-preserving and stable properties.  We have replaced this subsection with a brief text description.}
 
 \reply{3. The boundary conditions should really be described in more detail.  It'd be helpful to state mathematically what boundary conditions are imposed (in section 5 say), rather than having it algorithmically described in section 7.  In particular, the diffusive nature of the $W$ equation suggests that one should apply some sort of conditions on $W$ at all boundaries, but these are rather hidden, \dots}
 {On the one hand, the situation is much worse than portrayed by the reviewer, and it is not primarily about what is inside this paper.  On the other hand, there is no boundary in PISM in the sense meant by the reviewer.  We now explain these statements.\\
-\indent Our model is, as clearly stated in the paper, subject to inequalities on water amount (i.e.~$W\ge 0$) and on pressure (i.e.~$0\le P \le P_o$).  The constraints imply that the fully-mathematical description of the equations have their \emph{free} boundary conditions essentially determined by a variational inequality formulation.\\
-\indent This is clearly understood \emph{for the pressure equation} by Schoof et al 2012 \cite{Schoofetal2012}.  However, \cite{Schoofetal2012} does not consider negative basal melt rate (i.e.~the case $m<0$ in equation (4.5) for the evolution of water thickness $h_w$ in \cite{Schoofetal2012}).  As a result they miss the fact that \emph{both} evolution equations, i.e.~for water amount $W$ and for pressure $P$ (our notation), are subject to variational inequalities.  \\
-\indent Indeed, diffusive or otherwise, the continuum equation (i.e.~PDE) for water thickness $W$, whether stated in our manuscript or in \cite{Schoofetal2012} or in \cite{Hewitt2011}, or elsewhere, does not maintain positive values of $W$ if $m$ can be negative (i.e.~refreeze), so a free boundary appears which we must deal with.\footnote{It is a free boundary not seen in \cite{Schoofetal2012} primarily because there is no allowance for coupling to an energy-conserving basal melt rate, which would sometimes be negative.  In this sense the pre-determined water input of most subglacial hydrology modeling is addressing an easier problem than ours.}  A numerical scheme for $W$ evolution must actively enforce the inequality in some way, such as by restricting admissible functions, or by truncation/projection in an explicit scheme. \\
-\indent So the only mathematically honest treatment of our continuum model would require coupled variational inequalities.  As just one variational inequality is hard to handle---see \cite{Werderetal2013}, who say it is ``prohibitive'' in 2D and then skip it---the complications of a couple pair are great.  We actually believe we \emph{are} correctly (i.e.~convergently) numerically solving this coupled pair of free boundary problems by an explicit scheme which truncates/projects to enforce the inequalities.\\
-\indent We can say with confidence that if we took this on with mathematical precision then (i) the paper would be enormous and (ii) no one would read it.  We have instead followed climate modeling expository convention, e.g.~as practiced for ocean models and sea ice, of clearly stating the continuum equations even though the equations are in fact only the interior condition of a variational inequality.\\
-\indent On the other hand, as stated earlier, in PISM there is no classical boundary.  Speaking abstractly, note that the periodic domain version of the model in \cite{Schoofetal2012} would have no classically-defined boundary conditions in the sense meant by the reviewer at all.  But, for whole ice sheet simulations in PISM, the ocean or ice free land surrounding the ice sheet is has exactly such a periodic (i.e.~flat torus) boundary.  This has little to no disadvantage in practice, but it has the huge advantage that at every grid point in PISM, and on every processor, we have the same physics.  Thus we \emph{do} need to state how all free boundaries are handled numerically---this is what we are doing in section 7.6, i.e.~``algorithmically in section 7''---but we don't have classical boundaries to state or apply in the sense meant by the reviewer. \\
-\indent In summary, we describe what the numerical scheme actually does in section 7.6.  Then we show verification results in a case where the exact continuum solution, subject to the two coupled (but unstated) variational inequalities, with free boundary, is known.  We think this is actually addressing the boundary conditions in a manner which is more helpful to the GMD reader than some of the expository alternatives.}
+\indent Our model is, as clearly stated in the paper, subject to inequalities on water amount (i.e.~$W\ge 0$) and on pressure (i.e.~$0\le P \le P_o$).  These constraints imply that a mathematically rigorous description of the equations has \emph{free} boundary conditions essentially determined by a variational inequality or similar weak formulation.\\
+\indent This is clearly understood \emph{for the pressure equation} by Schoof et al 2012 \cite{Schoofetal2012}.  However, \cite{Schoofetal2012} does not consider negative basal melt rate (i.e.~the case $m<0$ in equation (4.5) for the evolution of water thickness $h_w$ in \cite{Schoofetal2012}).  As a result they miss the fact that \emph{both} evolution equations, i.e.~for water amount $W$ and for pressure $P$ (our notation), are subject to variational inequalities.  Indeed, diffusive or otherwise, the continuum equation for water thickness $W$, as stated in \cite{Schoofetal2012} or \cite{Hewitt2011} or our manuscript or elsewhere, does not maintain positive values of $W$ if $m$ can be negative (i.e.~refreeze), so a free boundary appears which we must deal with.\footnote{It is a free boundary not seen in \cite{Schoofetal2012} primarily because there is no allowance for coupling to an energy-conserving basal melt rate, which would sometimes be negative.  In this sense the pre-determined water input of most subglacial hydrology modeling is addressing an easier problem than ours.}  A numerical scheme for $W$ evolution must actively enforce the inequality in some way, such as by restricting admissible functions or by truncation/projection in an explicit scheme such as ours or that of \cite{Schoofetal2012}. \\
+\indent So the only mathematically honest treatment of our continuum model would require coupled variational inequalities.  As just one variational inequality is hard to handle---see \cite{Werderetal2013}, who say it is ``prohibitive'' in 2D and then skip it---the complications of a coupled pair are great.  We actually believe we \emph{are} correctly (i.e.~convergently) numerically solving this coupled pair of free boundary problems by an explicit scheme which truncates/projects to enforce the inequalities, but we are not close to proving that.  If we took on this topic with mathematical precision then (i) the paper would be enormous and (ii) no one would read it. \\
+\indent On the other hand, note that the periodic domain (i.e.~flat torus) version of the model in \cite{Schoofetal2012} would have no classically-defined boundary conditions because the domain on which the continuum model is solved has no boundary.  For whole ice sheet simulations in PISM, the ocean or ice free land surrounding the ice sheet is has exactly such a periodic extension, that is, no boundary.  This has little disadvantage in practice, and the advantage that every grid point in PISM, on every processor, has the same physics.  We do indeed state how all free boundaries are handled numerically---this is what we are doing ``algorithmically in section 7'', by stating where inequalities are enforced by truncation/projection---but we don't have classical boundaries in the sense meant by the reviewer. \\
+\indent In summary, we describe what the numerical scheme actually does in section 7.6.  Then we show verification results in a case where the exact continuum solution, subject to the two coupled (but unstated) variational inequalities, with free boundary, is known.  We think this is actually addressing the boundary conditions in a manner which is more helpful to the GMD reader than some expository alternatives.}
 
 \reply{\dots and in section 9.1 it is claimed that there are convergence issues associated with a jump in $W$, which seems at odds with the diffusive term.}
 {No, we do not say such a thing in section 9.1. \\
@@ -466,113 +464,71 @@ Thus we \emph{do} say that the exact solution has low regularity.  As well-known
 
 \reply{ \dots  I suspect the boundary conditions are mostly imposed by step (vi) on p4742, but I was not entirely clear on what is meant by 'not computing' the divided difference contribution to the flux divergence.}
 {The sentence in question on step (vi) is simply wrong, and should not be there at all as it describes an old state of the code.  It has been removed.  \\
-\indent In fact, equation (55) is used as stated at all grid points, regardless of neighbor mask state.\footnote{See method \texttt{raw\_update\_W()} in file \texttt{PISMRoutingHydrology.cc} in branch \texttt{stable0.6} of the PISM source code.}  Thus the boundary conditions, which can all be interpreted as free boundary conditions and which are motivated by concerns listed in replies above, are applied in steps (ii), (vii), (viii), (ix), and (x).}
+\indent Equation (55) is used as stated at all grid points, regardless of neighbor mask state.\footnote{See method \texttt{raw\_update\_W()} in file \texttt{PISMRoutingHydrology.cc} in branch \texttt{stable0.6} of the PISM source code.}  Thus the boundary conditions, which can all be interpreted as free boundary conditions and which are motivated by concerns listed in replies above, are applied in steps (ii), (vii), (viii), (ix), and (x) in the list given in section 7.6. \\
+\indent In fact, we have added the following ideas about boundary conditions to the revised text: \emph{(i)} PISM always has a periodic grid for whole ice sheet computations, so there is no classical boundary to the hydrology system.  \emph{(ii)} Free boundaries occur all over the place as a result of enforcement of inequalities.  \emph{(iii)} In ice-free land and ice-free ocean grid points, the hydrology model effectively sees such a large (in magnitude) negative value for $m$ that any water which flows to, or diffuses to, that location during a time step is immediately removed.  \emph{(iv)} The ice-free grid points have pressure determined by external factors (e.g.~atmospheric or ocean-base pressures).}
 
-\reply{Finally, I felt the paper might be shortened without losing detail; there are a number
-of places where the discussion of relatively simple points is laboured. Sections that
-might be reduced include section 2.4, section 4.3, section 6.2, section 7.1, section
-9.2.1, (could just reference Aschwanden et al for much of this?), section 9.2.4, and the
-appendix.}
+\reply{Finally, I felt the paper might be shortened without losing detail; there are a number of places where the discussion of relatively simple points is laboured. Sections that might be reduced include section 2.4, section 4.3, section 6.2, section 7.1, section 9.2.1, (could just reference Aschwanden et al for much of this?), section 9.2.4, and the appendix.}
 {}
 
 \reply{Specific comments\\
-1. p4708, l3, also throughout - I do not see why the parabolic equation is always
-described as a 'regularization', which suggests some element of artifice. For the
-physical system described, the equation is parabolic, and there is no need to
-treat it as a regularization.}
+1. p4708, l3, also throughout - I do not see why the parabolic equation is always described as a 'regularization', which suggests some element of artifice.  For the physical system described, the equation is parabolic, and there is no need to treat it as a regularization.}
 {}
 
-\reply{2. p4708, l7 - I’d temper this by saying that till is 'sometimes' observed, as I don’t
-think it is true that it is always observed.}
+\reply{2. p4708, l7 - I'd temper this by saying that till is 'sometimes' observed, as I don't think it is true that it is always observed.}
 {}
 
-\reply{3. p4708, l20 - it is not the inclusion of wall melt in the mass conservation equation
-that leads to the instability but rather then inclusion of wall melt in the kinematic
-opening-closure equation.}
+\reply{3. p4708, l20 - it is not the inclusion of wall melt in the mass conservation equation that leads to the instability but rather then inclusion of wall melt in the kinematic opening-closure equation.}
 {}
 
-\reply{4. p4711, l9 - given the coupling with PISM, it seems a bit odd to say that you
-‘accept’ the hydrostatic approximation, since you should be calculating $P_o$ consistently with the ice flow. As I understand it $P_o$ is always hydrostatic for the level
-of approximation in PISM, so this would seem a better justification.}
+\reply{4. p4711, l9 - given the coupling with PISM, it seems a bit odd to say that you 'accept' the hydrostatic approximation, since you should be calculating $P_o$ consistently with the ice flow. As I understand it $P_o$ is always hydrostatic for the level of approximation in PISM, so this would seem a better justification.}
 {}
 
-\reply{5. p4713, l11, also throughout - I find the repeated reference to the 'advection-diffusion equation' a bit misleading as although it has advection and diffusion
-terms, it is rather different from what is normally associated with that term, as the
-velocity depends on the pressure which is evolving simultaneously.  Perhaps this
-is my own connotation of advection-diffusion, but I think it should be emphasized
-that (12) is not stand-alone and is inherently coupled to more equations.}
+\reply{5. p4713, l11, also throughout - I find the repeated reference to the 'advection-diffusion equation' a bit misleading as although it has advection and diffusion terms, it is rather different from what is normally associated with that term, as the velocity depends on the pressure which is evolving simultaneously.  Perhaps this is my own connotation of advection-diffusion, but I think it should be emphasized that (12) is not stand-alone and is inherently coupled to more equations.}
 {}
 
-\reply{6. p4717 - the prescription of a minimum value for $N$ seems a bit arbitrary---could
-it be explained briefly what this physically represents? (e.g.~this is the level at which the till becomes sufficiently deformable that a cavity system is developed and that effectively caps the water pressure?) I would have thought a critical pressure, rather than a critical fraction of overburden, might be more reasonable? That aside, I found the prescription of $W_{til}^{max}$, and subsequent derivation of till thickness $\eta$ (22) rather odd, since it seems more natural to prescribe the thickness of till $\eta$ and have $W_{til}^{max}$ derived from that (and $\delta$ and $P_o$).  As it is, $\eta$ varies as the overburden varies (when coupled with ice flow), so that there is implicit redistribution of sediment.}
+\reply{6. p4717 - the prescription of a minimum value for $N$ seems a bit arbitrary---could it be explained briefly what this physically represents? (e.g.~this is the level at which the till becomes sufficiently deformable that a cavity system is developed and that effectively caps the water pressure?) I would have thought a critical pressure, rather than a critical fraction of overburden, might be more reasonable? That aside, I found the prescription of $W_{til}^{max}$, and subsequent derivation of till thickness $\eta$ (22) rather odd, since it seems more natural to prescribe the thickness of till $\eta$ and have $W_{til}^{max}$ derived from that (and $\delta$ and $P_o$).  As it is, $\eta$ varies as the overburden varies (when coupled with ice flow), so that there is implicit redistribution of sediment.}
 {}
 
-\reply{7. p4721, (30) and following sentences - it is a bit confusing to write $P = P_{FC}(W)$
-here (and in (29), and similarly in the appendix), as the formula depends upon $P_o$
-and therefore space, as well as on $W$. It’d be clearer to include $x$ as an additional
-argument here ((30) is not then a clean porous-medium equation).}
+\reply{7. p4721, (30) and following sentences - it is a bit confusing to write $P = P_{FC}(W)$ here (and in (29), and similarly in the appendix), as the formula depends upon $P_o$ and therefore space, as well as on $W$.  It'd be clearer to include $x$ as an additional argument here ((30) is not then a clean porous-medium equation).}
 {}
 
 \reply{8. p4723, l5 - this sentence reads rather strangely.  Aren't most of the parameters 'user-adjustable'?  What is meant by temporal 'detail' in the pressure evolution - is it suggesting that $\phi_0=0$ is 'correct'?  Later that paragraph, what is meant by diffusive 'range', and would it not scale as $\phi_0^{1/2}$?}
 {}
 
-\reply{9. p4723, l16-22 - this algorithm is certainly a lot more computationally efficient
-than the method used to solve the elliptic variational problem of Schoof et al
-(2012), but it should be noted that the schemes are not solving exactly the same
-problem (at least, for non-steady states, which is where the computational cost
-lies).  Difficulties of Schoof et al’s method stemmed notably from discontinuities
-in W associated with unfilled cavities, which are absent in the current problem.}
+\reply{9. p4723, l16-22 - this algorithm is certainly a lot more computationally efficient than the method used to solve the elliptic variational problem of Schoof et al (2012), but it should be noted that the schemes are not solving exactly the same problem (at least, for non-steady states, which is where the computational cost lies).  Difficulties of Schoof et al's method stemmed notably from discontinuities in $W$ associated with unfilled cavities, which are absent in the current problem.}
 {}
 
-\reply{10. p4727, l6 - I'm not sure how much we know that the system is close to steady
-state 'much of the time', so I'd recommend removing this; justification for looking
-at steady states is probably not required.}
+\reply{10. p4727, l6 - I'm not sure how much we know that the system is close to steady state 'much of the time', so I'd recommend removing this; justification for looking at steady states is probably not required.}
 {}
 
 \reply{11. p4728, l1 - clarify that this statement is for a given discharge?}
 {}
 
-\reply{12. p4729, l11 - I am confused by the 'solution' $W = W_r$ to (45). This would only be
-a solution if the ice surface were a very particular shape?}
+\reply{12. p4729, l11 - I am confused by the 'solution' $W = W_r$ to (45). This would only be a solution if the ice surface were a very particular shape?}
 {}
 
-\reply{13. Section 6.2 - the discussion of the boundary conditions here seems unnecessar-
-ily confusing and it could be much clearer just to state the shape, sliding velocity,
-and boundary conditions that are used, rather than explaining in generality how
-the solution works. Note that $W_c$ has only been defined in the appendix so comes
-out of the blue here. Since $r = L$ is the edge of the domain, the distinction be-
-tween $L_-$ and $L$ seems pedantic (the definition of variables outside of the domain
-has not yet been given, and is more of an algorithmic issue).}
+\reply{13. Section 6.2 - the discussion of the boundary conditions here seems unnecessarily confusing and it could be much clearer just to state the shape, sliding velocity, and boundary conditions that are used, rather than explaining in generality how the solution works. Note that $W_c$ has only been defined in the appendix so comes out of the blue here. Since $r = L$ is the edge of the domain, the distinction between $L_-$ and $L$ seems pedantic (the definition of variables outside of the domain has not yet been given, and is more of an algorithmic issue).}
 {}
 
 \reply{14. p4731, (48) - $\varphi_0$ is $\omega_0$ ?}
 {}
 
-\reply{15. p4731, l7 - presumably the numerical value for $W^*$ given here corresponds to a
-particular parameter set? It must depend upon $k$, $H_0$ etc?}
+\reply{15. p4731, l7 - presumably the numerical value for $W^*$ given here corresponds to a particular parameter set? It must depend upon $k$, $H_0$ etc?}
 {}
 
 \reply{16. p4736, l20 - the right hand column here seems unnecessary?}
 {}
 
-\reply{17. p4739, l25 - The numerical values of timesteps here and on p4732 could be
-brought together to save space and avoid repetition. The value of $\phi_0$ used seems
-rather large; if a smaller value were used (going towards the elliptic limit) might
-the timestep restriction become restrictive?}
+\reply{17. p4739, l25 - The numerical values of timesteps here and on p4732 could be brought together to save space and avoid repetition. The value of $\phi_0$ used seems rather large; if a smaller value were used (going towards the elliptic limit) might the timestep restriction become restrictive?}
 {}
 
-\reply{18. p4748, l15, and figure 11 - I was a bit confused by the comparison of $W$ and $P/P_o$ ;
-what significance is $P/P_o$ believed to have? Doesn't a lot of this information come
-just from the steady state relationship between $W$ and $P$ in (A4)?, The caption is
-a bit confusing when it refers to 'pairs' $(W,P)$, but what is plotted is really $P/P_o$.}
+\reply{18. p4748, l15, and figure 11 - I was a bit confused by the comparison of $W$ and $P/P_o$; what significance is $P/P_o$ believed to have? Doesn't a lot of this information come just from the steady state relationship between $W$ and $P$ in (A4)?, The caption is a bit confusing when it refers to 'pairs' $(W,P)$, but what is plotted is really $P/P_o$.}
 {}
 
-\reply{19. p4749, l9 - what is the 'actual diffusivity of the advective flux'?  'diffusive nature of
-the advective flux' might be clearer.}
+\reply{19. p4749, l9 - what is the 'actual diffusivity of the advective flux'?  'diffusive nature of the advective flux' might be clearer.}
 {}
 
-\reply{20. p4749, l15 - this statement is rather vague, and I'm not sure what it's trying to
-say.}
+\reply{20. p4749, l15 - this statement is rather vague, and I'm not sure what it's trying to say.}
 {}
 
 \reply{21. p4751, l17 - something missing from this sentence?}
@@ -910,6 +866,11 @@ Livingstone, S.~J., Clark, C.~D., Woodward, J., and Kingslake, J.: Potential
   subglacial lake locations and meltwater drainage pathways beneath the
   {A}ntarctic and {G}reenland ice sheets, The Cryosphere, 7, 1721--1740,
   \doi{10.5194/tc-7-1721-2013}, 2013.
+
+\bibitem{MortonMayers}
+Morton, K.~W. and Mayers, D.~F.: Numerical {S}olutions of {P}artial
+  {D}ifferential {E}quations: {A}n {I}ntroduction, Cambridge University Press,
+  2nd edn., 2005.
 
 \bibitem{SchoofCoulombBlatter}
 Schoof, C.: Coulomb friction and other sliding laws in a higher order glacier
