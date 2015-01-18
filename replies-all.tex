@@ -507,28 +507,29 @@ Thus we \emph{do} say that the exact solution has low regularity.  As well-known
 {We have removed the wordy justification for looking at the steady state equations.  Thanks!}
 
 \reply{11. p4728, l1 - clarify that this statement is for a given discharge?}
-{}
+{This statement was justified by a specific argument in the Appendix, but the whole concern is to subtle.  We have removed the statement and its justification to save space.}
 
 \reply{12. p4729, l11 - I am confused by the 'solution' $W = W_r$ to (45). This would only be a solution if the ice surface were a very particular shape?}
-{}
+{This text, which was not clear relative to the statement of equation (45) anyway, but which could be justified by the careful treatment in the Appendix, has been removed as part of our drastic simplification of the description of the nearly-exact solution.}
 
 \reply{13. Section 6.2 - the discussion of the boundary conditions here seems unnecessarily confusing and it could be much clearer just to state the shape, sliding velocity, and boundary conditions that are used, rather than explaining in generality how the solution works. Note that $W_c$ has only been defined in the appendix so comes out of the blue here. Since $r = L$ is the edge of the domain, the distinction between $L_-$ and $L$ seems pedantic (the definition of variables outside of the domain has not yet been given, and is more of an algorithmic issue).}
-{}
+{Again, this text has been removed.  We agree it, and the material in the Appendix, were not well-factored.}
 
 \reply{14. p4731, (48) - $\varphi_0$ is $\omega_0$ ?}
-{}
+{Again, the relevant text, and the symbol $\omega_0$, have been removed.  (And the answer is ``yes'', because it was a typo.)}
 
 \reply{15. p4731, l7 - presumably the numerical value for $W^*$ given here corresponds to a particular parameter set? It must depend upon $k$, $H_0$ etc?}
-{}
+{Yes, the numerical value of $W^*$ depended upon particular parameter values listed in Table A3.  But the text in this section 6.2, and Table A3, have been removed.}
 
 \reply{16. p4736, l20 - the right hand column here seems unnecessary?}
-{}
+{Yes.  We have simplified these equations by removing the right-hand column.}
 
 \reply{17. p4739, l25 - The numerical values of timesteps here and on p4732 could be brought together to save space and avoid repetition. The value of $\phi_0$ used seems rather large; if a smaller value were used (going towards the elliptic limit) might the timestep restriction become restrictive?}
-{}
+{We are solving multiple coupled equations here, and thus the separation of this material between the mass conservation equation and the pressure equation.  The value of $\phi_0$ is rather large, and indeed a smaller time step would cause more expensive computations, which is exactly the point made earlier about the ``user-adjustable tradeoff''.  But in the text in question on page 4739, our point is made even more strongly with a smaller value of $\phi_0$, namely that the time-step for the pressure equation is the controlling timestep.  So a rather large value of $\phi_0$ is fine here.}
 
 \reply{18. p4748, l15, and figure 11 - I was a bit confused by the comparison of $W$ and $P/P_o$; what significance is $P/P_o$ believed to have? Doesn't a lot of this information come just from the steady state relationship between $W$ and $P$ in (A4)?, The caption is a bit confusing when it refers to 'pairs' $(W,P)$, but what is plotted is really $P/P_o$.}
-{}
+{In steady state there is a relationship between pressure $P$ and water amount $W$, which could be denoted ``$P(A,c_1,c_2,W_r,P_o,|\mathbf{v}_b|,W)$'' but which we denote $P(W)$ to emphasize its primary feature relative to the literature, namely that it is like the Flowers-Clarke function which we denote $P_{FC}(W)$.  Note that $P(W)$ in fact is \emph{proportional} to $P_o$---that is its only dependence on $P_o$---so other dependencies are clearer if we present $P/P_o$.  But, because there are dependencies on sliding speed $|\mathbf{v}_b|$ and on overburden pressure $P_o$ in $P(W)$, and because the actual computation is not exactly steady (no time-dependent computation is), the model results here will not lie on a single curve.\\
+\indent We have fixed the caption to refer to $(W,P/P_o)$ pairs.}
 
 \reply{19. p4749, l9 - what is the 'actual diffusivity of the advective flux'?  'diffusive nature of the advective flux' might be clearer.}
 {}
