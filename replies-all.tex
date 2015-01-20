@@ -660,20 +660,19 @@ them later).}
 {We have moved the first mention of Table 2, which categorizes major variables into ``state'', ``input'', and ``output,'' forward to this point.}
 
 \reply{p.10 Eq.1 add a term $\partial W_{eng}/\partial t$}
-{}
+{No.  As noted, we do not conserve water held englacially.}
 
-\reply{p.10 l.9 it is not quite clear what ``the two-dimensional subglacial layer'' is. Presumably
-it is the layer which has thickness $W$.}
-{}
+\reply{p.10 l.9 it is not quite clear what ``the two-dimensional subglacial layer'' is. Presumably it is the layer which has thickness $W$.}
+{We model the base of the glacier as a two-dimensional surface.  Furthermore, in common with the literature, we have a \emph{thickness} for subglacial water, which makes the model two-dimensional.  The conserved quantity $W+W_{til}$ is a thickness, the flux follows the ice base (instead of going into the ice or into the ground), and the equations for all variables only involve $x$ and $y$ derivatives; these are all the usual meanings of ``two-dimensional''.}
 
 \reply{p.10 l.18 Specify that the pressure $P$ is at the top of the water layer too.}
-{}
+{No.  This is not what we mean, nor what is meant by the pressure variable in other literature like $p_w$ in equation (1) of \cite{Werderetal2013}.  In such 2D pressure equation models one can regard the pressure variable as a vertical average of the pressure, but note it does not increase with thickening of the layer by itself.  This is why we add ``$\rho_w g W$'' to our formula for the hydraulic potential, because (in common with all the literature) we have no vertical profile of pressure in the distributed system, but (not in common with the literature) we want subglacial lakes to spread out (as they physically would).}
 
 \reply{p.16 l.8 write ``and $N_{til} = P_o-P_{til}$ is the effective pressure of the overlying ice on the saturated till \dots''}
-{}
+{We don't feel we need to introduce the new symbol $P_{til}$ only to eliminate it in this way.  The cited literature adequately defines the phrase ``the effective pressure of the overlying ice on the saturated till.''}
 
 \reply{p.16 l.10 Should be ``previous section'' but specify section number instead.}
-{}
+{Yes.  Fixed.}
 
 \reply{p.16 l.19 I find $N_0$ confusing. The very similar looking subscript ``o'' in $P_o$ refers overburden but the ``$0$'' is something else. Maybe $N_r$ or $N_{ref}$?}
 {}
