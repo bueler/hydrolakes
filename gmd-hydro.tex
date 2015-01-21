@@ -266,7 +266,7 @@ Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=
 
 The evolution equations listed so far, namely \eqref{eq:adeqn}, \eqref{eq:hewittcapacity}, and \eqref{eq:tilldynamics}, can be simplified to three equations in the four major variables $W$, $\Wtil$, $Y$, and $P$.  We do not yet know how to compute the water pressure $P$ or its rate of change $\partial P/\partial t$ given the other variables and data of the problem.  A closure is needed.
 
-\subsection{Simplified closures without cavity evolution}  We first consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  We list them because the resulting simplified conservation equations emerge as reductions of our more complete theory.  For simplicity we present them without till storage ($\Wtilmax=0$) and only in the constant conductivity case ($\alpha=1$ and $\beta=2$).
+\subsection{Simplified closures without cavity evolution}  \label{subsec:simplifiedclosures}  We first consider two simple closures which appear in the literature but which do not use cavity evolution equation \eqref{eq:hewittcapacity} or similar physics.  We list them because the resulting simplified conservation equations emerge as reductions of our more complete theory.  For simplicity we present them without till storage ($\Wtilmax=0$) and only in the constant conductivity case ($\alpha=1$ and $\beta=2$).
 
 Setting the pressure equal to the overburden pressure is the simplest closure \citep{LeBrocqetal2009,Shreve1972}:
 \begin{equation}
@@ -348,26 +348,24 @@ The functions used in the model equations and inequalities can be categorized in
 
 \renewcommand{\labelenumi}{\textbf{(\roman{enumi})}}
 \begin{enumerate}
-\item The zero till storage ($\Wtilmax=0$) and zero englacial porosity ($\phi_0=0$) case of \eqref{eq:bluebox} is the model described by \cite{Schoofetal2012}, recalling that $\bq = - K W \grad \psi$,
+\item The zero till storage ($\Wtilmax=0$) and zero englacial porosity ($\phi_0=0$) case of \eqref{eq:bluebox} is essentially the model described by \cite{Schoofetal2012}.  Recalling that $\bq = - K W \grad \psi$, the equations are
 \begin{align}
 &\frac{\partial W}{\partial t} = - \Div\left( K W \grad \psi \right) + \frac{m}{\rho_w}, \label{eq:schoofsmodel} \\
 &0 = \Div \left( K W \grad \psi \right) + \frac{m}{\rho_w} \notag \\
 &\qquad \qquad + c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+.  \notag
 \end{align}
-The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic regularization of \eqref{eq:schoofsmodel} based on a notional connection to porous englacial storage, and with coupling to additional till storage.
+The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:bluebox} is a parabolic version of \eqref{eq:schoofsmodel}, regularized using a notional connection to porous englacial storage, and with coupling to till storage.
 
-\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which physical processes for the evolution of pressure are ignored, is essentially the model for ``routing'' water to subglacial lakes under cold ice sheets in \cite{Siegertetal2009} and \cite{Livingstoneetal2013}.  Assuming again that till storage is removed ($\Wtilmax=0$) then the model has only $W$ as a state variable, the single evolution equation is
-\begin{equation}
-\frac{\partial W}{\partial t} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}. \label{eq:lakesmodel}
-\end{equation}
-along with the bound $W \ge 0$ and further-simplified definitions $K = k W^{\alpha-1} \left|\grad (P_o + \rho_w g b)\right|^{\beta-2}$ and $\bV = - K \grad \left(P_o + \rho_w g b\right)$.  As noted in section \ref{sec:closures}, the $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.  This reduced model is mostly an advection, but, because of \eqref{eq:potential} for the hydraulic potential, which implies some diffusion, model \eqref{eq:lakesmodel} has continuous solutions for $W$.
+\item The $P=P_o$ limit of \eqref{eq:bluebox}, in which the evolution equation for pressure is ignored, is essentially the model for ``routing'' water to subglacial lakes under cold ice sheets used by \cite{Siegertetal2009} and \cite{Livingstoneetal2013}.  As noted in section \ref{sec:closures}, the $\Wtilmax=0$ and $\alpha=1$ case of this model routes water with a velocity which is determined entirely by ice and bedrock geometry.
 
-\item The non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which, in particular, $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of a one-dimensional glacier and $q_{out},q_{in}$ are given by observations, is the model of \cite{Bartholomausetal2011}; see \cite{Bueler2014correspondence}.
+\item The non-distributed ``lumped'' form of \eqref{eq:bluebox}, in which, in particular, $\Div \bq = (q_{out} - q_{in})/L$ where $L$ is the length of the glacier and $q_{out},q_{in}$ are given by observations, is the model of \cite{Bartholomausetal2011}; see \cite{Bueler2014correspondence}.
 
-\item The undrained plastic bed (UPB) model of \cite{Tulaczyketal2000b} arises as the $W=0,\bq=0,\phi_0=0$ reduction of \eqref{eq:bluebox}.  This model depends on friction-heating feedback to keep $\Wtil$ bounded, which is not effective in a membrane-stress-inclusive theory in which local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by non-conservatively removing water above the capacity, which is a minimal ``drained'' version of the UPB model.
+\item The undrained plastic bed (UPB) model of \cite{Tulaczyketal2000b} arises as the $W=0,\bq=0,\phi_0=0$ reduction of \eqref{eq:bluebox}.  This model depends on friction-heating feedback to keep $\Wtil$ bounded, which is not effective if local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $\Wtil \le \Wtilmax$ by removing water above the capacity $\Wtilmax$, giving a minimal non-conservative, but ``drained,'' version of the UPB model.
 \end{enumerate}
 
-The above list does not imply that all possible subglacial hydrology models are subsumed in ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} is a variation on idea \textbf{(ii)} above but it is not a reduction.  The \cite{FlowersClarke2002_theory} model is also not a reduction, although a significant connection is explained in the section on steady states below.  Most significantly, models which include conduits \citep[among others]{Schoofmeltsupply,Hewittetal2012} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,vanderWeletal2013} but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.
+The above list does not imply that all possible subglacial hydrology models are reductions of ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} is a variation on idea \textbf{(ii)} above but it is not a reduction.  The \cite{FlowersClarke2002_theory} model mentioned in subsection \ref{subsec:simplifiedclosures} is also not a reduction, though a significant connection is explained in the Appendix.
+
+Two-dimensional models which include conduits \citep{Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,vanderWeletal2013}, but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.  Our model has no conduit-like evolution equations at all, though the gradient-descent locations of characteristic curves from models using idea \textbf{(ii)} may correspond to the locations of conduits in some cases.
 
 \subsection{Steady states}  \label{subsec:steady} The steady states of equations \eqref{eq:bluebox} are of physical modelling importance because the subglacial system can be close to steady state much of the time, but also because physical processes become decoupled in steady state, which helps us understand the model.  Specifically, the steady form of model \eqref{eq:bluebox}, with $\alpha=1$, $\beta=2$, and $\Wtilmax=0$ for simplicity, can be written as follows in terms of $\bV,\bq,W,P$:
 \begin{align}
