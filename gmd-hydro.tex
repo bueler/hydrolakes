@@ -227,9 +227,7 @@ The void ratio $e$ and the effective water layer thickness $\Wtil$ are describin
 \begin{equation}
 e = \frac{\Wtil}{\eta}.  \label{eq:voidequivalent}
 \end{equation}
-On the other hand we will describe the maximum capacity of the till by specifying a maximum on the water layer thickness \citep{BBssasliding}, that is,
-FIXME
-The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at the maximum void ratio $e$ and at maximum $\Wtil$.  But then equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} combine to express the solid-till thickness $\eta$ in terms of our preferred parameters and the overburden pressure,
+On the other hand we specify a maximum $\Wtilmax$ on the water layer thickness, namely by \eqref{eq:Wtilbounds}.  The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at maximum values of void ratio $e$ and effective thickness $\Wtil$, so equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} allow us to express the solid-till thickness $\eta$ in terms of our preferred parameters $\Wtilmax$, $\delta$, $e_0$, $N_0$, and $C_c$:
 \begin{equation}
 \eta = \frac{\Wtilmax}{e_0 - C_c \log_{10}\left(\delta P_o / N_0\right)}.  \label{eq:etaexpression}
 \end{equation}
@@ -239,26 +237,29 @@ From \eqref{eq:voidpressure}, \eqref{eq:voidequivalent}, and \eqref{eq:etaexpres
 \hatNtil = N_0 \left(\frac{\delta P_o}{N_0}\right)^s 10^{(e_0/C_c)\,(1-s)}
 \label{eq:NtilofWtil}
 \end{equation}
-where $s = \Wtil/\Wtilmax$.  However, as noted above, $\Ntil$ is bounded, so the form we use is shown in Figure \ref{fig:Ntilfunctions}(b):
+where $s = \Wtil/\Wtilmax$.  However, as noted above, $\Ntil$ is bounded:
 \begin{equation}
 \Ntil = \min\left\{P_o,\, \hatNtil\right\}.
 \label{eq:Wtilpressure}
 \end{equation}
+This function is shown in Figure \ref{fig:Ntilfunctions}(b).
 
-It follows from equations \eqref{eq:mohrcoulomb} and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ can be determined from the water amount $\Wtil$.  Regarding the parameters in this relation:
+It follows from equations \eqref{eq:mohrcoulomb}, \eqref{eq:NtilofWtil}, and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ is determined by the water amount $\Wtil$.  Regarding the parameters in this relation:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
-\item Experiments on till suggest small values for cohesion, $0 \le c_0 \lesssim 1$ kPa \citep{Tulaczyketal2000}, and we choose $c_0=0$ for concreteness.
-\item Observed till friction angles $\varphi$ are in a $18^\circ$--\,$40^\circ$ range \citep{CuffeyPaterson}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ can depend on bed elevation, so as to accommodate the submarine history of some sediments.
-\item The ratio $e_0/C_c$ can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Values for the dimensionless constants $e_0$ and $C_c$ used in this paper are from till samples from ice stream B in Antarctica, namely $e_0=0.69$ and $C_c=0.12$ in Figure 6 of \cite{Tulaczyketal2000}, thus $e_0/C_c=5.75$.
+\item Experiments on till suggest small values for cohesion $c_0$ in \eqref{eq:mohrcoulomb}, $0 \le c_0 \lesssim 1$ kPa \citep{Tulaczyketal2000}, and we choose $c_0=0$ for concreteness.
+\item Measured till friction angles $\varphi$ are in a $18^\circ$--\,$40^\circ$ range \citep{CuffeyPaterson}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ depends on bed elevation so as to model the submarine history of low-elevation sediments.
+\item The ratio $e_0/C_c$ can be determined by laboratory experiments on till samples \citep[e.g.][]{Hookeetal1997,Tulaczyketal2000}.  Values for the dimensionless constants $e_0$ and $C_c$ used here (Table \ref{tab:constants}) are from till samples from ice stream B in Antarctica \citep{Tulaczyketal2000}, and they give $e_0/C_c=5.75$ in \eqref{eq:NtilofWtil}.
 \item The till capacity parameter $\Wtilmax$ could be set in a location-dependent manner from in situ \citep{Tulaczyketal2000} or seismic reflection \citep{Rooneyetal1987} evidence, but for simplicity we set it to a constant $2$ meters.
 \end{enumerate}
 
-\subsection{Sliding law}  The ice sliding velocity is determined by solving a stress balance in which the vector basal shear stress $\boldsymbol\tau_b$ appears either as a boundary condition \citep{SchoofCoulombBlatter} or as a term in the balance \citep{SchoofStream,BBssasliding}.  In PISM the scalar yield stress $\tau_c$ determines the basal shear stress through a sliding law
+\subsection{Sliding law}  Observe that the ice sliding velocity $\mathbf{v}_b$ is an input into the subglacial hydrology model we are building, because of equation \eqref{eq:openingform}.  On the other hand, the yield stress $\tau_c$ is an output of the till-related part of the hydrology model (subsection \ref{subsec:effectivepressuretill}).  In an ice dynamics model like PISM, $\mathbf{v}_b$ is determined by solving a stress balance in which the vector basal shear stress $\boldsymbol\tau_b$ appears either as a boundary condition \citep{SchoofCoulombBlatter} or as a term in a vertically-integrated balance \citep{SchoofStream,BBssasliding}.  In PISM, $\tau_c$ and $\mathbf{v}_b$ combine to determine $\boldsymbol\tau_b$ through a sliding law
 \begin{equation}
-\boldsymbol\tau_b = - \tau_c \frac{\mathbf{u}}{|\mathbf{u}|^{1-q} u_0^q} \label{eq:pseudobasalstress}
+\boldsymbol\tau_b = - \tau_c \frac{\mathbf{v}_b}{|\mathbf{v}_b|^{1-q} v_0^q}. \label{eq:pseudobasalstress}
 \end{equation}
-where $\mathbf{u}$ is the sliding velocity of the base of the ice, $0\le q \le 1$ , and $u_0$ is a threshold sliding velocity \citep{AschwandenAdalgeirsdottirKhroulev}.  Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{u}/|\mathbf{u}|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of $|\mathbf{u}|$ as $|\mathbf{u}| \gg u_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{u}|^{q-1} \mathbf{u}$ with coefficient $\beta = \tau_c / u_0^q$; in the linear case $q=1$ we have $\beta = \tau_c/u_0$.
+where $0\le q \le 1$ and $v_0$ is a threshold sliding speed \citep{AschwandenAdalgeirsdottirKhroulev}.
+
+Power law \eqref{eq:pseudobasalstress} generalizes, and includes as the case $q=0$, the purely-plastic (Coulomb) relation $\boldsymbol\tau_b = - \tau_c \mathbf{v}_b/|\mathbf{v}_b|$.  At least in the $q\ll 1$ cases, under \eqref{eq:pseudobasalstress} the till ``yields'' and the magnitude of the basal shear stress becomes nearly independent of $|\mathbf{v}_b|$, when $|\mathbf{v}_b| \gg v_0$.  Equation \eqref{eq:pseudobasalstress} could also be written in generic power-law form $\boldsymbol\tau_b = - \beta |\mathbf{v}_b|^{q-1} \mathbf{v}_b$ with coefficient $\beta = \tau_c / v_0^q$; in the linear case $q=1$ we have $\beta = \tau_c/v_0$.
 
 
 \section{Closures to determine pressure} \label{sec:closures}
