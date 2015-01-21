@@ -367,76 +367,31 @@ The above list does not imply that all possible subglacial hydrology models are 
 
 Two-dimensional models which include conduits \citep{Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,vanderWeletal2013}, but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.  Our model has no conduit-like evolution equations at all, though the gradient-descent locations of characteristic curves from models using idea \textbf{(ii)} may correspond to the locations of conduits in some cases.
 
-\subsection{Steady states}  \label{subsec:steady} The steady states of equations \eqref{eq:bluebox} are of physical modelling importance because the subglacial system can be close to steady state much of the time, but also because physical processes become decoupled in steady state, which helps us understand the model.  Specifically, the steady form of model \eqref{eq:bluebox}, with $\alpha=1$, $\beta=2$, and $\Wtilmax=0$ for simplicity, can be written as follows in terms of $\bV,\bq,W,P$:
+\subsection{Steady states}  \label{subsec:steady}  The steady form of model \eqref{eq:bluebox}, stated using $\alpha=1$, $\beta=2$, and $\Wtilmax=0$ for simplicity, can be written as follows in terms of $\bV,\bq,W,P$:
 \begin{align}
 \bV &= - k \grad \left(P + \rho_w g b\right), \label{eq:Vsteady} \\
 \bq &= \bV W - \rho_w g k W \grad W, \label{eq:qsteady} \\
 0 &= - \Div \bq + \frac{m}{\rho_w}, \label{eq:masscontsteady} \\
 0 &= c_2 A (P_o - P)^3 W - c_1 |\bv_b| (W_r - W)_+. \label{eq:openclosesteady}
 \end{align}
-Steady state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are stated in the one-dimensional case by \cite{Schoofetal2012} model, where the decoupling is also noted; see equations (5.8) and (5.10) in \citep{Schoofetal2012}.
+These steady state equations are also stated in the one-dimensional case by \cite{Schoofetal2012}, where traveling-wave exact solutions are also found.  Observe that the equations describing mass conservation \eqref{eq:masscontsteady} and cavity opening/closing processes \eqref{eq:openclosesteady} have become decoupled.
 
-We can make four specific observations about solutions to \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}, which we find are useful in understanding the time-dependent model at longer time-scales also:
+We make three observations about solutions to \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
-\item from \eqref{eq:openclosesteady} there is a functional relationship $P=P(W)$ which determines the pressure given the water amount,
-\item by \eqref{eq:Vsteady} and \eqref{eq:openclosesteady}, the apparently advective flux ``$\bV W$'' in \eqref{eq:qsteady} actually acts diffusively, if sliding is occurring and if the water amount is either small or comparable to the roughness scale,
-\item the water amount $W$ generally scales inversely with the conductivity, and
-\item exact solutions can be constructed.
+\item from \eqref{eq:openclosesteady} there is a functional relationship $P=P(W)$,
+\item by \eqref{eq:Vsteady} and \eqref{eq:openclosesteady}, the apparently advective flux ``$\bV W$'' in \eqref{eq:qsteady} actually acts diffusively, and
+\item radial nearly-exact solutions can be constructed.
 \end{enumerate}
-In Appendix A we detail points (\emph{i}), (\emph{ii}), and (\emph{iii}).  Observation (\emph{iv}) is addressed in the next section.
+In Appendix A we detail points (\emph{i}) and (\emph{ii}).  Observation (\emph{iii}) is addressed next.
 
+\subsection{A nearly-exact steady state solution}  \label{subsec:exactsolution}  For the purpose of verifying numerical schemes we have built a two-dimensional, nearly-exact solution for $W$ and $P$, in a case with nontrivial overburden pressure and ice sliding.  It depends on the numerical solution of a scalar first-order ordinary differential equation (ODE) initial value problem, something we can do with high accuracy.
 
-\section{An exact steady state solution}  \label{sec:exactsolution}
+We solve the flat bed ($b=0$) angularly-symmetric case of coupled equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}.  By assuming spatially-constant water input ($m=m_0$), a parabolic ice thickness profile in the radial coordinate $r$, and a particular profile of sliding---namely a function $|\bv_b(r)|$ with onset of sliding at location $r=5$ km, about one-fourth of the ice cap radius $r=22.5$ km---the equations reduce to a single first-order ODE in $r$ for the water thickness $W(r)$.  The pressure $P(r)$ is then determined from $W(r)$ by the functional relationship \eqref{eq:PofWsteady} which arises in steady state (Appendix A).
 
-\subsection{Radial equations}  Steady equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} are the basis on which we now build a nearly-exact solution for $W$ and $P$ in the map-plane, in a case with nontrivial overburden pressure and ice sliding speed.  This solution is useful for verifying numerical schemes.  It depends on the numerical solution of a scalar first-order ordinary differential equation (ODE) initial value problem, something we can do with high accuracy.  Traveling wave exact solutions in one horizontal dimension appear in \cite{Schoofetal2012}.
+To compute the nearly-exact solution we use adaptive numerical ODE solvers, both a Runge-Kutta method and a variable-order stiff solver, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$.  The two solvers gave identical results to more than six digits.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}, which also shows the regions of the $r,W$ plane which correspond to overpressure ($P=P_o$ in our model), normal pressure ($0<P<P_o$), and underpressure ($P=0$).  Figure \ref{fig:Pexact} shows the corresponding pressure solution $P(r)$.  Starting at the margin, we see that the solution is in the normal pressure region as $r$ decreases, until the onset of sliding ($r=5$ km).  At that location it switches into the overpressure case because there is no sliding.
 
-Consider the flat bed case ($b=0$).  Assuming dependence only on the radial coordinate $r = \sqrt{x^2+y^2}$, from equations \eqref{eq:Vsteady}--\eqref{eq:masscontsteady} one may eliminate the velocity to get
-\begin{align}
-&q = - k W\, \left(\frac{dP}{dr} + \rho_w g \frac{dW}{dr}\right), \label{eq:rsflux} \\
-&\frac{1}{r}\frac{d}{dr}\left(r\,q\right) = \frac{m}{\rho_w}. \label{eq:rsconserve}
-\end{align}
-
-In the case of constant water input $m = m_0$, we can integrate \eqref{eq:rsconserve} from $0$ to $r$ and use symmetry ($q(0)=0$) to get
-\begin{equation}
-q(r) = \frac{m_0}{2\rho_w} \, r. \label{eq:qradial}
-\end{equation}
-Suppose $h(r)$ is given so that $P_o(r)$ is also determined.  Assume that the scaled sliding speed $s_b(r)$ has a bounded derivative and that the solution $W(r)$ satisfies conditions $W_c < W < W_r$; these properties can be verified for the constructed solution.  By combining \eqref{eq:PofWsteady}, \eqref{eq:dPdWsteady}, \eqref{eq:rsflux}, and \eqref{eq:qradial} we can eliminate $q$ and $P$ to find
-\begin{align}
-&\omega_0\, r = - W\, \bigg[\frac{dP_o}{dr} - \frac{ds_b}{dr} \left(\frac{W_r - W}{W}\right)^{1/3}  \label{eq:WradialODE} \\
-&\qquad \qquad \qquad + \left(\frac{s_b W_r}{3 W^{4/3} (W_r - W)^{2/3}} + \rho_w g\right) \frac{dW}{dr}\bigg] \notag
-\end{align}
-where $\omega_0 = m_0 / (2 \rho_w k)$.
-
-Equation \eqref{eq:WradialODE} is a first-order ordinary differential equation (ODE) for $W(r)$.  To put it in the standard form expected by a numerical ODE solver we solve it for $dW/dr$.
-
-\subsection{A nontrivial solution}  \label{subsect:exactsoln}  Though equation \eqref{eq:WradialODE} has a constant solution $W(r)=W_r$, to generate a nontrivial exact solution we will choose a positive thickness of ice at the margin (a cliff) so that $P_o(L^-)>0$.  At the ice margin $r=L$ we have water pressure $P=0$ so $W(L)=W_c(L^-)$ is the boundary condition for the ODE.  We assume that at the margin there is some sliding so that $s_b(L^-)>0$, and by \eqref{eq:steadyboundfirst} we require that $s_b(L^-) W_r > P_o(L^-)^3 W(L)$.  The condition at $r=L$ also satisfies $W(L) < W_r$.  Then we integrate \eqref{eq:WradialODE} from $r=L$ to $r=0$.  The central water thickness value $W(0)$ is determined as part of the solution.
-
-It is useful to have an ice cap geometry in which the surface gradient formula is simple so that $dP_o/dr$ in \eqref{eq:WradialODE} is also simple, so we choose a parabolic profile
-\begin{equation}
-H(r) = H_0 \left(1 - \frac{r^2}{R_0^2} \right) \label{eq:choosebodvardssonh}
-\end{equation}
-where $H(0)=H_0$ is the height (thickness) at the center of the ice cap.  It follows that $dP_o/dr = - C r$ where $C=2\rho_i g h_0 R_0^{-2}$.  We choose $L=0.9 R_0$ and we note that $H(L)=0.19 h_0$ is the size of the cliff.
-
-The sliding speed could be determined by a model for stresses at the ice base and within the ice \citep{GreveBlatter2009}, but for hydrology model verification we simply choose a well-behaved sliding speed function which has no sliding near the ice cap center, until a radius $r=R_1$ at which sliding increases:
-\begin{equation}
-|\bv_b|(r) = \begin{cases} 0, & 0 \le r \le R_1, \\
-                           v_0  \left(\frac{r-R_1}{L-R_1}\right)^5, & R_1 < r \le L.
-             \end{cases}  \label{eq:choosevb}
-\end{equation}
-It follows from \eqref{eq:definesb} and \eqref{eq:choosevb} that $ds_b/dr$ in \eqref{eq:WradialODE} is bounded and continuous on $0\le r \le L$.
-
-Now we solve ODE \eqref{eq:WradialODE} with initial condition $W(L)$ and the specific values in Table \ref{tab:verifconstants}.  We use adaptive numerical ODE solvers, both a Runge-Kutta 4(5) Dormand-Prince method and a variable-order stiff solver, with relative tolerance $10^{-12}$ and absolute tolerance $10^{-9}$.  The two solvers gave essentially identical results.  Modest stiffness \citep{AscherPetzold} of ODE \eqref{eq:WradialODE} is observed at $r\approx R_1$.  The result $W(r)$ is shown in Figure \ref{fig:Wexact}.
-
-Because equations \eqref{eq:choosebodvardssonh} and \eqref{eq:choosevb} imply a pressure functional relation $P=P(W,r)$ from \eqref{eq:PofWsteady}, we can also show in Figure \ref{fig:Wexact} the regions of the $r,W$ plane which correspond to overpressure, normal pressure, and underpressure.  We see that $W(r)$ is in the normal pressure region as $r$ decreases from $r=L$ to $r=R_1$, but at $r=R_1$ the function $W(r)$ switches into the overpressure case because there is no sliding.  Figure \ref{fig:Pexact} shows the corresponding pressure solution $P(r)=P(W(r))$ from \eqref{eq:PofWsteady}.
-
-The reason for stiffness near $R_1$ is that as the sliding goes to zero the cavitation rate goes to zero.  Because creep closure balances cavitation in steady state, effective pressure also goes to zero ($P\to P_o$).  The remaining active mechanisms in the model are the variable overburden pressure and the rate of water input, and they must exactly balance.  In this case \eqref{eq:WradialODE} reduces to the simpler form
-\begin{equation}
-\frac{dW}{dr} = - \frac{\varphi_o r W^{-1} + \frac{dP_o}{dr}}{\rho_w g}. \label{eq:WradialODEnoslide}
-\end{equation}
-Though we have not derived it this way, Equation \eqref{eq:WradialODEnoslide} is the steady radial form of the mass conservation equation under the ``$P=P_o$'' closure, namely equation \eqref{eq:PisoverConservation}.
-
-In equation \eqref{eq:WradialODEnoslide} we see that $dW/dr=0$ if $W$ satisfies $W = - \omega_0 r / (dP_o/dr)$.  In our case with geometry \eqref{eq:choosebodvardssonh} this reduces to a constant value $W^*= 0.21764$ m because $dP_o/dr$ is linear in $r$.  Both numerical ODE solvers used here confirm that $W(r)$ is asymptotic to this constant value $W^*$ as $r\to 0$, and that $W(r)\approx W^*$ within about 1\% on all of $0\le r \le R_1$.  This is seen in Figure \ref{fig:Wexact}.
+Verification results using the nearly-exact solution appear in section \ref{sec:results}.  The numerical methods (next section) use a cartesian $(x,y)$ grid unrelated to the radial nearly-exact solution.  Thus numerical error comes from generic relationships between exact solution features and the grid.
 
 
 \section{Numerical schemes}  \label{sec:num}
@@ -640,11 +595,11 @@ along with bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.  The determination of 
 
 \section{Results}  \label{sec:results}
 
-\subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in section \ref{sec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of measuring and analysing the errors made by the numerical scheme, especially as the numerical grid is refined \citep{Wesseling,BLKCB}.
+\subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in subsection \ref{subsec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of measuring and analysing the errors made by the numerical scheme, especially as the numerical grid is refined \citep{Wesseling,BLKCB}.
 
 We initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after one model-month.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is error.
 
-For the verification runs we use the values in Table \ref{tab:verifconstants}.  We do runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
+For the verification runs we use the values in Table FIXME.  We do runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
 
 This convergence evidence suggests that the coupled advection-diffusion-reaction equations for $W$ and $P$ have correctly-implemented numerical schemes.  The rate of convergence is roughly linear (i.e.~about $O(\Delta x^1)$) because largest errors arise at locations of low regularity of the solution, including the radius $r=R_1$ where $P$ abruptly drops from $P_o$, and at the ice sheet margin $r=L$ where there is a jump in the water thickness to zero.
 
@@ -683,7 +638,7 @@ We can examine the local relationship between water amount $W$ and pressure $P$ 
 \item a 2D parallel implementation of a coupled till-and-linked-cavities model (sections \ref{sec:elements}--\ref{sec:num}),
 \item an englacial porosity regularization which allows a practical numerical model in which physical bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:closures} and \ref{sec:num}),
 \item an analysis of steady states (subsection \ref{subsec:steady} and Appendix A), describing the actual diffusivity of the advective flux in that case,
-\item an exact solution of the coupled mass and pressure equations in the steady radial case (section \ref{sec:exactsolution}), leading to verification (section \ref{sec:results}), and
+\item an exact solution of the coupled mass and pressure equations in the steady radial case (section \ref{subsec:exactsolution}), leading to verification (section \ref{sec:results}), and
 \item demonstration at whole ice-sheet scale on a million-point hydrology grid (section \ref{sec:results}).
 \end{itemize}
 The comprehensive treatment here of certain subjects is also important.  We have
@@ -1147,27 +1102,6 @@ One may regard \eqref{eq:ellipticforWsteadyone} as a non-linear elliptic equatio
         \end{tabular} \\ \hline
 \end{tabular}
 \label{tab:symbols}
-\end{table}
-
-\begin{table}[ht]
-  \centering
-  \caption{Constants used in constructing the exact solution.}
-  \begin{tabular}{llll}
-    \textbf{Name} & \textbf{Value} & \textbf{Units} & \textbf{Description}\\
-\hline
-    $\alpha$ & $1$ & & power in flux \\
-    $\beta$  & $2$ & & power in flux \\
-    $H_0$ & $500$ & m & center thickness \\
-    $k$   & $0.01/(\rho_w g)$ & $\text{m}^3\,\text{s}\,\text{kg}^{-1}$ & hydraulic conductivity \\
-    $L$   & $22.5$& km & cliff at $r=0.9 R_0$ \\
-    $m_0$ & $0.2\rho_w$ & $\text{kg}\,\text{m}^{-2}\,\text{a}^{-1}$ & water input rate \\
-    $R_0$ & $25$  & km & ideal ice cap radius \\
-    $R_1$ & $5$   & km & sliding starts \\
-    $v_0$ & $100$ & $\text{m}\,\text{a}^{-1}$ & sliding speed scale \\
-    $W_r$ & $1$ & m & roughness scale \\
-    \hline
-  \end{tabular}
- \label{tab:verifconstants}
 \end{table}
 
 \begin{table*}[t]
