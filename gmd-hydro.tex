@@ -108,33 +108,33 @@ The structure of the paper is as follows: Section \ref{sec:elements} considers b
 
 \section{Elements of subglacial hydrology} \label{sec:elements}
 
-\subsection{Mass conservation}  We assume that liquid water is of constant density.  Thus the thickness of the layer of laterally-transportable (mobile) water, denoted by $W(t,x,y)$, determines its mass.  In addition there is liquid water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of tens to thousands of meters \citep{FlowersClarke2002_theory}.
-
-The total effective thickness of the water at map-plane location $(x,y)$ and time $t$ is $W + \Wtil$.  This sum is the conserved quantity in our model.  In two map-plane dimensions the mass conservation equation is \citep[compare][]{Clarke05}
+\subsection{Mass conservation}  We assume that liquid water is of constant density $\rho_w$; see Table \ref{tab:constants} for constants.  Thus the thickness of the layer of laterally-moving water, denoted by $W(t,x,y)$, determines its mass; see Table \ref{tab:symbols} for variable names and meanings.  In addition there is liquid water stored locally in the pore spaces of till \citep{Tulaczyketal2000b} which is also described by an effective thickness $\Wtil(t,x,y)$.  Such thicknesses are only meaningful compared to observations if they are regarded as averages over a horizontal scale of meters to hundreds of meters \citep{FlowersClarke2002_theory}.  Thus the total effective thickness of the water at map-plane location $(x,y)$ and time $t$ is $W + \Wtil$.  This sum is the conserved quantity in our model.  In two map-plane dimensions the mass conservation equation is \citep[compare][]{Clarke05}
 \begin{equation} \label{eq:conserve}
 \frac{\partial W}{\partial t} + \frac{\partial \Wtil}{\partial t} + \Div \bq = \frac{m}{\rho_w}
 \end{equation}
-where $\Div = (\partial/\partial x) + (\partial/\partial y)$ denotes divergence, $\bq$ is the (vector) water flux (units $\text{m}^2\,\text{s}^{-1}$), $m$ is the total input to the subglacial hydrology (units $\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$) and $\rho_w$ is the density of fresh liquid water; see Table \ref{tab:constants} for this an other physical constants.  Note that the water flux $\bq$ is concentrated within the two-dimensional subglacial layer.
+where $\Div = \partial/\partial x + \partial/\partial y$ denotes divergence, $\bq$ is the vector water flux ($\text{m}^2\,\text{s}^{-1}$), and $m$ is the total input to the subglacial hydrology ($\text{kg}\,\text{m}^{-2}\,\text{s}^{-1}$).  Note that the water flux $\bq$ is concentrated within the two-dimensional subglacial layer.
 
-The water source $m$ in equation \eqref{eq:conserve} includes melt on the lower surface of the glacier and drainage from the glacier surface if that occurs.  In portions of ice sheets with cold surface conditions, such as Antarctica and the interior of Greenland, the basal melt rate part of $m$ is determined by the energy balance at the base of the ice \citep{AschwandenBuelerKhroulevBlatter}.  The Greenland results in section \ref{sec:results} use only that basal melt for $m$.  Drainage from the surface has also been added to $m$ in applications of our model \citep{vanPeltthesis}, but modelling such drainage is outside the scope of this paper.
+The water source $m$ in equation \eqref{eq:conserve} includes both melt on the base of the glacier and drainage to the bed from the glacier surface.  In portions of ice sheets with cold surface conditions, such as Antarctica and the interior of Greenland, the basal melt rate part of $m$ is dominated by the energy balance at the base of the ice \citep{AschwandenBuelerKhroulevBlatter}, and the Greenland results in section \ref{sec:results} use only that basal melt for $m$.  Drainage from the surface has also been added to $m$ in applications of our model \citep{vanPeltthesis}, but modelling such drainage is outside the scope of this paper.
 
-\subsection{Hydraulic potential}  The  hydraulic potential $\psi(t,x,y)$ combines the pressure $P(t,x,y)$ of the transportable subglacial water and the gravitational potential of the top of the water layer \citep{Goelleretal2013,Hewittetal2012},
+\subsection{Hydraulic potential and water pressure}  The  hydraulic potential $\psi(t,x,y)$ combines the pressure $P(t,x,y)$ of the transportable subglacial water and the gravitational potential of the top of the water layer \citep{Goelleretal2013,Hewittetal2012},
 \begin{equation} \label{eq:potential}
 \psi = P + \rho_w g\, (b+W).
 \end{equation}
 Here $z=b(x,y)$ is the bedrock elevation.
 
-We have added the term ``$\rho_w g W$'' to the standard hydraulic potential formula $\psi = P + \rho_w g b$ \citep{Clarke05,Shreve1972} because differences in the potential at the \emph{top} of the subglacial water layer determine the driving potential gradient for a fluid layer.  The $W$ term in \eqref{eq:potential} makes the mass conservation equation diffusive, regardless of the action of other diffusive mechanisms; see subsection \ref{subsec:steady}.  When the water depth becomes substantial ($W\gg 1$ m), as it would be in a subglacial lake, this term keeps the modeled lakes from being singularities of the water thickness field.  Indeed, subglacial lakes of infinitesimal extent and infinite depth form at local minima of the hydraulic potential if this term is absent \citep{LeBrocqetal2009}.
+We have added the term ``$\rho_w g W$'' to the standard hydraulic potential formula $\psi = P + \rho_w g b$ \citep{Clarke05,Shreve1972} because differences in the potential at the \emph{top} of the subglacial water layer determine the driving potential gradient for a fluid layer.  When the water depth becomes substantial ($W\gg 1$ m), as it would be in a subglacial lake, this term keeps the modeled lakes from being singularities of the water thickness field \citep[compare][]{LeBrocqetal2009}.
 
-Ice is a viscous fluid which has a stress field of its own.  The basal value of the downward normal stress, traditionally called the overburden pressure, is denoted by $P_o$.  We accept the shallow approximation that it is hydrostatic \citep{GreveBlatter2009}:
+Ice is a viscous fluid which has a stress field of its own.  The basal value of the downward normal stress, called the overburden pressure, is denoted by $P_o$.  We accept the shallow approximation that this stress is hydrostatic \citep{GreveBlatter2009},
 \begin{equation} \label{eq:hydrostatic}
   P_o = \rho_i g H,
 \end{equation}
-where $H$ is the ice thickness.  Because the condition $P>P_o$ is presumed to cause the ice to lift and thus reduce the pressure back to overburden $P=P_o$ \citep{Schoofetal2012}, it follows that the pressure solution is subject to inequalities
+where $H$ is the ice thickness.
+
+Overpressure $P>P_o$ has been observed in ice sheets, but only for short durations \citep{Dasetal08}.  In our model and others \citep{Schoofetal2012}, however, because the condition $P>P_o$ is presumed to cause the ice to lift and thus reduce the pressure back to overburden $P=P_o$, the pressure solution is subject to inequalities
 \begin{equation}
 0 \le P \le P_o. \label{eq:bounds}
 \end{equation}
-In temperate glaciers a similar upper bound applies because water rising to the surface through efficient englacial conduits is free to flow at the surface, ensuring $P\le (\rho_w/\rho_i) P_o$, at least if supraglacial geysers are regarded as exceptional \citep{Bartholomausetal2011,Bueler2014correspondence}.
+
 
 \subsection{Darcy flow}  Transportable water flows from high to low hydraulic potential.  The simplest expression of this is a Darcy flux model for a water sheet,
 \begin{equation}  \label{eq:fluxearly}
@@ -312,8 +312,6 @@ Equation \eqref{eq:strongclosure} obviously allows us to eliminate either $W$ or
 \end{equation}
 
 In the zero till storage case (set $\Wtilmax=0$ so $\Wtil=0$), equation \eqref{eq:elliptic} is exactly the elliptic pressure equation (2.12) of \cite{Schoofetal2012}.  They solve \eqref{eq:elliptic} in one dimension with pressure boundary conditions at the lateral edges of the subglacial hydrologic system to determine the pressure $P$, and they argue that a model based on \eqref{eq:elliptic} should accommodate the possibility of partially-empty cavities with $W<Y$ and at zero pressure $P=0$.  Direct evidence for such vapor/air-filled cavities does not exist for tidewater glaciers or ice sheets, though of course subglacial hydrology is poorly-observed generally.  In any case we accept a potential loss of model completeness by using a full-cavity model.
-
-Overpressure $P>P_o$ has been observed in ice sheets \citep[for example]{Dasetal08,Bartholomausetal2011}, but only for short durations.  Our modelled pressure satisfies $P\le P_o$; compare \cite{Werderetal2013}.
 
 \subsection{Notional englacial porosity as a regularization}  Englacial systems of cracks, crevasses, and moulins have been observed in glaciers \citep[for example]{Fountainetal2005,Bartholomausetal2008,Harperetal2010}, and these have been included in combined englacial/subglacial hydrology models \citep{FlowersClarke2002_theory,Bartholomausetal2011,Hewitt2013,Werderetal2013}.  The englacial system is generally parameterized as having macroporosity $0\le \phi < 1$.  If the englacial system is efficiently-connected to the subglacial water then the amount of englacial water is equivalent to the subglacial pressure.  Subglacial pressure is reflected by an englacial ``water table'' in such models.
 
