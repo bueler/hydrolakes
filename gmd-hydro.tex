@@ -398,7 +398,7 @@ Verification results using the nearly-exact solution appear in section \ref{sec:
 
 The equations in model \eqref{eq:bluebox} are discretized by explicit finite difference methods \citep{MortonMayers}.   A centered, second-order scheme is applied to the diffusion part of the mass conservation equation in \eqref{eq:bluebox}, but two upwind-type schemes for the advection part are compared, namely first-order ``donor cell'' upwinding \citep{LeVeque} and a higher-order flux-limited upwind-biased method \citep{HundsdorferVerwer2010}.  All the numerical schemes are implemented in parallel using the PETSc library \citep{petsc-user-ref}.
 
-\subsection{Mass conservation: spatial discretization}  To set notation, suppose the rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$, $(\Wtil)_{ij}^l \approx \Wtil(t_l,x_i,y_j)$, and $\Plij \approx P(t_l,x_i,y_j)$ denote the numerical approximations.
+\subsection{Discretization of the mass conservation equation}  \label{subsec:Wfd}  To set notation, suppose the rectangular computational domain has $M_x \times M_y$ gridpoints $(x_i,y_j)$ with uniform spacing $\Delta x,\Delta y$.  Let $\Wlij \approx W(t_l,x_i,y_j)$, $(\Wtil)_{ij}^l \approx \Wtil(t_l,x_i,y_j)$, and $\Plij \approx P(t_l,x_i,y_j)$ denote the numerical approximations.
 
 We compute velocity components and flux components at the staggered (cell-face-centered) points, shown in Figure \ref{fig:stencil}, from centered finite difference approximations of equations \eqref{eq:vexpression} and \eqref{eq:qexpression}.  We use ``compass'' indices for such staggered values, so that, for example, the ``east'' and ``north'' staggered water layer thicknesses are computed by averaging regular grid values:
 \begin{equation}
@@ -468,7 +468,33 @@ When using the Koren flux-limiter the stencil in Figure \ref{fig:stencil} is ext
 
 For either scheme, if the water input $m$ is negative then we must actively enforce, by truncation, the positivity of the water thickness $W$.  In fact, positivity of the source-free advection-diffusion scheme, a desirable property which we can show by standard methods \citep{HundsdorferVerwer2010}, does not ensure positivity of the solution if there is  water removal, i.e.~if $m/\rho_w - \partial \Wtil/\partial t < 0$.
 
-\subsection{Discretization of the pressure equation}  The pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with additional ``reaction'' terms associated to opening and closing.  The time step restriction for our explicit pressure scheme is comparable to \eqref{eq:dtDIFFW}, though the proof above for the stability of the mass conservation scheme does not suffice to prove stability.  That is, if the time step satisfies $\Delta t \le \Delta t_P$, where
+\subsection{Discretization of the pressure equation}  \label{subsec:Pfd}  Pressure evolution equation \eqref{eq:regpressureequation} is a nonlinear diffusion with ``reaction'' terms from the opening and closing of cavities.  However, our numerical scheme for this equation is similar to the scheme for the mass conservation equation (section \ref{subsec:Wfd}) because the spatial derivatives are actually the same in each equation, namely $\Div\bq$.  Thus we reuse the computation of those derivatives, namely scheme \eqref{eq:fluxdivgrid}, which gives $\mathcal{D}_{i,j}$.
+
+Let $\mathcal{O}_{ij}$, $\mathcal{C}_{ij}$ be the gridded values of the zeroth-order (i.e.~without spatial derivatives) opening and closing rates; see equations \eqref{eq:openingform}, \eqref{eq:closingform}.  Define the sum of all zeroth-order terms:
+\begin{equation}
+Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.  \label{eq:defnZ}
+\end{equation}
+Using \eqref{eq:fluxdivgrid} for the flux divergence, the scheme for pressure equation \eqref{eq:regpressureequation} is
+\begin{equation}
+\frac{\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} = - \mathcal{D}_{i,j} + Z_{ij}. \label{eq:Pfd}
+\end{equation}
+Because equation \eqref{eq:defnZ} uses the updated value $(\Wtil)_{ij}^{l+1}$, equation \eqref{eq:tillupdatefd} must be applied before \eqref{eq:Pfd} can be used to update $P$.  There are also special cases at the boundaries of the region where $W>0$; see subsection \ref{subsec:onestep}.
+
+\subsection{Time-stepping}  FIXME Stability for the mass-conservation advection schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
+\begin{equation}
+\Delta t_{\text{CFL}} \left(\frac{\max |u|}{\Delta x} + \frac{\max |v|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
+\end{equation}
+Because of the additional diffusion process, for stability the time step should also satisfy $\Delta t \le \Delta t_{W}$  where \citep{MortonMayers}
+\begin{equation}
+\Delta t_W\, \max D \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{4}. \label{eq:dtDIFFW}
+\end{equation}
+The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the scheme.  (We show this for the first-order upwind scheme, but standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.)
+
+We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis}.  We used a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
+
+This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  The scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction, but we suppose that $\Delta t_{CFL}$ is controlling for $\Delta x \gg 100$ m.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.
+
+FIXME The time step restriction for our explicit pressure scheme is comparable to \eqref{eq:dtDIFFW}, though the proof above for the stability of the mass conservation scheme does not suffice to prove stability.  That is, if the time step satisfies $\Delta t \le \Delta t_P$, where
 \begin{equation}
 \Delta t_P\, \left(\frac{2 \max D}{\phi_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1 \label{eq:dtDIFFP}
 \end{equation}
@@ -485,39 +511,9 @@ We can again be quantitative in a particular example.  Consider the same 250 m s
 \end{align*}
 This analysis suggests that the numerical scheme for pressure diffusion, given next, may often have the shortest time step, but it may be comparable to CFL.  Note that $\Delta t_{\text{CFL}}=O(\Delta x)$ while $\Delta t_W$ and $\Delta t_P$ are $O(\Delta x^2)$.  The time step restriction $\Delta t_P$ scales with the adjustable regularizing porosity $\phi_0$ so we can make it more or less severe.
 
-The scheme we use for the pressure equation \eqref{eq:regpressureequation} is similar to the scheme we have just presented for the mass continuity equation \eqref{eq:adeqn}.  Denote $\psi_{i,j}^l = P_{i,j}^l + \rho_w g (b_{i,j}^l + W_{i,j}^l)$.  Let $\mathcal{O}_{ij} = c_1 |\bv_b|_{i,j} \left(W_r - \Wlij\right)_+$ and $\mathcal{C}_{ij} = c_2 A \left(\rho_i g H_{i,j} - \Plij\right)^3 \Wlij$ be the gridded values of the cavitation-opening and creep-closure rates.  Also define the sum of all zero order (i.e.~without spatial derivatives) terms
-\begin{equation}
-Z_{ij} = \mathcal{C}_{ij} - \mathcal{O}_{ij} + \frac{m_{ij}}{\rho_w} - \frac{(\Wtil)_{ij}^{l+1} - (\Wtil)_{ij}^l}{\Delta t}.  \label{eq:defnZ}
-\end{equation}
-Using \eqref{eq:fluxdivgrid} for the flux divergence, the scheme for pressure equation \eqref{eq:regpressureequation} is now
-\begin{equation}
-\frac{\phi_0}{\rho_w g} \frac{P_{i,j}^{l+1} - \Plij}{\Delta t} = - \mathcal{D}_{i,j} + Z_{ij},  \label{eq:Pfd}
-\end{equation}
-or, in explicit update form,
-\begin{equation}
-P_{i,j}^{l+1} = \Plij + \frac{\rho_w g\,\Delta t}{\phi_0} \left(- \mathcal{D}_{i,j} + Z_{ij}\right). \label{eq:Pfdupdate}
-\end{equation}
-Because equation \eqref{eq:defnZ} uses the updated value $(\Wtil)_{ij}^{l+1}$, equation \eqref{eq:tillupdatefd} must be applied before \eqref{eq:Pfdupdate} can be used to update $P$ to the new time $t_{l+1}$.
-
-There are special cases at the boundaries of the active subglacial layer: (\emph{i}) where there is no ice $H_{i,j}=0$ and land ($b_{i,j}>0$) we set $P_{i,j}^{l+1}=0$, (\emph{ii}) where the ice is floating we set $P_{i,j}^{l+1}=(P_o)_{i,j}$, and (\emph{iii}) where there is grounded ice ($H_{i,j}>0$) and no water ($W_{i,j}^l=0$) we set $P_{i,j}^{l+1}=(P_o)_{i,j}$ if there is no basal sliding and $P_{i,j}^{l+1}=0$ if there is sliding (because of cavitation; see equation \eqref{eq:PofWsteady}).
-
-\subsection{Mass conservation: time-stepping}  FIXME Stability for the advection schemes occurs with a time step $\Delta t \le \Delta t_{\text{CFL}}$ where
-\begin{equation}
-\Delta t_{\text{CFL}} \left(\frac{\max |u|}{\Delta x} + \frac{\max |v|}{\Delta y}\right) = \frac{1}{2}. \label{eq:dtCFL}
-\end{equation}
-Because of the additional diffusion process, for stability the time step should also satisfy $\Delta t \le \Delta t_{W}$  where \citep{MortonMayers}
-\begin{equation}
-\Delta t_W\, \max D \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = \frac{1}{4}. \label{eq:dtDIFFW}
-\end{equation}
-The condition $\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W\}$ is sufficient for stability and convergence of the scheme.  (We show this for the first-order upwind scheme, but standard theory suggests the same conclusion for the higher-order flux-limited advection scheme \citep{HundsdorferVerwer2010}.)
-
-We can understand the scale of these restrictions better by considering an example using the parameter values in Table \ref{tab:constants}.  We ran the model on a $\Delta x = \Delta y = 250$ m grid to approximate steady state for the subglacial hydrology of \Nbreen \citep{vanPeltthesis}.  We used a hypothesized water input distribution with average value about 1 m $\text{a}^{-1}$, and a glacier-wide constant sliding rate of $50$ m $\text{a}^{-1}$.  The result is that the maximum computed water speed $|\bV|$ is about $0.2$ m $\text{s}^{-1}$ so the advective restriction \eqref{eq:dtCFL} is $\Delta t_{\text{CFL}} \approx 300\,\text{s} \approx 10^{-5}\,\text{a}$.  Computed diffusivity $D = \rho_w g K W$ has a maximum value that varies significantly in time, $0.1 \le \max D \le 5 \,\text{m}^2\,\text{s}^{-1}$.  Diffusive restriction \eqref{eq:dtDIFFW} using value $\max D=1\,\text{m}^2\,\text{s}^{-1}$ is $\Delta t_W \approx 8000\,\text{s} \approx 2.5 \times 10^{-4}\,\text{a}$.  Thus in this simulation $\Delta t_W \approx 25 \Delta t_{CFL}$.
-
-This example suggests that, unless both the global peak velocity is unusually slow, and deep subglacial lakes develop so that $D$ is large, the diffusive time scale is significantly longer than the CFL time scale for a $250$ m grid.  The scaling $\Delta t_W = O(\Delta x^2)$ versus $\Delta t_{CFL} = O(\Delta x^1)$ makes it clear that under sufficient spatial grid refinement $\Delta t_W$ is the controlling restriction, but we suppose that $\Delta t_{CFL}$ is controlling for $\Delta x \gg 100$ m.  We will see below, however, that the time step restriction associated to an explicit time-stepping method for the pressure equation is typically shorter than either of $\Delta t_W,\Delta t_{CFL}$, and it scales as $O(\Delta x^2)$ like $\Delta t_W$.
-
 If implicit time-stepping is used for the pressure equation, which requires variational inequality treatment to preserve physical pressure bounds \citep{Schoofetal2012}, then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could also be removed by implicit steps for the mass-conservation equation, though it would seem this requires another variational inequality formulation because of the lower bound $W\ge 0$.  Our observation that $\Delta t_{CFL} \ll \Delta t_W$ for practical ice sheet grids suggests that implicit time-stepping for the mass-conservation equation is not beneficial.
 
-\subsection{One time step of the model}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution.  For convenience we treat the ice geometry and sliding speed as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
+\subsection{One time step of the model}  \label{subsec:onestep}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution.  For convenience we treat the ice geometry and sliding speed as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
 
 The ice geometry may be quite general, with ice-free land or floating ice allowed at any location $(x_i,y_j)$.  The ice geometry determines boolean ``masks'' for grid cell state (based on zero sea level elevation):
 \begin{align*}
@@ -536,7 +532,7 @@ One time step follows this algorithm:
 \item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.
 \item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
 \item Get approximations $\mathcal{D}_{i,j}$ of the flux divergence from \eqref{eq:fluxdivgrid}.  For each direction (i.e.~$x$- and $y$-directions), do not compute the divided-difference contribution to the flux divergence in \eqref{eq:fluxdivgrid} if either neighbor is \texttt{icefree} or \texttt{float}.
-\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Then use \eqref{eq:Pfdupdate} to compute values for $P_{i,j}^{l+1}$ at the remaining locations.
+\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Then use \eqref{eq:Pfd} to compute values for $P_{i,j}^{l+1}$ at the remaining locations.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wfd} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$.
