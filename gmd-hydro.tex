@@ -555,28 +555,22 @@ The correspondence between the notation in this paper and PISM's configurable pa
 
 \section{Results}  \label{sec:results}
 
-\subsection{Verification of the coupled model}  By using the coupled steady-state exact solution constructed in subsection \ref{subsec:exactsolution} we can verify most of the numerical schemes described above.  Verification is the process of measuring and analysing the errors made by the numerical scheme, especially as the numerical grid is refined \citep{Wesseling,BLKCB}.
+\subsection{Verification of the coupled model}  By using the coupled, steady-state, nearly-exact solution (subsection \ref{subsec:exactsolution}) we verified most of the numerical schemes described above.  (Verification is the process of measuring and analysing the errors made by the numerical scheme, especially as the numerical grid is refined \citep{Wesseling}.)  To do this we initialized our time-stepping numerical scheme with the nearly-exact steady solution and we measured the error relative to the exact values after one model-month.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is numerical error.  We did runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
 
-We initialize our time-stepping numerical scheme with the exact steady solution and we measure the error relative to the steady exact values after one model-month.  The continuum time-dependent model \eqref{eq:bluebox} would cause no drift away from steady state, so any drift is error.
+This convergence evidence suggests that we have implemented the numerical schemes in section \ref{sec:num}, for the coupled advection-diffusion-reaction equations for $W$ and $P$, correctly.  The rate of convergence in this verification case is roughly linear (i.e.~about $O(\Delta x^1)$) because the largest errors arise at locations of low regularity of the exact solution, including the radius $r=5$ km where $P$ quickly drops from $P_o$, and at the ice sheet margin where there is a jump in $W$ to zero.
 
-For the verification runs we use the values in Table FIXME.  We do runs on grids decreasing by factors of two from $2$ km to $125$ m.  Figure \ref{fig:refineWPpism} shows the results based on first-order upwinding for the fluxes.
-
-This convergence evidence suggests that the coupled advection-diffusion-reaction equations for $W$ and $P$ have correctly-implemented numerical schemes.  The rate of convergence is roughly linear (i.e.~about $O(\Delta x^1)$) because largest errors arise at locations of low regularity of the solution, including the radius $r=R_1$ where $P$ abruptly drops from $P_o$, and at the ice sheet margin $r=L$ where there is a jump in the water thickness to zero.
-
-The rates of convergence for average errors are nearly identical for the higher resolution flux-limited (Koren) scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications.  It also requires less interprocess communication in a parallel implementation like ours.
+The rates of convergence for average errors are nearly identical for the higher-resolution flux-limited scheme and for the first-order upwinding scheme (not shown).  Because our problem is an advection-diffusion problem in which both the advection velocity and the diffusivity are solution-dependent, it is difficult to separate the errors arising from numerical treatments of advection and diffusion.  The first-order upwinding scheme for the advection has much larger numerical diffusivity but this diffusivity is masked by the physical diffusivity.  Based on our verification evidence it is reasonable to choose the simpler first-order upwinding for applications, as it requires less interprocess communication.
 
 
-\subsection{Application of the model at ice sheet scale}
+\subsection{Application to the Greenland ice sheet}
 
-We now apply our mass-conserving hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics for a realistic distribution of sliding and basal melt rate.
+We now apply our hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics giving a realistic distributions of overburden pressure, ice sliding speed, and basal melt rate.
 
-\subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was applied by grid sequencing to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state.  Model choices for ice dynamics, including enhancement factor, sliding law power, and till friction angle, follow \cite{AschwandenAdalgeirsdottirKhroulev}.  The steady present-day climate of the ice sheet, especially surface mass balance and surface temperature \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.  The grid sequence was 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid.  All model fields were bilinearly interpolated at each refinement stage.  This whole spinup used 2800 processor-hours on 72 processors on a linux cluster with 2.2 GHz AMD Opteron processors, a small computation for modern supercomputers.
+\subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (section \ref{sec:pismdoc}), was used to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state, following the procedures in \cite{AschwandenAdalgeirsdottirKhroulev}.  Our model uses no spatially-variable parameter values, such as basal shear stresses, found by inversion of surface velocities.  The steady present-day climate of the ice sheet, especially bed elevations, surface temperature, and surface mass balance \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.  The grid sequence was to run 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation at each refinement stage.  The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million velocity/temperature points.  This whole spinup used 2800 total processor-hours on 72 2.2 GHz AMD Opteron processors, a small computation for modern supercomputers.
 
-The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million grid points (e.g.~locations where ice temperature and velocity were computed).  In the last 100 a of the final stage the ice sheet volume varied by less than $0.04$ percent.  Other more active measures showed stability during the last 100 a at the level of less than one percent (e.g.~the area of temperate base and the maximum ice velocity over the whole sheet) to at most a few percent (the floating ice area).
- 
-The results of this whole-ice-sheet spinup were validated by comparing results to present-day observations.  (Though the model is in nearly steady state, the actual Greenland ice sheet may not be as close to steady.)  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  However, in describing more careful validation measures for similar 2 km PISM model runs, \cite{AschwandenAdalgeirsdottirKhroulev} observe that volume alone is inadequate for model validation.  A better evaluation of dynamical quality is shown in Figure \ref{fig:Greenspinupeval}, which compares the modeled and observed surface speed.  We see that the extent of the Northeast Greenland ice stream is smaller than observed, and the distribution of flow in Western Greenland outlet glaciers differs from the observed pattern.  However, our model uses no spatially-variable parameter values such as basal shear stresses found by inversion of surface velocities \citep{AschwandenAdalgeirsdottirKhroulev}.
+The results of this spinup were validated by comparing results to present-day observations.  In the last 100 a of this run the ice sheet volume varied by less than $0.04$ percent, so the model is in nearly steady state, though the actual Greenland ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  Compared to volume alone, a better evaluation of dynamical quality is to compare the modeled and observed \citep{Joughinetal2010} surface speed, with a very similar result to the comparison described in \cite{AschwandenAdalgeirsdottirKhroulev}.
 
-The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  We note that the areas of sliding roughly coincide with areas of basal melt because modeled basal resistance comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
+The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  Areas of sliding roughly coincide with areas of basal melt because heat-producing (modeled) basal drag comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
 
 \subsubsection{Experimental setup}  We used fields $H$, $m$, $|\bv_b|$ from the spun-up state as steady data in five model-year runs of our mass-conserving hydrology \texttt{routing} and \texttt{distributed} models.  Because these fields were fixed, only one-way coupling was tested: a steady ice dynamics model fed its fields to an evolving subglacial hydrology model.  The hydrology model was initialized with the $\Wtil$ values from the spun-up state, but with $W=0$ initial values and $P=0$ initial values (for \texttt{distributed}).
 
@@ -619,7 +613,7 @@ The first author was supported by NASA grant \#NNX13AM16G.  This work was suppor
 \end{acknowledgements}
 
 
-\begin{thebibliography}{68}
+\begin{thebibliography}{}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{{\tt #1}}
 \providecommand{\urlprefix}{URL }
@@ -649,21 +643,18 @@ Aschwanden, A., Adalgeirsd{\'o}ttir, G., and Khroulev, C.: Hindcasting to
 Balay, S. et~al.: {PETS}c {U}sers {M}anual, Tech. Rep. ANL-95/11 - Revision
   3.2, Argonne National Laboratory, 2011.
 
-\bibitem[{Bartholomaus et~al.(2008)Bartholomaus, Anderson, and
-  Anderson}]{Bartholomausetal2008}
+\bibitem[{Bartholomaus et~al.(2008)}]{Bartholomausetal2008}
 Bartholomaus, T.~C., Anderson, R.~S., and Anderson, S.~P.: Response of glacier
   basal motion to transient water storage, Nature Geosci., 1, 33--37,
   \doi{10.1038/ngeo.2007.52}, 2008.
 
-\bibitem[{Bartholomaus et~al.(2011)Bartholomaus, Anderson, and
-  Anderson}]{Bartholomausetal2011}
+\bibitem[{Bartholomaus et~al.(2011)}]{Bartholomausetal2011}
 Bartholomaus, T.~C., Anderson, R.~S., and Anderson, S.~P.: Growth and collapse
   of the distributed subglacial hydrologic system of {K}ennicott {G}lacier,
   {A}laska, {USA}, and its effects on basal motion, J. Glaciol., 57, 985--1002,
   2011.
 
-\bibitem[{Bindschadler and twenty-seven others(2013)Bindschadler
-  et~al.}]{Bindschadler2013SeaRISE}
+\bibitem[{Bindschadler et~al.(2013)}]{Bindschadler2013SeaRISE}
 Bindschadler, R. et~al.: Ice-sheet model sensitivities to environmental forcing
   and their use in projecting future sea-level ({T}he {S}ea{RISE} {P}roject),
   J. Glaciol, 59, 195--224, 2013.
@@ -782,6 +773,10 @@ Huybrechts, P. et~al.: The {EISMINT} benchmarks for testing ice-sheet models,
 \bibitem[{Johnson and Fastook(2002)}]{JohnsonFastook}
 Johnson, J. and Fastook, J.~L.: Northern {H}emisphere glaciation and its
   sensitivity to basal melt water, Quat. Int., 95, 65--74, 2002.
+
+\bibitem[{Joughin et~al.(2010)}]{Joughinetal2010}
+Joughin, I. et~al.: Greenland flow variability from ice-sheet-wide velocity
+  mapping, J. Glaciol., 56, 415--430, 2010.
 
 \bibitem[{Kamb(1987)}]{Kamb1987}
 Kamb, B.: Glacier surge mechanism based on linked cavity configuration of the
@@ -1128,12 +1123,6 @@ One may regard \eqref{eq:ellipticforWsteadyone} as a non-linear elliptic equatio
 \end{figure}
 
 \newcommand{\grnht}{3.4in}
-\begin{figure*}[ht]
-\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velsurf-mag} \,
-\includegraphics[height=\grnht,keepaspectratio=true]{Greenland-surfvelmag}}
-\caption{To evaluate the result of the 2 km grid spun-up ice dynamical model we compare modelled ice speed at the ice surface (left; $\mathrm{m}\,\mathrm{a}^{-1}$) to satellite observations (right; $\mathrm{m}\,\mathrm{a}^{-1}$).}
-\label{fig:Greenspinupeval}
-\end{figure*}
 
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
