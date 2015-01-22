@@ -979,7 +979,7 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 
 \begin{table*}[ht]
   \centering
-  \caption{Physical constants and model parameters.  All values are configurable in PISM.}
+  \caption{Physical constants and model parameters.  All values are configurable in PISM; see Table \ref{tab:correspondence}.}
   \begin{tabular}{lllp{3.0in}} 
     \textbf{Name} & \textbf{Default} & \textbf{Units} & \textbf{Description}\\
 \hline
@@ -1032,9 +1032,9 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 \end{table}
 
 \begin{table*}[t]
-  \caption{Correspondence between symbols in this paper and PISM configuration parameter names.  Alphabetical by parameter name.  All of these are used in the \texttt{distributed} model, with the indicated subsets also used in the \texttt{routing} and \texttt{null} models.} \vskip4mm \centering
+  \caption{Correspondence between PISM parameter names and symbols in this paper (Table \ref{tab:constants}).  All are used in the \texttt{distributed} model, with indicated subsets used in the \texttt{routing} and \texttt{null} models.} \vskip4mm \centering
   \begin{tabular}{llcc} \tophline
-    \textbf{PISM configuration name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}} \\
+    \textbf{PISM parameter name} & \textbf{Symbol} & \textbf{\texttt{routing}} & \textbf{\texttt{null}} \\
     \middlehline
     \verb|fresh_water_density| & $\rho_w$ & $\times$ & $\times$ \\
     \verb|hydrology_cavitation_opening_coefficient| & $c_1$ \\
@@ -1064,19 +1064,19 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{Ntilfunctions}
-\caption{\textbf{(a)} Equation \eqref{eq:voidpressure} determines the effective pressure $\Ntil$ as a function of the void ratio $e$, as shown here.  Reference values of $e_0$ and $N_0$ are indicated.  \textbf{(b)}  The same curve, with $\Ntil$ as a function of $\Wtil$, and  bounded above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$ (solid curve), is used in our model.  The case shown is for 1000 meters ice thickness.}
+\caption{\textbf{(a)} Equation \eqref{eq:voidpressure} determines the effective pressure $\Ntil$ as a function of the void ratio $e$; reference values $e_0$,$N_0$ are indicated.  \textbf{(b)}  The same curve, but with $\Ntil$ as a function of $\Wtil$, with bounds above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$; the solid curve is used in our model.  The case shown has 1000 meters ice thickness.}
 \label{fig:Ntilfunctions}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{exact-W-plot-onu}
-\caption{An exact radial, steady solution for water thickness $W(r)$ (dashed).  In $r$-versus-$W$ space the overpressure (O), normal pressure (N), and underpressure (U) regions are determined by ice geometry and sliding velocity (solid curves; see text).}
+\caption{A nearly-exact radial, steady solution for water thickness $W(r)$ (dashed).  In $r$-versus-$W$ space the overpressure (O), normal pressure (N), and underpressure (U) regions (solid curves) are determined by ice geometry and sliding velocity, because this is steady state.}
 \label{fig:Wexact}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=3.0in,keepaspectratio=true]{exact-P-plot}
-\caption{An exact radial, steady solution pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
+\caption{A nearly-exact radial, steady solution for pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
 \label{fig:Pexact}
 \end{figure}
 
@@ -1084,7 +1084,7 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 \centering
 \includegraphics[width=2.2in,keepaspectratio=true]{diffstencil}
 \bigskip
-\caption{Numerical schemes \eqref{eq:Wfd} and \eqref{eq:Pfd} use a grid-point-centered cell.  Velocities, diffusivities, and fluxes are evaluated at staggered grid locations (triangles at centers of cell edges denoted $e,w,n,s$).  State functions $W,P$ are located at regular grid points (diamonds).}
+\caption{Numerical schemes \eqref{eq:Wfd} and \eqref{eq:Pfd} use a grid-point-centered cell.  Velocities, diffusivities, and fluxes are evaluated at staggered grid locations (triangles at centers of cell edges) denoted by compass notation $e,w,n,s$.  State functions $W,W_{til},P$ are located at regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
@@ -1099,7 +1099,7 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velbase-mag}}
-\caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed $|\bv_b|$ (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the spun-up model.}
+\caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed $|\bv_b|$ (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the spun-up state.}
 \label{fig:Greenhydroinputs}
 \end{figure*}
 
@@ -1119,7 +1119,7 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 \begin{figure*}[ht]
 \mbox{\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwat} \,
 \includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwprel}}
-\caption{Outputs from the \texttt{distributed} hydrology model include the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure, shown relative to overburden pressure $P/P_o$ (right).}
+\caption{Outputs from the \texttt{distributed} hydrology model include the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure $P$, shown relative to overburden pressure (i.e.~$P/P_o$; right).}
 \label{fig:Greendistributedresults}
 \end{figure*}
 
@@ -1128,19 +1128,19 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\bV$ i
 \mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin1-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin10-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin30-g2km}}
 \mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin100-g2km} \,
 \includegraphics[height=1.85in,keepaspectratio=true]{bin300-g2km}}
-\caption{Scatter plots of $(W,P)$ pairs for all cells at end of a 5 model year steady-input simulation on a 2 km grid for the whole Greenland ice sheet using roughness scale $W_r = 0.1$ m.  Each scatter plot shows the pairs for a select range of ice sliding speeds, as indicated.  Points are colored by ice thickness using a common scale shown beside last figure.}
+\caption{Scatter plots of $(W,P/P_o)$ pairs for all cells from the \texttt{distributed} model run, which used roughness scale $W_r = 0.1$ m.  Each sub-plot only shows the pairs for the indicated range of ice sliding speeds $|\mathbf{v}_b|$.  Points are colored by ice thickness using a common scale shown beside last figure.}
 \label{fig:GreenisPofW}
 \end{figure*}
 
 \begin{figure}[ht]
 \includegraphics[width=2.8in,keepaspectratio=true]{psteady-vb}
-\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady} depends on the sliding speed $|\bv_b|$.  Four cases are shown.  All use $W_r=1$ m and a uniform ice thickness of $H=1000$ m.  Values of $W_c$ are indicated by black dots at $P=0$.  Relation \eqref{eq:PofWFC} (dashed black) is shown with $W_{\text{crit}}=1$ m for comparison.}
+\caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady}, using $W_r=1$ m and $H=1000$ m (solid curves).  Values of $W_c$ are indicated by black dots at $P=0$.  For comparison, \cite{FlowersClarke2002_theory} relation \eqref{eq:PofWFC} is shown with $W_{\text{crit}}=1$ m (dashed black).}
 \label{fig:psteady-vb}
 \end{figure}
 
 \begin{figure}[ht]
 \includegraphics[width=2.8in,keepaspectratio=true]{psteady-Po}
-\caption{The graph of $P(W)$ defined by \eqref{eq:PofWsteady} also depends on overburden pressure $P_o=\rho_i g H$.  We fix $|\bv_b|=100$ m/a and $W_r=1$ m and consider four cases of uniform thickness $H$.}
+\caption{The graph of $P(W)$ defined by \eqref{eq:PofWsteady} also depends on overburden pressure $P_o=\rho_i g H$, shown using $|\bv_b|=100$ m/a and $W_r=1$ m.}
 \label{fig:psteady-Po}
 \end{figure}
 
