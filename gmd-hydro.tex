@@ -5,7 +5,6 @@
 \usepackage[T1]{fontenc}
 
 % hyperref should be the last package we load
-%\usepackage[draft,pdftex,
 \usepackage[pdftex,
                 colorlinks=true,
                 plainpages=false, % only if colorlinks=true
@@ -589,18 +588,16 @@ Recall that $|\bv_b|$ determines the pressure drop caused by sliding-generated c
 We can examine the local relationship between water amount $W$ and pressure $P$ in the \texttt{distributed} results.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show realistically-large spatial variations.  In Figure \ref{fig:GreenisPofW} we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each sub-plot, and color the points by the ice thickness.  There is an increasing relationship between $W$ and the relative pressure $P/P_o$ in each bin.  While in the fast-sliding case $W$ is often comparable to the bed roughness scale $W_r$, for slow sliding we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  In thick ice the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure always have low ice thickness.
 
 \conclusions  \label{sec:conclusion}  This paper documents additions made to the Parallel Ice Sheet Model in its 0.6 version released February 2014.  It describes and demonstrates a subglacial hydrology model which is novel in having these features:\begin{itemize}
-\item a 2D parallel implementation of a coupled till-and-linked-cavities model (sections \ref{sec:elements}--\ref{sec:num}),
-\item an englacial porosity regularization which allows a practical numerical model in which physical bounds $0\le P \le P_o$ hold at all times (sections \ref{sec:closures} and \ref{sec:num}),
-\item an analysis of steady states (subsection \ref{subsec:steady} and Appendix A), describing the actual diffusivity of the advective flux in that case,
-\item an exact solution of the coupled mass and pressure equations in the steady radial case (section \ref{subsec:exactsolution}), leading to verification (section \ref{sec:results}), and
-\item demonstration at whole ice-sheet scale on a million-point hydrology grid (section \ref{sec:results}).
+\item a 2D parallel implementation of a coupled till-and-linked-cavities model,
+\item a pressure-equation regularization, using notional englacial porosity, which eases implementation and improves numerical performance,
+\item a scheme for maintaining physical pressure bounds ($0\le P \le P_o$) at all times,
+\item verification using a nearly-exact solution of the coupled mass-conservation and pressure equations, in the steady radial case, and
+\item demonstration at high resolution and whole ice-sheet scale on a million-point hydrology grid.
 \end{itemize}
-The comprehensive treatment here of certain subjects is also important.  We have
-\begin{itemize}
-\item clarified the relationship of several ``closures'' which turn morphological ideas about the subglacial aquifer into concrete pressure equations (section \ref{sec:closures}), and
-\item created and implemented a common extension of several seemly-disparate published models (section \ref{sec:newmodel}).
-\end{itemize}
-A deliberate limitation in scope of the current paper is that we show only one-way coupling.  In this paper the PISM ice flow and thermodynamics model feeds basal melt rate and sliding velocities to the hydrology model.  Two-way coupling  will appear in future work.
+
+The reasonably-comprehensive exposition here also clarifies the relationship among several pressure-determining ``closures'' (section \ref{sec:closures}), and it allows us to understand our model as a common extension of several seemingly-disparate published models (section \ref{sec:newmodel}).  An analysis of steady states shows that in that case a functional relationship arises, between pressure and water amount.  The analysis also reveals the diffusive nature of the advective flux.
+
+The current paper only demonstrates one-way coupling, in which the PISM ice flow and thermodynamics model feeds basal melt rate and sliding velocities to the hydrology model.  Two-way coupling  will appear in future work.
 
 
 \section{Code availability}  \label{sec:availability}
@@ -609,7 +606,7 @@ The source code for all versions of PISM is available through host website \url{
 
 
 \begin{acknowledgements}
-The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.  Constantine Khroulev helped with the PISM implementation.  Detailed comments by Andy Aschwanden, Tim Bartholomaus, and Martin Truffer were much appreciated.
+Comments by editor Dan Goldberg, reviewer Tim Bartholomaus, and two anonymous reviewers improved the focus and quality of the paper.  Detailed comments by Andy Aschwanden and Martin Truffer were much appreciated.  Constantine Khroulev helped with the PISM implementation.  The first author was supported by NASA grant \#NNX13AM16G.  This work was supported by a grant of high-performance computing resources from the Arctic Region Supercomputing Center.
 \end{acknowledgements}
 
 
