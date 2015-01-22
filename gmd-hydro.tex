@@ -536,22 +536,21 @@ One time step follows this algorithm:
 This recipe goes with a reporting scheme for mass conservation.  Note that in steps \emph{(ii)} and \emph{(ix)} water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero in the continuum limit $\Delta t\to 0$.
 
 
-\section{PISM options for hydrology models} \label{sec:pismdoc}
+\section{PISM options for the hydrology model} \label{sec:pismdoc}
 
-In this section we document the runtime options for the PISM hydrology model \citep{pism-user-manual}.  There are three choices of model equations, namely \texttt{distributed}, \texttt{routing}, and \texttt{null}.  The first of these is the complete model described in this paper.  The other two are reductions; we list them in order of decreasing complexity.
+This section documents the runtime options for PISM subglacial hydrology models; see also \citep{pism-user-manual}.  There are three choices of model equations (below), with the first being the complete model described in this paper.  The other two are reductions.  The runtime choice of model equations uses option \texttt{-hydrology NAME} where \texttt{NAME} is one of the three headings below.
 
-\subsection{\texttt{distributed}}  This most-complete PISM hydrology model is chosen by runtime option \texttt{-hydrology distributed}.  It is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:constants} and \ref{tab:symbols}.
+\medskip
+\noindent \texttt{distributed}:\quad  This model is governed by the full set of equations \eqref{eq:bluebox} in section \ref{sec:newmodel}; see also Tables \ref{tab:constants} and \ref{tab:symbols}.
 
-\subsection{\texttt{routing}}  This model is chosen by option \texttt{-hydrology routing}.  It is governed by a subset of equations \eqref{eq:bluebox}, with the equation for evolution of pressure $P$ removed, and with the replacement $P\mapsto P_o = \rho_i g H$ in defining $K$, $\bV$, and $\psi$.  Thus the equations simplify to:
-\begin{align}
-&\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:routingmodel} \\
-&\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag
-\end{align}
-along with bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$.  The determination of $\Ntil$ and $\tau_c$ is unchanged.
+\medskip
+\noindent \texttt{routing}:\quad  In this model the equation for pressure evolution is replaced by $P = P_o$.  The evolution equations for $W$ and $W_{til}$, the determination of $\Ntil$ and $\tau_c$, and the bounds $0\le W$ and $0\le \Wtil \le \Wtilmax$, are unchanged from the \texttt{distributed} model.
 
-\subsection{\texttt{null}}  This non-conserving model is chosen by option \texttt{-hydrology null}.  It is the default hydrology model in PISM.  It has only the state variable $\Wtil$.  The equations are the same as in \eqref{eq:routingmodel} except that there is no ``$W$'' and the first of equations \eqref{eq:routingmodel} is gone.
+\medskip
+\noindent \texttt{null}:\quad  This non-conserving model, used in \citep{BBssasliding}, has only the state variable $\Wtil$ which evolves by equation \eqref{eq:tilldynamics}.
 
-\subsection{Configurable constants}  All of the constants in Table \ref{tab:constants} are configurable parameters in PISM.  The correspondence between PISM parameters names and the symbols in this paper is in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  See \verb|src/pism_config.cdl| for default values and units.
+\medskip
+The correspondence between the notation in this paper and PISM's configurable parameters is shown in Table \ref{tab:correspondence}.  These parameters can be changed at runtime by using the parameter name as an option, or by setting a \verb|pism_overrides| variable in a NetCDF file which is read with the \verb|-config_override | option.  The text file \verb|src/pism_config.cdl| has default values and units.
 
 
 \section{Results}  \label{sec:results}
