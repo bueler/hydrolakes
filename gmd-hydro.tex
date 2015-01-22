@@ -496,9 +496,9 @@ However, the time step restriction from the pressure equation scheme is typicall
 \begin{equation}
 \Delta t_P\, \left(\frac{2 \max D}{\phi_0}\right) \left(\frac{1}{\Delta x^2} + \frac{1}{\Delta y^2}\right) = 1. \label{eq:dtDIFFP}
 \end{equation}
-If the time step satisfies
+If the time step is set by
 \begin{equation}
-\Delta t \le \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}.  \label{eq:stablecombined}
+\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}.  \label{eq:stablecombined}
 \end{equation}
 then we observe in practice that the coupled scheme consisting of \eqref{eq:Wfd}, \eqref{eq:tillupdatefd}, and \eqref{eq:Pfd} is stable.
 
@@ -506,34 +506,34 @@ Recalling \eqref{eq:dtDIFFW}, however, $\Delta t_P$ is actually a fraction of $\
 
 If implicit time-stepping were instead used for the pressure equation, which requires overt variational inequality treatment to preserve physical pressure bounds \citep{Schoofetal2012}, then the time scales $\Delta t_W, \Delta t_{CFL}$ addressed here are the only restrictions.  The time step restriction $\Delta t_W$ could also be removed by implicit steps for the mass-conservation equation, though again this requires a variational inequality formulation because of the lower bound $W\ge 0$.  Our observation above that $\Delta t_{CFL} \ll \Delta t_W$ for practical ice sheet grids suggests that implicit time-stepping for the mass-conservation equation is not beneficial.
 
-\subsection{One time step of the model}  \label{subsec:onestep}  Mathematical model \eqref{eq:bluebox} evolves $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized evolution.  For convenience we treat the ice geometry and sliding speed as fixed, and so $h_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$ are all denoted as time-independent.
+\subsection{One time step of the model}  \label{subsec:onestep}  Mathematical model \eqref{eq:bluebox} evolves the fields $W$, $\Wtil$, and $P$.  Here we describe one time step of the fully-discretized coupled evolution.
 
-The ice geometry may be quite general, with ice-free land or floating ice allowed at any location $(x_i,y_j)$.  The ice geometry determines boolean ``masks'' for grid cell state (based on zero sea level elevation):
+For convenience only we denote the ice geometry, bed geometry, and sliding speed (i.e.~$H_{i,j}$, $b_{i,j}$, $(P_o)_{i,j}$, and $|\bv_b|_{i,j}$) as though they were all time-independent.  The geometry may be quite general, with ice-free land, floating ice shelf, or ice-free ocean allowed at any location $(x_i,y_j)$.  In fact, the geometry data determines boolean ``masks'' on the grid, based on zero as the sea level elevation:
 \begin{align*}
-\text{\texttt{icefree}}_{i,j} &= (h_{i,j} > 0)\, \&\, (h_{i,j} = b_{i,j}), \\
-\text{\texttt{float}}_{i,j}   &= (\rho_i (H_{\text{float}})_{i,j} < - \rho_{sw}\, b_{i,j}).
+\text{\texttt{icefree}}_{i,j} &= (H_{i,j} = 0)\, \&\, (b_{i,j} > 0), \\
+\text{\texttt{float}}_{i,j}   &= (\rho_i H_{i,j} < - \rho_{sw}\, b_{i,j}),
 \end{align*}
-Here we take a sea-water density $\rho_{sw}=1028.0$ and define $H_{\text{float}}=h_{i,j} / (1 - r)$ as the thickness of the ice if it is floating, where $r=\rho_i / \rho_{sw}$.  Note that $\text{\texttt{float}}_{i,j}$ is also true in ice-free ocean.  The subglacial hydrology model exists only for grounded ice, that is, only if both \texttt{icefree} and \texttt{float} are false.  The other mask cases provide boundary conditions when they are neighbors to grounded ice-filled cells.
+where $\rho_{sw}=1028.0$ is sea-water density.  Note $\text{\texttt{float}}_{i,j}$ is true both where there is floating ice shelf and where the ocean is ice-free.  The subglacial hydrology model exists only for grounded ice, that is, only if both flags \texttt{icefree} and \texttt{float} are false.
 
 One time step follows this algorithm:
 
 \renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
-\item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy the bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
+\item Start with values $\Wlij$, $(\Wtil)_{i,j}^l$, $\Plij$ which satisfy bounds $W\ge 0$, $0\le \Wtil \le \Wtilmax$, and $0 \le P \le P_o$.
 \item Get $(\Wtil)_{i,j}^{l+1}$ by \eqref{eq:tillupdatefd}.  Enforce $0\le \Wtil \le \Wtilmax$.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(\Wtil)_{i,j}^{l+1}=0$.
 \item Get $W$ values averaged onto the staggered grid from \eqref{eq:stagW}, staggered grid values of the effective conductivity $K$ from \eqref{eq:stagK}, velocity components $u$, $v$ at staggered grid locations from \eqref{eq:velocitycomp}, and staggered grid values of the diffusivity $D$ from \eqref{eq:diffusivitycomp}.
-\item Get time step $\Delta t = \min\{\Delta t_{\text{CFL}}, \Delta t_W, \Delta t_P\}$ using criteria \eqref{eq:dtCFL}, \eqref{eq:dtDIFFW}, and \eqref{eq:dtDIFFPfromW}.
-\item Using \eqref{eq:adfluxes} and a particular flux-limiter, compute the advective fluxes $Q_e(\alpha_e)$ at all staggered-grid points $(i+1/2,j)$ and $Q_n(\beta_n)$ at all staggered-grid points $(i,j+1/2)$.
-\item Get approximations $\mathcal{D}_{i,j}$ of the flux divergence from \eqref{eq:fluxdivgrid}.  For each direction (i.e.~$x$- and $y$-directions), do not compute the divided-difference contribution to the flux divergence in \eqref{eq:fluxdivgrid} if either neighbor is \texttt{icefree} or \texttt{float}.
-\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$ and $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Then use \eqref{eq:Pfd} to compute values for $P_{i,j}^{l+1}$ at the remaining locations.
-\item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then reset (project) into this range.
+\item Get time step $\Delta t$ from \eqref{eq:stablecombined}.
+\item Using \eqref{eq:adfluxes} and a flux-limiter $\psi(\theta)$, compute the advective fluxes $Q_e(\alpha_e)$ and $Q_n(\beta_n)$ at all staggered-grid points.
+\item Get flux divergence approximations $\mathcal{D}_{i,j}$ from \eqref{eq:fluxdivgrid}.
+\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$, and if $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfd} to compute $P_{i,j}^{l+1}$.
+\item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then truncate/project into this range.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wfd} to compute values for $W_{i,j}^{l+1}$.
-\item If $W_{i,j}^{l+1}<0$ then reset (project) $W_{i,j}^{l+1}=0$.
+\item If $W_{i,j}^{l+1}<0$ then truncate/project to get $W_{i,j}^{l+1}=0$.
 \item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
 \end{enumerate}
 
 \medskip
-This recipe goes with a reporting scheme for mass conservation.  Note that in steps \emph{(ii)} and \emph{(ix)} water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero under the continuum limit $\Delta t\to 0$.
+This recipe goes with a reporting scheme for mass conservation.  Note that in steps \emph{(ii)} and \emph{(ix)} water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero in the continuum limit $\Delta t\to 0$.
 
 
 \section{PISM options for hydrology models} \label{sec:pismdoc}
