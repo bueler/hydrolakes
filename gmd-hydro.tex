@@ -524,7 +524,7 @@ One time step follows this algorithm:
 \item Get time step $\Delta t$ from \eqref{eq:stablecombined}.
 \item Using \eqref{eq:adfluxes} and a flux-limiter $\psi(\theta)$, compute the advective fluxes $Q_e(\alpha_e)$ and $Q_n(\beta_n)$ at all staggered-grid points.
 \item Get flux divergence approximations $\mathcal{D}_{i,j}$ from \eqref{eq:fluxdivgrid}.
-\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$, and if $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  Otherwise use \eqref{eq:Pfd} to compute $P_{i,j}^{l+1}$.
+\item If $\text{\texttt{icefree}}_{i,j}$ then set $P_{i,j}^{l+1}=0$.  If $\text{\texttt{float}}_{i,j}$ then set $P_{i,j}^{l+1} = (P_o)_{i,j}$.  If $\Wlij=0$, and if $\text{\texttt{icefree}}_{i,j}$ and $\text{\texttt{float}}_{i,j}$ are both false, then either set $P_{i,j}^{l+1} = (P_o)_{i,j}$ (no sliding) or $P_{i,j}^{l+1} = 0$ (any sliding).  Otherwise use \eqref{eq:Pfd} to compute $P_{i,j}^{l+1}$.
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then truncate/project into this range.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wfd} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then truncate/project to get $W_{i,j}^{l+1}=0$.
