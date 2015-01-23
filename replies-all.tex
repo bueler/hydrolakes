@@ -644,7 +644,7 @@ physical bounds on the pressure.'' write ``We use englacial porosity as a regula
 \reply{p.9 l.19 It would help to briefly introduce which processes will be described and in
 particular which are the unknown variables (or major variables as the authors call
 them later).}
-{We have moved the first mention of Table 2, which categorizes major variables into ``state'', ``input'', and ``output,'' forward to this point.}
+{We have moved the first mention of Table 2, which categorizes major variables into ``state'', ``input'', and ``output,'' forward to this point.  The introduction does state what processes are involved.}
 
 \reply{p.10 Eq.1 add a term $\partial W_{eng}/\partial t$}
 {No.  As noted, we do not conserve water held englacially.}
@@ -653,7 +653,7 @@ them later).}
 {We model the base of the glacier as a two-dimensional surface.  Furthermore, in common with the literature, we have a \emph{thickness} for subglacial water, which makes the model two-dimensional.  The conserved quantity $W+W_{til}$ is a thickness, the flux follows the ice base (instead of going into the ice or into the ground), and the equations for all variables only involve $x$ and $y$ derivatives; these are all the usual meanings of ``two-dimensional''.}
 
 \reply{p.10 l.18 Specify that the pressure $P$ is at the top of the water layer too.}
-{No.  This is not what we mean, nor what is meant by the pressure variable in other literature like $p_w$ in equation (1) of \cite{Werderetal2013}.  In such 2D pressure equation models one can regard the pressure variable as a vertical average of the pressure, but note it does not increase with thickening of the layer alone.  This is why we add ``$\rho_w g W$'' to our formula for the hydraulic potential, because (in common with all the literature) we have no vertical profile of pressure in the distributed system, but (not in common with the literature) we want subglacial lakes to spread out (as they physically would).}
+{No.  This is not what we mean, nor what is meant by the pressure variable in other literature (e.g.~$p_w$ in equation (1) of \cite{Werderetal2013}).  In such 2D pressure equation models one can regard the pressure variable as a vertical average of the pressure, but note it does not increase with thickening of the layer alone, which it would if it had the meaning implied by the reviewer.  This is why we add ``$\rho_w g W$'' to our formula for the hydraulic potential, because (in common with all the literature) we have no vertical profile of pressure in the distributed system, but (not in common with the literature) we want subglacial lakes to spread out (as they physically would).}
 
 \reply{p.16 l.8 write ``and $N_{til} = P_o-P_{til}$ is the effective pressure of the overlying ice on the saturated till \dots''}
 {We don't feel we need to introduce the new symbol $P_{til}$ only to eliminate it in this way.  The cited literature adequately defines the phrase ``the effective pressure of the overlying ice on the saturated till.''}
@@ -662,94 +662,103 @@ them later).}
 {Yes.  Fixed.}
 
 \reply{p.16 l.19 I find $N_0$ confusing. The very similar looking subscript ``o'' in $P_o$ refers overburden but the ``$0$'' is something else. Maybe $N_r$ or $N_{ref}$?}
-{}
+{We do not use symbol ``$N_o$'' or other things that could be confused.  We are using here the notation from \cite{Tulaczyketal2000}, and we would like to keep that correspondence.}
 
-\reply{p.17 l.8-16 What follows in this part is unclear. Reformulate of this introductory sentence ``On the other hand we will describe the maximum capacity of the till by specifying \dots'' to prepare the reader that instead of working with $\delta$ you change to $W_{til}^{max}$.}
-{}
+\reply{p.17 l.8-16 What follows in this part is unclear. Reformulate of [sic] this introductory sentence ``On the other hand we will describe the maximum capacity of the till by specifying \dots'' to prepare the reader that instead of working with $\delta$ you change to $W_{til}^{max}$.}
+{The sentence in question now says ``On the other hand we specify a maximum $W_{til}^{max}$ on the water layer thickness, \dots'', to bring forward the symbol $W_{til}^{max}$.}
 
 \reply{p.17 l.10 Should this not just be $W_{til} < W_{til}^{max}$.  The lower bound is never used, or is it?}
-{}
+{The lower bound $0\le W_{til}$ is most-certainly used.  We observe that almost all of the literature, in situations like this, fails to note this inequality.  In fact, if the source terms can be negative in a mass conservation equation for which the conserved variable is a \emph{thickness} then the model must actively enforce the fact that the thickness is nonnegative.  Within our paper we have also made this is made clearer with respect to the thickness $W_{til}$.}
 
 \reply{p.19 l.10 For this section the $Y$ equation is not needed/decoupled. That should be
 mentioned.}
-{}
+{This is an odd comment because this is precisely what the sentence on lines 11--12 says: ``We first consider two simple closures which appear in the literature but which do not use cavity evolution Eq.~(13) or similar physics.''  Equation (13) is the $\partial Y/\partial t$ equation.}
 
 \reply{p.20 l.22 comma after ``consider.''}
-{}
+{The sentence in question now says ``At an almost opposite extreme, our second simplified closure makes the water pressure a function of the amount of water.''  This avoids the issue.}
 
 \reply{p.22 l.10 Expand here (or maybe elsewhere) on how $P \le P_o$ is enforced.}
-{}
+{We now state how this inequality is enforced in both sections 5.1 and 6.5 (new numbering).}
 
 \reply{p.23 l.15-22 This paragraph is a bit misplaced in this section.  Maybe the enforcement of the various constraints, including $0 \le P \le P_o$, warrants its own section.  Which is where this paragraph would belong.}
-{}
+{This paragraph belongs here because explicit time-stepping is only possible in equations without algebraic constraints.  That is, only after we state our regularized pressure evolution equation can we make a basic point: because of the $\partial P/\partial t$ term in our equation, a time-stepping solution can be \emph{explicit}.  Now we don't have to follow \cite{Schoofetal2012} and use an elliptic variational inequality form to incorporate the bounds $0\le P \le P_o$.\footnote{We could follow \cite{Schoofetal2012} in this respect, but we have an easier-to-implement option which is numerically consistent and (we believe) convergent.}  This paragraph, and the following paragraph about Clarke's model, are indeed about consequences and meaning of the englacial porosity regularization.}
 
 \reply{p.23 l.19-22 These two sentences suggest that the authors have solved the ``prohibitively expensive'' problem of Werder et al. (2013).  But as discussed above, they only solve a simplified version of Schoof et al. (2012) without channels.  Reword.}
-{}
+{The reviewer is not paying attention to what Werder et al.~(2013) \cite{Werderetal2013} actually says:
+\smallskip
+\begin{quote}
+\emph{Note that we impose no restrictions on the values that the water pressure can attain. This is in contrast to the model in Schoof et al. [2012] and Hewitt et al. [2012] which assumes that an air/vapor gap forms when the pressure drops to zero, and instantaneous ice uplift occurs when pressure exceeds overburden. However, the numerical procedure used in those studies is prohibitively expensive to use in 2-D.}
+\end{quote}
+This makes it copiously clear that it is the ``numerical procedure used in those studies'', including in Schoof et al.~(2012) which has no conduits, which is expensive.  And that it is is a numerical procedure to ``impose \dots restrictions on the values that the water pressure can attain.''  We have indeed offered an alternative, and demonstrated without question that it ours is not ``prohibitively expensive''.\\
+\indent The reviewer claims this issue is about ``channels'' (conduits).  It isn't.  We stand by what we said, ``This variational inequality problem is asserted to be 'prohibitively expensive' by Werder et al.~(2013) when solved in two dimensions at each step of a time-stepping model.''.}
 
 \reply{p.24 Sec.5.1 I like this summary. One suggestion: write the equations in Eq.34 all as
 ``time derivative of unknown = something.'' Add the boundary conditions.}
-{}
+{We have added text about boundary conditions to subsection 5.1.\\
+\indent However, we do not take the suggestion that we write as ``time derivative \dots = something'' for a well-known reason.  When there are constraints, ODE systems are often written
+    $$M\frac{d\mathbf{u}}{dt} = A \mathbf{u}$$
+and not
+    $$\frac{d\mathbf{u}}{dt} = M^{-1} A \mathbf{u},$$
+even when $M$ is invertible.  The reasons are subtle, but they apply here: we want the minimum well-posed statement of evolution because their are constraints on the variables.  In our case our system is PDEs, but (appropriately-interpreted) our $M$ is triangular and invertible.  It ceases to be invertible as $\phi_0\to 0$, as we state in comparing our model to that of \cite{Schoofetal2012}, which has a differential-algebraic version of our problem.}
 
 \reply{p.25 l.1-8 Either be specific about which functions are what type or leave the paragraph away.}
-{}
+{Table 2 makes it copiously clear which functions are which, and we have pointed the reader to that Table earlier in the paragraph.  This paragraph is key for explaining coupling to ice dynamics.}
 
 \reply{p.25 Sec.5.2 This section should be merged with section 4.1, probably at this location in the MS.}
-{}
+{We believe that the existing structure of sections 2--5 is very important in this regard. \\
+\indent In sections 2 and 3 we point out physical principles with which readers will not disagree.\footnote{I.e.~disagree fundamentally.  Details are subject to disagreement, of course.}  Then we start section 4 with the key statement ``The evolution equations listed so far \dots can be simplified to three equations in the four major variables \dots  We do not yet know how to compute the water pressure $P$ \dots''  Subsection 4.1 collects closures which are for this purpose (i.e.~determining the water pressure) but which are scattered all over the literature.  Only with this structure can we \emph{then} make clear why our choice (i.e.~simply $W=Y$) is reasonable and how it fits in, and can we also regularize the resulting pressure-determining equation (subsections 4.2 and 4.3).  At that point (i.e.~section 5.1) we can summarize our whole model.  Then we can help the actual user of our model by showing in what parameter limits we get some simpler or different models (section 5.2).}
 
 \reply{p.25 l.11-19 as stated above, I don’t think this is quite the Schoof et al. (2012) model.}
-{}
+{This is the Schoof et al.~(2012) \cite{Schoofetal2012} model.  Equations (2.8)--(2.10) in \cite{Schoofetal2012} give our equation (36a).  Equation (2.12) in \cite{Schoofetal2012} is our equation (36b).}
 
-\reply{p.27 l.23 write ``layer thickness'' instead of ``amount''}
-{}
-
-\reply{p.28 l.1 write ``layer thickness'' instead of ``amount'' (and other places in the MS)}
-{}
+\reply{p.27 l.23 write ``layer thickness'' instead of ``amount''\\
+\indent p.28 l.1 write ``layer thickness'' instead of ``amount'' (and other places in the MS)}
+{We somewhat agree.  First, our exposition of this particular list of observations has been simplified so that the issue does not arise.  \\
+\indent Throughout the manuscript, when we refer to $W$ or $W_{til}$ in particular we generally use ``thickness''.  But ``water amount'' is an appropriate phrase when we want to contrast with other water properties, especially ``water pressure.''}
 
 \reply{p.37 l.15 What happens when $W < 0$ should probably be discussed in the mathematical section too.}
-{}
+{We have added some discussion of the appearance of free boundaries, from the enforcement of inequalities including $W\ge 0$, to subsection 5.1 on the continuum model.}
 
 \reply{p.39 l.14 For a mountain glacier porosity seems to be around $0.01$ (Bartholomaus
 et al., 2011).  Porosity for an ice sheet may be more on the order of $10^{-4}$.}
-{}
+{Yes.  (Or rather, we don't doubt that a careful survey will reveal that someday.)  The role of our englacial porosity in regularizing the solution, and in smoothing-out temporal detail in results if it is too large, is already adequately covered.}
 
 \reply{p.40 l.13 What is the ``active subglacial layer''?}
-{}
+{Right.  That ambiguous phrase has been removed.  We now say ``There are also special cases at the boundaries of the region where $W > 0$ \dots''}
 
 \reply{p.42 l.17 is this connected to the statement on p. 37, l.15? How?}
-{}
+{Yes, it is connected.  Because literature including \cite{Hewittetal2012,Schoofetal2012,Werderetal2013} is modeling water input into mostly-temperate mountain glaciers, mostly from surface melt, that literature misses the point that $W\ge 0$ must be enforced.  That is, it must be enforced when there is refreeze, a known case under ice sheets.  Thus there are more-diverse free boundaries, and potential for conservation errors, in our physical model for ice sheets than in that literature.}
 
 \reply{p.45 l.20 write ``The spin-up grid sequence...''}
-{}
+{Done.}
 
 \reply{45 Sec.9.2.1 This section is too long and detailed considering this is not about ice flow modelling.  Is this spin-up different from others used before?  Also in a similar
 vein, Fig.~6~could be removed.}
-{}
+{This section has been shortened, and Figure 6 removed, but nonetheless this material defines the meaning and quality of the input data into the subglacial hydrology model.  It cannot be removed entirely.}
 
-\reply{p.48 l.5-7 The till is either completely full or empty.  If I understand the dependence of sliding on the till hydrology correctly, this means either fully slippery on not at all.
-So, is there no dependence of sliding on hydrology?  Maybe this point could be
-briefly discussed.}
-{}
+\reply{p.48 l.5-7 The till is either completely full or empty.  If I understand the dependence of sliding on the till hydrology correctly, this means either fully slippery on not at all.  So, is there no dependence of sliding on hydrology?  Maybe this point could be briefly discussed.}
+{There is dependence of sliding on hydrology.  While basal shear stress only directly depends on the amount of water in the till, not in the transport network, the model in its two-way coupled form can ``turn on'' and ``turn off'' ice streams for the correct (e.g.~at least from what is understood for Kamb ice stream) thermodynamically-determined reasons.\footnote{While none of the reviewers seem to note this aspect of subglacial hydrology, it is probably our highest priority, as revealed by all the papers on whole ice sheet modeling which we cite \dots all of which are ignored.} \\
+\indent It is also true that when there is sufficient basal melt then the till in the model will be fully-saturated.  Is this wrong? \\
+\indent Finally it is very important to note that the velocity of sliding is \emph{not}, by any means, a local function of basal shear stress, much less hydrology.  PISM solves a nontrivial stress balance to determine where sliding occurs, implying high-quality results compared to the observed surface velocities in outlet glaciers \cite{AschwandenAdalgeirsdottirKhroulev}.}
 
 \reply{\textbf{Comments for tables and figures}\\
 Tab.~3 Why is $W_r$ so much higher here?}
-{}
+{Table 3 itself is removed.  The particular value of a parameter in a verification test is rarely the issue.  We think both $W_r\approx 0.1$ m and $W_r\approx 1$ m are reasonable given the roughness seen in deglaciated areas.}
 
 \reply{Fig.~2 Label $R_1$ and $L$.}
-{}
+{The presentation of the nearly-exact solution has been made briefer and clearer, and the labels are not (now) needed.}
 
 \reply{Fig 2 \& 3 they could be combined.}
-{}
+{Perhaps as subplots, but our arrangment allows separate, and clearer, captions.  We want to show $W$ and $P$ separately, of course.}
 
 \reply{Fig.~6 could be left away}
-{}
+{Done.}
 
-\reply{Fig.~8 \& 11 mention what model run this is for}
-{}
+\reply{Fig.~8 [sic; 9?] \& 11 mention what model run this is for}
+{The Figure 8 caption is clear on which model.  The Figure 9 caption is clear that it is the same model as in Figure 8.  The Figure 11 caption (now Figure 10) has been corrected to make it clear it is \texttt{distributed}.}
 
-\reply{Fig.~11 Add a label to the colour-scale. Also, I think there is a inconsistency between
-the caption and the text (p.48, l.18), one says ice thickness one says sliding
-speed.}
-{}
+\reply{Fig.~11 Add a label to the colour-scale. Also, I think there is a inconsistency between the caption and the text (p.48, l.18), one says ice thickness one says sliding speed.}
+{The caption already says that the color scale is for ice thickness.  We are not sure what was the ``inconsistency between the caption and the text'', but we now say ``we 'bin' pairs $(W,P)$ by relatively-narrow sliding speed ranges (each sub-plot) and color the points by the ice thickness'', and we hope that is clear.}
 \end{itemize}
 
 
