@@ -194,15 +194,17 @@ Till with pressurized liquid water in its pore spaces is expected to support muc
 
 We will assume throughout that liquid water or ice fills pore spaces in the till, and that there are no air- or vapor-filled pore spaces.  When $\Wtil=0$ in the model, the pore spaces in the till are regarded as filled with ice and the basal shear stress is correspondingly high.  When $\Wtil$ attains sufficiently large values, however, the till is regarded as saturated with liquid, and a drop in effective pressure becomes possible (subsection \ref{subsec:effectivepressuretill} below).
 
-\subsection{Evolution of water amount}  The water in till pore spaces is much less mobile than that in the linked-cavity system because of the very low hydraulic conductivity of till \citep{LingleBrown1987,TrufferEchelmeyerHarrison2001}.  Therefore we choose an evolution equation for $\Wtil$ without horizontal transport for simplicity \citep{BBssasliding,Tulaczyketal2000}, namely
+\subsection{Evolution of till-stored water layer thickness}  The water in till pore spaces is much less mobile than that in the linked-cavity system because of the very low hydraulic conductivity of till \citep{LingleBrown1987,TrufferEchelmeyerHarrison2001}.  Therefore we choose an evolution equation for $\Wtil$ without horizontal transport for simplicity \citep{BBssasliding,Tulaczyketal2000}, namely
 \begin{equation}
 \frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d. \label{eq:tilldynamics}
 \end{equation}
-Here $C_d\ge 0$ is a fixed rate that makes the till gradually drain in the absence of water input; we choose $C_d=1$ mm/a, which is small compared to typical values of $m/\rho_w$.  Refreeze is also allowed, as a negative value for $m$.  Note that any water in excess of the capacity of the till then enters the transport system; it is conserved.  As in \citep{BBssasliding}, we constrain the water amount by
+Here $C_d\ge 0$ is a fixed rate that makes the till gradually drain in the absence of water input; we choose $C_d=1$ mm/a, which is small compared to typical values of $m/\rho_w$.  Refreeze is also allowed, as a negative value for $m$.
+
+As in \citep{BBssasliding}, we constrain the layer thickness by
 \begin{equation}
-0 \le \Wtil \le \Wtilmax,  \label{eq:Wtilbounds}
+0 \le \Wtil \le \Wtilmax.  \label{eq:Wtilbounds}
 \end{equation}
-which, as we explain next, has impacts on both the effective pressure on the till and the manner in which water is drained into the distributed system.
+Any water in excess of the capacity of the till, i.e.~$\Wtilmax$, ``overflows'' the till and enters the transport system; it is conserved.  Because the source term $m$ in equation \eqref{eq:tilldynamics}, or the whole right side, can be negative, the lower bound in \eqref{eq:Wtilbounds} must be actively-enforced.  The upper bound in \eqref{eq:Wtilbounds} also relates to the effective pressure on the till, as we explain next.
 
 \subsection{Effective pressure on the till} \label{subsec:effectivepressuretill}  Deformation of saturated till is well-modeled by a plastic (Coulomb friction) or nearly-plastic rheology \citep{Hookeetal1997,TrufferHarrisonEchelmeyer2000,Tulaczyketal2000,SchoofTill}.  Its yield stress $\tau_c$ satisfies the Mohr-Coulomb relation
 \begin{equation}
@@ -226,7 +228,7 @@ The void ratio $e$ and the effective water layer thickness $\Wtil$ are describin
 \begin{equation}
 e = \frac{\Wtil}{\eta}.  \label{eq:voidequivalent}
 \end{equation}
-On the other hand we specify a maximum $\Wtilmax$ on the water layer thickness, namely by \eqref{eq:Wtilbounds}.  The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at maximum values of void ratio $e$ and effective thickness $\Wtil$, so equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} allow us to express the solid-till thickness $\eta$ in terms of our preferred parameters $\Wtilmax$, $\delta$, $e_0$, $N_0$, and $C_c$:
+On the other hand we specify a maximum $\Wtilmax$ on the water layer thickness, in bounds \eqref{eq:Wtilbounds}.  The minimum $\Ntil=\delta P_o$ of the effective pressure occurs at maximum values of void ratio $e$ and effective thickness $\Wtil$, so equations \eqref{eq:voidpressure} and \eqref{eq:voidequivalent} allow us to express the solid-till thickness $\eta$ in terms of our preferred parameters $\Wtilmax$, $\delta$, $e_0$, $N_0$, and $C_c$:
 \begin{equation}
 \eta = \frac{\Wtilmax}{e_0 - C_c \log_{10}\left(\delta P_o / N_0\right)}.  \label{eq:etaexpression}
 \end{equation}
@@ -243,7 +245,7 @@ where $s = \Wtil/\Wtilmax$.  However, as noted above, $\Ntil$ is bounded:
 \end{equation}
 This function is shown in Figure \ref{fig:Ntilfunctions}(b).
 
-It follows from equations \eqref{eq:mohrcoulomb}, \eqref{eq:NtilofWtil}, and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ is determined by the water amount $\Wtil$.  Regarding the parameters in this relation:
+It follows from equations \eqref{eq:mohrcoulomb}, \eqref{eq:NtilofWtil}, and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ is determined by the layer thickness $\Wtil$.  Regarding the parameters in this relation:
 \renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
 \item Experiments on till suggest small values for cohesion $c_0$ in \eqref{eq:mohrcoulomb}, $0 \le c_0 \lesssim 1$ kPa \citep{Tulaczyketal2000}, and we choose $c_0=0$ for concreteness.
@@ -317,7 +319,7 @@ Stiffness in these pressure equations ultimately follows from the incompressibil
 
 \section{The new subglacial hydrology model in PISM} \label{sec:newmodel}
 
-\subsection{Summary of the model}  The major evolution equations for the model are mass conservation \eqref{eq:adeqn}, till-stored water amount evolution \eqref{eq:tilldynamics}, and pressure evolution \eqref{eq:regpressureequation}.  Collected here for clarity they are:
+\subsection{Summary of the model}  The major evolution equations for the model are mass conservation \eqref{eq:adeqn}, till-stored water layer thickness evolution \eqref{eq:tilldynamics}, and pressure evolution \eqref{eq:regpressureequation}.  Collected here for clarity they are:
 \begin{align}
 &\ddt{W} + \ddt{\Wtil} = - \Div\left(\bV\, W\right) + \Div \left(D \grad W\right) + \frac{m}{\rho_w}, \label{eq:bluebox} \\
 &\frac{\partial \Wtil}{\partial t} = \frac{m}{\rho_w} - C_d, \notag \\
@@ -341,7 +343,7 @@ As a result of inequalities \eqref{eq:allbounds}, free boundaries arise in the d
 
 A coupled weak formulation of equations \eqref{eq:bluebox} and constraints \eqref{eq:allbounds} would be a mathematically-rigorous unified description of the free boundary conditions, but this paper takes a more pragmatic approach, as follows.  First, PISM uses a periodic domain for whole ice sheet computations (section \ref{sec:results}), so the computational domain has no classical boundary.  Second, inequalities \eqref{eq:allbounds} are enforced in our coupled explicit scheme by truncation/projection (section \ref{sec:num}).  Third, at ice-free land and ocean (i.e.~ice shelf or ice-free ocean) grid locations, pressure $P$ is determined by atmospheric or ocean pressure, respectively.  Fourth and finally, at ice-free land and ocean grid locations the mass conservation equation effectively have $m$ sufficiently negative so that water which flows or diffuses into that grid location during a time step is fully removed and thus $W=0$ and $\Wtil=0$; see the ``mask'' variables in section \ref{sec:num}.
 
-The functions used in the model equations and inequalities can be categorized into \emph{state} functions, which must be provided with initial values, \emph{input} functions, which are either supplied by observations or by other components of an ice sheet model, and \emph{output} functions which are supplied to other components of the ice sheet model (Table \ref{tab:symbols}).  In two-way coupling the ice dynamics model passes $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and $\tau_c$ is returned.
+As in Table \ref{tab:symbols}, the functions in the model can be categorized into \emph{state} functions, which must be provided with initial values, \emph{input} functions, which are either supplied by observations or by other components of an ice sheet model, and \emph{output} functions which are supplied to other components of the ice sheet model.  In two-way coupling the ice dynamics model passes $H$, $m$, and $|\bv_b|$ to the subglacial hydrology model, and $\tau_c$ is returned.
 
 \subsection{Reduction to existing models}  Four reductions (limiting cases) of model \eqref{eq:bluebox} can now be stated precisely:
 
@@ -563,9 +565,11 @@ The rates of convergence for average errors are nearly identical for the higher-
 
 We now apply our hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics giving a realistic distributions of overburden pressure, ice sliding speed, and basal melt rate.
 
-\subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (subsection \ref{subsec:pismdoc}), was used to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state, following the procedures in \cite{AschwandenAdalgeirsdottirKhroulev}.  Our model uses no spatially-variable parameter values, such as basal shear stresses, found by inversion of surface velocities.  The steady present-day climate of the ice sheet, especially bed elevations, surface temperature, and surface mass balance \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.  The grid sequence was to run 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation at each refinement stage.  The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million velocity/temperature points.  This whole spinup used 2800 total processor-hours on 72 2.2 GHz AMD Opteron processors, a small computation for modern supercomputers.
+\subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (subsection \ref{subsec:pismdoc}), was used to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state, following the procedures in \cite{AschwandenAdalgeirsdottirKhroulev}.  Our model uses no spatially-variable parameter values, such as basal shear stresses, found by inversion of surface velocities.  The steady present-day climate of the ice sheet, especially bed elevations, surface temperature, and surface mass balance \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.
 
-The results of this spinup were validated by comparing results to present-day observations.  In the last 100 a of this run the ice sheet volume varied by less than $0.04$ percent, so the model is in nearly steady state, though the actual Greenland ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  Compared to volume alone, a better evaluation of dynamical quality is to compare the modeled and observed \citep{Joughinetal2010} surface speed, with a very similar result to the comparison described in \cite{AschwandenAdalgeirsdottirKhroulev}.
+The spin-up grid sequence was to run 50 ka on a 20 km grid, 20 ka on a 10 km grid, 2 ka on a 5 km grid, and finally 200 a on a 2 km grid, with bilinear interpolation at each refinement stage.  The final 2 km stage, on a horizontal grid of 1.05 million grid points, used uniform 10 m vertical spacing so that the ice sheet flow was modelled on a structured 3D grid of 460 million velocity/temperature points.  This whole spin-up used 2800 total processor-hours on 72 2.2 GHz AMD Opteron processors, a small computation for modern supercomputers.
+
+The results of this spin-up were validated by comparing results to present-day observations.  In the last 100 a of this run the ice sheet volume varied by less than $0.04$ percent, so the model is in nearly steady state, though the actual Greenland ice sheet may not be as close to steady.  The spun-up ice sheet volume of $3.094\times 10^{6}\,\textrm{km}^3$ is close to the present-day volume of $3.088\times 10^{6}\,\textrm{km}^3$ computed from the SeaRISE data on the same grid.  Compared to volume alone, a better evaluation of dynamical quality is to compare the modeled and observed \citep{Joughinetal2010} surface speed, with a very similar result to the comparison described in \cite{AschwandenAdalgeirsdottirKhroulev}.
 
 The spun-up initial state includes, in particular, modelled ice thickness $H$, basal melt rate $m$, and sliding velocity $|\bv_b|$; the latter two fields are shown in Figure \ref{fig:Greenhydroinputs}.  Areas of sliding roughly coincide with areas of basal melt because heat-producing (modeled) basal drag comes from the yield stress parameterized in section \ref{sec:tillmechanics}.
 
@@ -573,7 +577,7 @@ The spun-up initial state includes, in particular, modelled ice thickness $H$, b
 
 In the runs, variables $W$, $\Wtil$, and $P$ were recomputed at each time-step, and at each of 1.05 million subglacial hydrology grid points, according to the numerical model described in section \ref{sec:num}.  In both \texttt{routing} and \texttt{distributed} models the hydrological system became quite steady after the first three model years.
 
-Adaptively-determined time-steps reached a steady level of about 4 model-hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the \texttt{distributed} model the time steps were actually slightly longer, primarily because \texttt{routing} concentrates large water amounts and fluxes along steepest-descent paths; the time steps were about 6 model-hours based on maximum speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and much smaller maximum diffusivities $D$ of about 0.25 $\text{m}^2\,\text{s}^{-1}$.    These hydrology-only runs used much less computation than the spinup: 14.7 processor-hours for the \texttt{routing} run and 14.2 for \texttt{distributed}. 
+Adaptively-determined time-steps reached a steady level of about 4 model-hours for the \texttt{routing} model based on maximum subglacial water speeds $|\bV|$ of 0.05 $\text{m}\,\text{s}^{-1}$ and maximum diffusivity $D$ of 10.6 $\text{m}^2\,\text{s}^{-1}$.  For the \texttt{distributed} model the time steps were actually slightly longer, primarily because \texttt{routing} concentrates large water amounts and fluxes along steepest-descent paths; the time steps were about 6 model-hours based on maximum speeds $|\bV|$ of 0.03 $\text{m}\,\text{s}^{-1}$ and much smaller maximum diffusivities $D$ of about 0.25 $\text{m}^2\,\text{s}^{-1}$.    These hydrology-only runs used much less computation than the spin-up: 14.7 processor-hours for the \texttt{routing} run and 14.2 for \texttt{distributed}. 
 
 \subsubsection{\texttt{routing} results}  The final $\Wtil$ and $W$ fields from the \texttt{routing} run are shown in Figure \ref{fig:Greenroutingresults}.  The till is fully saturated ($\Wtil=2$ m) in essentially all areas where basal melt occurs.  In the outlet glacier areas the transportable water $W$ concentrates along curves of steepest descent of the hydraulic potential; see detail in Figure \ref{fig:Greenroutingdetail}.  The location of the pathways is determined primarily by the bedrock elevation detail provided by the SeaRISE data set, which is limited.  Furthermore, the grid resolution of 2 km, while very high for whole ice sheet models, still causes spatial ``smearing'' of the flow pathways.
 
@@ -583,7 +587,7 @@ The continuum limit of the model would have concentrated pathways of a few meter
 
 Recall that $|\bv_b|$ determines the pressure drop caused by sliding-generated cavities.  The effect is to spread out the water $W$ relative to the \texttt{routing} model, as clearly seen in Figure \ref{fig:Greendistributedresults}.  There is now no strong concentration of $W$ along curves of steepest descent of the hydraulic potential, but the spreading depends on opening and closing parameters in the \texttt{distributed} model, especially parameters $c_1,c_2,\phi_0,W_r$.  Darcy flux model parameters $\alpha,\beta,k$ are also important.  Parameter identification using observed surface data, though needed, is beyond our current scope.
 
-We can examine the local relationship between water amount $W$ and pressure $P$ in the \texttt{distributed} results.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show realistically-large spatial variations.  In Figure \ref{fig:GreenisPofW} we ``bin'' pairs $(W,P)$ by relatively-narrow sliding velocity ranges, as shown in each sub-plot, and color the points by the ice thickness.  There is an increasing relationship between $W$ and the relative pressure $P/P_o$ in each bin.  While in the fast-sliding case $W$ is often comparable to the bed roughness scale $W_r$, for slow sliding we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  In thick ice the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure always have low ice thickness.
+We can examine the local relationship between water layer thickness $W$ and pressure $P$ in the \texttt{distributed} results.  Though the model is near steady state, the basal melt rate, sliding speed, and overburden pressure all show realistically-large spatial variations.  In Figure \ref{fig:GreenisPofW} we ``bin'' pairs $(W,P)$ by relatively-narrow sliding speed ranges (each sub-plot) and color the points by the ice thickness.  There is an increasing relationship between $W$ and the relative pressure $P/P_o$ in each bin.  While in the fast-sliding case $W$ is often comparable to the bed roughness scale $W_r$, for slow sliding we see generally lower water amounts ($W \lesssim W_r/10$) but a full range of pressures.  In thick ice the pressure $P$ is close to overburden even if there is fast sliding.  Locations with high sliding, high water amount, and low pressure always have low ice thickness.
 
 \conclusions  \label{sec:conclusion}  This paper documents additions made to the Parallel Ice Sheet Model in its 0.6 version released February 2014.  It describes and demonstrates a subglacial hydrology model which is novel in having these features:\begin{itemize}
 \item a 2D parallel implementation of a coupled till-and-linked-cavities model,
@@ -941,7 +945,7 @@ Winkelmann, R. et~al.: The {P}otsdam {P}arallel {I}ce {S}heet
 
 \appendix
 
-\section{Analysis of steady states}  Relative to the time-dependent model equations \eqref{eq:bluebox}, steady-state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} have separate balances between the divergence of the flux and the water input, and the opening and closing processes.  In particular, equation \eqref{eq:openclosesteady} allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the water amount $W$.  However, steady state is only possible if a condition holds:
+\section{Analysis of steady states}  Relative to the time-dependent model equations \eqref{eq:bluebox}, steady-state equations \eqref{eq:Vsteady}--\eqref{eq:openclosesteady} have separate balances between the divergence of the flux and the water input, and the opening and closing processes.  In particular, equation \eqref{eq:openclosesteady} allows us to write the pressure $P=P(W)$ in steady state as a continuous function of the layer thickness $W$.  However, steady state is only possible if a condition holds:
 \begin{equation}
 c_1 |\bv_b| (W_r - W)_+ \le c_2 A P_o^3 W. \label{eq:steadyboundfirst}
 \end{equation}
@@ -951,7 +955,7 @@ We define a scaled basal sliding speed which has units of pressure; it is a scal
 \begin{equation}
 s_b =  \left(\frac{c_1 |\bv_b|}{c_2 A}\right)^{1/3}.  \label{eq:definesb}
 \end{equation}
-Then \eqref{eq:steadyboundfirst} is equivalent to the condition $W\ge W_c$, where $W_c = W_r s_b^3/(s_b^3 + P_o^3)$ is a critical water amount.  If $W\ge W_c$ then
+Then \eqref{eq:steadyboundfirst} is equivalent to the condition $W\ge W_c$, where $W_c = W_r s_b^3/(s_b^3 + P_o^3)$ is a critical water thickness.  If $W\ge W_c$ then
 \begin{equation}
 P(W) = P_o - s_b \left(\frac{(W_r - W)_+}{W}\right)^{1/3}.  \label{eq:PofWsteady}
 \end{equation}
