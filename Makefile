@@ -10,13 +10,6 @@ all: $(TEXFILE:.tex=.pdf)
 	pdflatex $<
 	pdflatex $<
 
-# link ice-bib.bib needed for bibtex to work  (to that file in pism-dev/doc/)
-#%.pdf: %.tex ice-bib.bib
-#	pdflatex $<
-#	bibtex $(<:.tex=.aux)
-#	pdflatex $<
-#	pdflatex $<
-
 .PHONY: clean
 
 clean:
