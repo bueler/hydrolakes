@@ -14,7 +14,6 @@ To build the PDF `gmd-hydro.pdf`, which requires LaTeX, do
     $ cd ..
     $ ln -s Copernicus/copernicus.cls
     $ ln -s Copernicus/copernicus.bst
-    $ unzip figszip.zip
     $ make
 
 The model described in `gmd-hydro.pdf` is implemented in PISM by the `-hydrology distributed` option; this is the `PISMDistributedHydrology` class.  It has a successful verification case.  Running it gives reasonable results for Nbreen (see van Pelt (2013)) and Greenland.  The model has an understandable relationship to several other models, but it lacks conduits; see `gmd-hydro.pdf`.
