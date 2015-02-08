@@ -16,23 +16,25 @@ fprintf('  (av err bwat) = O(dx^{%.2f}),  (av err bwp) = O(dx^{%.2f})\n',pW(1),p
 figure(1)
 subplot(4,1,1:2)
 loglog(dx,averrW,'ks',dx,maxerrW,'kx','markersize',10)
-grid on,  ylabel('error in W  (m)')
+grid on,  ylabel('error in W  (m)','fontsize',18)
 axis([0.9*min(dx) 1.1*max(dx) 0.9*min(averrW) 1.1*max(maxerrW)])
 set(gca,'XTick',flipud(dx))
 set(gca,'XTickLabel',{'','','','',''})
 set(gca,'YTick',[0.001 0.01])
 set(gca,'YTickLabel',{'0.001','0.01'})
-legend('average W error','maximum W error','Location','NorthWest')
+hlW = legend('average W error','maximum W error','Location','NorthWest');
+set(hlW,'fontsize',18)
 
 subplot(4,1,3:4)
 loglog(dx,averrP,'ks',dx,maxerrP,'kx','markersize',10)
-grid on,  xlabel('\Delta x  (m)'), ylabel('error in P  (bar)')
+grid on,  xlabel('\Delta x  (m)','fontsize',18), ylabel('error in P  (bar)','fontsize',18)
 axis([0.9*min(dx) 1.1*max(dx) 0.9*min(averrP) 1.1*max(maxerrP)])
 set(gca,'XTick',flipud(dx))
 set(gca,'XTickLabel',{'125','250','500','1000','2000'})
 set(gca,'YTick',[0.01 0.1])
 set(gca,'YTickLabel',{'0.01','0.1'})
-legend('average P error','maximum P error','Location','NorthWest')
+hlP = legend('average P error','maximum P error','Location','NorthWest');
+set(hlP,'fontsize',18)
 
 set(gcf,'Position',[100,100,600,600])
 
