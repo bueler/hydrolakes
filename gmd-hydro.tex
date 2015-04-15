@@ -97,7 +97,7 @@ In cases where boreholes have actually been drilled to the ice base, till is oft
 
 The major goals here are to implement, verify, and demonstrate this two-dimensional subglacial hydrology model.  The model is applicable at a wide variety of spatial and temporal scales but it has relatively-few parameters.  It is parallelized and it exhibits convergence of solutions under grid refinement.  It is a sub-model of a comprehensive three-dimensional ice sheet model, the open-source Parallel Ice Sheet Model (PISM; \texttt{pism-docs.org}); the sub-model can be added to any PISM run by a simple run-time option.
 
-Conduits are not included.  Existing theories of conduits apparently require their locations to be fixed a priori \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013}.  Such lattice models have no known continuum limit in the map plane.  By contrast with conduits, linked-cavity models do not put the cavities at the nodes of a pre-determined lattice, exactly because the continuum limit of such a lattice model is known \citep{Hewitt2011}, namely partial differential equation (PDE) \eqref{eq:hewittcapacity} in the current paper.  Regarding lattice models, because all PISM usage involves a run-time determination of grid resolution, all parameters must have grid-spacing-independent meaning.  Lattice or other input-grid-based models are therefore not acceptable as components of PISM.
+Channelized subglacial flow is widely-assumed to occur in Greenland, based on borehole and moulin evidence \citep[for example]{Andrewsetal2014}.  This important physical process for subglacial hydrologic transport is not captured by our model because conduits are not modeled.  Existing theories of conduits apparently require their locations to be fixed a priori \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013}.  Such lattice models have no known continuum limit in the map plane.  By contrast with conduits, linked-cavity models do not put the cavities at the nodes of a pre-determined lattice, exactly because the continuum limit of such a lattice model is known \citep{Hewitt2011}, namely partial differential equation (PDE) \eqref{eq:hewittcapacity} in the current paper.  Regarding lattice models, because all PISM usage involves a run-time determination of grid resolution, all parameters must have grid-spacing-independent meaning.  Lattice or other input-grid-based models are therefore not acceptable as components of PISM.
 
 Wall melt in the linked-cavity system, which is believed to be small \citep{Kamb1987}, is not added into the mass conservation equation in our model.  (It can be calculated diagnostically from the modeled flux and hydraulic gradient, however.)  If included in mass conservation, the addition of wall melt can generate an unstable distributed system \citep{Walder1982}, though such a system can be stabilized to some degree by bedrock bumps \citep{CreytsSchoof2009}.
 
@@ -562,7 +562,7 @@ The rates of convergence for average errors are nearly identical for the higher-
 
 \subsection{Application to the Greenland ice sheet}
 
-We now apply our hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics giving a realistic distributions of overburden pressure, ice sliding speed, and basal melt rate.
+We now apply our hydrology models to the entire Greenland ice sheet at 2 km grid resolution.  This nontrivial example demonstrates the model at large computational scale using real ice sheet geometry, with one-way coupling from ice dynamics giving realistic distributions of overburden pressure, ice sliding speed, and basal melt rate.
 
 \subsubsection{Spun-up initial state}  The PISM dynamics and thermodynamics model \citep{BBssasliding,Winkelmannetal2011,AschwandenBuelerKhroulevBlatter}, using the non-mass-conserving \texttt{null} hydrology model (subsection \ref{subsec:pismdoc}), was used to compute a consistent and nearly-steady model of the ice sheet, a ``spun-up'' initial state, following the procedures in \cite{AschwandenAdalgeirsdottirKhroulev}.  Our model uses no spatially-variable parameter values, such as basal shear stresses, found by inversion of surface velocities.  The bed elevations and present-day climate of the ice sheet, especially surface temperature and surface mass balance \citep{Ettemaetal2009}, were from the SeaRISE data set for Greenland \citep{Bindschadler2013SeaRISE}.
 
@@ -619,6 +619,13 @@ Comments by editor Dan Goldberg, reviewer Tim Bartholomaus, and two anonymous re
   \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
+
+
+\bibitem[{Andrews et~al.(2014)}]{Andrewsetal2014}
+Andrews, L.~C., Catania, G.~A., Hoffman, M.~J., Gulley, J.~D., L\"uthi, M.~P.,
+  Ryser, C.~, Hawley, R.~L., and Neumann, T.~A.: Direct observations of evolving
+  subglacial drainage beneath the {G}reenland {I}ce {S}heet, Nature, 514, 80--83,
+  \doi{10.1038/nature13796}, 2014.
 
 \bibitem[{Ascher and Petzold(1998)}]{AscherPetzold}
 Ascher, U. and Petzold, L.: Computer {M}ethods for {O}rdinary {D}ifferential

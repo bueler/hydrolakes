@@ -1,0 +1,135 @@
+
+> I believe that the reviewers simply wanted more explicit mention of what is
+> and is not represented by the model — and this is understandable because,
+> while the assumptions and limitations of the model are quite clear to a
+> reader who "speaks the language" of the manuscript, there is likely to be a
+> large contingent of people who don’t speak the language using the PISM
+> hydrology model.  Already PISM has a wide user community, and I expect it to
+> grow substantially with the release of its hydrological component---and based
+> on what I perceive to be a very large scientific community of researchers
+> interested in subglacial hydrology, a very small portion of whom are familiar
+> with numerical solution of PDEs, there is an ever-increasing need for this
+> type of explicit clarity. Just as the authors are concerned about
+> misconceptions when non-expert users write and publish high-impact papers on
+> the result of this hydrological model---and they will---the reviewers are
+> concerned too, and I share this concern.
+
+One might suppose from this comment that it is never mentioned that conduits are
+not in the model.
+
+However, the draft in question, sent to this editor on 11 February, includes the
+following four sentences, listed with line number, explicitly stating that there
+are no conduits in the model:
+
+95   Conduits are not included.
+
+651  Two-dimensional models which include conduits \citep{Schoofmeltsupply} are
+     not reductions of our model.
+
+658  Our model has no conduit-like evolution equations at all, though the
+     gradient-descent locations of characteristic curves from models using idea
+     (ii) may correspond to the locations of conduits in some cases.
+    
+1118 ... our model has no ``R-channel'' conduit mechanism, in which
+     dissipation heating of the flowing water generates wall melt-back.
+
+As there are about 500 sentences in the paper, almost 1% of the paper is already
+devoted to denying that the model has conduits.  The introduction and the
+conclusion state this.
+
+> Thus, I would like two things made more explicit:
+> 
+> 1) In the paragraph beginning at line 95, the rationale for not including
+> conduits is reasonable from a mathematical standpoint; however, it should be
+> acknowledged that channelized flow does occur in Greenland, and is a
+> potentially (I say "potentially" yet am confident it is more of a
+> "definitely") important physical process to subglacial hydrologic transport
+> that is not captured by this model.  That applied mathematics has not yet
+> produced a coarse-grained continuum representation of conduits does not mean
+> it is not important.
+
+It is never claimed, of course, that either conduits don't exist or that they
+are not important.  Rather it is pointed out that existing models of conduits
+are inadequate to the task of inclusion into a continuum theory of subglacial
+hydrology in two dimensions.  For this reason, they are not included in
+our model, which does not, should not, and even cannot (because of
+unknown-in-advance user choices), fix a grid or even a grid scale in
+advance.
+
+It is apparent that the nonconformity of this claim is driving editorial
+overreach here, with a demand for a particular statement, one clearly without
+consequence or real scientific content, as a condition for publication.
+
+So, to proceed past this barrier, we have replaced the leading sentence on line
+95, i.e. "Conduits are not included." with these two sentences:
+
+    Channelized subglacial flow is widely-assumed to occur
+    in Greenland, based on borehole and moulin evidence (Andrews et al., 2014,
+    for example).  This important physical process for subglacial hydrologic
+    transport is not captured by our model because conduits are not modeled.
+
+> 2) As I see it, eq 32(b) and eq 18 (and the "cap" for W_til) ...
+
+For clarity, we think what is meant are the equation
+
+dW_til/dt = m/\rho_w - C_d
+
+and the inequality
+
+0 <= W_til <= W_til^max
+
+> ... could be included
+> with the ice dynamics component of PISM, and eqs 32(a,c) could be solved
+> horribly incorrectly, and this would not impact ice dynamics in any way.
+
+This seems to be a statement that the model of till saturation is directly tied
+to ice dynamics, through Mohr-Coulomb, while water in the linked-cavity network
+has a no influence on ice dynamics, though the ice dynamics influences the
+linked-cavity network.
+
+This is correct.  As we point out repeatedly, our model is an extension of
+the Tulaczyck work which underlies the actually-observation-supported connection
+between basal melt rates and ice
+stream flow, that is, the generation of theoretical and field work done on the
+Siple Coast ice streams.  That work was all based on the notion that there was
+ultimately drainage of the subglacial water in excess of the capacity of the
+till.  There is still no evidence that the pressure gradient in the
+then-unobserved drainage network affects ice flow, though of course there is
+much subglacial modeling based on other ideas that would not explain ice stream
+flow.
+
+Regarding whether (32a,c) are solved correctly, this is the first paper to
+bother to verify that the coupled solution is correct in more than one
+horizontal dimension, through the construction and use of an exact solution.
+The editor has other fish to fry than actually being interested in whether
+(32a,c) are solved correctly, apparently.
+
+> This is what I believe reviewer 1 meant by 1-way coupling.  If I am wrong I
+> must apologize, but I must be convinced. The authors emphasize that the
+> velocity solve is nonlocal and so yield stress does not determine basal
+> stress locally; this is accepted and besides to point I am making.  I am not
+> saying this is *wrong*, or that hydrology can cavity size *should* affect
+> basal stress (though in reality I believe it could, see below), but I insist
+> this is briefly pointed out in section 4 or 5.
+
+It is a bit hard to respond to this comment.  We explicitly make the point that
+we are testing the model in a one-way mode only in the following three locations:
+
+1032 This nontrivial example demonstrates the model at large computational scale
+     using real ice sheet geometry, with one-way coupling from ice dynamics giving a
+     realistic distributions of overburden pressure, ice sliding speed, and basal
+     melt rate.
+
+1080 Thus only one-way coupling was tested: a steady ice dynamics model fed its
+     fields to an evolving subglacial hydrology model.
+
+1179 The current paper only demonstrates one-way coupling, in which the PISM ice
+     flow and thermodynamics model feeds basal melt rate and sliding velocities
+     to the hydrology model.  Two-way coupling  will appear in future work.
+
+The last two sentences are really not obscure; they are the last two sentences
+of the conclusion.
+
+The editor says "I insist this is briefly pointed out in section 4 or 5."  To
+bring this topic up to the 1%-of-sentences-have-to-make-the-point standard,
+
