@@ -27,7 +27,7 @@ are no conduits in the model:
 658  Our model has no conduit-like evolution equations at all, though the
      gradient-descent locations of characteristic curves from models using idea
      (ii) may correspond to the locations of conduits in some cases.
-    
+
 1118 ... our model has no ``R-channel'' conduit mechanism, in which
      dissipation heating of the flowing water generates wall melt-back.
 
@@ -36,7 +36,7 @@ devoted to denying that the model has conduits.  The introduction and the
 conclusion, in particular, include statements to this.
 
 > Thus, I would like two things made more explicit:
-> 
+>
 > 1) In the paragraph beginning at line 95, the rationale for not including
 > conduits is reasonable from a mathematical standpoint; however, it should be
 > acknowledged that channelized flow does occur in Greenland, and is a
@@ -161,17 +161,158 @@ subsection 5.1 as follows:
 
 > Minor issues:
 
-> l157: $m$ is described as being either due to basal melt or to drainage from the surface. But in 2.3 I might be wrong but I believe it is referred to as coming exclusively from basal melt -- otherwise it is implied that surface drainage goes directly into the till -- which I think is in contrast with the Tsai and Rice (2010) view of the process and others as well. Shouldn't drainage from the surface be a direct source to the hydrological system in addition to \rho_w(\partial W_{til}/\partial t - melt/rho_w)?
+> l157: $m$ is described as being either due to basal melt or to drainage from
+> the surface.  But in 2.3 I might be wrong but I believe it is referred to as
+> coming exclusively from basal melt ...
+
+Section 2.3 never mentions $m$ or the concept of basal melt or drainage from the
+surface.
+
+> ---otherwise it is implied that surface drainage goes directly into the till
+
+Indeed that is what we imply.  Note that the kind of macro-porous network of
+cracks seen in most mountain glaciers could bring water relatively-gently to the
+bed.
+
+> ---which I think is in contrast with the Tsai and Rice (2010) view of the
+> process and others as well.  Shouldn't drainage from the surface be a direct
+> source to the hydrological system in addition to
+> \rho_w(\partial W_{til}/\partial t - melt/rho_w)?
+
+No, our model is not a good one to use to describe "a basal crack driven by the
+rapid drainage of a surface meltwater lake near the margin of the Greenland Ice
+Sheet", to quote the abstract of Tsai & Rice.
 
 > l532 harder, not hardest (which sounds awkward)
 
-> l533 confusing sentence; suggest to lead with the numerical advantage and follow up with the drawback, e.g. "By contrast, if \phi_0 is larger then the numerical solution of equation (31) is easier; but local changes in subglacial pressure P are damped and spread at the speed of influence to other parts of the connected subglacial hydrologic system."
+O.k.  Changed.  The point to emphasize is that elliptic systems are infinitely
+stiff, i.e. the most-difficult parabolic case is the elliptic case.
 
-> Finally, I make a few comments regarding other issues I saw in the reviewer-author discourse. Action is not required, so to speak, but i urge the authors to at least consider them.
+> l533 confusing sentence; suggest to lead with the numerical advantage and
+> follow up with the drawback, e.g. "By contrast, if \phi_0 is larger then the
+> numerical solution of equation (31) is easier; but local changes in
+> subglacial pressure P are damped and spread at the speed of influence to
+> other parts of the connected subglacial hydrologic system."
 
-> 1) Reviewer 1 commented on the odd combination of a deforming-till basal stress parameterization with a cavity opening/closure hydrologic system evolution. The author interpreted this to mean that cavitation does not occur on deformable beds, and maybe that is what was meant. But in their response the authors cited Schoof (2007). In this paper, the ice-cavity interface is treated as shear stress-free, and I do not know the literature well enough but presumably other models of deformable bed cavitation use the same treatment. I would think this would mean, as with hard-bed cavitation, that the effective coarse-grained basal stress would decrease with some measure of cavity side. Such a dependence is not present in the yield stress formulation used in this model.
+Yes, it is an awkward sentence.  Because the numerical problems at the other
+extreme are already stated, "numerics need not be mentioned in this sentence.
+We propose the simpler:
 
-> 2) Reviewer 3 is right about the "corner case" mentioned, though he might not have worded it clearly enough. In the extreme case, if an infinite slab of ice of uniform thickness rested on a uniform layer of water of pressure that exactly balanced the overburden, i don't see what would be driving the (infinitely wide) cavity to close. Replace "infinite" with "very wide" and this is the case the reviewer referred to. Furthermore, the authors say that "none of the models in the literature toe the creep closure rate to the roughness scale". Well, perhaps they do not call it "roughness scale", but this is really just semantics. Plenty of models account for the geometric arrangement of clasts and obstacles in the closure rate, for instance Creyts and Schoof (2009) and Kyrke-Smith, Katz and Fowler (2015).
+    By contrast, local changes in subglacial pressure $P$ propagate to other
+    parts of the connected hydraulic system in a damped way if $\phi_0$ is large.
 
-> 3) As the authors point out in the manuscript and response to referees, the use of the fixed drainage term C_d is a straightforward extension of Tulaczyk et al's UPB model. It is not the only possible one, however; Van der Wel et al 2013 is cited solely as an example of one-horizontal-dimension drainage, but it is not acknowledged that their model is *another* possible extension, which takes account of vertical transport, something which this model does not do. Furthermore, I don't think anything is straightforward about this drainage term. In Tulaczyk et al 2000b (p485) it is stated that the mechanism of drainage is far from clear and while a constant parameter for drainage is assumed for simplicity, a mechanism that depends on void ratio (and by extension till interstitial water pressure via your eq 19) cannot be discounted.
+> Finally, I make a few comments regarding other issues I saw in the
+> reviewer-author discourse.  Action is not required, so to speak, but I urge
+> the authors to at least consider them.
+
+> 1) Reviewer 1 commented on the odd combination of a deforming-till basal
+> stress parameterization with a cavity opening/closure hydrologic system
+> evolution. The author interpreted this to mean that cavitation does not occur
+> on deformable beds, and maybe that is what was meant. But in their response
+> the authors cited Schoof (2007). In this paper, the ice-cavity interface is
+> treated as shear stress-free, ...
+
+We are not experts on the stress boundary condition in water-filled and
+air-filled cavities.  In Schoof's model these arise in the soft bed.
+
+We do, however, presume that the *shear* stress applied to
+the base of the ice by the water or air in a cavity is very small.  This is
+exactly the approximation also used for ice shelves.  In an ice shelf the
+contact area is certainly larger, and probably the water velocity is higher,
+but the shear stress is still ignored.
+
+> ... and I do not know the literature well enough but
+> presumably other models of deformable bed cavitation use the same treatment.
+
+We don't know of other *models* of deformable bed cavition.  The modelers have
+already decided hard-bed cavitation is the way to go, regardless of the
+widespread evidence of till.  Have you read this opinion piece?:
+
+Murray, T. Assessing the paradigm shift: deformable glacier beds. Quaternary
+Science Reviews, 16(9): 995-1016, 1997.
+
+She was wrong.  The paradigm did not shift.  Damn the evidence full speed ahead!
+
+> ... I would think this would mean, as with hard-bed cavitation, that the
+> effective coarse-grained basal stress would decrease with some measure of
+> cavity size. Such a dependence is not present in the yield stress formulation
+> used in this model.
+
+That's correct, it is not.
+
+The main point we have in mind is that both morphologies are almost certainly
+present simultaneously, namely layers of till without cavities and some cavities,
+which might be against hard bed or not.  So how to handle this?  The problem is
+that only a few area-averaged continuum models are available.  So we use them.
+
+> 2) Reviewer 3 is right about the "corner case" mentioned, though he might not 
+> have worded it clearly enough.  In the extreme case, if an infinite slab of ice
+> of uniform thickness rested on a uniform layer of water of pressure that
+> exactly balanced the overburden, I don't see what would be driving the
+> (infinitely wide) cavity to close.  Replace "infinite" with "very wide" and
+> this is the case the reviewer referred to.
+
+No it is not the case the reviewer referred to.
+
+Note the VERY VERY clear hypothesis that "P < P_o" in Reviewer 3's setup.  This
+hypothesis is not accidental; the sentence describes a "decrease [in] input" so
+that the prior P=P_o case is converted to P<P_o.
+
+This means there is a force.  In particular, N > 0 and thus v_c(N,h) in Schoof's
+model is positive.  On the other hand, v_o(h) is zero if you believe its meaning
+(i.e. opening through cavitation; opening of cavities is driven by contact of
+the ice with the bed; Schoof's formula makes it negative to the closure happens
+even quicker).  So the cavity closes.
+
+Reviewer 3 very clearly says "This contrasts to Schoof et al. (2012) which keeps
+P = Po until W <= W_r."  That is, Reviewer 3 claims that P is somehow pushed
+back up to P_o in the Schoof model.  We don't think that is true, because we
+are actually looking at the equations in Schoof et al. (2012).
+
+You say "an infinite slab of ice of uniform thickness rested on a uniform layer
+of water of pressure that exactly balanced the overburden".  That is not "P<P_o",
+and clearly not the case Reviewer 3 has in mind.
+
+There is NO mention of the lateral extent of the cavity in Reviewer 3's comment.
+You have made up "infinite" and "very wide" out of whole cloth, unfortunately.
+
+On the other hand, in *your* setup our equations (and Schoof's too) say that
+there is no closure of the cavity.  In *your* setup with the explicit "pressure
+that exactly balanced the overburden" assumption, then N=0 and the closure term
+is zero.  And the formula for opening is also zero because of "(W_r - Y)_+" in
+our formula, and assuming in your setup that the water is thicker than the
+roughness scale (i.e. W = Y > W_r so W_r - Y < 0).  So both (13) and (14) give
+zero and thus dY/dt = dW/dt = 0.
+
+> ... Furthermore, the authors say that
+> "none of the models in the literature tie the creep closure rate to the
+> roughness scale".  Well, perhaps they do not call it "roughness scale", but
+> this is really just semantics.  Plenty of models account for the geometric
+> arrangement of clasts and obstacles in the closure rate, for instance Creyts
+> and Schoof (2009) and Kyrke-Smith, Katz and Fowler (2015).
+
+This is a significant change of subject.  These papers assume a thin film of
+water.  We agree in this case that ... the film had better not be thicker than
+the clast size because then the old Walder argument applies and the film is
+unstable.  But these models still don't tie the closure rate to the roughness
+scale, to my knowledge.  They have motion of the ice/water surface though
+differences in pressure, just like we do.
+
+So what is the point here?
+
+> 3) As the authors point out in the manuscript and response to referees, the
+> use of the fixed drainage term C_d is a straightforward extension of Tulaczyk
+> et al's UPB model.  It is not the only possible one, however; Van der Wel et
+> al 2013 is cited solely as an example of one-horizontal-dimension drainage,
+> but it is not acknowledged that their model is *another* possible extension,
+> which takes account of vertical transport, something which this model does
+> not do.  Furthermore, I don't think anything is straightforward about this
+> drainage term. In Tulaczyk et al 2000b (p485) it is stated that the mechanism
+> of drainage is far from clear and while a constant parameter for drainage is
+> assumed for simplicity, a mechanism that depends on void ratio (and by
+> extension till interstitial water pressure via your eq 19) cannot be discounted.
+
+We agree.  Where did we "discount" these concerns?  Where did we say that our
+version of the Tulaczyk C_d mechanism was the "only possible one"?
+ 
 
