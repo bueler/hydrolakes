@@ -15,9 +15,9 @@
 > concerned too, and I share this concern.
 
 One might suppose from this comment that it is never mentioned that conduits are
-not in the model.  However, the draft in question includes the
-following four sentences, listed with line number, explicitly stating that there
-are no conduits in the model:
+not in the model.  However, the draft in question (date 14 February 2015) already
+includes the following four sentences, listed with line number, explicitly stating
+that there are no conduits in the model:
 
 95   Conduits are not included.
 
@@ -31,9 +31,10 @@ are no conduits in the model:
 1118 ... our model has no ``R-channel'' conduit mechanism, in which
      dissipation heating of the flowing water generates wall melt-back.
 
-As there are about 500 sentences in the paper, almost 1% of the paper is already
-devoted to denying that the model has conduits.  The introduction and the
-conclusion, in particular, include statements to this.
+The introduction and the conclusion, in particular, include statements to this
+effect.  Generally good scientific articles say precisely what they do, not
+what they do not do.  Our work, apparently, must follow other practices,
+as follows:
 
 > Thus, I would like two things made more explicit:
 >
@@ -46,8 +47,9 @@ conclusion, in particular, include statements to this.
 > produced a coarse-grained continuum representation of conduits does not mean
 > it is not important.
 
-We never claim, of course, that either conduits don't exist or that they
-are not important.  Rather we point out that existing models of conduits
+We never claim, of course, that conduits are not an important process.
+
+Rather we point out that existing models of conduits
 are inadequate to the task of inclusion into a continuum theory of subglacial
 hydrology in two dimensions.  For this reason, they are not included in
 our model, which does not, should not, and even cannot (because of
@@ -55,8 +57,8 @@ unknown-in-advance user choices), fix a lattice/grid or even a lattice-spacing
 scale in advance.
 
 It is apparent that the nonconformity of this claim is driving editorial
-overreach here, with a demand for a particular statement, one clearly without
-consequence or real scientific content, as a condition for publication.
+overreach here.  There is a demand for a particular statement, one clearly
+without consequence or real scientific content, as a condition for publication.
 
 To proceed past this barrier, we have replaced the leading sentence on line
 95, i.e. "Conduits are not included." with these two sentences:
@@ -68,7 +70,7 @@ To proceed past this barrier, we have replaced the leading sentence on line
 
 > 2) As I see it, eq 32(b) and eq 18 (and the "cap" for W_til) ...
 
-For clarity, what is meant are the equation
+For clarity, what is referred to here are the equation
 
 dW_til/dt = m/\rho_w - C_d
 
@@ -76,30 +78,40 @@ and the inequalities
 
 0 <= W_til <= W_til^max
 
-> ... could be included
-> with the ice dynamics component of PISM, and eqs 32(a,c) could be solved
-> horribly incorrectly, and this would not impact ice dynamics in any way.
+> ... could be included with the ice dynamics component of PISM, and eqs 32(a,c)
+> could be solved horribly incorrectly, and this would not impact ice dynamics
+> in any way.
 
 But it would impact mass conservation completely.  If one only had (32b) and
 the constraint this would be the old, well-tested PISM model.  In other words,
-this is exactly the context for why the *title of the paper* starts with the
-words "mass-conserving".
+this is exactly the context which explains why the *title of the paper* starts
+with the words "mass-conserving".
 
 This seems to be a complaint that our model of till saturation is directly tied
 to ice dynamics, through Mohr-Coulomb, while water in the linked-cavity network
 has a no influence on ice dynamics, though the ice dynamics influences the
-linked-cavity network.
+linked-cavity network.  This is a correct description of our model.
 
-This is correct.  As we point out repeatedly, our model is an extension of
-the Tulaczyck (2000) work and the Schoof et al (2012) work.  The former
-underlies the actually-observation-supported connection between basal melt rates
-and ice stream flow, that is, the great theoretical and field work done on the
-Siple Coast ice streams.  That work was all based on the notion that there could
+As we point out repeatedly, our model is an extension of the Tulaczyk et al (2000ab),
+Le Brocq et al (2009), and Schoof et al (2012) work.  None of these tie the
+cavity or drainage system pressure to the basal shear stress, in the first case
+because the model does not have such a system.  In any case we do not know how
+to tie the basal shear stress to the P and W in our model.
+
+Of course, the Tulaczyk et al (2000ab) work underlies the actually
+observation-supported connection between basal melt rates
+and ice stream flow, that is, the extended theoretical and field work done on the
+Siple Coast ice streams.  That work was all based on the notion that there must
 ultimately be drainage of the subglacial water in excess of the capacity of the
 till.  There is still no evidence that the pressure gradient in the
-at-the-time-unobserved drainage network affects ice flow, though of course there
+at-the-time-unobserved drainage network affects ice flow.  By contrast, there
 is much ongoing subglacial modeling based on ideas that cannot explain ice
-stream flow.
+stream flow.  We are trying not to abandon an effective model for the majority
+of subglacial-water-modulated fast flow (i.e. ice stream flow) just so we can
+model the latest popular curiosity, the small effect of dynamics on the slow
+warm parts of Greenland.  (Note that fast outlet flow in Greenland is remarkably
+insensitive to Moulin input, especially on the scale of a one-month ice sheet
+model step.)
 
 Regarding whether (32a,c) are solved correctly, this is the first paper to
 bother to verify that the coupled solution is correct in more than one
@@ -133,14 +145,14 @@ sentences of the conclusion.
 
 The editor says "I insist this is briefly pointed out in section 4 or 5."
 Presumably "this" is a statement that "cavity size [does not] affect basal
-stress".  (It is hard to parse the demand to find what would satisfy it.)
+stress".
 
-Making a change in section 4 makes no sense.  Section 4 is about
+Making a change in section 4 makes no sense because it is about
 closures to the equations for the evolution of the subglacial variables (i.e.
 W_til, W, P).  The basal shear stress applied to the base of the ice is not
 closely-related.
 
-So we have tried to state what is insisted-upon in section 5, at the end of
+So we have tried to state what is "insisted"-upon in section 5, at the end of
 subsection 5.1 as follows:
 
      In this model the pressure $P$ does not feed back to ice dynamics through
@@ -170,9 +182,7 @@ surface.
 
 > ---otherwise it is implied that surface drainage goes directly into the till
 
-Indeed that is what we imply.  Note that the kind of macro-porous network of
-cracks seen in most mountain glaciers could bring water relatively-gently to the
-bed.
+Indeed that is what we imply.
 
 > ---which I think is in contrast with the Tsai and Rice (2010) view of the
 > process and others as well.  Shouldn't drainage from the surface be a direct
@@ -181,12 +191,12 @@ bed.
 
 No, our model is not a good one to use to describe "a basal crack driven by the
 rapid drainage of a surface meltwater lake near the margin of the Greenland Ice
-Sheet", to quote the abstract of Tsai & Rice.
+Sheet", to quote the abstract of Tsai & Rice.  Must our model be designed for
+this?
 
 > l532 harder, not hardest (which sounds awkward)
 
-O.k.  Changed.  The point to emphasize is that elliptic systems are infinitely
-stiff, i.e. the most-difficult parabolic case is the elliptic case.
+O.k.  Changed.
 
 > l533 confusing sentence; suggest to lead with the numerical advantage and
 > follow up with the drawback, e.g. "By contrast, if \phi_0 is larger then the
@@ -194,9 +204,9 @@ stiff, i.e. the most-difficult parabolic case is the elliptic case.
 > subglacial pressure P are damped and spread at the speed of influence to
 > other parts of the connected subglacial hydrologic system."
 
-Yes, it is an awkward sentence.  Because the numerical problems at the other
-extreme are already stated, "numerics need not be mentioned in this sentence.
-We propose the simpler:
+Yes, it is an awkward sentence.  Because numerical problems at the other
+extreme are already stated, "numerical" need not be mentioned in this sentence.
+We have changed to the simpler sentence:
 
     By contrast, local changes in subglacial pressure $P$ propagate to other
     parts of the connected hydraulic system in a damped way if $\phi_0$ is large.
@@ -204,46 +214,51 @@ We propose the simpler:
 > Finally, I make a few comments regarding other issues I saw in the
 > reviewer-author discourse.  Action is not required, so to speak, but I urge
 > the authors to at least consider them.
-
+>
 > 1) Reviewer 1 commented on the odd combination of a deforming-till basal
 > stress parameterization with a cavity opening/closure hydrologic system
-> evolution. The author interpreted this to mean that cavitation does not occur
+> evolution. The authors interpreted this to mean that cavitation does not occur
 > on deformable beds, and maybe that is what was meant. But in their response
 > the authors cited Schoof (2007). In this paper, the ice-cavity interface is
 > treated as shear stress-free, ...
 
-We are not experts on the stress boundary condition in water-filled and
-air-filled cavities.  In Schoof's model these arise in the soft bed.
-
-We do, however, presume that the *shear* stress applied to
+We are not experts on the stress boundary condition in water-filled or
+air-filled cavities.  We do, however, presume that the *shear* stress applied to
 the base of the ice by the water or air in a cavity is very small.  This is
-exactly the approximation also used for ice shelves.  In an ice shelf the
-contact area is certainly larger, and probably the water velocity is higher,
-but the shear stress is still ignored.
+exactly the approximation also used for ice shelves, for example.  In an ice
+shelf the contact area is certainly larger, and probably the water velocity is
+higher, and yet the applied shear stress is still ignored.
+
+Thus we are not surprised that Schoof treats the ice-cavity interface as shear
+stress-free.
 
 > ... and I do not know the literature well enough but
 > presumably other models of deformable bed cavitation use the same treatment.
 
-We don't know of other *models* of deformable bed cavition.  The modelers have
-already decided hard-bed cavitation is the way to go, regardless of the
-widespread evidence of till.  Have you read this opinion piece?:
-
-Murray, T. Assessing the paradigm shift: deformable glacier beds. Quaternary
-Science Reviews, 16(9): 995-1016, 1997.
-
-She was wrong.  The paradigm did not shift.  Damn the evidence full speed ahead!
+We don't know of other *models* of deformable bed cavition at all.
 
 > ... I would think this would mean, as with hard-bed cavitation, that the
 > effective coarse-grained basal stress would decrease with some measure of
-> cavity size. Such a dependence is not present in the yield stress formulation
+> cavity size.
+
+Why?  The contact with the till (i.e. other than the cavities) could be quite
+strong because large cavities in a linked cavity system could more-effectively
+drain the till which contacted the ice.  Weak till is not automatically tied to
+large cavities.
+
+In any case, we are simply pointing out in our model that:
+
+1) till is present in observations of the bed under glaciers and ice sheets
+
+2) sliding over bumps and till can both credibly make cavities
+
+Are these wrong?
+
+> Such a dependence is not present in the yield stress formulation
 > used in this model.
 
-That's correct, it is not.
-
-The main point we have in mind is that both morphologies are almost certainly
-present simultaneously, namely layers of till without cavities and some cavities,
-which might be against hard bed or not.  So how to handle this?  The problem is
-that only a few area-averaged continuum models are available.  So we use them.
+"Such a dependence" presumably means that the basal shear stress must be a
+function of cavity size.  No, we do not have that in the model.
 
 > 2) Reviewer 3 is right about the "corner case" mentioned, though he might not 
 > have worded it clearly enough.  In the extreme case, if an infinite slab of ice
@@ -254,35 +269,38 @@ that only a few area-averaged continuum models are available.  So we use them.
 
 No it is not the case the reviewer referred to.
 
-Note the VERY VERY clear hypothesis that "P < P_o" in Reviewer 3's setup.  This
+Note the VERY clear hypothesis that "P < P_o" in Reviewer 3's setup.  This
 hypothesis is not accidental; the sentence describes a "decrease [in] input" so
 that the prior P=P_o case is converted to P<P_o.
 
 This means there is a force.  In particular, N > 0 and thus v_c(N,h) in Schoof's
 model is positive.  On the other hand, v_o(h) is zero if you believe its meaning
-(i.e. opening through cavitation; opening of cavities is driven by contact of
-the ice with the bed; Schoof's formula makes it negative to the closure happens
-even quicker).  So the cavity closes.
+(i.e. opening of cavities is driven by contact of the ice with the bed; without
+ice/bed contact the cavities do not open).  So the cavity closes.
 
 Reviewer 3 very clearly says "This contrasts to Schoof et al. (2012) which keeps
-P = Po until W <= W_r."  That is, Reviewer 3 claims that P is somehow pushed
+P = Po until W <= W_r."  Reviewer 3 thus claims that P is somehow pushed
 back up to P_o in the Schoof model.  We don't think that is true, because we
-are actually looking at the equations in Schoof et al. (2012).
+are actually looking at the equations in Schoof et al. (2012), apparently.
 
-You say "an infinite slab of ice of uniform thickness rested on a uniform layer
+*You* say "an infinite slab of ice of uniform thickness rested on a uniform layer
 of water of pressure that exactly balanced the overburden".  That is not "P<P_o",
 and clearly not the case Reviewer 3 has in mind.
 
 There is NO mention of the lateral extent of the cavity in Reviewer 3's comment.
-You have made up "infinite" and "very wide" out of whole cloth, unfortunately.
+You have made up "infinite" and "very wide" out of whole cloth.
 
-On the other hand, in *your* setup our equations (and Schoof's too) say that
+In *your* setup our equations (and Schoof's too) say that
 there is no closure of the cavity.  In *your* setup with the explicit "pressure
 that exactly balanced the overburden" assumption, then N=0 and the closure term
-is zero.  And the formula for opening is also zero because of "(W_r - Y)_+" in
-our formula, and assuming in your setup that the water is thicker than the
+is zero.  Our formula for opening also gives zero because of "(W_r - Y)_+" is
+zero, assuming in your setup that the water is thicker than the
 roughness scale (i.e. W = Y > W_r so W_r - Y < 0).  So both (13) and (14) give
 zero and thus dY/dt = dW/dt = 0.
+
+In *your* corner case, necessarily assuming no boundary conditions on the system
+so as to make sens of your case, our equations and Schoof's equations don't
+close the cavity.
 
 > ... Furthermore, the authors say that
 > "none of the models in the literature tie the creep closure rate to the
@@ -292,13 +310,12 @@ zero and thus dY/dt = dW/dt = 0.
 > and Schoof (2009) and Kyrke-Smith, Katz and Fowler (2015).
 
 This is a significant change of subject.  These papers assume a thin film of
-water.  We agree in this case that ... the film had better not be thicker than
+water.  We agree in this case that the film had better not be thicker than
 the clast size because then the old Walder argument applies and the film is
 unstable.  But these models still don't tie the closure rate to the roughness
-scale, to my knowledge.  They have motion of the ice/water surface though
-differences in pressure, just like we do.
+scale, to my knowledge.
 
-So what is the point here?
+What is the point here?
 
 > 3) As the authors point out in the manuscript and response to referees, the
 > use of the fixed drainage term C_d is a straightforward extension of Tulaczyk
@@ -307,12 +324,16 @@ So what is the point here?
 > but it is not acknowledged that their model is *another* possible extension,
 > which takes account of vertical transport, something which this model does
 > not do.  Furthermore, I don't think anything is straightforward about this
-> drainage term. In Tulaczyk et al 2000b (p485) it is stated that the mechanism
+> drainage term.  In Tulaczyk et al 2000b (p485) it is stated that the mechanism
 > of drainage is far from clear and while a constant parameter for drainage is
 > assumed for simplicity, a mechanism that depends on void ratio (and by
 > extension till interstitial water pressure via your eq 19) cannot be discounted.
 
 We agree.  Where did we "discount" these concerns?  Where did we say that our
 version of the Tulaczyk C_d mechanism was the "only possible one"?
- 
+
+We *do* point out something that seems not to concern the editor.  A more
+complicated till model is one of many, many ways to add more
+totally-unconstrained-by-the-available-data parameters.  We prefer to reduce
+their number not increase it.
 
