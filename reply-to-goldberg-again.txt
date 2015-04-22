@@ -28,7 +28,7 @@ that there are no conduits in the model:
      gradient-descent locations of characteristic curves from models using idea
      (ii) may correspond to the locations of conduits in some cases.
 
-1118 ... our model has no ``R-channel'' conduit mechanism, in which
+1118 ... our model has no "R-channel" conduit mechanism, in which
      dissipation heating of the flowing water generates wall melt-back.
 
 The introduction and the conclusion, in particular, include statements to this
@@ -140,7 +140,7 @@ point that we are testing the model in a one-way mode:
      flow and thermodynamics model feeds basal melt rate and sliding velocities
      to the hydrology model.  Two-way coupling  will appear in future work.
 
-The last two sentences, in particular, are not obscure.  They are the last two
+The last two sentences, in particular, are not obscure as they are the last two
 sentences of the conclusion.
 
 The editor says "I insist this is briefly pointed out in section 4 or 5."
@@ -172,7 +172,6 @@ subsection 5.1 as follows:
      linked-cavity system.
 
 > Minor issues:
-
 > l157: $m$ is described as being either due to basal melt or to drainage from
 > the surface.  But in 2.3 I might be wrong but I believe it is referred to as
 > coming exclusively from basal melt ...
