@@ -12,6 +12,8 @@
             urlcolor=magenta  % only if colorlinks=true
 ]{hyperref}
 
+\renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
+
 
 \begin{document}
 \graphicspath{{figszip/}}
@@ -209,7 +211,6 @@ N_{\text{til}} = \min\left\{P_o,\, \hat N_{\text{til}}\right\}.
 This function is shown in Figure \ref{fig:Ntilfunctions}(b).
 
 It follows from equations \eqref{eq:mohrcoulomb}, \eqref{eq:NtilofWtil}, and \eqref{eq:Wtilpressure} that the yield stress $\tau_c$ is determined by the layer thickness $W_{\text{til}}$.  Regarding the parameters in this relation:
-\renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
 \item Experiments on till suggest small values for cohesion $c_0$ in \eqref{eq:mohrcoulomb}, $0 \le c_0 \lesssim 1$ kPa \citep{Tulaczyketal2000}, and we choose $c_0=0$ for concreteness.
 \item Measured till friction angles $\varphi$ are in a $18^\circ$--\,$40^\circ$ range \citep{CuffeyPaterson}.  Simulations of the whole Antarctic \citep{Martinetal2011} and Greenlandic \citep{AschwandenAdalgeirsdottirKhroulev} ice sheets have been based on a hypothesis that the till friction angle $\varphi$ depends on bed elevation so as to model the submarine history of low-elevation sediments.
@@ -312,7 +313,6 @@ As in Table \ref{tab:symbols}, the functions in the model can be categorized int
 
 \subsection{Reduction to existing models}  Four reductions (limiting cases) of model \eqref{eq:bluebox} can now be stated precisely:
 
-\renewcommand{\labelenumi}{\textbf{(\roman{enumi})}}
 \begin{enumerate}
 \item The zero till storage ($W_{\text{til}}^{\text{max}}=0$) and zero englacial porosity ($\phi_0=0$) case of \eqref{eq:bluebox} is essentially the model described by \cite{Schoofetal2012}.  Recalling that $\mathbf{q} = - K W \nabla \psi$, the equations are
 \begin{align}
@@ -329,9 +329,9 @@ The bounds $W \ge 0$ and $0 \le P \le P_o$ are unchanged.  Model \eqref{eq:blueb
 \item The undrained plastic bed (UPB) model of \cite{Tulaczyketal2000b} arises as the $W=0,\mathbf{q}=0,\phi_0=0$ reduction of \eqref{eq:bluebox}.  This model depends on friction-heating feedback to keep $W_{\text{til}}$ bounded, which is not effective if local friction heating is a non-local function of changes in till strength.  \cite{BBssasliding} therefore enforce $W_{\text{til}} \le W_{\text{til}}^{\text{max}}$ by removing water above the capacity $W_{\text{til}}^{\text{max}}$, giving a minimal non-conservative, but ``drained,'' version of the UPB model.
 \end{enumerate}
 
-The above list does not imply that all possible subglacial hydrology models are reductions of ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} is a variation on idea \textbf{(ii)} above but it is not a reduction.  The \cite{FlowersClarke2002_theory} model mentioned in subsection \ref{subsec:simplifiedclosures} is also not a reduction, though a significant connection is explained in the Appendix.
+The above list does not imply that all possible subglacial hydrology models are reductions of ours.  For example, the subglacial hydrology model of \cite{JohnsonFastook} is a variation on idea (\emph{ii}) above but it is not a reduction.  The \cite{FlowersClarke2002_theory} model mentioned in subsection \ref{subsec:simplifiedclosures} is also not a reduction, though a significant connection is explained in the Appendix.
 
-Two-dimensional models which include conduits \citep{Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,vanderWeletal2013}, but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.  Our model has no conduit-like evolution equations at all, though the gradient-descent locations of characteristic curves from models using idea \textbf{(ii)} may correspond to the locations of conduits in some cases.
+Two-dimensional models which include conduits \citep{Schoofmeltsupply} are not reductions of our model.  Conduit evolution is numerically-straightforward to implement in one-dimensional hydrology models \citep{Hewittetal2012,vanderWeletal2013}, but when extended to two-horizontal dimensions all existing models \citep{Schoofmeltsupply,Hewitt2013,Werderetal2013} become ``lattice'' models without a known continuum limit.  Our model has no conduit-like evolution equations at all, though the gradient-descent locations of characteristic curves from models using idea (\emph{ii}) may correspond to the locations of conduits in some cases.
 
 \subsection{Steady states}  \label{subsec:steady}  The steady form of model \eqref{eq:bluebox}, stated using $\alpha=1$, $\beta=2$, and $W_{\text{til}}^{\text{max}}=0$ for simplicity, can be written as follows in terms of $\mathbf{V},\mathbf{q},W,P$:
 \begin{align}
@@ -343,7 +343,6 @@ Two-dimensional models which include conduits \citep{Schoofmeltsupply} are not r
 These steady state equations are also stated in the one-dimensional case by \cite{Schoofetal2012}.  Observe that the equations describing mass conservation \eqref{eq:masscontsteady} and cavity opening/closing processes \eqref{eq:openclosesteady} have become decoupled.
 
 We make three observations about solutions to \eqref{eq:Vsteady}--\eqref{eq:openclosesteady}:
-\renewcommand{\labelenumi}{(\emph{\roman{enumi}})}
 \begin{enumerate}
 \item from \eqref{eq:openclosesteady} there is a functional relationship $P=P(W)$,
 \item by \eqref{eq:Vsteady} and \eqref{eq:openclosesteady}, the apparently advective flux ``$\mathbf{V} W$'' in \eqref{eq:qsteady} actually acts diffusively, and
@@ -483,7 +482,6 @@ where $\rho_{sw}=1028.0$ is sea-water density.  Note $\text{\texttt{float}}_{i,j
 
 One time step follows this algorithm:
 
-\renewcommand{\labelenumi}{\emph{(\roman{enumi})}}
 \begin{enumerate}
 \item Start with values $W^l_{i,j}$, $(W_{\text{til}})_{i,j}^l$, $P_{i,j}^l$ which satisfy bounds $W\ge 0$, $0\le W_{\text{til}} \le W_{\text{til}}^{\text{max}}$, and $0 \le P \le P_o$.
 \item Get $(W_{\text{til}})_{i,j}^{l+1}$ by \eqref{eq:tillupdatefd}.  Enforce $0\le W_{\text{til}} \le W_{\text{til}}^{\text{max}}$.  If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $(W_{\text{til}})_{i,j}^{l+1}=0$.
@@ -495,11 +493,11 @@ One time step follows this algorithm:
 \item If $P_{i,j}^{l+1}$ does not satisfy bounds $0 \le P \le P_o$ then truncate/project into this range.
 \item If $\text{\texttt{icefree}}_{i,j}$ or $\text{\texttt{float}}_{i,j}$ then set $W_{i,j}^{l+1}=0$.  Otherwise use \eqref{eq:Wfd} to compute values for $W_{i,j}^{l+1}$.
 \item If $W_{i,j}^{l+1}<0$ then truncate/project to get $W_{i,j}^{l+1}=0$.
-\item Update time $t_{l+1}=t_l+\Delta t$ and repeat at \emph{(i)}.
+\item Update time $t_{l+1}=t_l+\Delta t$ and repeat at (\emph{i}).
 \end{enumerate}
 
 \medskip
-This recipe goes with a reporting scheme for mass conservation.  Note that in steps \emph{(ii)} and \emph{(ix)} water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step \emph{(x)}, which represent a mass conservation error which goes to zero in the continuum limit $\Delta t\to 0$.
+This recipe goes with a reporting scheme for mass conservation.  Note that in steps (\emph{ii}) and (\emph{ix}) water is lost or gained at the margin where either the ice thickness goes to zero on land (margins), or at locations where the ice becomes floating (grounding lines).  Because such loss/gain may be the modeling goal---users want hydrological discharge---these amounts are reported.  This reporting scheme also tracks the projections in step (\emph{x}), which represent a mass conservation error which goes to zero in the continuum limit $\Delta t\to 0$.
 
 
 \subsection{Run-time options for hydrology models} \label{subsec:pismdoc}  Option \texttt{-hydrology NAME}, where \texttt{NAME} is one of the three headings below, chooses the model equations.
