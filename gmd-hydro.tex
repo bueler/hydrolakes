@@ -21,7 +21,7 @@
 \author[1]{E.~Bueler}
 \author[2]{W.~{van} Pelt}
 
-\affil[1]{Department of Mathematics and Statistics, University of Alaska Fairbanks, Alaska, USA}
+\affil[1]{Department of Mathematics and Statistics and Geophysical Institute, University of Alaska Fairbanks, Alaska, USA}
 \affil[2]{Institute for Marine and Atmospheric Research Utrecht, The Netherlands\footnote{Current address: Department of Earth Sciences, Uppsala University, Sweden}}
 
 \runningtitle{Subglacial hydrology in PISM}
@@ -586,7 +586,6 @@ Comments by editor Dan Goldberg, reviewer Tim Bartholomaus, and two anonymous re
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 
-
 \bibitem[{Andrews et~al.(2014)}]{Andrewsetal2014}
 Andrews, L.~C., Catania, G.~A., Hoffman, M.~J., Gulley, J.~D., L\"uthi, M.~P.,
   Ryser, C.~, Hawley, R.~L., and Neumann, T.~A.: Direct observations of evolving
@@ -954,7 +953,7 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\mathb
 \begin{table*}[ht]
   \centering
   \caption{Physical constants and model parameters.  All values are configurable in PISM; see Table \ref{tab:correspondence}.}
-  \begin{tabular}{lllp{3.0in}} 
+  \begin{tabular}{lllp{7.62cm}}
     \textbf{Name} & \textbf{Default} & \textbf{Units} & \textbf{Description}\\
 \hline
     $A$ & $3.1689\times 10^{-24}$ & $\text{Pa}^{-3}\,\text{s}^{-1}$ & ice softness \citep{EISMINT96} \phantom{$\Big|$} \\
@@ -1037,83 +1036,80 @@ where $\psi_o = P_o + \rho_w g b$.  Thus the direction of water velocity $\mathb
 %%%%%%%%%%%%%%%%%    FIGURES    %%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{Ntilfunctions}
+\includegraphics[width=7.62cm,keepaspectratio=true]{Ntilfunctions}
 \caption{\textbf{(a)} Equation \eqref{eq:voidpressure} determines the effective pressure $N_{\text{til}}$ as a function of the void ratio $e$; reference values $e_0$,$N_0$ are indicated.  \textbf{(b)}  The same curve, but with $N_{\text{til}}$ as a function of $W_{\text{til}}$, with bounds above by overburden pressure $P_o$ and below by a fixed fraction $\delta$ of $P_o$; the solid curve is used in our model.  The case shown has 1000 meters ice thickness.}
 \label{fig:Ntilfunctions}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{exact-W-plot-onu}
+\includegraphics[width=7.62cm,keepaspectratio=true]{exact-W-plot-onu}
 \caption{A nearly-exact radial, steady solution for water thickness $W(r)$ (dashed).  In $r$-versus-$W$ space the overpressure (O), normal pressure (N), and underpressure (U) regions (solid curves) are determined by ice geometry and sliding velocity, because this is steady state.}
 \label{fig:Wexact}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{exact-P-plot}
+\includegraphics[width=7.62cm,keepaspectratio=true]{exact-P-plot}
 \caption{A nearly-exact radial, steady solution for pressure $P(r)$ (dashed) and overburden pressure $P_o$ (solid).}
 \label{fig:Pexact}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=2.2in,keepaspectratio=true]{diffstencil}
+\includegraphics[width=5.59cm,keepaspectratio=true]{diffstencil}
 \bigskip
 \caption{Numerical schemes \eqref{eq:Wfd} and \eqref{eq:Pfd} use a grid-point-centered cell.  Velocities, diffusivities, and fluxes are evaluated at staggered grid locations (triangles at centers of cell edges) denoted by compass notation $e,w,n,s$.  State functions $W,W_{til},P$ are located at regular grid points (diamonds).}
 \label{fig:stencil}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=3.0in,keepaspectratio=true]{refineWPpism}
+\includegraphics[width=7.62cm,keepaspectratio=true]{refineWPpism}
 \caption{Average water thickness error $|W-W_{exact}|$ decays as $O(\Delta x^{0.91})$, and average pressure error $|P-P_{exact}|$ decays as $O(\Delta x^{0.92})$, for grids with spacing $250 \le \Delta x = \Delta y \le 2000$ m.}
 \label{fig:refineWPpism}
 \end{figure}
 
-\newcommand{\grnht}{3.4in}
-
 \begin{figure*}[ht]
-\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-bmelt} \,
-\includegraphics[height=\grnht,keepaspectratio=true]{g2km-init-velbase-mag}}
+\mbox{\includegraphics[height=8.64cm,keepaspectratio=true]{g2km-init-bmelt} \,
+\includegraphics[height=8.64cm,keepaspectratio=true]{g2km-init-velbase-mag}}
 \caption{The inputs to the hydrology model are the modeled basal melt rate $m/\rho_w$ (left; $\mathrm{m}\,\mathrm{a}^{-1}$) and sliding speed $|\mathbf{v}_b|$ (right; $\mathrm{m}\,\mathrm{a}^{-1}$) from the spun-up state.}
 \label{fig:Greenhydroinputs}
 \end{figure*}
 
 \begin{figure*}[ht]
-\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-tillwat} \,
-\includegraphics[height=\grnht,keepaspectratio=true]{routing-decoupled-bwat}}
+\mbox{\includegraphics[height=8.64cm,keepaspectratio=true]{routing-decoupled-tillwat} \,
+\includegraphics[height=8.64cm,keepaspectratio=true]{routing-decoupled-bwat}}
 \caption{Outputs from the \texttt{routing} hydrology model are the modelled till-stored water layer thickness $W_{\text{til}}$ (left; $\mathrm{m}$) and modelled transportable water layer thickness $W$ (right; $\mathrm{m}$).}
 \label{fig:Greenroutingresults}
 \end{figure*}
 
 \begin{figure*}[ht]
-\includegraphics[height=2.7in,keepaspectratio=true]{detail-routing-decoupled-bwat}
+\includegraphics[height=6.86cm,keepaspectratio=true]{detail-routing-decoupled-bwat}
 \caption{Detail of transportable water $W$ plotted in Figure \ref{fig:Greenroutingresults}, covering Jakobshavn (J), Helheim (H), and Kangerdlugssuaq (K) outlet glaciers}
 \label{fig:Greenroutingdetail}
 \end{figure*}
 
 \begin{figure*}[ht]
-\mbox{\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwat} \,
-\includegraphics[height=\grnht,keepaspectratio=true]{distributed-decoupled-bwprel}}
+\mbox{\includegraphics[height=8.64cm,keepaspectratio=true]{distributed-decoupled-bwat} \,
+\includegraphics[height=8.64cm,keepaspectratio=true]{distributed-decoupled-bwprel}}
 \caption{Outputs from the \texttt{distributed} hydrology model include the modelled transportable water layer thickness $W$ (left; $\mathrm{m}$), and the modelled transportable water layer pressure $P$, shown relative to overburden pressure (i.e.~$P/P_o$; right).}
 \label{fig:Greendistributedresults}
 \end{figure*}
 
-\newcommand{\myheight}{1.8in}
 \begin{figure*}[ht]
-\mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin1-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin10-g2km} \, \includegraphics[height=\myheight,keepaspectratio=true]{bin30-g2km}}
-\mbox{\includegraphics[height=\myheight,keepaspectratio=true]{bin100-g2km} \,
-\includegraphics[height=1.85in,keepaspectratio=true]{bin300-g2km}}
+\mbox{\includegraphics[height=4.57cm,keepaspectratio=true]{bin1-g2km} \, \includegraphics[height=4.57cm,keepaspectratio=true]{bin10-g2km} \, \includegraphics[height=4.57cm,keepaspectratio=true]{bin30-g2km}}
+\mbox{\includegraphics[height=4.57cm,keepaspectratio=true]{bin100-g2km} \,
+\includegraphics[height=4.70cm,keepaspectratio=true]{bin300-g2km}}
 \caption{Scatter plots of $(W,P/P_o)$ pairs for all cells from the \texttt{distributed} model run, which used roughness scale $W_r = 0.1$ m.  Each sub-plot only shows pairs from the indicated range of ice sliding speeds.  Points are colored by ice thickness using a common scale shown beside last figure.}
 \label{fig:GreenisPofW}
 \end{figure*}
 
 \begin{figure}[ht]
-\includegraphics[width=2.8in,keepaspectratio=true]{psteady-vb}
+\includegraphics[width=7.11cm,keepaspectratio=true]{psteady-vb}
 \caption{The steady state function $P(W)$ defined by equation \eqref{eq:PofWsteady}, using $W_r=1$ m and $H=1000$ m (solid curves).  Values of $W_c$ are indicated by black dots at $P=0$.  For comparison, \cite{FlowersClarke2002_theory} relation \eqref{eq:PofWFC} is shown with $W_{\text{crit}}=1$ m (dashed black).}
 \label{fig:psteady-vb}
 \end{figure}
 
 \begin{figure}[ht]
-\includegraphics[width=2.8in,keepaspectratio=true]{psteady-Po}
+\includegraphics[width=7.11cm,keepaspectratio=true]{psteady-Po}
 \caption{The graph of $P(W)$ defined by \eqref{eq:PofWsteady} also depends on overburden pressure $P_o=\rho_i g H$, shown using $|\mathbf{v}_b|=100$ m/a and $W_r=1$ m.}
 \label{fig:psteady-Po}
 \end{figure}
