@@ -1,0 +1,28 @@
+Dear Katharina Ruckert --
+
+Thanks for the careful typesetting.  I have some general comments first, followed
+by specific things line-by-line.  The attached scanned PDF may help locate the
+corrections, because I have used green pen to show where they are.
+
+General Comments
+----------------
+
+There were some changes you made, presumably to match journal defaults, that
+I think should be changed back.
+
+* The word "equation", or its abbreviation "Eq.", actually *means* something,
+  namely a mathematical relation where two quantities are equal.  Thus "Eq."
+  should not be added at every LaTeX command \eqref{...}.  In particular,
+  (4), (17), (20), and (33) are actually *inequalities*, and exactly not
+  equations!  It is fine to say "inequalities (4)" or "bounds (4)".
+
+* Similarly, (32) is a "model" or "Eqs." but not "Eq.".
+
+* In some places, replacing "zero" by "0" seems very strange.  I have indicated
+  places where I think "zero" is better.
+
+Line-by-line Comments
+---------------------
+
+* FIXME
+
