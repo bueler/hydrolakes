@@ -4,6 +4,8 @@ Thanks for the careful copy-editing.  I have some general comments first,
 followed by specifics line-by-line.  The attached scanned PDF may help locate
 the corrections, because I have used green pen to show where they are.
 
+I apologize that I have had to correct several of my own technical errors.
+
 General Comments
 ----------------
 
@@ -14,9 +16,11 @@ that should be changed back because they change the meaning of the text.
   namely a mathematical relation where two quantities are equal.  Thus "Eq."
   should not be added at every LaTeX command \eqref{...}.  In particular,
   (4), (17), (20), and (33) are actually *inequalities*, and exactly not
-  equations!  It is fine to say "inequalities (4)" or "bounds (4)".
+  equations!  It is fine to say "inequalities (4)" or "bounds (4)".  I have
+  indicated below where this needs correction.
 
-* Similarly, (32) is a "model" or "Eqs." but not "Eq.".
+* Similarly, (32) is a "model" or "coupled equations" or just "Eqs.", but not
+  "Eq.".  I have indicated below where this needs correction.
 
 * In some places, replacing "zero" by "0" obstructs readability.  I have
   indicated places where I think "zero" is readable.
@@ -29,9 +33,10 @@ Line-by-line Comments
 Remarks from the Language Copy-Editor
 -------------------------------------
 
-CE1:  
+CE1:  Replace "first-order ``donor cell'' upwinding" with
+      "a first-order ``donor cell'' upwind method".
 
-CE2:  
+CE2:  Put "PETSc (Portable, Extensible Toolkit for Scientific Computation)".
 
 CE3:  
 
@@ -76,19 +81,33 @@ TS12: exact author list is "Phillipe Huybrechts, Tony Payne, The EISMINT Interco
 
 TS13: Joughin, Ian; Smith, Ben E.; Howat, Ian M.; Scambos, Ted; Moon, Twila
 
-TS14: Publisher location = 
+TS14: Publisher location = New York
 
-TS15: Publisher location = 
+TS15: Publisher location = Cambridge, UK
 
-TS16: Publisher location = 
+TS16: Publisher location = Dordrecht, The Netherlands
 
-TS17: Publisher location = 
+TS17: Publisher location = Cambridge, UK
 
-TS18: 
+TS18: NOTE: year should be 2015.  Access date: May 12, 2015
 
-TS19: 
+TS19: S. T. Rooney, D. D. Blankenship, R. B. Alley, C. R. Bentley
 
-TS20: Publisher location = 
+TS20: NOTE: this should be fixed to include editor, book title, and publisher location,
+      and to correct the year, as follows:
 
-TS21: Publisher location = 
+  @inbook{Siegertetal2007,
+  title={Hydrological connections between {A}ntarctic subglacial lakes,
+         the flow of water beneath the {E}ast {A}ntarctic Ice Sheet and
+         implications for sedimentary processes},
+  author={Siegert, M. and Le Brocq, A. and Payne, A.},
+  booktitle={{Glacial Sedimentary Processes and Products}},
+  editor={Michael J. Hambrey, Poul Christoffersen, Neil F. Glasser, Bryn Hubbard},
+  year={2007},
+  pages={3--10},
+  publisher={Wiley-Blackwell},
+  address={Malden, MA, USA},
+  }
+
+TS21: Publisher location = Berlin
 
