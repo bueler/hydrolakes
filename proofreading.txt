@@ -1,10 +1,15 @@
 Dear Katharina Ruckert --
 
-Thanks for the careful copy-editing.  I have some general comments first,
+Thanks for the careful copy-editing.  I have some general comments below,
 followed by specifics line-by-line.  The attached scanned PDF may help locate
-the corrections, because I have used green pen to show where they are.
+the corrections; I have used green pen to show where they are.
 
-I apologize that I have had to correct several of my own technical errors.
+I apologize that I have had to correct several of my own technical errors.  I
+have indicated where they are my fault.
+
+Best Regards,
+
+Ed
 
 General Comments
 ----------------
@@ -13,11 +18,16 @@ There were some changes you have made, presumably to match journal defaults,
 that should be changed back because they change the meaning of the text.
 
 * The word "equation", or its abbreviation "Eq.", actually *means* something,
-  namely a mathematical relation where two quantities are equal.  Thus "Eq."
+  namely a mathematical relation where two quantities are *equal*.  Thus "Eq."
   should not be added at every LaTeX command \eqref{...}.  In particular,
   (4), (17), (20), and (33) are actually *inequalities*, and exactly not
-  equations!  It is fine to say "inequalities (4)" or "bounds (4)".  I have
-  indicated below where this needs correction.
+  equations!  It is fine to say "inequalities (4)" or "bounds (4)" or "constraints (4)".
+  I have indicated below where this needs correction.
+
+  (These changes do not appear on the copy_editing_changes PDF, but instead
+  apparently came from different copernicus.cls settings or something.  In any
+  case, the appearance I intended is in my PDF file upload on 22 April, and in
+  the .tex file uploaded 23 April.)
 
 * Similarly, (32) is a "model" or "coupled equations" or just "Eqs.", but not
   "Eq.".  I have indicated below where this needs correction.
@@ -25,10 +35,150 @@ that should be changed back because they change the meaning of the text.
 * In some places, replacing "zero" by "0" obstructs readability.  I have
   indicated places where I think "zero" is readable.
 
+* The second author, who is Dutch, notes:  "One tiny detail about the references
+  to "van der Wel" and "van Pelt".  In proper Dutch the "v" in "van" needs to be
+  capitalized when not preceded by a first name or letter.  This will only affect
+  the citations and not the manuscript authors on the first page."
+
 Line-by-line Comments
 ---------------------
 
-* FIXME
+* page 1, first address line:  Please replace "University of Alaska Fairbanks,
+  Alaska, USA" with simpler "University of Alaska Fairbanks, USA".  (my fault)
+
+* page 1, lines 6,7,9 of abstract:  Please replace "(1)" with "1." and so on.
+  I do not want this enumerate to be confused with equation numbers.  (my fault)
+
+* page 2, first column, line 10 from bottom:  Please replace "namely, partial
+  differential equation" with "namely as a partial differential equation".  (my fault)
+
+* page 2, second column, line 15 from top:  Please remove "also".  (my fault)
+
+* page 3, first column, line 3 of first paragraph:  Please replace "2012) and the"
+  with "2012).  The".  (my fault)
+
+* page 4, second column, line 3 from bottom:  Please replace "fills pore spaces"
+  with "fills the pore spaces".  (my fault)
+
+* page 5, first column:
+
+  - line 12 from top:  Remove "Bueler and Brown, 2009;" here.
+    The citation 7 lines later is correct.  (my fault)
+
+  - lines 25 and 26 from top:  Replace "Eq. (17)" by "inequalities (17)",
+    in both cases.
+
+  - line 2 from bottom:  Replace "the logarithm of N_{til} and e"
+    by "e and the logarithm of N_{til}".  (my fault)
+
+* page 5, second column:
+
+  - line 19 from top:  Replace "water.  In fact" with "water
+    in the till.  In fact".  (my fault)
+
+  - line 24 from top:  Replace "bounds of Eq. (17)" with
+    "bounds (17)".
+
+* page 7, second column:
+
+  - line 3 from top:  Please replace "is part" with "is already
+    part".  (my fault)
+
+  - line 3 from top:  Please replace "0" with "zero".
+
+  - line 6 from top:  Remove "; see", which changes the
+    meaning.  I really do mean "pressure Eq. (2.12)" or "pressure equation (2.12)".
+
+* page 8, first column:
+
+  - line 5 from top:  Replace "constraints Eg. (4)" with
+    "constraints (4)".
+
+  - line 12 from top:  Replace "constraints (Eq. 4)" with
+    "constraints (4)".
+
+  - line 4 from bottom:  Replace "Equation (32) is" with
+    "Equations (32) are".
+
+  - line 3 from bottom:  Replace "Mohr-Coulomb (Eq. 18)" by "Mohr-Coulomb Eq. (18)".
+    Replace "pressure (Eqs. 23 and 24)" by "pressure Eqs. (23) and (24)".
+
+* page 8, second column:
+
+  - line 6 from top:  Replace "constraints Eq. (33)" by "constraints (33)".
+
+  - line 11 from top:  Replace "inequalities Eq. (33)" by "inequalities (33)".
+
+  - line 17 from top:  Replace "have m" by "has m".  (my fault)
+
+  - line 3 from bottom:  Replace "0" by "zero" in both instances.
+
+* page 9, first column:
+
+  - line 6 from top:  Replace "Model Eq. (32) is a parabolic version of Eq. (34)"
+    by "Model (32) is a parabolic version of model (34)".
+
+  - line 9 from top:   Replace "Eq. (32)" by "Eqs. (32)".
+  
+  - line 17 from top:  Replace "Eq. (32)" by "Eqs. (32)".
+
+  - line 23 from top:  Replace "Eq. (32)" by "Eqs. (32)".
+
+* page 9, second column, first line:  Please replace "model Eq. (32)" by
+  "model Eqs. (32)".
+
+* page 10, first column:
+
+  - line 13 from top:  Replace "The equations in model Eq. (32)" by "Equations (32)".
+
+  - line 16 from top:  Replace "equation in Eq. (32)" with "equation in model (32)".
+
+  (See below for CE1.)
+
+  (See below for CE2.)
+
+* page 12, first column, line 9 from bottom:  Replace "the equations of Eq. (32)" by
+  "Eqs. (32)".
+
+* page 12, second column:
+
+  - line 20 from top:  This is a phrase from an earlier
+    version of the paper which should be removed.  Replace all of this: "though
+    the proof above ... stability.  Nonetheless" by simply "and".  (my fault)
+
+  - line 2 from bottom:  Replace "for" with "only for the diffusion part of".
+    (my fault)
+
+* page 13, first column, line 1:  Replace "model Eq. (32)" by "model Eqs. (32)".
+
+* page 13, second column:
+
+  (See below for CE3.)
+
+  - line 16 from top:  Replace "full set of Eq. (32)" with "full set of Eqs. (32)".
+
+  - line 4 from bottom:  Replace "on first-order upwinding" with "on the
+    first-order upwind method".
+
+* page 14, second column:
+
+  - line 8 from top:  Replace "upwinding" with "upwind method".
+
+  - line 4 from bottom:  Remove comma, so "stresses, found" becomes "stresses
+    found".  (my fault)
+
+* page 15, second column Figures 6 and 7:  Please make these figures span two
+  columns, as they did in the PDF version submitted 22 April.
+
+* page 16, second column Figures 9 and 10:  Please make these figures span two
+  columns, as they did in the PDF version submitted 22 April.
+
+* page 18, first column, line 1:  Please replace "model Eq. (32)" with
+  "model Eqs. (32)".
+
+* page 19, first column, line 1:  Please italicize "a priori", as this latin
+  phrase becomes ungrammatical as written.
+
 
 Remarks from the Language Copy-Editor
 -------------------------------------
@@ -36,9 +186,11 @@ Remarks from the Language Copy-Editor
 CE1:  Replace "first-order ``donor cell'' upwinding" with
       "a first-order ``donor cell'' upwind method".
 
-CE2:  Put "PETSc (Portable, Extensible Toolkit for Scientific Computation)".
+CE2:  The definition of "PETSc" is "Portable, Extensible Toolkit for Scientific computation".
 
-CE3:  
+CE3:  Replace "recipe" with "algorithm".
+
+
 
 Remarks from the Typesetter
 ---------------------------
