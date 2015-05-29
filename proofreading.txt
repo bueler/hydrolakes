@@ -1,14 +1,14 @@
 Dear Katharina Ruckert --
 
-Thanks for the careful typesetting.  I have some general comments first, followed
-by specific things line-by-line.  The attached scanned PDF may help locate the
-corrections, because I have used green pen to show where they are.
+Thanks for the careful copy-editing.  I have some general comments first,
+followed by specifics line-by-line.  The attached scanned PDF may help locate
+the corrections, because I have used green pen to show where they are.
 
 General Comments
 ----------------
 
-There were some changes you made, presumably to match journal defaults, that
-I think should be changed back.
+There were some changes you have made, presumably to match journal defaults,
+that should be changed back because they change the meaning of the text.
 
 * The word "equation", or its abbreviation "Eq.", actually *means* something,
   namely a mathematical relation where two quantities are equal.  Thus "Eq."
@@ -18,11 +18,77 @@ I think should be changed back.
 
 * Similarly, (32) is a "model" or "Eqs." but not "Eq.".
 
-* In some places, replacing "zero" by "0" seems very strange.  I have indicated
-  places where I think "zero" is better.
+* In some places, replacing "zero" by "0" obstructs readability.  I have
+  indicated places where I think "zero" is readable.
 
 Line-by-line Comments
 ---------------------
 
 * FIXME
+
+Remarks from the Language Copy-Editor
+-------------------------------------
+
+CE1:  
+
+CE2:  
+
+CE3:  
+
+Remarks from the Typesetter
+---------------------------
+
+TS1:  S. Balay, S. Abhyankar, M. Adams, J. Brown, P. Brune, K. Buschelman,
+      V. Eijkhout, W. Gropp, D. Kaushik, M. Knepley, L. Curfman McInnes,
+      K. Rupp, B. Smith, and H. Zhang
+
+TS2:  Bindschadler, Robert A.; Nowicki, Sophie; Abe-Ouchi, Ayako; Aschwanden, Andy;
+      Choi, Hyeungu; Fastook, Jim; Granzow, Glen; Greve, Ralf; Gutowski, Gail;
+      Herzfeld, Ute; Jackson, Charles; Johnson, Jesse; Khroulev, Constantine;
+      Levermann, Anders; Lipscomb, William H.; Martin, Maria A.; Morlighem, Mathieu;
+      Parizek, Byron R.; Pollard, David; Price, Stephen F.; Ren, Diandong;
+      Saito, Fuyuki; Sato, Tatsuru; Seddik, Hakime; Seroussi, Helene;
+      Takahashi, Kunio; Walker, Ryan; Wang, Wei Li
+
+TS3:  Bueler, Ed; Lingle, Craig S.; Kallen-Brown, Jed A.; Covey, David N.;
+      Bowman, Latrice N.
+
+TS4:  "Garry K. C. Clarke" is full name on publication.
+
+TS5:  Publisher location = Burlington, MA, USA
+
+TS6:  Janneke Ettema, Michiel R. van den Broeke, Erik van Meijgaard,
+      Willem Jan van de Berg, Jonathan L. Bamber, Jason E. Box, Roger C. Bales
+
+TS7:  Andrew G. Fountain, Robert W. Jacobel, Robert Schlichting, Peter Jansson
+
+TS8:  Publisher location = Berlin
+
+TS9:  volume = {119}
+      number = {3}
+      pages = {414--436}
+
+TS10: Hooke R. Le B.; Hanson B.; Iverson N. R.; Jansson P.; Fischer U. H.
+
+TS11: NOTE: year should be 2003.  Publisher location = Berlin.
+
+TS12: exact author list is "Phillipe Huybrechts, Tony Payne, The EISMINT Intercomparison Group"
+
+TS13: Joughin, Ian; Smith, Ben E.; Howat, Ian M.; Scambos, Ted; Moon, Twila
+
+TS14: Publisher location = 
+
+TS15: Publisher location = 
+
+TS16: Publisher location = 
+
+TS17: Publisher location = 
+
+TS18: 
+
+TS19: 
+
+TS20: Publisher location = 
+
+TS21: Publisher location = 
 
