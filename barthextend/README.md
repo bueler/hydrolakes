@@ -1,7 +1,13 @@
 hydrolakes/barthextend
-==========
+======================
 
-This correspondence will be submitted to J. Glaciology.  To build the PDF `barthextend.pdf`, which requires LaTeX, do
+This was published as a [correspondence in the _Journal of Glaciology_](https://www.igsoc.org/journal/60/222/t14j075.pdf).
+
+
+Build the PDF
+-------------
+
+To build the PDF `barthextend.pdf`, which requires LaTeX, do
 
     $ ln -s ~/pism/doc/ice-bib.bib   # see github.com/pism/pism
     $ mkdir igs && cd igs
